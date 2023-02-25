@@ -50,15 +50,18 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-Ray computeRay(float2 ndcPosition, constant float4x4& invProjMatrix)
+float3 viewToWorld(float2 ndc, float z, constant Uniforms& uniforms)
 {
-    float4 ptOnNearPlane = invProjMatrix * float4(ndcPosition.x, ndcPosition.y, 0, 1);
+    float4 p = uniforms.viewMatrix * uniforms.invProjectionMatrix * float4(ndc, z, 1);
+    return p.xyz / p.w;
+}
+
+Ray computeRay(float2 ndcPosition, constant Uniforms& uniforms)
+{
+    float3 origin = viewToWorld(ndcPosition, 0, uniforms);
+    float3 direction = normalize(origin);
     
-    float3 origin = ptOnNearPlane.xyz / ptOnNearPlane.w;
-    float3 direction = normalize(ptOnNearPlane.xyz);
-    
-    float4 ptOnFarPlane = invProjMatrix * float4(ndcPosition.x, ndcPosition.y, 1, 1);
-    float3 end = ptOnFarPlane.xyz / ptOnFarPlane.w;
+    float3 end = viewToWorld(ndcPosition, 1, uniforms);
     
     float maxDist = length(end - origin);
     return { origin, direction, maxDist };
@@ -426,7 +429,7 @@ public:
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]])
 {
-    const auto ray = computeRay(in.viewportNDC, uniforms.invProjectionMatrix);
+    const auto ray = computeRay(in.viewportNDC, uniforms);
     
     Scene scene;
     auto res = scene.rayMarch(ray);

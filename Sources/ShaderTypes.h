@@ -43,8 +43,7 @@ struct Vertex final
 struct Uniforms final
 {
     matrix_float4x4 invProjectionMatrix;
-    float farZ;
-    matrix_float4x4 modelViewMatrix;
+    matrix_float4x4 viewMatrix;
 };
 
 #endif /* ShaderTypes_h */

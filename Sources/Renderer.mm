@@ -44,7 +44,8 @@ Vertex s_Vertices[4] = {
 
     matrix_float4x4 _projectionMatrix;
     matrix_float4x4 _invProjectionMatrix;
-    float _farZ;
+    
+    simd_float3 _cameraPos;
 }
 
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
@@ -55,6 +56,8 @@ Vertex s_Vertices[4] = {
         _device = view.device;
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         [self _loadMetalWithView:view];
+        
+        _cameraPos = simd_make_float3(0, 0, 0);
     }
 
     return self;
@@ -141,6 +144,16 @@ Vertex s_Vertices[4] = {
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
 }
 
+- (simd_float3)cameraPos
+{
+    return _cameraPos;
+}
+
+- (void)setCameraPos:(simd_float3)cameraPos
+{
+    _cameraPos = cameraPos;
+}
+
 - (void)_updateGameState
 {
     /// Update any game state before encoding renderint commands to our drawable
@@ -148,11 +161,11 @@ Vertex s_Vertices[4] = {
     Uniforms* uniforms = (Uniforms*)_uniformBufferAddress;
 
     uniforms->invProjectionMatrix = _invProjectionMatrix;
-    uniforms->farZ = _farZ;
     
-    matrix_float4x4 viewMatrix = matrix4x4_translation(0.0, 0.0, -8.0);
-
-    uniforms->modelViewMatrix = viewMatrix;
+    matrix_float4x4 cameraMatrix = matrix4x4_translation(_cameraPos.x, _cameraPos.y, _cameraPos.z);
+    auto viewMatrix = simd_inverse(cameraMatrix);
+    
+    uniforms->viewMatrix = viewMatrix;
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
@@ -230,8 +243,8 @@ Vertex s_Vertices[4] = {
     /// Respond to drawable size or orientation changes here
 
     float aspect = size.width / (float)size.height;
-    _farZ = 100.f;
-    _projectionMatrix = matrix_perspective_right_hand(65.0f * (M_PI / 180.0f), aspect, 0.1f, _farZ);
+    const float farZ = 100.f;
+    _projectionMatrix = matrix_perspective_right_hand(65.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
 

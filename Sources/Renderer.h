@@ -13,5 +13,7 @@
 
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
 
+@property(nonatomic) simd_float3 cameraPos;
+
 @end
 
