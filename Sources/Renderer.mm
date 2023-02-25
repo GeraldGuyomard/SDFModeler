@@ -45,7 +45,7 @@ Vertex s_Vertices[4] = {
     matrix_float4x4 _projectionMatrix;
     matrix_float4x4 _invProjectionMatrix;
     
-    simd_float3 _cameraPos;
+    simd_float4x4 _cameraTransform;
 }
 
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
@@ -57,7 +57,7 @@ Vertex s_Vertices[4] = {
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         [self _loadMetalWithView:view];
         
-        _cameraPos = simd_make_float3(0, 0, 0);
+        _cameraTransform = matrix_identity_float4x4;
     }
 
     return self;
@@ -144,14 +144,14 @@ Vertex s_Vertices[4] = {
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
 }
 
-- (simd_float3)cameraPos
+- (simd_float4x4)cameraTransform
 {
-    return _cameraPos;
+    return _cameraTransform;
 }
 
-- (void)setCameraPos:(simd_float3)cameraPos
+- (void)setCameraTransform:(simd_float4x4)cameraTransform
 {
-    _cameraPos = cameraPos;
+    _cameraTransform = cameraTransform;
 }
 
 - (void)_updateGameState
@@ -162,8 +162,7 @@ Vertex s_Vertices[4] = {
 
     uniforms->invProjectionMatrix = _invProjectionMatrix;
     
-    matrix_float4x4 cameraMatrix = matrix4x4_translation(_cameraPos.x, _cameraPos.y, _cameraPos.z);
-    auto viewMatrix = simd_inverse(cameraMatrix);
+    auto viewMatrix = simd_inverse(_cameraTransform);
     
     uniforms->viewMatrix = viewMatrix;
 }
@@ -258,6 +257,16 @@ matrix_float4x4 matrix4x4_translation(float tx, float ty, float tz)
         { 0,   0,  1,  0 },
         { tx, ty, tz,  1 }
     }};
+}
+
+simd_float3 translation(simd_float4x4 m)
+{
+    return m.columns[3].xyz;
+}
+
+void setTranslation(simd_float4x4& m, simd_float3 t)
+{
+    m.columns[3].xyz = t;
 }
 
 static matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)

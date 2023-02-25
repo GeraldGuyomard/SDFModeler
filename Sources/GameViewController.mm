@@ -41,24 +41,31 @@
     float dX = event.deltaX;
     float dY = event.deltaY;
     
-    simd_float3 pos = _renderer.cameraPos;
+    auto transform = _renderer.cameraTransform;
+    
+    simd_float3 pos = translation(transform);
     
     constexpr float k = 1.f / 1000.f;
     
     pos.x += -dX * k;
     pos.y += -dY * k;
     
-    _renderer.cameraPos = pos;
+    setTranslation(transform, pos);
+    
+    _renderer.cameraTransform = transform;
 }
 
 - (void)scrollWheel:(NSEvent*)event
 {
     float d = event.scrollingDeltaY / 100.f;
     
-    simd_float3 pos = _renderer.cameraPos;
-    pos.z += (-d / 100.f);
+    auto transform = _renderer.cameraTransform;
+    auto pos = translation(transform);
     
-    _renderer.cameraPos = pos;
+    pos.z += (-d / 100.f);
+    setTranslation(transform, pos);
+    
+    _renderer.cameraTransform = transform;
 }
 
 @end
