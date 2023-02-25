@@ -17,7 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7444A4CE29A1CB63009632C3 /* TestRayMarching.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestRayMarching.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D129A1CB63009632C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7444A4D229A1CB63009632C3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
@@ -29,7 +29,7 @@
 		7444A4DD29A1CB64009632C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7444A4E429A1CB64009632C3 /* TestRayMarching.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TestRayMarching.entitlements; sourceTree = "<group>"; };
+		7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +46,7 @@
 		7444A4C529A1CB63009632C3 = {
 			isa = PBXGroup;
 			children = (
-				7444A4D029A1CB63009632C3 /* TestRayMarching */,
+				7444A4D029A1CB63009632C3 /* Sources */,
 				7444A4CF29A1CB63009632C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,12 +54,12 @@
 		7444A4CF29A1CB63009632C3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7444A4CE29A1CB63009632C3 /* TestRayMarching.app */,
+				7444A4CE29A1CB63009632C3 /* SDFModeler.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		7444A4D029A1CB63009632C3 /* TestRayMarching */ = {
+		7444A4D029A1CB63009632C3 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				7444A4D129A1CB63009632C3 /* AppDelegate.h */,
@@ -73,17 +73,17 @@
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
-				7444A4E429A1CB64009632C3 /* TestRayMarching.entitlements */,
+				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
 			);
-			path = TestRayMarching;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		7444A4CD29A1CB63009632C3 /* TestRayMarching */ = {
+		7444A4CD29A1CB63009632C3 /* SDFModeler */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 7444A4E729A1CB64009632C3 /* Build configuration list for PBXNativeTarget "TestRayMarching" */;
+			buildConfigurationList = 7444A4E729A1CB64009632C3 /* Build configuration list for PBXNativeTarget "SDFModeler" */;
 			buildPhases = (
 				7444A4CA29A1CB63009632C3 /* Sources */,
 				7444A4CB29A1CB63009632C3 /* Frameworks */,
@@ -93,9 +93,9 @@
 			);
 			dependencies = (
 			);
-			name = TestRayMarching;
+			name = SDFModeler;
 			productName = TestRayMarching;
-			productReference = 7444A4CE29A1CB63009632C3 /* TestRayMarching.app */;
+			productReference = 7444A4CE29A1CB63009632C3 /* SDFModeler.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -112,7 +112,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 7444A4C929A1CB63009632C3 /* Build configuration list for PBXProject "TestRayMarching" */;
+			buildConfigurationList = 7444A4C929A1CB63009632C3 /* Build configuration list for PBXProject "SDFModeler" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -125,7 +125,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				7444A4CD29A1CB63009632C3 /* TestRayMarching */,
+				7444A4CD29A1CB63009632C3 /* SDFModeler */,
 			);
 		};
 /* End PBXProject section */
@@ -283,7 +283,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TestRayMarching/TestRayMarching.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Sources/SDFModeler.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -298,7 +298,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.TestRayMarching;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -309,7 +309,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = TestRayMarching/TestRayMarching.entitlements;
+				CODE_SIGN_ENTITLEMENTS = Sources/SDFModeler.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -324,7 +324,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.TestRayMarching;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 			};
@@ -333,7 +333,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		7444A4C929A1CB63009632C3 /* Build configuration list for PBXProject "TestRayMarching" */ = {
+		7444A4C929A1CB63009632C3 /* Build configuration list for PBXProject "SDFModeler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7444A4E529A1CB64009632C3 /* Debug */,
@@ -342,7 +342,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		7444A4E729A1CB64009632C3 /* Build configuration list for PBXNativeTarget "TestRayMarching" */ = {
+		7444A4E729A1CB64009632C3 /* Build configuration list for PBXNativeTarget "SDFModeler" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				7444A4E829A1CB64009632C3 /* Debug */,

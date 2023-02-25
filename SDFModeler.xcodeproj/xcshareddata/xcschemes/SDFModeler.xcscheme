@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7444A4CD29A1CB63009632C3"
-               BuildableName = "TestRayMarching.app"
-               BlueprintName = "TestRayMarching"
-               ReferencedContainer = "container:TestRayMarching.xcodeproj">
+               BuildableName = "SDFModeler.app"
+               BlueprintName = "SDFModeler"
+               ReferencedContainer = "container:SDFModeler.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7444A4CD29A1CB63009632C3"
-            BuildableName = "TestRayMarching.app"
-            BlueprintName = "TestRayMarching"
-            ReferencedContainer = "container:TestRayMarching.xcodeproj">
+            BuildableName = "SDFModeler.app"
+            BlueprintName = "SDFModeler"
+            ReferencedContainer = "container:SDFModeler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7444A4CD29A1CB63009632C3"
-            BuildableName = "TestRayMarching.app"
-            BlueprintName = "TestRayMarching"
-            ReferencedContainer = "container:TestRayMarching.xcodeproj">
+            BuildableName = "SDFModeler.app"
+            BlueprintName = "SDFModeler"
+            ReferencedContainer = "container:SDFModeler.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
