@@ -47,7 +47,7 @@
     
     constexpr float k = 1.f / 1000.f;
     
-    pos.x += -dX * k;
+    pos.x += dX * k;
     pos.y += -dY * k;
     
     setTranslation(transform, pos);
@@ -57,12 +57,12 @@
 
 - (void)scrollWheel:(NSEvent*)event
 {
-    float d = event.scrollingDeltaY / 100.f;
+    float d = event.scrollingDeltaY / 1000.f;
     
     auto transform = _renderer.cameraTransform;
     auto pos = translation(transform);
     
-    pos.z += (-d / 100.f);
+    pos.z += d;
     setTranslation(transform, pos);
     
     _renderer.cameraTransform = transform;

@@ -8,6 +8,7 @@
 #import <MetalKit/MetalKit.h>
 
 matrix_float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, float nearZ, float farZ);
+matrix_float4x4 matrix4x4_translation(float tx, float ty, float tz);
 
 simd_float3 translation(simd_float4x4 m);
 void setTranslation(simd_float4x4& m, simd_float3 t);

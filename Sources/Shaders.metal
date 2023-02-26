@@ -50,20 +50,15 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-float3 viewToWorld(float2 ndc, float z, constant Uniforms& uniforms)
-{
-    float4 p = uniforms.viewMatrix * uniforms.invProjectionMatrix * float4(ndc, z, 1);
-    return p.xyz / p.w;
-}
-
 Ray computeRay(float2 ndcPosition, constant Uniforms& uniforms)
 {
     float3 origin = viewToWorld(ndcPosition, 0, uniforms);
-    float3 direction = normalize(origin);
-    
     float3 end = viewToWorld(ndcPosition, 1, uniforms);
     
-    float maxDist = length(end - origin);
+    float3 direction = (end - origin);
+    float maxDist = length(direction);
+    direction /= maxDist;
+    
     return { origin, direction, maxDist };
 }
 
@@ -401,13 +396,16 @@ public:
     
     SDFResult rayMarch(Ray ray) const
     {
-        Sphere sphere1 { float3(-1, 0, -5), 0.5f, float4(1, 0, 0, 1) };
-        Sphere sphere2 { float3(0.5, 0, -5), 0.8f, float4(0, 0, 1, 1) };
-        Sphere sphere3 { float3(0, 1, -5), 0.7f, float4(0, 1, 0, 1) };
-        RoundedBox box { float3(1.5, 0, -2.5), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        //constexpr float kZ = -5.f;
+        constexpr float kZ = 0;
         
-        Sphere sphere4 { float3(-1.5, 0.6, -2.5), 0.4f, float4(0, 0, 1, 1) };
-        RoundedBox box2 { float3(-1.5, 0, -2.5), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        Sphere sphere1 { float3(-1, 0, kZ), 0.5f, float4(1, 0, 0, 1) };
+        Sphere sphere2 { float3(0.5, 0, kZ), 0.8f, float4(0, 0, 1, 1) };
+        Sphere sphere3 { float3(0, 1, kZ), 0.7f, float4(0, 1, 0, 1) };
+        RoundedBox box { float3(0.5, 0, kZ + 3.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        
+        Sphere sphere4 { float3(-1.5, 0.6, kZ + 2.5f), 0.4f, float4(0, 0, 1, 1) };
+        RoundedBox box2 { float3(-1.5, 0, kZ + 2.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
         UnionPrimitive<Sphere, RoundedBox> unionPrim(sphere4, box2, float4(0, 1, 1, 1));
         
         return ::rayMarch(ray, sphere1, sphere2, sphere3, box, unionPrim);

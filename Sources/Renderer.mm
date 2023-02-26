@@ -57,7 +57,7 @@ Vertex s_Vertices[4] = {
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         [self _loadMetalWithView:view];
         
-        _cameraTransform = matrix_identity_float4x4;
+        _cameraTransform = matrix4x4_translation(0, 0, 5.f);
     }
 
     return self;
@@ -161,10 +161,11 @@ Vertex s_Vertices[4] = {
     Uniforms* uniforms = (Uniforms*)_uniformBufferAddress;
 
     uniforms->invProjectionMatrix = _invProjectionMatrix;
+    uniforms->cameraMatrix = _cameraTransform;
     
-    auto viewMatrix = simd_inverse(_cameraTransform);
-    
-    uniforms->viewMatrix = viewMatrix;
+    // test
+    //const auto near = viewToWorld(simd_float2 {0, 0}, 0, *uniforms);
+    //const auto far = viewToWorld(simd_float2 {0, 0}, 1, *uniforms);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
