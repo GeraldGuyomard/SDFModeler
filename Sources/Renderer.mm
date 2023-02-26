@@ -271,7 +271,7 @@ void setTranslation(simd_float4x4& m, simd_float3 t)
     m.columns[3].xyz = t;
 }
 
-static matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)
+matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)
 {
     axis = vector_normalize(axis);
     float ct = cosf(radians);
@@ -285,6 +285,12 @@ static matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)
         { x * z * ci + y * st, y * z * ci - x * st,     ct + z * z * ci, 0},
         {                   0,                   0,                   0, 1}
     }};
+}
+
+matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis, vector_float3 origin)
+{
+    auto rot = matrix4x4_rotation(radians, axis);
+    return matrix4x4_translation(origin.x, origin.y, origin.z) * rot * matrix4x4_translation(-origin.x, -origin.y, -origin.z);
 }
 
 matrix_float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, float nearZ, float farZ)

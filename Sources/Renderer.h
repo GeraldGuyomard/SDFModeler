@@ -9,6 +9,8 @@
 
 matrix_float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, float nearZ, float farZ);
 matrix_float4x4 matrix4x4_translation(float tx, float ty, float tz);
+matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis);
+matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis, vector_float3 origin);
 
 simd_float3 translation(simd_float4x4 m);
 void setTranslation(simd_float4x4& m, simd_float3 t);
