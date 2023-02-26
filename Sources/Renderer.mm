@@ -271,6 +271,26 @@ void setTranslation(simd_float4x4& m, simd_float3 t)
     m.columns[3].xyz = t;
 }
 
+void decompose(simd_float4x4 m, simd_float3& oRight, simd_float3& oUp, simd_float3& oForward, simd_float3& oPosition)
+{
+    oRight = simd_normalize(m.columns[0].xyz);
+    oUp = simd_normalize(m.columns[1].xyz);
+    oForward = simd_normalize(m.columns[2].xyz);
+    oPosition = m.columns[3].xyz;
+}
+
+simd_float4x4 recompose(simd_float3 right, simd_float3 up, simd_float3 forward, simd_float3 position)
+{
+    auto m = matrix_identity_float4x4;
+    
+    m.columns[0].xyz = right;
+    m.columns[1].xyz = up;
+    m.columns[2].xyz = forward;
+    m.columns[3].xyz = position;
+    
+    return m;
+}
+
 matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)
 {
     axis = vector_normalize(axis);

@@ -53,47 +53,56 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-#if 1
+    const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
+    
     auto pt = event.locationInWindow;
     simd_float2 delta { float(pt.x - _initialPos.x), float(pt.y - _initialPos.y) };
     
-    // Orbit
-    const auto yaw = matrix4x4_rotation(delta.x * 1e-3f, simd_float3 { 0, 1, 0 }, _orbitOrigin);
+    simd_float3 right, up, fwd, pos;
+    decompose(_initialCameraTransform, right, up, fwd, pos);
     
-    auto cam = _initialCameraTransform;
-    auto pos = cam.columns[3].xyz;
-    
-    const auto newPos = simd_mul(yaw, simd_float4 { pos.x, pos.y, pos.z, 1.f });
-    pos = newPos.xyz;
-    
-    const auto fwd = simd_normalize(pos - _orbitOrigin);
-    const auto up = cam.columns[1].xyz;
-    const auto right = simd_cross(up, fwd);
-    
-    cam.columns[0].xyz = right;
-    cam.columns[1].xyz = up;
-    cam.columns[2].xyz = fwd;
-    cam.columns[3].xyz = pos;
-    
-    _renderer.cameraTransform = cam;
-    
-#else
-    float dX = event.deltaX;
-    float dY = event.deltaY;
-    
-    auto transform = _renderer.cameraTransform;
-    
-    simd_float3 pos = translation(transform);
-    
-    constexpr float k = 1.f / 1000.f;
-    
-    pos.x += dX * k;
-    pos.y += -dY * k;
-    
-    setTranslation(transform, pos);
-    
-    _renderer.cameraTransform = transform;
-#endif
+    if (shift)
+    {
+        constexpr float k = -1.f / 1000.f;
+        
+        delta *= k;
+        
+        pos += right * delta.x;
+        pos += up * delta.y;
+        
+        auto newTransform = recompose(right, up, fwd, pos);
+        _renderer.cameraTransform = newTransform;
+    }
+    else
+    {
+        // Orbit
+        
+        // yaw
+        const auto yaw = matrix4x4_rotation(-delta.x * 1e-3f, simd_float3 { 0, 1, 0 }, _orbitOrigin);
+        
+        auto newPos = simd_mul(yaw, simd_float4 { pos.x, pos.y, pos.z, 1.f });
+        pos = newPos.xyz;
+        
+        fwd = simd_normalize(pos - _orbitOrigin);
+        right = simd_cross(up, fwd);
+        
+        auto newTransform = recompose(right, up, fwd, pos);
+        
+        // pitch
+        decompose(newTransform, right, up, fwd, pos);
+        
+        const auto pitch = matrix4x4_rotation(delta.y * 1e-3f, simd_float3 { 1, 0, 0 }, _orbitOrigin);
+        
+        newPos = simd_mul(pitch, simd_float4 { pos.x, pos.y, pos.z, 1.f });
+        pos = newPos.xyz;
+        
+        fwd = simd_normalize(pos - _orbitOrigin);
+        up = simd_mul(yaw, simd_float4 { up.x, up.y, up.z, 0.f }).xyz;
+        
+        newTransform = recompose(right, up, fwd, pos);
+        
+        _renderer.cameraTransform = newTransform;
+    }
 }
 
 - (void)scrollWheel:(NSEvent*)event
