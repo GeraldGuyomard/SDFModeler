@@ -402,7 +402,7 @@ public:
         Sphere sphere1 { float3(-1, 0, kZ), 0.5f, float4(1, 0, 0, 1) };
         Sphere sphere2 { float3(0.5, 0, kZ), 0.8f, float4(0, 0, 1, 1) };
         Sphere sphere3 { float3(0, 1, kZ), 0.7f, float4(0, 1, 0, 1) };
-        RoundedBox box { float3(0.5, 0, kZ + 3.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        RoundedBox box { float3(0.5, 0, kZ + 1.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
         
         Sphere sphere4 { float3(-1.5, 0.6, kZ + 2.5f), 0.4f, float4(0, 0, 1, 1) };
         RoundedBox box2 { float3(-1.5, 0, kZ + 2.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };

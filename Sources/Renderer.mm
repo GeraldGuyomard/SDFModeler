@@ -245,7 +245,7 @@ Vertex s_Vertices[4] = {
 
     float aspect = size.width / (float)size.height;
     const float farZ = 100.f;
-    _projectionMatrix = matrix_perspective_right_hand(65.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
+    _projectionMatrix = matrix_perspective_right_hand(45.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
 
