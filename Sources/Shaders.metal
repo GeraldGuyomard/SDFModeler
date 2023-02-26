@@ -111,8 +111,11 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
     float3 lightDir = normalize(float3(-1, -1, -1));
     float intensity = max(0.1f, dot(-normal, lightDir));
 
-    float spec = max(0.f, dot(-ray.direction, normal));
-    spec = 0.5f * pow(spec, 20.f);
+    // L = 2 * dot(N, L) * N - L
+    float3 L = (2.f * dot(normal, lightDir) * normal) - lightDir;
+    
+    float spec = max(0.f, dot(ray.direction, L));
+    spec = 0.8f * pow(spec, 10.f);
     
     return (primitive.color(p) * intensity) + float4(spec, spec, spec, 0.f);
 }
