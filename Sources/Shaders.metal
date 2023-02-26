@@ -99,7 +99,7 @@ float3 computeNormal(TPrimitive primitive, float dist, float3 position)
 
 
 template <typename TPrimitive>
-float4 computeShade(TPrimitive primitive, float dist, float3 p)
+float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
 {
     if (abs(dist) > kDistanceEpsilon)
     {
@@ -111,7 +111,10 @@ float4 computeShade(TPrimitive primitive, float dist, float3 p)
     float3 lightDir = normalize(float3(-1, -1, -1));
     float intensity = max(0.1f, dot(-normal, lightDir));
 
-    return primitive.color(p) * intensity;
+    float spec = max(0.f, dot(-ray.direction, normal));
+    spec = 0.5f * pow(spec, 20.f);
+    
+    return (primitive.color(p) * intensity) + float4(spec, spec, spec, 0.f);
 }
 
 
@@ -127,14 +130,6 @@ public:
         const float3 d = p - _origin;
         const float dist = length(d) - _radius;
         return dist;
-    }
-    
-    SDFResult computeSDF(float3 p) const
-    {
-        const float dist = computeDistance(p);
-        const float4 shadedColor = computeShade(*this, dist, p);
-        
-        return { dist, shadedColor };
     }
     
     float4 color(float3 p) const
@@ -186,11 +181,6 @@ public:
         return p.y - _altitude;
     }
     
-    SDFResult computeSDF(float3 p) const
-    {
-        return { computeDistance(p), color(p) };
-    }
-    
     float4 color(float3 p) const
     {
         return _color;
@@ -218,12 +208,6 @@ public:
     float computeDistance(float3 p) const
     {
         return p.y - _altitude;
-    }
-    
-    SDFResult computeSDF(float3 p) const
-    {
-        float d = computeDistance(p);
-        return { d, color(p) };
     }
     
     float4 color(float3 p) const
@@ -258,14 +242,6 @@ public:
         return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - _radius;
     }
     
-    SDFResult computeSDF(float3 p) const
-    {
-        const float dist = computeDistance(p);
-        const float4 shadedColor = computeShade(*this, dist, p);
-        
-        return { dist, shadedColor };
-    }
-    
     float4 color(float3 p) const
     {
         return _color;
@@ -291,14 +267,6 @@ public:
         const float d1 = _p1.computeDistance(p);
         const float d2 = _p2.computeDistance(p);
         return min(d1, d2);
-    }
-    
-    SDFResult computeSDF(float3 p) const
-    {
-        const float dist = computeDistance(p);
-        const float4 shadedColor = computeShade(*this, dist, p);
-        
-        return { dist, shadedColor };
     }
     
     float4 color(float3 p) const
@@ -327,14 +295,6 @@ public:
         return max(d1, -d2);
     }
     
-    SDFResult computeSDF(float3 p) const
-    {
-        const float dist = computeDistance(p);
-        const float4 shadedColor = computeShade(dist, p, *this);
-        
-        return { dist, shadedColor };
-    }
-    
     float4 color(float3 p) const
     {
         return _color;
@@ -348,16 +308,19 @@ private:
 
 
 template <typename TPrimitive>
-SDFResult computeSDF(float3 p, TPrimitive primitive)
+SDFResult computeSDF(float3 p, Ray ray, TPrimitive primitive)
 {
-    return primitive.computeSDF(p);
+    const float d = primitive.computeDistance(p);
+    const float4 c = computeShade(primitive, ray, d, p);
+    
+    return { d, c };
 }
 
 template <typename TFirstPrimitive, typename... TPrimitives>
-SDFResult computeSDF(float3 p, TFirstPrimitive firstPrimitive, TPrimitives... primitives)
+SDFResult computeSDF(float3 p, Ray ray, TFirstPrimitive firstPrimitive, TPrimitives... primitives)
 {
-    SDFResult r1 = firstPrimitive.computeSDF(p);
-    SDFResult r2 = computeSDF(p, primitives...);
+    SDFResult r1 = computeSDF(p, ray, firstPrimitive);
+    SDFResult r2 = computeSDF(p, ray, primitives...);
     
     return (r1.distance <= r2.distance) ? r1 : r2;
 }
@@ -372,7 +335,7 @@ SDFResult rayMarch(Ray ray, TPrimitives... primitives)
     for (int i=0; i < kNbSteps; ++i)
     {
         float3 p = ray.pt(d);
-        auto result = computeSDF(p, primitives...);
+        auto result = computeSDF(p, ray, primitives...);
         
         if (result.hit())
         {
