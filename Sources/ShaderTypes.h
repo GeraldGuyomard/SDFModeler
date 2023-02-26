@@ -60,11 +60,12 @@ struct Uniforms final
 {
     matrix_float4x4 invProjectionMatrix;
     matrix_float4x4 cameraMatrix;
+    matrix_float4x4 ndcToWorldTransform;
 };
 
 simd_float3 viewToWorld(simd_float2 ndc, float z, CONSTANT Uniforms& uniforms)
 {
-    auto p = uniforms.cameraMatrix * uniforms.invProjectionMatrix * simd_float4 { ndc.x, ndc.y, z, 1 };
+    auto p = uniforms.ndcToWorldTransform * simd_float4 { ndc.x, ndc.y, z, 1 };
     return p.xyz / p.w;
 }
 

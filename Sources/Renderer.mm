@@ -158,10 +158,11 @@ Vertex s_Vertices[4] = {
 {
     /// Update any game state before encoding renderint commands to our drawable
 
-    Uniforms* uniforms = (Uniforms*)_uniformBufferAddress;
+    Uniforms& uniforms = *((Uniforms*)_uniformBufferAddress);
 
-    uniforms->invProjectionMatrix = _invProjectionMatrix;
-    uniforms->cameraMatrix = _cameraTransform;
+    uniforms.invProjectionMatrix = _invProjectionMatrix;
+    uniforms.cameraMatrix = _cameraTransform;
+    uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     
     // test
     //const auto near = viewToWorld(simd_float2 {0, 0}, 0, *uniforms);
