@@ -57,7 +57,7 @@ Vertex s_Vertices[4] = {
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         [self _loadMetalWithView:view];
         
-        _cameraTransform = matrix4x4_translation(0, 0, 5.f);
+        _cameraTransform = matrix4x4_translation(float3 {0, 0, 5.f});
     }
 
     return self;
@@ -251,16 +251,6 @@ Vertex s_Vertices[4] = {
 
 #pragma mark Matrix Math Utilities
 
-matrix_float4x4 matrix4x4_translation(float tx, float ty, float tz)
-{
-    return (matrix_float4x4) {{
-        { 1,   0,  0,  0 },
-        { 0,   1,  0,  0 },
-        { 0,   0,  1,  0 },
-        { tx, ty, tz,  1 }
-    }};
-}
-
 simd_float3 translation(simd_float4x4 m)
 {
     return m.columns[3].xyz;
@@ -289,42 +279,6 @@ simd_float4x4 recompose(simd_float3 right, simd_float3 up, simd_float3 forward, 
     m.columns[3].xyz = position;
     
     return m;
-}
-
-matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis)
-{
-    axis = vector_normalize(axis);
-    float ct = cosf(radians);
-    float st = sinf(radians);
-    float ci = 1 - ct;
-    float x = axis.x, y = axis.y, z = axis.z;
-
-    return (matrix_float4x4) {{
-        { ct + x * x * ci,     y * x * ci + z * st, z * x * ci - y * st, 0},
-        { x * y * ci - z * st,     ct + y * y * ci, z * y * ci + x * st, 0},
-        { x * z * ci + y * st, y * z * ci - x * st,     ct + z * z * ci, 0},
-        {                   0,                   0,                   0, 1}
-    }};
-}
-
-matrix_float4x4 matrix4x4_rotation(float radians, vector_float3 axis, vector_float3 origin)
-{
-    auto rot = matrix4x4_rotation(radians, axis);
-    return matrix4x4_translation(origin.x, origin.y, origin.z) * rot * matrix4x4_translation(-origin.x, -origin.y, -origin.z);
-}
-
-matrix_float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, float nearZ, float farZ)
-{
-    float ys = 1 / tanf(fovyRadians * 0.5);
-    float xs = ys / aspect;
-    float zs = farZ / (nearZ - farZ);
-
-    return (matrix_float4x4) {{
-        { xs,   0,          0,  0 },
-        {  0,  ys,          0,  0 },
-        {  0,   0,         zs, -1 },
-        {  0,   0, nearZ * zs,  0 }
-    }};
 }
 
 @end

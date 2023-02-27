@@ -14,6 +14,8 @@
 		7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DD29A1CB64009632C3 /* Assets.xcassets */; };
 		7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DF29A1CB64009632C3 /* Main.storyboard */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
+		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
+		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +32,10 @@
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
+		74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonDefinitions.h; sourceTree = "<group>"; };
+		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
+		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
+		74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommonDefinitions.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +76,10 @@
 				7444A4D829A1CB63009632C3 /* GameViewController.mm */,
 				7444A4DA29A1CB63009632C3 /* Shaders.metal */,
 				7444A4DC29A1CB63009632C3 /* ShaderTypes.h */,
+				74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */,
+				74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */,
+				74DAA6CE29AC2F3300171C03 /* Ray.h */,
+				74DAA6CF29AC2F8B00171C03 /* Ray.cpp */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
@@ -147,6 +157,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
+				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,

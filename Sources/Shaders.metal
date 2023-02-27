@@ -7,13 +7,9 @@
 
 // File for Metal kernel and shader functions
 
-#include <metal_stdlib>
-#include <simd/simd.h>
 
-// Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
-
-using namespace metal;
+#include "ShaderTypes.h"
+#include "Ray.h"
 
 struct VertexShaderOut
 {
@@ -22,22 +18,6 @@ struct VertexShaderOut
 };
 
 constexpr static constant float kDistanceEpsilon = 1e-2f;
-
-struct Ray
-{
-    float3 origin;
-    float3 direction;
-    float maxLength;
-    
-    Ray(float3 origin, float3 direction, float maxLength)
-    : origin(origin), direction(direction), maxLength(maxLength)
-    {}
-    
-    float3 pt(float t) const
-    {
-        return origin + (t * direction);
-    }
-};
 
 vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
@@ -115,7 +95,7 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
     float3 L = (2.f * dot(normal, lightDir) * normal) - lightDir;
     
     float spec = max(0.f, dot(ray.direction, L));
-    spec = 0.8f * pow(spec, 10.f);
+    spec = 0.8f * pow(spec, 30.f);
     
     return (primitive.color(p) * intensity) + float4(spec, spec, spec, 0.f);
 }

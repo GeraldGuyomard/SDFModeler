@@ -7,6 +7,7 @@
 
 #import "GameViewController.h"
 #import "Renderer.h"
+#include "CommonDefinitions.h"
 
 @implementation GameViewController
 {
