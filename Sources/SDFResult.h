@@ -40,7 +40,7 @@ struct SDFResult final
 template <typename TPrimitive>
 float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
 {
-    if (abs(dist) > kDistanceEpsilon)
+    if (dist > kDistanceEpsilon)
     {
         return primitive.color(p);
     }
