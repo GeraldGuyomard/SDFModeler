@@ -41,27 +41,7 @@ float3 computeNormal(TPrimitive primitive, float dist, float3 position)
 }
 
 
-template <typename TPrimitive>
-float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
-{
-    if (abs(dist) > kDistanceEpsilon)
-    {
-        return primitive.color(p);
-    }
-    
-    float3 normal = computeNormal(primitive, dist, p);
-    
-    float3 lightDir = normalize(float3(-1, -1, -1));
-    float intensity = max(0.1f, dot(-normal, lightDir));
 
-    // L = 2 * dot(N, L) * N - L
-    float3 L = (2.f * dot(normal, lightDir) * normal) - lightDir;
-    
-    float spec = max(0.f, dot(ray.direction, L));
-    spec = 0.8f * pow(spec, 30.f);
-    
-    return (primitive.color(p) * intensity) + float4(spec, spec, spec, 0.f);
-}
 
 
 class Sphere
@@ -137,12 +117,6 @@ private:
     float4 _color;
 };
 
-
-float2 pulse(float2 v)
-{
-    return step(0.9, v);
-}
-
 class HorizontalGrid
 {
 public:
@@ -160,7 +134,7 @@ public:
     {
         float2 xy = fmod(abs(p.xz), _cellSize) / _cellSize;
         
-        xy = pulse(xy);
+        xy = step(0.9, xy);
         
         float l = length(xy);
         return _color * l;
@@ -252,24 +226,6 @@ private:
     float4 _color;
 };
 
-
-template <typename TPrimitive>
-SDFResult computeSDF(float3 p, Ray ray, TPrimitive primitive)
-{
-    const float d = primitive.computeDistance(p);
-    const float4 c = computeShade(primitive, ray, d, p);
-    
-    return { d, c };
-}
-
-template <typename TFirstPrimitive, typename... TPrimitives>
-SDFResult computeSDF(float3 p, Ray ray, TFirstPrimitive firstPrimitive, TPrimitives... primitives)
-{
-    SDFResult r1 = computeSDF(p, ray, firstPrimitive);
-    SDFResult r2 = computeSDF(p, ray, primitives...);
-    
-    return (r1.distance <= r2.distance) ? r1 : r2;
-}
 
 template <typename... TPrimitives>
 SDFResult rayMarch(Ray ray, TPrimitives... primitives)
