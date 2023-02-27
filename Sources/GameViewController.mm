@@ -14,6 +14,7 @@
     MTKView* _view;
     Renderer* _renderer;
     
+    bool _shift;
     CGPoint _initialPos;
     simd_float4x4 _initialCameraTransform;
     simd_float3 _orbitOrigin;
@@ -43,6 +44,8 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
+    _shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
+    
     _initialPos = event.locationInWindow;
     _initialCameraTransform = _renderer.cameraTransform;
     
@@ -54,14 +57,12 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
-    
     auto pt = event.locationInWindow;
     simd_float2 delta { float(pt.x - _initialPos.x), float(pt.y - _initialPos.y) };
     
     auto decomp = decompose(_initialCameraTransform);
     
-    if (shift)
+    if (_shift)
     {
         constexpr float k = -1.f / 1000.f;
         
@@ -80,7 +81,7 @@
         // yaw
         const auto yaw = matrix4x4_rotation(-delta.x * 1e-3f, float3 { 0, 1, 0 }, _orbitOrigin);
         
-        auto newPos = yaw * float4 { decomp.position.x, decomp.position.y, decomp.position.z, 1.f };
+        auto newPos = yaw * make_float4(decomp.position, 1.f);
         decomp.position = newPos.xyz;
         
         decomp.forward = normalize(decomp.position - _orbitOrigin);
@@ -93,11 +94,11 @@
         
         const auto pitch = matrix4x4_rotation(delta.y * 1e-3f, float3 { 1, 0, 0 }, _orbitOrigin);
         
-        newPos = pitch * float4 { decomp.position.x, decomp.position.y, decomp.position.z, 1.f };
+        newPos = pitch * make_float4(decomp.position, 1.f);
         decomp.position = newPos.xyz;
         
         decomp.forward = normalize(decomp.position - _orbitOrigin);
-        decomp.up = (yaw * float4 { decomp.up.x, decomp.up.y, decomp.up.z, 0.f }).xyz;
+        decomp.up = (yaw * make_float4(decomp.up, 0.f)).xyz;
         
         newTransform = recompose(decomp);
         
