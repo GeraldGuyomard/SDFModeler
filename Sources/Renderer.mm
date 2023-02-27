@@ -42,10 +42,10 @@ Vertex s_Vertices[4] = {
 
     void* _uniformBufferAddress;
 
-    matrix_float4x4 _projectionMatrix;
-    matrix_float4x4 _invProjectionMatrix;
+    float4x4 _projectionMatrix;
+    float4x4 _invProjectionMatrix;
     
-    simd_float4x4 _cameraTransform;
+    float4x4 _cameraTransform;
 }
 
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
@@ -144,12 +144,12 @@ Vertex s_Vertices[4] = {
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
 }
 
-- (simd_float4x4)cameraTransform
+- (float4x4)cameraTransform
 {
     return _cameraTransform;
 }
 
-- (void)setCameraTransform:(simd_float4x4)cameraTransform
+- (void)setCameraTransform:(float4x4)cameraTransform
 {
     _cameraTransform = cameraTransform;
 }
@@ -247,38 +247,6 @@ Vertex s_Vertices[4] = {
     const float farZ = 100.f;
     _projectionMatrix = matrix_perspective_right_hand(45.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
-}
-
-#pragma mark Matrix Math Utilities
-
-simd_float3 translation(simd_float4x4 m)
-{
-    return m.columns[3].xyz;
-}
-
-void setTranslation(simd_float4x4& m, simd_float3 t)
-{
-    m.columns[3].xyz = t;
-}
-
-void decompose(simd_float4x4 m, simd_float3& oRight, simd_float3& oUp, simd_float3& oForward, simd_float3& oPosition)
-{
-    oRight = simd_normalize(m.columns[0].xyz);
-    oUp = simd_normalize(m.columns[1].xyz);
-    oForward = simd_normalize(m.columns[2].xyz);
-    oPosition = m.columns[3].xyz;
-}
-
-simd_float4x4 recompose(simd_float3 right, simd_float3 up, simd_float3 forward, simd_float3 position)
-{
-    auto m = matrix_identity_float4x4;
-    
-    m.columns[0].xyz = right;
-    m.columns[1].xyz = up;
-    m.columns[2].xyz = forward;
-    m.columns[3].xyz = position;
-    
-    return m;
 }
 
 @end

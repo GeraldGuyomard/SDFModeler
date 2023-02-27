@@ -16,21 +16,36 @@
     using namespace metal;
 
     #define CONSTANT constant
+    #define DEVICE device
     #define INLINE
 
     using EnumBackingType = metal::int32_t;
     #define VB_ATTRIBUTE(a) [[attribute(a)]]
 
+    float4x4 float4x4_identity()
+    {
+        return float4x4 {   {1, 0, 0, 0},
+                            {0, 1, 0, 0},
+                            {0, 0, 1, 0},
+                            {0, 0, 0, 1}
+        };
+    }
 
 #else
 
     using namespace simd;
 
     #define CONSTANT const
+    #define DEVICE
     #define INLINE inline
 
     using EnumBackingType = int32_t;
     #define VB_ATTRIBUTE(a)
+
+    inline float4x4 float4x4_identity()
+    {
+        return matrix_identity_float4x4;
+    }
 
 #endif
 
@@ -84,3 +99,59 @@ INLINE float4x4 matrix4x4_rotation(float radians, float3 axis, float3 origin)
     return matrix4x4_translation(origin) * rot * matrix4x4_translation(-origin);
 }
 
+INLINE float3 translation(float4x4 m)
+{
+    return m.columns[3].xyz;
+}
+
+INLINE float3 right(float4x4 m)
+{
+    return normalize(m.columns[0].xyz);
+}
+
+INLINE float3 up(float4x4 m)
+{
+    return normalize(m.columns[1].xyz);
+}
+
+INLINE float3 forward(float4x4 m)
+{
+    return normalize(m.columns[2].xyz);
+}
+
+INLINE void setTranslation(DEVICE float4x4& m, float3 t)
+{
+    m.columns[3].xyz = t;
+}
+
+struct float4x4Decomposition final
+{
+    float3 right;
+    float3 up;
+    float3 forward;
+    float3 position;
+};
+
+INLINE float4x4Decomposition decompose(float4x4 m)
+{
+    float4x4Decomposition decomp;
+    
+    decomp.right = normalize(m.columns[0].xyz);
+    decomp.up = normalize(m.columns[1].xyz);
+    decomp.forward = normalize(m.columns[2].xyz);
+    decomp.position = m.columns[3].xyz;
+    
+    return decomp;
+}
+
+INLINE float4x4 recompose(float4x4Decomposition decomp)
+{
+    auto m = float4x4_identity();
+    
+    m.columns[0].xyz = decomp.right;
+    m.columns[1].xyz = decomp.up;
+    m.columns[2].xyz = decomp.forward;
+    m.columns[3].xyz = decomp.position;
+    
+    return m;
+}
