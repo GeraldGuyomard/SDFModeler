@@ -19,3 +19,14 @@ public:
 private:
     SDFGeometry() = delete;
 };
+
+template <typename TPrimitive>
+float3 computeNormal(TPrimitive primitive, float dist, float3 position)
+{
+    constexpr float delta = 0.01f;
+    float2 eps { delta, 0.f };
+    
+    return normalize(float3(primitive.computeDistance(position + eps.xyy) - dist,
+             primitive.computeDistance(position + eps.yxy) - dist,
+             primitive.computeDistance(position + eps.yyx) - dist));
+}

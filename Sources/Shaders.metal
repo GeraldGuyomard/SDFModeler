@@ -11,6 +11,7 @@
 #include "ShaderTypes.h"
 #include "Ray.h"
 #include "SDFResult.h"
+#include "RayMarch.h"
 
 struct VertexShaderOut
 {
@@ -28,21 +29,6 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 
     return out;
 }
-
-template <typename TPrimitive>
-float3 computeNormal(TPrimitive primitive, float dist, float3 position)
-{
-    constexpr float delta = 0.01f;
-    float2 eps(delta, 0.f);
-    
-    return normalize(float3(primitive.computeDistance(position + eps.xyy) - dist,
-             primitive.computeDistance(position + eps.yxy) - dist,
-             primitive.computeDistance(position + eps.yyx) - dist));
-}
-
-
-
-
 
 class Sphere
 {
@@ -81,18 +67,6 @@ float3 computeNormal<Sphere>(Sphere sphere, Ray ray, float dist, float3 position
     return normalize(position - sphere.origin());
 }
 */
-
-float rayPlaneIntersectionCoeff(Ray ray, float3 planeOrigin, float3 planeNormal)
-{
-    float denom = dot(planeNormal, ray.direction);
-    if (abs(denom) > 0.0001f) // your favorite epsilon
-    {
-        float t = dot(planeOrigin - ray.origin, planeNormal) / denom;
-        return t;
-    }
-    
-    return -1.f;
-}
 
 class HorizontalPlane
 {
@@ -227,33 +201,6 @@ private:
 };
 
 
-template <typename... TPrimitives>
-SDFResult rayMarch(Ray ray, TPrimitives... primitives)
-{
-    constexpr int kNbSteps = 100;
-    
-    float d = 0.f;
-    
-    for (int i=0; i < kNbSteps; ++i)
-    {
-        float3 p = ray.pt(d);
-        auto result = computeSDF(p, ray, primitives...);
-        
-        if (result.hit())
-        {
-            return result;
-        }
-        
-        d += result.distance;
-        
-        if (d > ray.maxLength)
-        {
-            break;
-        }
-    }
-    
-    return {};
-}
 
 class Scene
 {

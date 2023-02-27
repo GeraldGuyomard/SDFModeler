@@ -18,6 +18,7 @@
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
 		74DAA6D929AC444E00171C03 /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D729AC444E00171C03 /* SDFGeometry.cpp */; };
+		74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,8 @@
 		74DAA6D529AC439E00171C03 /* SDFResult.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFResult.cpp; sourceTree = "<group>"; };
 		74DAA6D729AC444E00171C03 /* SDFGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFGeometry.cpp; sourceTree = "<group>"; };
 		74DAA6D829AC444E00171C03 /* SDFGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFGeometry.h; sourceTree = "<group>"; };
+		74DAA6DA29AC469200171C03 /* RayMarch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RayMarch.cpp; sourceTree = "<group>"; };
+		74DAA6DB29AC469200171C03 /* RayMarch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RayMarch.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +94,8 @@
 				74DAA6D829AC444E00171C03 /* SDFGeometry.h */,
 				74DAA6CF29AC2F8B00171C03 /* Ray.cpp */,
 				74DAA6D429AC432C00171C03 /* SDFResult.h */,
+				74DAA6DA29AC469200171C03 /* RayMarch.cpp */,
+				74DAA6DB29AC469200171C03 /* RayMarch.h */,
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
@@ -173,6 +178,7 @@
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
+				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				74DAA6D929AC444E00171C03 /* SDFGeometry.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
