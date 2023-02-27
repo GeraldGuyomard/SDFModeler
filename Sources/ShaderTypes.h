@@ -11,6 +11,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
+#include "Uniforms.h"
 
 enum BufferIndex : EnumBackingType
 {
@@ -31,17 +32,5 @@ struct Vertex final
     simd_float2 viewportNDC VB_ATTRIBUTE(VertexAttributeViewportNDC);
 };
 
-struct Uniforms final
-{
-    simd_float4x4 invProjectionMatrix;
-    simd_float4x4 cameraMatrix;
-    simd_float4x4 ndcToWorldTransform;
-};
-
-simd_float3 viewToWorld(simd_float2 ndc, float z, CONSTANT Uniforms& uniforms)
-{
-    auto p = uniforms.ndcToWorldTransform * simd_float4 { ndc.x, ndc.y, z, 1 };
-    return p.xyz / p.w;
-}
 
 

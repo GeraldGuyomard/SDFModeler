@@ -10,14 +10,13 @@
 
 #include "ShaderTypes.h"
 #include "Ray.h"
+#include "SDFResult.h"
 
 struct VertexShaderOut
 {
     float4 position [[position]];
     float2 viewportNDC;
 };
-
-constexpr static constant float kDistanceEpsilon = 1e-2f;
 
 vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
@@ -29,42 +28,6 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 
     return out;
 }
-
-Ray computeRay(float2 ndcPosition, constant Uniforms& uniforms)
-{
-    float3 origin = viewToWorld(ndcPosition, 0, uniforms);
-    float3 end = viewToWorld(ndcPosition, 1, uniforms);
-    
-    float3 direction = (end - origin);
-    float maxDist = length(direction);
-    direction /= maxDist;
-    
-    return { origin, direction, maxDist };
-}
-
-struct SDFResult
-{
-    float distance;
-    float4 color;
-    
-    SDFResult()
-    : distance(-10000), color(0.f)
-    {}
-    
-    SDFResult(float distance, float4 color)
-    : distance(distance), color(color)
-    {}
-    
-    bool hit() const
-    {
-        return (distance >= 0.f) && (distance <= kDistanceEpsilon);
-    }
-    
-    bool isValid() const
-    {
-        return (color.a != 0.f) && hit();
-    }
-};
 
 template <typename TPrimitive>
 float3 computeNormal(TPrimitive primitive, float dist, float3 position)
@@ -373,7 +336,7 @@ public:
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]])
 {
-    const auto ray = computeRay(in.viewportNDC, uniforms);
+    const auto ray = Ray::make(in.viewportNDC, uniforms);
     
     Scene scene;
     auto res = scene.rayMarch(ray);

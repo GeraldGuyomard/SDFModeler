@@ -1,0 +1,23 @@
+//
+//  Uniforms.h
+//  SDFModeler
+//
+//  Created by Gérald Guyomard on 2/26/23.
+//
+
+#pragma once
+
+#include "CommonDefinitions.h"
+
+struct Uniforms final
+{
+    float4x4 invProjectionMatrix;
+    float4x4 cameraMatrix;
+    float4x4 ndcToWorldTransform;
+};
+
+INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)
+{
+    auto p = uniforms.ndcToWorldTransform * float4 { ndc.x, ndc.y, z, 1 };
+    return p.xyz / p.w;
+}
