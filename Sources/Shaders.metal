@@ -13,6 +13,9 @@
 #include "SDFResult.h"
 #include "RayMarch.h"
 
+#include "SDFGeometry/SDFSphere.h"
+#include "Transformer/ConstTransformer.h"
+
 struct VertexShaderOut
 {
     float4 position [[position]];

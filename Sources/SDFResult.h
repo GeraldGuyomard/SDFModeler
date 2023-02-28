@@ -8,7 +8,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "SDFGeometry.h"
+#include "SDFGeometry/SDFGeometry.h"
 #include "Ray.h"
 
 constexpr static CONSTANT float kDistanceEpsilon = 1e-2f;

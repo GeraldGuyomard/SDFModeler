@@ -17,8 +17,10 @@
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
-		74DAA6D929AC444E00171C03 /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D729AC444E00171C03 /* SDFGeometry.cpp */; };
 		74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
+		74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E129AC790C00171C03 /* SDFGeometry */; };
+		74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
+		74DAA6E729AC7CAD00171C03 /* Transformer in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E629AC7CAD00171C03 /* Transformer */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,10 +44,12 @@
 		74DAA6D329AC420C00171C03 /* Uniforms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uniforms.h; sourceTree = "<group>"; };
 		74DAA6D429AC432C00171C03 /* SDFResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFResult.h; sourceTree = "<group>"; };
 		74DAA6D529AC439E00171C03 /* SDFResult.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFResult.cpp; sourceTree = "<group>"; };
-		74DAA6D729AC444E00171C03 /* SDFGeometry.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFGeometry.cpp; sourceTree = "<group>"; };
-		74DAA6D829AC444E00171C03 /* SDFGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFGeometry.h; sourceTree = "<group>"; };
 		74DAA6DA29AC469200171C03 /* RayMarch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RayMarch.cpp; sourceTree = "<group>"; };
 		74DAA6DB29AC469200171C03 /* RayMarch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RayMarch.h; sourceTree = "<group>"; };
+		74DAA6E129AC790C00171C03 /* SDFGeometry */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SDFGeometry; sourceTree = "<group>"; };
+		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
+		74DAA6E429AC7BD200171C03 /* SDFObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFObject.h; sourceTree = "<group>"; };
+		74DAA6E629AC7CAD00171C03 /* Transformer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Transformer; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,17 +94,19 @@
 				74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */,
 				74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */,
 				74DAA6CE29AC2F3300171C03 /* Ray.h */,
-				74DAA6D729AC444E00171C03 /* SDFGeometry.cpp */,
-				74DAA6D829AC444E00171C03 /* SDFGeometry.h */,
 				74DAA6CF29AC2F8B00171C03 /* Ray.cpp */,
 				74DAA6D429AC432C00171C03 /* SDFResult.h */,
 				74DAA6DA29AC469200171C03 /* RayMarch.cpp */,
 				74DAA6DB29AC469200171C03 /* RayMarch.h */,
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
+				74DAA6E129AC790C00171C03 /* SDFGeometry */,
+				74DAA6E629AC7CAD00171C03 /* Transformer */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
 				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
+				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
+				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -164,6 +170,8 @@
 			files = (
 				7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */,
 				7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */,
+				74DAA6E729AC7CAD00171C03 /* Transformer in Resources */,
+				74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -179,10 +187,10 @@
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
-				74DAA6D929AC444E00171C03 /* SDFGeometry.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */,
+				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -251,9 +259,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = Sources/;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
+				MTL_HEADER_SEARCH_PATHS = Sources/;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 			};
@@ -303,9 +313,11 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = Sources/;
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				MTL_HEADER_SEARCH_PATHS = Sources/;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -322,6 +334,7 @@
 				DEVELOPMENT_TEAM = 4EUCTF8UFR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = Sources/;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
@@ -348,6 +361,7 @@
 				DEVELOPMENT_TEAM = 4EUCTF8UFR;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = Sources/;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INFOPLIST_KEY_NSMainStoryboardFile = Main;
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;

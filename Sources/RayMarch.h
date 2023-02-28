@@ -9,7 +9,7 @@
 
 #include "CommonDefinitions.h"
 #include "Ray.h"
-#include "SDFGeometry.h"
+#include "SDFGeometry/SDFGeometry.h"
 #include "SDFResult.h"
 
 template <typename... TPrimitives>

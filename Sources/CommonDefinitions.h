@@ -49,6 +49,62 @@
 
 #endif
 
+INLINE float4x4 float4x4_inverse(float4x4 m)
+{
+    float det = determinant(m);
+    
+    float A2323 = m.columns[2][2] * m.columns[3][3] - m.columns[2][3] * m.columns[3][2];
+    float A1323 = m.columns[2][1] * m.columns[3][3] - m.columns[2][3] * m.columns[3][1];
+    float A1223 = m.columns[2][1] * m.columns[3][2] - m.columns[2][2] * m.columns[3][1];
+    float A0323 = m.columns[2][0] * m.columns[3][3] - m.columns[2][3] * m.columns[3][0];
+    float A0223 = m.columns[2][0] * m.columns[3][2] - m.columns[2][2] * m.columns[3][0];
+    float A0123 = m.columns[2][0] * m.columns[3][1] - m.columns[2][1] * m.columns[3][0];
+    float A2313 = m.columns[1][2] * m.columns[3][3] - m.columns[1][3] * m.columns[3][2];
+    float A1313 = m.columns[1][1] * m.columns[3][3] - m.columns[1][3] * m.columns[3][1];
+    float A1213 = m.columns[1][1] * m.columns[3][2] - m.columns[1][2] * m.columns[3][1];
+    float A2312 = m.columns[1][2] * m.columns[2][3] - m.columns[1][3] * m.columns[2][2];
+    float A1312 = m.columns[1][1] * m.columns[2][3] - m.columns[1][3] * m.columns[2][1];
+    float A1212 = m.columns[1][1] * m.columns[2][2] - m.columns[1][2] * m.columns[2][1];
+    float A0313 = m.columns[1][0] * m.columns[3][3] - m.columns[1][3] * m.columns[3][0];
+    float A0213 = m.columns[1][0] * m.columns[3][2] - m.columns[1][2] * m.columns[3][0];
+    float A0312 = m.columns[1][0] * m.columns[2][3] - m.columns[1][3] * m.columns[2][0];
+    float A0212 = m.columns[1][0] * m.columns[2][2] - m.columns[1][2] * m.columns[2][0];
+    float A0113 = m.columns[1][0] * m.columns[3][1] - m.columns[1][1] * m.columns[3][0];
+    float A0112 = m.columns[1][0] * m.columns[2][1] - m.columns[1][1] * m.columns[2][0];
+
+    return (1.f / det) * float4x4 {
+        float4 { + ( m.columns[1][1] * A2323 - m.columns[1][2] * A1323 + m.columns[1][3] * A1223 ),
+            - ( m.columns[0][1] * A2323 - m.columns[0][2] * A1323 + m.columns[0][3] * A1223 ),
+            + ( m.columns[0][1] * A2313 - m.columns[0][2] * A1313 + m.columns[0][3] * A1213 ),
+            - ( m.columns[0][1] * A2312 - m.columns[0][2] * A1312 + m.columns[0][3] * A1212 ) },
+        float4 {
+            - ( m.columns[1][0] * A2323 - m.columns[1][2] * A0323 + m.columns[1][3] * A0223 ),
+            + ( m.columns[0][0] * A2323 - m.columns[0][2] * A0323 + m.columns[0][3] * A0223 ),
+            - ( m.columns[0][0] * A2313 - m.columns[0][2] * A0313 + m.columns[0][3] * A0213 ),
+            + ( m.columns[0][0] * A2312 - m.columns[0][2] * A0312 + m.columns[0][3] * A0212 ), },
+        float4 {
+            + ( m.columns[1][0] * A1323 - m.columns[1][1] * A0323 + m.columns[1][3] * A0123 ),
+            - ( m.columns[0][0] * A1323 - m.columns[0][1] * A0323 + m.columns[0][3] * A0123 ),
+            + ( m.columns[0][0] * A1313 - m.columns[0][1] * A0313 + m.columns[0][3] * A0113 ),
+            - ( m.columns[0][0] * A1312 - m.columns[0][1] * A0312 + m.columns[0][3] * A0112 ), },
+        
+        float4 {
+            - ( m.columns[1][0] * A1223 - m.columns[1][1] * A0223 + m.columns[1][2] * A0123 ),
+            + ( m.columns[0][0] * A1223 - m.columns[0][1] * A0223 + m.columns[0][2] * A0123 ),
+            - ( m.columns[0][0] * A1213 - m.columns[0][1] * A0213 + m.columns[0][2] * A0113 ),
+            + ( m.columns[0][0] * A1212 - m.columns[0][1] * A0212 + m.columns[0][2] * A0112 )}
+    };
+}
+
+#if defined(__METAL_VERSION__)
+
+float4x4 inverse(const float4x4 m)
+{
+    return float4x4_inverse(m);
+}
+
+#endif
+
 INLINE float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, float nearZ, float farZ)
 {
     float ys = 1 / tan(fovyRadians * 0.5);
