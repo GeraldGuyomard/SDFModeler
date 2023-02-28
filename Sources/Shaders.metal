@@ -47,34 +47,6 @@ using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
 using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, ConstTransformer, ConstMaterial>;
 
-template<typename P1, typename P2>
-class SubstractionPrimitive
-{
-public:
-    SubstractionPrimitive(P1 p1, P2 p2, float4 color)
-    : _p1(p1), _p2(p2), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        const float d1 = _p1.computeDistance(p);
-        const float d2 = _p2.computeDistance(p);
-        return max(d1, -d2);
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        return _color;
-    }
-    
-private:
-    P1 _p1;
-    P2 _p2;
-    float4 _color;
-};
-
-
-
 class Scene
 {
 public:
@@ -85,6 +57,7 @@ public:
         constexpr float kZ = 0;
         
         Sphere sphere1 { { 0.5f }, { float3(-1, 0, kZ) }, { float4(1, 0, 0, 1) } };
+        //SDFObject<SDFSphere, ConstTransformer, GridMaterial> sphere1 { { 0.5f }, { float3(-1, 0, kZ) }, { 0.01f, float4(1, 0, 0, 1) } };
         Sphere sphere2 { { 0.8f }, { float3(0.5, 0, kZ) }, { float4(0, 0, 1, 1) } };
         Sphere sphere3 { { 0.7f }, { float3(0, 1, kZ) }, { float4(0, 1, 0, 1) } };
         RoundedBox box {

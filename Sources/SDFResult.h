@@ -42,7 +42,7 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
 {
     if (dist > kDistanceEpsilon)
     {
-        return primitive.computeAlbedo(p);
+        return { 0.f };
     }
     
     float3 normal = computeNormal(primitive, dist, p);
