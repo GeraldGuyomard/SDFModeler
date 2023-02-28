@@ -47,6 +47,16 @@
         return matrix_identity_float4x4;
     }
 
+    inline float2 fmod(float2 in, float m)
+    {
+        return { fmod(in.x, m), fmod(in.y, m) };
+    }
+
+    inline float2 step(float m, float2 in)
+    {
+        return { step(in.x, m), step(in.y, m) };
+    }
+
 #endif
 
 INLINE float4x4 float4x4_inverse(float4x4 m)

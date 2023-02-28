@@ -18,10 +18,15 @@
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
 		74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
-		74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E129AC790C00171C03 /* SDFGeometry */; };
 		74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
-		74DAA6E729AC7CAD00171C03 /* Transformer in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E629AC7CAD00171C03 /* Transformer */; };
-		74DAA6E929ADAA8500171C03 /* Material in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E829ADAA8500171C03 /* Material */; };
+		74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
+		74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */; };
+		74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */; };
+		74DAA6FC29ADB5B900171C03 /* ConstTransformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */; };
+		74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FA29ADB5B900171C03 /* Transformer.cpp */; };
+		74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */; };
+		74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
+		74DAA70729ADB5C100171C03 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,11 +52,24 @@
 		74DAA6D529AC439E00171C03 /* SDFResult.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFResult.cpp; sourceTree = "<group>"; };
 		74DAA6DA29AC469200171C03 /* RayMarch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RayMarch.cpp; sourceTree = "<group>"; };
 		74DAA6DB29AC469200171C03 /* RayMarch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RayMarch.h; sourceTree = "<group>"; };
-		74DAA6E129AC790C00171C03 /* SDFGeometry */ = {isa = PBXFileReference; lastKnownFileType = folder; path = SDFGeometry; sourceTree = "<group>"; };
 		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
 		74DAA6E429AC7BD200171C03 /* SDFObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFObject.h; sourceTree = "<group>"; };
-		74DAA6E629AC7CAD00171C03 /* Transformer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Transformer; sourceTree = "<group>"; };
-		74DAA6E829ADAA8500171C03 /* Material */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Material; sourceTree = "<group>"; };
+		74DAA6EE29ADB5A200171C03 /* SDFPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFPlane.h; sourceTree = "<group>"; };
+		74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFPlane.cpp; sourceTree = "<group>"; };
+		74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFSphere.cpp; sourceTree = "<group>"; };
+		74DAA6F129ADB5A200171C03 /* SDFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFGeometry.h; sourceTree = "<group>"; };
+		74DAA6F229ADB5A200171C03 /* SDFSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFSphere.h; sourceTree = "<group>"; };
+		74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFGeometry.cpp; sourceTree = "<group>"; };
+		74DAA6F829ADB5B900171C03 /* ConstTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstTransformer.h; sourceTree = "<group>"; };
+		74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstTransformer.cpp; sourceTree = "<group>"; };
+		74DAA6FA29ADB5B900171C03 /* Transformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transformer.cpp; sourceTree = "<group>"; };
+		74DAA6FB29ADB5B900171C03 /* Transformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transformer.h; sourceTree = "<group>"; };
+		74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstMaterial.cpp; sourceTree = "<group>"; };
+		74DAA70029ADB5C100171C03 /* GridMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GridMaterial.cpp; sourceTree = "<group>"; };
+		74DAA70129ADB5C100171C03 /* Material.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Material.h; sourceTree = "<group>"; };
+		74DAA70229ADB5C100171C03 /* ConstMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstMaterial.h; sourceTree = "<group>"; };
+		74DAA70329ADB5C100171C03 /* GridMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridMaterial.h; sourceTree = "<group>"; };
+		74DAA70429ADB5C100171C03 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +102,9 @@
 		7444A4D029A1CB63009632C3 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				74DAA6FE29ADB5C100171C03 /* Material */,
+				74DAA6F729ADB5B900171C03 /* Transformer */,
+				74DAA6ED29ADB5A200171C03 /* SDFGeometry */,
 				7444A4D129A1CB63009632C3 /* AppDelegate.h */,
 				7444A4D229A1CB63009632C3 /* AppDelegate.m */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
@@ -103,15 +124,49 @@
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
-				74DAA6E129AC790C00171C03 /* SDFGeometry */,
-				74DAA6E629AC7CAD00171C03 /* Transformer */,
-				74DAA6E829ADAA8500171C03 /* Material */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
 				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		74DAA6ED29ADB5A200171C03 /* SDFGeometry */ = {
+			isa = PBXGroup;
+			children = (
+				74DAA6EE29ADB5A200171C03 /* SDFPlane.h */,
+				74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */,
+				74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */,
+				74DAA6F129ADB5A200171C03 /* SDFGeometry.h */,
+				74DAA6F229ADB5A200171C03 /* SDFSphere.h */,
+				74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */,
+			);
+			path = SDFGeometry;
+			sourceTree = "<group>";
+		};
+		74DAA6F729ADB5B900171C03 /* Transformer */ = {
+			isa = PBXGroup;
+			children = (
+				74DAA6F829ADB5B900171C03 /* ConstTransformer.h */,
+				74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */,
+				74DAA6FA29ADB5B900171C03 /* Transformer.cpp */,
+				74DAA6FB29ADB5B900171C03 /* Transformer.h */,
+			);
+			path = Transformer;
+			sourceTree = "<group>";
+		};
+		74DAA6FE29ADB5C100171C03 /* Material */ = {
+			isa = PBXGroup;
+			children = (
+				74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */,
+				74DAA70029ADB5C100171C03 /* GridMaterial.cpp */,
+				74DAA70129ADB5C100171C03 /* Material.h */,
+				74DAA70229ADB5C100171C03 /* ConstMaterial.h */,
+				74DAA70329ADB5C100171C03 /* GridMaterial.h */,
+				74DAA70429ADB5C100171C03 /* Material.cpp */,
+			);
+			path = Material;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,9 +228,6 @@
 			files = (
 				7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */,
 				7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */,
-				74DAA6E929ADAA8500171C03 /* Material in Resources */,
-				74DAA6E729AC7CAD00171C03 /* Transformer in Resources */,
-				74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,9 +241,17 @@
 				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
+				74DAA6FC29ADB5B900171C03 /* ConstTransformer.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
+				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
+				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
+				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
+				74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */,
+				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
+				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
+				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,

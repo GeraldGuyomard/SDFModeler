@@ -14,9 +14,12 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
-#include "SDFGeometry/SDFSphere.h"
 #include "Transformer/ConstTransformer.h"
 #include "Material/ConstMaterial.h"
+#include "Material/GridMaterial.h"
+
+#include "SDFGeometry/SDFSphere.h"
+#include "SDFGeometry/SDFPlane.h"
 
 struct VertexShaderOut
 {
@@ -38,65 +41,8 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
 
 
-/*
-template <>
-float3 computeNormal<Sphere>(Sphere sphere, Ray ray, float dist, float3 position)
-{
-    return normalize(position - sphere.origin());
-}
-*/
-
-class HorizontalPlane
-{
-public:
-    
-    HorizontalPlane(float altitude, float4 color)
-    : _altitude(altitude), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        return p.y - _altitude;
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        return _color;
-    }
-    
-private:
-    float _altitude;
-    float4 _color;
-};
-
-class HorizontalGrid
-{
-public:
-    
-    HorizontalGrid(float altitude, float cellSize, float4 color)
-    : _altitude(altitude), _cellSize(cellSize), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        return p.y - _altitude;
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        float2 xy = fmod(abs(p.xz), _cellSize) / _cellSize;
-        
-        xy = step(0.9, xy);
-        
-        float l = length(xy);
-        return _color * l;
-    }
-    
-private:
-    float _altitude;
-    float _cellSize;
-    float4 _color;
-};
+using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
+using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
 
 class RoundedBox
 {
@@ -208,7 +154,10 @@ public:
     SDFResult rayMarch(Ray ray) const
     {
         constexpr float kGridGreyLevel = 0.5f;
-        HorizontalGrid grid(-10, 1, float4(kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1));
+        const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
+        //Plane grid({}, { float3(-10.f) }, { color } );
+        
+        Grid grid({}, { float3(-10.f) }, { 1.f , color });
         
         return ::rayMarch(ray, grid);
     }

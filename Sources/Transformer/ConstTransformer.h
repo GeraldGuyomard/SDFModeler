@@ -18,6 +18,10 @@ public:
     : _invTransform(inverse(transform))
     {}
     
+    ConstTransformer(float3 translation)
+    : _invTransform(matrix4x4_translation(-translation))
+    {}
+    
     float3 transform(float3 p) const
     {
         const auto t = _invTransform * float4 { p.x, p.y, p.z, 1.f };

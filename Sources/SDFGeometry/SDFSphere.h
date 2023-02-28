@@ -26,3 +26,11 @@ public:
 private:
     const float _radius;
 };
+
+/*
+template <>
+float3 computeNormal<SDFSphere>(Sphere sphere, Ray ray, float dist, float3 position)
+{
+    return normalize(position - sphere.origin());
+}
+*/
