@@ -78,7 +78,10 @@ public:
         using TUnion = SDFUnion<Sphere, RoundedBox>;
         TUnion sdfUnion(sphere4, box2);
         
-        SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, {}, { float4(0, 1, 1, 1) } );
+        //float4x4 transform = matrix4x4_rotation(0.3f, { 1.f, 1.f, 1.f } ) * matrix4x4_scale({0.3f, 0.3f, 0.3f});
+        float4x4 transform = float4x4_identity();
+        ConstTransformer transformer { transform };
+        SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, transformer, { float4(0, 1, 1, 1) } );
         
         return ::rayMarch(ray, sphere1, sphere2, sphere3, box, uni);
     }

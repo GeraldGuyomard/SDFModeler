@@ -152,6 +152,18 @@ INLINE float4x4 matrix4x4_translation(float3 t)
     return m;
 }
 
+INLINE float4x4 matrix4x4_scale(float3 s)
+{
+    float4x4 m;
+    
+    m.columns[0] = { s.x, 0,  0,  0 };
+    m.columns[1] = { 0,   s.y,  0,  0 };
+    m.columns[2] = { 0,   0,  s.z,  0 };
+    m.columns[3] = { 0,   0,  0,  1 };
+    
+    return m;
+}
+
 INLINE float4x4 matrix4x4_rotation(float radians, float3 axis)
 {
     axis = normalize(axis);
