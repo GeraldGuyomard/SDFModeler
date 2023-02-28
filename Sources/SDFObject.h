@@ -9,17 +9,21 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Transformer/Transformer.h"
+#include "Material/Material.h"
 
-template <typename TGeometry, typename TTransformer>
+template <typename TGeometry, typename TTransformer, typename TMaterial>
 class SDFObject final
 {
-    SDFObject(TGeometry geometry, TTransformer transformer)
-    : _geometry(geometry), _transformer(transformer)
+public:
+    
+    SDFObject(TGeometry geometry, TTransformer transformer, TMaterial material)
+    : _geometry(geometry), _transformer(transformer), _material(material)
     {}
     
     float computeDistance(float3 p) const
     {
-        return _geometry.computeDistance(p);
+        float3 transformedP = transform(p);
+        return _geometry.computeDistance(transformedP);
     }
     
     float3 transform(float3 p) const
@@ -27,7 +31,13 @@ class SDFObject final
         return _transformer.transform(p);
     }
     
+    float4 computeAlbedo(float3 p) const
+    {
+        return _material.computeAlbedo(p);
+    }
+    
 private:
     const TGeometry _geometry;
     const TTransformer _transformer;
+    const TMaterial _material;
 };

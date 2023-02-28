@@ -21,6 +21,7 @@
 		74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E129AC790C00171C03 /* SDFGeometry */; };
 		74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
 		74DAA6E729AC7CAD00171C03 /* Transformer in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E629AC7CAD00171C03 /* Transformer */; };
+		74DAA6E929ADAA8500171C03 /* Material in Resources */ = {isa = PBXBuildFile; fileRef = 74DAA6E829ADAA8500171C03 /* Material */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
 		74DAA6E429AC7BD200171C03 /* SDFObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFObject.h; sourceTree = "<group>"; };
 		74DAA6E629AC7CAD00171C03 /* Transformer */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Transformer; sourceTree = "<group>"; };
+		74DAA6E829ADAA8500171C03 /* Material */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Material; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,14 +101,15 @@
 				74DAA6DA29AC469200171C03 /* RayMarch.cpp */,
 				74DAA6DB29AC469200171C03 /* RayMarch.h */,
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
+				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
+				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 				74DAA6E129AC790C00171C03 /* SDFGeometry */,
 				74DAA6E629AC7CAD00171C03 /* Transformer */,
+				74DAA6E829ADAA8500171C03 /* Material */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
 				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
-				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
-				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -170,6 +173,7 @@
 			files = (
 				7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */,
 				7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */,
+				74DAA6E929ADAA8500171C03 /* Material in Resources */,
 				74DAA6E729AC7CAD00171C03 /* Transformer in Resources */,
 				74DAA6E229AC790C00171C03 /* SDFGeometry in Resources */,
 			);

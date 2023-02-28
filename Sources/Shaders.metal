@@ -13,8 +13,10 @@
 #include "SDFResult.h"
 #include "RayMarch.h"
 
+#include "SDFObject.h"
 #include "SDFGeometry/SDFSphere.h"
 #include "Transformer/ConstTransformer.h"
+#include "Material/ConstMaterial.h"
 
 struct VertexShaderOut
 {
@@ -33,35 +35,8 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-class Sphere
-{
-public:
-    Sphere(float3 origin, float radius, float4 color)
-    : _origin(origin), _radius(radius), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        const float3 d = p - _origin;
-        const float dist = length(d) - _radius;
-        return dist;
-    }
-    
-    float4 color(float3 p) const
-    {
-        return _color;
-    }
-    
-    float3 origin() const
-    {
-        return _origin;
-    }
-    
-private:
-    const float3 _origin;
-    const float _radius;
-    const float4 _color;
-};
+using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
+
 
 /*
 template <>
@@ -84,7 +59,7 @@ public:
         return p.y - _altitude;
     }
     
-    float4 color(float3 p) const
+    float4 computeAlbedo(float3 p) const
     {
         return _color;
     }
@@ -107,7 +82,7 @@ public:
         return p.y - _altitude;
     }
     
-    float4 color(float3 p) const
+    float4 computeAlbedo(float3 p) const
     {
         float2 xy = fmod(abs(p.xz), _cellSize) / _cellSize;
         
@@ -139,7 +114,7 @@ public:
         return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - _radius;
     }
     
-    float4 color(float3 p) const
+    float4 computeAlbedo(float3 p) const
     {
         return _color;
     }
@@ -166,7 +141,7 @@ public:
         return min(d1, d2);
     }
     
-    float4 color(float3 p) const
+    float4 computeAlbedo(float3 p) const
     {
         return _color;
     }
@@ -192,7 +167,7 @@ public:
         return max(d1, -d2);
     }
     
-    float4 color(float3 p) const
+    float4 computeAlbedo(float3 p) const
     {
         return _color;
     }
@@ -214,12 +189,12 @@ public:
         //constexpr float kZ = -5.f;
         constexpr float kZ = 0;
         
-        Sphere sphere1 { float3(-1, 0, kZ), 0.5f, float4(1, 0, 0, 1) };
-        Sphere sphere2 { float3(0.5, 0, kZ), 0.8f, float4(0, 0, 1, 1) };
-        Sphere sphere3 { float3(0, 1, kZ), 0.7f, float4(0, 1, 0, 1) };
+        Sphere sphere1 { { 0.5f }, { float3(-1, 0, kZ) }, { float4(1, 0, 0, 1) } };
+        Sphere sphere2 { { 0.8f }, { float3(0.5, 0, kZ) }, { float4(0, 0, 1, 1) } };
+        Sphere sphere3 { { 0.7f }, { float3(0, 1, kZ) }, { float4(0, 1, 0, 1) } };
         RoundedBox box { float3(0.5, 0, kZ + 1.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
         
-        Sphere sphere4 { float3(-1.5, 0.6, kZ + 2.5f), 0.4f, float4(0, 0, 1, 1) };
+        Sphere sphere4 { { 0.4f }, { float3(-1.5, 0.6, kZ + 2.5f) }, { float4(0, 0, 1, 1) } };
         RoundedBox box2 { float3(-1.5, 0, kZ + 2.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
         UnionPrimitive<Sphere, RoundedBox> unionPrim(sphere4, box2, float4(0, 1, 1, 1));
         

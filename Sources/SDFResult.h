@@ -42,7 +42,7 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
 {
     if (dist > kDistanceEpsilon)
     {
-        return primitive.color(p);
+        return primitive.computeAlbedo(p);
     }
     
     float3 normal = computeNormal(primitive, dist, p);
@@ -56,7 +56,7 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
     float spec = max(0.f, dot(ray.direction, L));
     spec = 0.8f * pow(spec, 30.f);
     
-    return (primitive.color(p) * intensity) + float4 { spec, spec, spec, 0.f };
+    return (primitive.computeAlbedo(p) * intensity) + float4 { spec, spec, spec, 0.f };
 }
 
 template <typename TPrimitive>
