@@ -14,6 +14,8 @@ class ConstMaterial final
 {
 public:
     
+    ConstMaterial() = default;
+    
     ConstMaterial(float4 albedo)
     : _albedo(albedo)
     {}
@@ -24,5 +26,5 @@ public:
     }
     
 private:
-    const float4 _albedo;
+    const float4 _albedo = { 0 };
 };

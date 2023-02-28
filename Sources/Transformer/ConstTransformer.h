@@ -14,6 +14,8 @@ class ConstTransformer final
 {
 public:
     
+    ConstTransformer() = default;
+    
     ConstTransformer(float4x4 transform)
     : _invTransform(inverse(transform))
     {}
@@ -29,5 +31,5 @@ public:
     }
     
 private:
-    float4x4 _invTransform;
+    float4x4 _invTransform = float4x4_identity();
 };

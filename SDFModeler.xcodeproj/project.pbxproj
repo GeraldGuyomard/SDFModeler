@@ -28,6 +28,7 @@
 		74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
 		74DAA70729ADB5C100171C03 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
+		74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,8 @@
 		74DAA70429ADB5C100171C03 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
 		74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFRoundedBox.cpp; sourceTree = "<group>"; };
 		74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundedBox.h; sourceTree = "<group>"; };
+		74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFUnion.cpp; sourceTree = "<group>"; };
+		74DAA70C29ADBC5700171C03 /* SDFUnion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFUnion.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +149,8 @@
 				74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */,
 				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
 				74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */,
+				74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */,
+				74DAA70C29ADBC5700171C03 /* SDFUnion.h */,
 			);
 			path = SDFGeometry;
 			sourceTree = "<group>";
@@ -165,9 +170,9 @@
 			isa = PBXGroup;
 			children = (
 				74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */,
+				74DAA70229ADB5C100171C03 /* ConstMaterial.h */,
 				74DAA70029ADB5C100171C03 /* GridMaterial.cpp */,
 				74DAA70129ADB5C100171C03 /* Material.h */,
-				74DAA70229ADB5C100171C03 /* ConstMaterial.h */,
 				74DAA70329ADB5C100171C03 /* GridMaterial.h */,
 				74DAA70429ADB5C100171C03 /* Material.cpp */,
 			);
@@ -254,6 +259,7 @@
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */,
+				74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */,
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,

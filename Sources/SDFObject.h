@@ -16,7 +16,7 @@ class SDFObject final
 {
 public:
     
-    SDFObject(TGeometry geometry, TTransformer transformer, TMaterial material)
+    SDFObject(TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
     : _geometry(geometry), _transformer(transformer), _material(material)
     {}
     

@@ -21,6 +21,7 @@
 #include "SDFGeometry/SDFSphere.h"
 #include "SDFGeometry/SDFPlane.h"
 #include "SDFGeometry/SDFRoundedBox.h"
+#include "SDFGeometry/SDFUnion.h"
 
 struct VertexShaderOut
 {
@@ -45,32 +46,6 @@ using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
 using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
 using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, ConstTransformer, ConstMaterial>;
-
-template<typename P1, typename P2>
-class UnionPrimitive
-{
-public:
-    UnionPrimitive(P1 p1, P2 p2, float4 color)
-    : _p1(p1), _p2(p2), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        const float d1 = _p1.computeDistance(p);
-        const float d2 = _p2.computeDistance(p);
-        return min(d1, d2);
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        return _color;
-    }
-    
-private:
-    P1 _p1;
-    P2 _p2;
-    float4 _color;
-};
 
 template<typename P1, typename P2>
 class SubstractionPrimitive
@@ -118,15 +93,21 @@ public:
             { float4(1, 1, 1, 1) } // material
         };
         
-        Sphere sphere4 { { 0.4f }, { float3(-1.5, 0.6, kZ + 2.5f) }, { float4(0, 0, 1, 1) } };
+        Sphere sphere4 { { 0.4f }, // geom
+                         { float3(-1.5, 0.6, kZ + 2.5f) } // material
+        };
+        
         RoundedBox box2 {
             { float3(0.2, 0.4, 0.2), 0.1 }, // geometry
-            { float3(-1.5, 0, kZ + 2.5f) }, // transform
-            { float4(1, 1, 1, 1) } // color
+            { float3(-1.5, 0, kZ + 2.5f) } // transform
         };
-        UnionPrimitive<Sphere, RoundedBox> unionPrim(sphere4, box2, float4(0, 1, 1, 1));
         
-        return ::rayMarch(ray, sphere1, sphere2, sphere3, box, unionPrim);
+        using TUnion = SDFUnion<Sphere, RoundedBox>;
+        TUnion sdfUnion(sphere4, box2);
+        
+        SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, {}, { float4(0, 1, 1, 1) } );
+        
+        return ::rayMarch(ray, sphere1, sphere2, sphere3, box, uni);
     }
 };
 
