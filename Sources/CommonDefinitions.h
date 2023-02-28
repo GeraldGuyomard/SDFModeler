@@ -47,14 +47,24 @@
         return matrix_identity_float4x4;
     }
 
+    inline float3 min(float3 lhs, float rhs)
+    {
+        return min(lhs, float3 { rhs });
+    }
+
+    inline float3 max(float3 lhs, float rhs)
+    {
+        return max(lhs, float3 { rhs });
+    }
+
     inline float2 fmod(float2 in, float m)
     {
-        return { fmod(in.x, m), fmod(in.y, m) };
+        return fmod(in, float2 { m });
     }
 
     inline float2 step(float m, float2 in)
     {
-        return { step(in.x, m), step(in.y, m) };
+        return step(in, float2 { m });
     }
 
 #endif

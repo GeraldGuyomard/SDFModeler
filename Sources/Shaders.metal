@@ -20,6 +20,7 @@
 
 #include "SDFGeometry/SDFSphere.h"
 #include "SDFGeometry/SDFPlane.h"
+#include "SDFGeometry/SDFRoundedBox.h"
 
 struct VertexShaderOut
 {
@@ -43,34 +44,7 @@ using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
 
 using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
 using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
-
-class RoundedBox
-{
-public:
-    
-    RoundedBox(float3 origin, float3 size, float radius, float4 color)
-    : _origin(origin), _size(size), _radius(radius), _color(color)
-    {}
-    
-    float computeDistance(float3 p) const
-    {
-        p -= _origin;
-        
-        float3 q = abs(p) - _size;
-        return length(max(q,0.0)) + min(max(q.x,max(q.y,q.z)),0.0) - _radius;
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        return _color;
-    }
-    
-private:
-    const float3 _origin;
-    const float3 _size;
-    const float _radius;
-    const float4 _color;
-};
+using RoundedBox = SDFObject<SDFRoundedBox, ConstTransformer, ConstMaterial>;
 
 template<typename P1, typename P2>
 class UnionPrimitive
@@ -138,10 +112,18 @@ public:
         Sphere sphere1 { { 0.5f }, { float3(-1, 0, kZ) }, { float4(1, 0, 0, 1) } };
         Sphere sphere2 { { 0.8f }, { float3(0.5, 0, kZ) }, { float4(0, 0, 1, 1) } };
         Sphere sphere3 { { 0.7f }, { float3(0, 1, kZ) }, { float4(0, 1, 0, 1) } };
-        RoundedBox box { float3(0.5, 0, kZ + 1.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        RoundedBox box {
+            { float3(0.2f, 0.4f, 0.2f), 0.1 }, // geometry
+            { float3(0.5, 0, kZ + 1.5f) }, // transform
+            { float4(1, 1, 1, 1) } // material
+        };
         
         Sphere sphere4 { { 0.4f }, { float3(-1.5, 0.6, kZ + 2.5f) }, { float4(0, 0, 1, 1) } };
-        RoundedBox box2 { float3(-1.5, 0, kZ + 2.5f), float3(0.2, 0.4, 0.2), 0.1, float4(1, 1, 1, 1) };
+        RoundedBox box2 {
+            { float3(0.2, 0.4, 0.2), 0.1 }, // geometry
+            { float3(-1.5, 0, kZ + 2.5f) }, // transform
+            { float4(1, 1, 1, 1) } // color
+        };
         UnionPrimitive<Sphere, RoundedBox> unionPrim(sphere4, box2, float4(0, 1, 1, 1));
         
         return ::rayMarch(ray, sphere1, sphere2, sphere3, box, unionPrim);

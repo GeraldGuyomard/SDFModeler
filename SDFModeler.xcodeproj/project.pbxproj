@@ -27,6 +27,7 @@
 		74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */; };
 		74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
 		74DAA70729ADB5C100171C03 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
+		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +71,8 @@
 		74DAA70229ADB5C100171C03 /* ConstMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstMaterial.h; sourceTree = "<group>"; };
 		74DAA70329ADB5C100171C03 /* GridMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridMaterial.h; sourceTree = "<group>"; };
 		74DAA70429ADB5C100171C03 /* Material.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Material.cpp; sourceTree = "<group>"; };
+		74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFRoundedBox.cpp; sourceTree = "<group>"; };
+		74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundedBox.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +144,8 @@
 				74DAA6F129ADB5A200171C03 /* SDFGeometry.h */,
 				74DAA6F229ADB5A200171C03 /* SDFSphere.h */,
 				74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */,
+				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
+				74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */,
 			);
 			path = SDFGeometry;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
+				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
