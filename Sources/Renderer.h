@@ -7,6 +7,7 @@
 
 #import <MetalKit/MetalKit.h>
 #import "CommonDefinitions.h"
+#import "Uniforms.h"
 
 // Our platform independent renderer class.   Implements the MTKViewDelegate protocol which
 //   allows it to accept per-frame update and drawable resize callbacks.
@@ -15,6 +16,7 @@
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
 
 @property(nonatomic) float4x4 cameraTransform;
+@property(nonatomic, readonly) const Uniforms* uniforms;
 
 @end
 

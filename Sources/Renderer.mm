@@ -154,6 +154,11 @@ Vertex s_Vertices[4] = {
     _cameraTransform = cameraTransform;
 }
 
+-(const Uniforms*) uniforms
+{
+    return (Uniforms*)_uniformBufferAddress;
+}
+
 - (void)_updateGameState
 {
     /// Update any game state before encoding renderint commands to our drawable

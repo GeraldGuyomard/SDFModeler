@@ -87,7 +87,7 @@ public:
     }
 };
 
-float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms)
+INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     

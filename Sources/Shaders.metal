@@ -10,9 +10,6 @@
 
 #include "World.h"
 
-//
-//
-
 struct VertexShaderOut
 {
     float4 position [[position]];
@@ -20,7 +17,7 @@ struct VertexShaderOut
 };
 
 vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
-                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+                                    constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
 {
     VertexShaderOut out;
 
