@@ -20,8 +20,15 @@ public:
     
     float4 computeAlbedo(float3 p) const
     {
-        float2 xy = fmod(abs(p.xz), _cellSize) / _cellSize;
+        float2 xy = p.xz;
         
+        float2 s = sign(xy);
+        xy *= s;
+        
+        xy = fmod(xy, _cellSize) / _cellSize;
+        
+        xy = max(-s, 0.f) + (s * xy);
+
         xy = step(0.9, xy);
         
         float l = length(xy);

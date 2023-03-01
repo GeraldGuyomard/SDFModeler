@@ -47,6 +47,16 @@
         return matrix_identity_float4x4;
     }
 
+    inline float2 min(float2 lhs, float rhs)
+    {
+        return min(lhs, float2 { rhs });
+    }
+
+    inline float2 max(float2 lhs, float rhs)
+    {
+        return max(lhs, float2 { rhs });
+    }
+
     inline float3 min(float3 lhs, float rhs)
     {
         return min(lhs, float3 { rhs });
