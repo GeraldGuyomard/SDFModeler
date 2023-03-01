@@ -12,6 +12,35 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "SDFResult.h"
 
+template <typename TPrimitive>
+SDFResult rayMarch(Ray ray, TPrimitive primitive)
+{
+    constexpr int kNbSteps = 100;
+    
+    float d = 0.f;
+    
+    for (int i=0; i < kNbSteps; ++i)
+    {
+        float3 p = ray.pt(d);
+        auto result = computeSDF(p, ray, primitive);
+        
+        if (result.hit())
+        {
+            return result;
+        }
+        
+        d += result.distance;
+        
+        if (d > ray.maxLength)
+        {
+            break;
+        }
+    }
+    
+    return {};
+}
+
+
 template <typename... TPrimitives>
 SDFResult rayMarch(Ray ray, TPrimitives... primitives)
 {

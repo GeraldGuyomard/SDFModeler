@@ -33,26 +33,25 @@ public:
     
     SDFResult rayMarch(Ray ray) const
     {
-        //constexpr float kZ = -5.f;
         constexpr float kZ = 0;
         
         Sphere sphere1 { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
-        //SDFObject<SDFSphere, ConstTransformer, GridMaterial> sphere1 { { 0.5f }, { float3(-1, 0, kZ) }, { 0.01f, float4(1, 0, 0, 1) } };
-        Sphere sphere2 { { 0.8f }, { float3 { 0.5, 0, kZ } }, { float4 { 0, 0, 1, 1 } } };
-        Sphere sphere3 { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
-        // float3(0.5, 0, kZ + 1.5f)
         
-        float s = 0.5f;
+        constexpr float s = 0.5f;
+        //ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_scale(float3 {s, s, s}) };
         
-        ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_scale(float3 {s, s, s}) };
-        //ConstTransformer transformer = ConstTransformer::makeWithInverse(matrix4x4_scale({1 / s, 1 / s, 1/ s}) * matrix4x4_translation({-0.5, 0, -(kZ + 1.5f)}));
+        ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_rotation(degToRad(45.f), float3 {1, 1, 0}) };
         
         RoundedBox box {
             { float3 { 0.2f, 0.4f, 0.2f }, 0.1 }, // geometry
             transformer, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
+        
+#if 1
+        Sphere sphere2 { { 0.8f }, { float3 { 0.5, 0, kZ } }, { float4 { 0, 0, 1, 1 } } };
+        Sphere sphere3 { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
         Sphere sphere4 { { 0.4f }, // geom
             { float3 { -1.5, 0.6, kZ + 2.5f } } // material
@@ -69,6 +68,9 @@ public:
         SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
         
         return ::rayMarch(ray, sphere1, sphere2, sphere3, box, uni);
+#else
+        return ::rayMarch(ray, box, sphere1);
+#endif
     }
 };
 

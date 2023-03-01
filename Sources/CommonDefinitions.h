@@ -69,6 +69,18 @@
 
 #endif
 
+static constexpr CONSTANT float PI = 3.141592653589793238;
+
+INLINE float radToDeg(float r)
+{
+    return r * (180.f / PI);
+}
+
+INLINE float degToRad(float r)
+{
+    return r * (PI / 180.f);
+}
+
 INLINE float4x4 float4x4_inverse(float4x4 m)
 {
     float det = determinant(m);
