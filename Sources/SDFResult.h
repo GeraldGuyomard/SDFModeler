@@ -56,7 +56,8 @@ float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
     float spec = max(0.f, dot(ray.direction, L));
     spec = 0.8f * pow(spec, 30.f);
     
-    return (primitive.computeAlbedo(p) * intensity) + float4 { spec, spec, spec, 0.f };
+    const float4 albedo = primitive.computeAlbedo(p);
+    return (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
 }
 
 template <typename TPrimitive>
