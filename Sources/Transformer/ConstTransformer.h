@@ -20,6 +20,13 @@ public:
     : _invTransform(inverse(transform))
     {}
     
+    static ConstTransformer makeWithInverse(float4x4 inv)
+    {
+        ConstTransformer t;
+        t._invTransform = inv;
+        return t;
+    }
+    
     ConstTransformer(float3 translation)
     : _invTransform(matrix4x4_translation(-translation))
     {}
@@ -27,7 +34,7 @@ public:
     float3 transform(float3 p) const
     {
         const auto t = _invTransform * float4 { p.x, p.y, p.z, 1.f };
-        return t.xyz;
+        return t.xyz / t.w;
     }
     
 private:

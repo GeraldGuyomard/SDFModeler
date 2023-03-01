@@ -44,6 +44,14 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
+    {
+        const float s = 0.95f;
+        float4x4 transform = matrix4x4_scale(float3 {s, s, s});
+        auto inv = float4x4_inverse(transform);
+        auto inv2 = inverse(transform);
+        int a;
+        a = 1;
+    }
     _shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
     
     _initialPos = event.locationInWindow;

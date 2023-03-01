@@ -29,6 +29,7 @@
 		74DAA70729ADB5C100171C03 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 		74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
+		74DAA71029AEEE7200171C03 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -76,6 +77,8 @@
 		74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundedBox.h; sourceTree = "<group>"; };
 		74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFUnion.cpp; sourceTree = "<group>"; };
 		74DAA70C29ADBC5700171C03 /* SDFUnion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFUnion.h; sourceTree = "<group>"; };
+		74DAA70E29AEEE7200171C03 /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
+		74DAA70F29AEEE7200171C03 /* World.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = World.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +133,8 @@
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
+				74DAA70E29AEEE7200171C03 /* World.cpp */,
+				74DAA70F29AEEE7200171C03 /* World.h */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
@@ -256,6 +261,7 @@
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
+				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */,

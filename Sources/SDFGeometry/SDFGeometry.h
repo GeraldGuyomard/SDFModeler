@@ -26,7 +26,9 @@ float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)
     constexpr float delta = 0.01f;
     float2 eps { delta, 0.f };
     
-    return normalize(float3(geometry.computeDistance(position + eps.xyy) - dist,
-                            geometry.computeDistance(position + eps.yxy) - dist,
-                            geometry.computeDistance(position + eps.yyx) - dist));
+    return normalize(float3 {
+        geometry.computeDistance(position + eps.xyy) - dist,
+        geometry.computeDistance(position + eps.yxy) - dist,
+        geometry.computeDistance(position + eps.yyx) - dist
+    });
 }
