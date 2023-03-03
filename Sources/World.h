@@ -87,7 +87,18 @@ public:
         
         Grid grid({}, { float3(-10.f) }, { 1.f , color });
         
-        return ::rayMarch(ray, grid);
+        const auto res = ::rayMarch(ray, grid);
+        
+        if (res.isValid())
+        {
+            return res;
+        }
+        
+        // cos angle
+        const float grey = abs(ray.direction.y);
+        const float4 c = { grey, grey, grey, 1.f };
+        
+        return { 0.f, c };
     }
 };
 
@@ -105,14 +116,7 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms)
     // Test Env Last
     Environment env;
     res = env.rayMarch(ray);
-    if (res.isValid())
-    {
-        return res.color;
-    }
-        
-    // Render background gradient
-    // in.viewportNDC.y in [1, -1]
-    float grey = (1.f - viewportNDC.y) / 2.f;
-    return float4 { grey, grey, grey, 1 };
+
+    return res.color;
 }
 
