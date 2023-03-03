@@ -16,27 +16,23 @@ public:
     
     ConstTransformer() = default;
     
-    ConstTransformer(float4x4 transform)
-    : _invTransform(inverse(transform))
-    {}
-    
-    static ConstTransformer makeWithInverse(float4x4 inv)
-    {
-        ConstTransformer t;
-        t._invTransform = inv;
-        return t;
-    }
-    
     ConstTransformer(float3 translation)
-    : _invTransform(matrix4x4_translation(-translation))
+    : _invRSTransform(matrix4x4_translation(-translation))
     {}
     
-    float3 transform(float3 p) const
+    ConstTransformer(float3 translation, float3 rotationAxis, float angle, float scale = 1.f)
+    : _invRSTransform(matrix4x4_rotation(-angle, rotationAxis) * matrix4x4_translation(-translation)), _scale(scale)
+    {}
+    
+    template <typename TSDFGeometry>
+    float computeDistance(TSDFGeometry primitive, float3 p) const
     {
-        const auto t = _invTransform * float4 { p.x, p.y, p.z, 1.f };
-        return t.xyz / t.w;
+        const auto localP = _invRSTransform * float4 { p.x, p.y, p.z, 1.f };
+        const auto transformedP = localP.xyz / localP.w;
+        return primitive.computeDistance(transformedP);
     }
     
 private:
-    float4x4 _invTransform = float4x4_identity();
+    float4x4 _invRSTransform = float4x4_identity();
+    float3 _scale = 1.f;
 };

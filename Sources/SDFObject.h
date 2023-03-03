@@ -22,13 +22,7 @@ public:
     
     float computeDistance(float3 p) const
     {
-        float3 transformedP = transform(p);
-        return _geometry.computeDistance(transformedP);
-    }
-    
-    float3 transform(float3 p) const
-    {
-        return _transformer.transform(p);
+        return _transformer.computeDistance(_geometry, p);
     }
     
     float4 computeAlbedo(float3 p) const

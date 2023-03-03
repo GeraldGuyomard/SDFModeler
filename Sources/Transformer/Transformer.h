@@ -14,7 +14,8 @@ class Transformer final
 {
 public:
     
-    float3 transform(float3 p) const;
+    template <typename TSDFGeometry>
+    float computeSDF(TSDFGeometry primitive, float3 p) const;
     
 private:
     Transformer() = delete;

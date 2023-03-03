@@ -41,7 +41,8 @@ public:
         constexpr float s = 0.5f;
         //ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_scale(float3 {s, s, s}) };
         
-        ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_rotation(degToRad(45.f), float3 {1, 1, 0}) };
+        ConstTransformer transformer { float3 {0.5, 0, kZ + 1.5f}, float3 {1, 1, 0}, degToRad(45.f) };
+        //ConstTransformer transformer { float3 {0.5, 0, kZ}, float3 {0, 0, 1}, degToRad(45.f)  };
         
         RoundedBox box {
             { float3 { 0.2f, 0.4f, 0.2f }, 0.1 }, // geometry
