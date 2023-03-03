@@ -27,12 +27,15 @@ public:
     template <typename TSDFGeometry>
     float computeDistance(TSDFGeometry primitive, float3 p) const
     {
-        const auto localP = _invRSTransform * float4 { p.x, p.y, p.z, 1.f };
+        float invScale = 1.f / _scale;
+        p *= invScale;
+        
+        const auto localP = _invRSTransform * float4 { p.x, p.y, p.z, invScale };
         const auto transformedP = localP.xyz / localP.w;
-        return primitive.computeDistance(transformedP);
+        return primitive.computeDistance(transformedP) * _scale;
     }
     
 private:
     float4x4 _invRSTransform = float4x4_identity();
-    float3 _scale = 1.f;
+    float _scale = 1.f;
 };

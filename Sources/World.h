@@ -38,20 +38,21 @@ public:
         Sphere sphere1 { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
         
         
-        constexpr float s = 0.5f;
-        //ConstTransformer transformer { matrix4x4_translation(float3 {0.5, 0, kZ + 1.5f}) * matrix4x4_scale(float3 {s, s, s}) };
+        float3 pos = float3 {0.5, 0, kZ};
         
-        ConstTransformer transformer { float3 {0.5, 0, kZ + 1.5f}, float3 {1, 1, 0}, degToRad(45.f) };
+        constexpr float s = 0.5f;
+        
+        ConstTransformer transformer { pos, float3 {1, 1, 0}, degToRad(45.f), s };
         //ConstTransformer transformer { float3 {0.5, 0, kZ}, float3 {0, 0, 1}, degToRad(45.f)  };
         
         RoundedBox box {
-            { float3 { 0.2f, 0.4f, 0.2f }, 0.1 }, // geometry
+            { float3 { 0.2f, 0.8f, 0.2f }, 0.1 }, // geometry
             transformer, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
         
 #if 1
-        Sphere sphere2 { { 0.8f }, { float3 { 0.5, 0, kZ } }, { float4 { 0, 0, 1, 1 } } };
+        Sphere sphere2 { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
         Sphere sphere3 { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
         Sphere sphere4 { { 0.4f }, // geom
