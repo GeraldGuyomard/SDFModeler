@@ -27,6 +27,13 @@ public:
         return primitive.computeDistance(p - _translation);
     }
     
+    Ray localRay(Ray ray) const
+    {
+        Ray r = ray;
+        r.origin -= _translation;
+        return r;
+    }
+    
 private:
     const float3 _translation = { 0.f };
 };
@@ -50,6 +57,16 @@ public:
     {
         p = _invRotTransform * (p - _translation);
         return primitive.computeDistance(p);
+    }
+    
+    Ray localRay(Ray ray) const
+    {
+        Ray r = ray;
+        r.origin = _invRotTransform * (ray.origin - _translation);
+        r.direction = _invRotTransform * ray.direction;
+        r.direction = normalize(r.direction);
+        
+        return r;
     }
     
 private:
@@ -77,6 +94,16 @@ public:
     {
         const auto localPBeforeScale = _invRotTransform * (p - _translation);
         return primitive.computeDistance(localPBeforeScale / _scale) * _scale;
+    }
+    
+    Ray localRay(Ray ray) const
+    {
+        Ray r = ray;
+        r.origin = _invRotTransform * ((ray.origin - _translation) / _scale);
+        r.direction = _invRotTransform * ray.direction;
+        r.direction = normalize(r.direction);
+        
+        return r;
     }
     
 private:

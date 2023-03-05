@@ -18,6 +18,7 @@
 		74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
 		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
 		74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */; };
+		74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
@@ -59,6 +60,8 @@
 		74AF133F29B4466B00F9BBA8 /* CellShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CellShader.cpp; sourceTree = "<group>"; };
 		74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderCPUViewController.mm; sourceTree = "<group>"; };
 		74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCPUViewController.h; sourceTree = "<group>"; };
+		74AF134429B53D5300F9BBA8 /* Culling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Culling.cpp; sourceTree = "<group>"; };
+		74AF134529B53D5300F9BBA8 /* Culling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Culling.h; sourceTree = "<group>"; };
 		74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonDefinitions.h; sourceTree = "<group>"; };
 		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
@@ -151,6 +154,8 @@
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
+				74AF134529B53D5300F9BBA8 /* Culling.h */,
+				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
 				74DAA70E29AEEE7200171C03 /* World.cpp */,
 				74DAA70F29AEEE7200171C03 /* World.h */,
 				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
@@ -179,16 +184,16 @@
 			children = (
 				74DAA6EE29ADB5A200171C03 /* SDFPlane.h */,
 				74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */,
-				74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */,
 				74DAA6F129ADB5A200171C03 /* SDFGeometry.h */,
-				74DAA6F229ADB5A200171C03 /* SDFSphere.h */,
 				74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */,
-				74FB546529B433CD00A20E26 /* SDFBox.cpp */,
+				74DAA6F229ADB5A200171C03 /* SDFSphere.h */,
+				74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */,
 				74FB546429B433CD00A20E26 /* SDFBox.h */,
-				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
+				74FB546529B433CD00A20E26 /* SDFBox.cpp */,
 				74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */,
-				74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */,
+				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
 				74DAA70C29ADBC5700171C03 /* SDFUnion.h */,
+				74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */,
 			);
 			path = SDFGeometry;
 			sourceTree = "<group>";
@@ -293,6 +298,7 @@
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
+				74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */,
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,

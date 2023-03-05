@@ -9,6 +9,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
+#include "Ray.h"
 
 class SDFGeometry final
 {
@@ -32,3 +33,4 @@ float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)
         geometry.computeDistance(position + eps.yyx) - dist
     });
 }
+

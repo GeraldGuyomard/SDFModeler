@@ -38,7 +38,7 @@ class Scene
 public:
     
     template <typename TShader>
-    SDFResult rayMarch(Ray ray, TShader shader) const
+    SDFResult rayMarch(Ray ray, TShader shader)
     {
         constexpr float kZ = 0;
         
@@ -88,7 +88,7 @@ class Environment
 public:
     
     template <typename TShader>
-    SDFResult rayMarch(Ray ray, TShader shader) const
+    SDFResult rayMarch(Ray ray, TShader shader)
     {
         constexpr float kGridGreyLevel = 0.5f;
         const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
