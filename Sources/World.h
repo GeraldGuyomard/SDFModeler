@@ -42,7 +42,7 @@ public:
     {
         constexpr float kZ = 0;
         
-        Sphere redSphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
+        Sphere redSphere { ray, { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
         
         float3 pos = float3 {0.5, 0, kZ};
         
@@ -50,6 +50,7 @@ public:
         
         Box whiteBox
         {
+            ray,
             { float3 { 0.4f, 0.4f, 0.4f } }, // geometry
             { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
             { float4 { 1, 1, 1, 1 } } // material
@@ -57,19 +58,20 @@ public:
         
         Box whiteBoxHalf
         {
+            ray,
             { float3 { 0.4f * s, 0.4f * s, 0.4f * s } }, // geometry
             { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
         
-        Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
-        Sphere greenSphere { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
+        Sphere blueSphere { ray, { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
+        Sphere greenSphere { ray, { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
-        Sphere spherePart { { 0.4f }, // geom
+        Sphere spherePart { ray, { 0.4f }, // geom
             { float3 { -2., 0.6, kZ + 0.5f } } // material
         };
         
-        RoundedBox boxPart {
+        RoundedBox boxPart { ray,
             { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
             { float3 { -2., 0, kZ + 0.5f } } // transform
         };
@@ -77,7 +79,7 @@ public:
         using TUnion = SDFUnion<Sphere, RoundedBox>;
         TUnion sdfUnion(spherePart, boxPart);
         
-        SDFObject<TUnion, RSTTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
+        SDFObject<TUnion, RSTTransformer, ConstMaterial> uni(ray, sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
         
         return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     }
@@ -94,7 +96,7 @@ public:
         const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
         //Plane grid({}, { float3(-10.f) }, { color } );
         
-        Grid grid({}, { float3(-10.f) }, { 1.f , color });
+        Grid grid(ray, {}, { float3(-10.f) }, { 1.f , color });
         
         const auto res = ::rayMarch(ray, shader, grid);
         

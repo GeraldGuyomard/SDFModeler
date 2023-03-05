@@ -11,17 +11,17 @@
 #include "Transformer/Transformer.h"
 #include "Material/Material.h"
 #include "Culling.h"
+#include "Ray.h"
 
 template <typename TGeometry, typename TTransformer, typename TMaterial>
 class SDFObject final
 {
 public:
     
-    SDFObject(TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
-    : _geometry(geometry), _transformer(transformer), _material(material)
-    {}
-    
-    void setCulling(Ray ray)
+    SDFObject(Ray ray, TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
+    : _geometry(geometry),
+    _transformer(transformer),
+    _material(material)
     {
         const Ray localRay = _transformer.localRay(ray);
         _culled = evaluateCulling(_geometry, localRay);
@@ -47,18 +47,6 @@ private:
     const TTransformer _transformer;
     const TMaterial _material;
     
-    bool _culled = false;
+    bool _culled;
 };
 
-template <typename TFirstSDFObject>
-void setCulling(Ray ray, TFirstSDFObject first)
-{
-    first.setCulling(ray);
-}
-
-template <typename TFirstSDFObject, typename... TSDFObjects>
-void setCulling(Ray ray, TFirstSDFObject first, TSDFObjects... others)
-{
-    setCulling(ray, first);
-    setCulling(ray, others...);
-}

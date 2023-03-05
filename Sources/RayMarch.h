@@ -44,8 +44,6 @@ SDFResult rayMarch(Ray ray, TShader shader, TPrimitive primitive)
 template <typename TShader, typename... TPrimitives>
 SDFResult rayMarch(Ray ray, TShader shader, TPrimitives... primitives)
 {
-    setCulling(ray, primitives...);
-    
     constexpr int kNbSteps = 100;
     
     float d = 0.f;
