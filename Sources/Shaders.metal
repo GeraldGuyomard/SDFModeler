@@ -30,7 +30,7 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]])
 {
-    //PhongShader shader;
-    CellShader shader;
+    PhongShader shader;
+    //CellShader shader;
     return render(in.viewportNDC, shader, uniforms);
 }

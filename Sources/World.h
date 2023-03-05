@@ -66,12 +66,12 @@ public:
         Sphere greenSphere { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
         Sphere spherePart { { 0.4f }, // geom
-            { float3 { -1.5, 0.6, kZ + 2.5f } } // material
+            { float3 { -2., 0.6, kZ + 0.5f } } // material
         };
         
         RoundedBox boxPart {
             { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
-            { float3 { -1.5, 0, kZ + 2.5f } } // transform
+            { float3 { -2., 0, kZ + 0.5f } } // transform
         };
         
         using TUnion = SDFUnion<Sphere, RoundedBox>;
