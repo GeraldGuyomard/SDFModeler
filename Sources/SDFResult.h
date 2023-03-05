@@ -37,43 +37,26 @@ struct SDFResult final
     }
 };
 
-template <typename TPrimitive>
-float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p)
-{
-    if (dist > kDistanceEpsilon)
-    {
-        return { 0.f };
-    }
-    
-    float3 normal = computeNormal(primitive, dist, p);
-    
-    float3 lightDir = normalize(float3 { -1.f, -1.f, -1.f });
-    float intensity = max(0.1f, dot(-normal, lightDir));
-
-    // L = 2 * dot(N, L) * N - L
-    float3 L = (2.f * dot(normal, lightDir) * normal) - lightDir;
-    
-    float spec = max(0.f, dot(ray.direction, L));
-    spec = 0.8f * pow(spec, 30.f);
-    
-    const float4 albedo = primitive.computeAlbedo(p);
-    return (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
-}
-
-template <typename TPrimitive>
-SDFResult computeSDF(float3 p, Ray ray, TPrimitive primitive)
+template <typename TShader, typename TPrimitive>
+SDFResult computeSDF(float3 p, Ray ray, TShader shader, TPrimitive primitive)
 {
     const float d = primitive.computeDistance(p);
-    const float4 c = computeShade(primitive, ray, d, p);
+    
+    if (d > kDistanceEpsilon)
+    {
+        return { d, 0.f };
+    }
+    
+    const float4 c = shader.computeShade(primitive, ray, d, p);
     
     return { d, c };
 }
 
-template <typename TFirstPrimitive, typename... TPrimitives>
-SDFResult computeSDF(float3 p, Ray ray, TFirstPrimitive firstPrimitive, TPrimitives... primitives)
+template <typename TShader, typename TFirstPrimitive, typename... TPrimitives>
+SDFResult computeSDF(float3 p, Ray ray, TShader shader, TFirstPrimitive firstPrimitive, TPrimitives... primitives)
 {
-    SDFResult r1 = computeSDF(p, ray, firstPrimitive);
-    SDFResult r2 = computeSDF(p, ray, primitives...);
+    SDFResult r1 = computeSDF(p, ray, shader, firstPrimitive);
+    SDFResult r2 = computeSDF(p, ray, shader, primitives...);
     
     return (r1.distance <= r2.distance) ? r1 : r2;
 }

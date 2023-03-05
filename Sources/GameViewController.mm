@@ -57,8 +57,9 @@
     p.x = 2.f * (p.x - (0.5f * size.x)) / size.x;
     p.y = 2.f * (p.y - (0.5f * size.y)) / size.y;
     
+    PhongShader shader;
     const auto* uniforms = _renderer.uniforms;
-    const auto pixel = render(p, *uniforms);
+    const auto pixel = render(p, shader, *uniforms);
     
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
 }

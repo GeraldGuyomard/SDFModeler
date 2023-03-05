@@ -13,6 +13,9 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
+
+#include "FragmentShader/PhongShader.h"
+
 #include "Transformer/StandardTransformers.h"
 #include "Material/ConstMaterial.h"
 #include "Material/GridMaterial.h"
@@ -33,7 +36,8 @@ class Scene
 {
 public:
     
-    SDFResult rayMarch(Ray ray) const
+    template <typename TShader>
+    SDFResult rayMarch(Ray ray, TShader shader) const
     {
         constexpr float kZ = 0;
         
@@ -74,14 +78,16 @@ public:
         
         SDFObject<TUnion, RSTTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
         
-        return ::rayMarch(ray, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
+        return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     }
 };
 
 class Environment
 {
 public:
-    SDFResult rayMarch(Ray ray) const
+    
+    template <typename TShader>
+    SDFResult rayMarch(Ray ray, TShader shader) const
     {
         constexpr float kGridGreyLevel = 0.5f;
         const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
@@ -89,7 +95,7 @@ public:
         
         Grid grid({}, { float3(-10.f) }, { 1.f , color });
         
-        const auto res = ::rayMarch(ray, grid);
+        const auto res = ::rayMarch(ray, shader, grid);
         
         if (res.isValid())
         {
@@ -104,12 +110,13 @@ public:
     }
 };
 
-INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms)
+template <typename TShader>
+INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& uniforms)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
     Scene scene;
-    auto res = scene.rayMarch(ray);
+    auto res = scene.rayMarch(ray, shader);
     if (res.isValid())
     {
         return res.color;
@@ -117,7 +124,7 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms)
 
     // Test Env Last
     Environment env;
-    res = env.rayMarch(ray);
+    res = env.rayMarch(ray, shader);
 
     return res.color;
 }

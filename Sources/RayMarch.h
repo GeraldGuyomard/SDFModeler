@@ -12,8 +12,8 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "SDFResult.h"
 
-template <typename TPrimitive>
-SDFResult rayMarch(Ray ray, TPrimitive primitive)
+template <typename TShader, typename TPrimitive>
+SDFResult rayMarch(Ray ray, TShader shader, TPrimitive primitive)
 {
     constexpr int kNbSteps = 100;
     
@@ -22,7 +22,7 @@ SDFResult rayMarch(Ray ray, TPrimitive primitive)
     for (int i=0; i < kNbSteps; ++i)
     {
         float3 p = ray.pt(d);
-        auto result = computeSDF(p, ray, primitive);
+        auto result = computeSDF(p, ray, shader, primitive);
         
         if (result.hit())
         {
@@ -41,8 +41,8 @@ SDFResult rayMarch(Ray ray, TPrimitive primitive)
 }
 
 
-template <typename... TPrimitives>
-SDFResult rayMarch(Ray ray, TPrimitives... primitives)
+template <typename TShader, typename... TPrimitives>
+SDFResult rayMarch(Ray ray, TShader shader, TPrimitives... primitives)
 {
     constexpr int kNbSteps = 100;
     
@@ -51,7 +51,7 @@ SDFResult rayMarch(Ray ray, TPrimitives... primitives)
     for (int i=0; i < kNbSteps; ++i)
     {
         float3 p = ray.pt(d);
-        auto result = computeSDF(p, ray, primitives...);
+        auto result = computeSDF(p, ray, shader, primitives...);
         
         if (result.hit())
         {
