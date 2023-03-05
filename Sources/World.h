@@ -15,6 +15,7 @@
 #include "SDFObject.h"
 
 #include "FragmentShader/PhongShader.h"
+#include "FragmentShader/CellShader.h"
 
 #include "Transformer/StandardTransformers.h"
 #include "Material/ConstMaterial.h"

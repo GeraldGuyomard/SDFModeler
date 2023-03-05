@@ -16,6 +16,7 @@
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
 		74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
+		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
@@ -53,6 +54,8 @@
 		74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FragmentShader.cpp; sourceTree = "<group>"; };
 		74AF133A29B442AE00F9BBA8 /* FragmentShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FragmentShader.h; sourceTree = "<group>"; };
 		74AF133B29B442AE00F9BBA8 /* PhongShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhongShader.h; sourceTree = "<group>"; };
+		74AF133E29B4466B00F9BBA8 /* CellShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CellShader.h; sourceTree = "<group>"; };
+		74AF133F29B4466B00F9BBA8 /* CellShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CellShader.cpp; sourceTree = "<group>"; };
 		74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonDefinitions.h; sourceTree = "<group>"; };
 		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
@@ -160,6 +163,8 @@
 				74AF133A29B442AE00F9BBA8 /* FragmentShader.h */,
 				74AF133829B442AE00F9BBA8 /* PhongShader.cpp */,
 				74AF133B29B442AE00F9BBA8 /* PhongShader.h */,
+				74AF133F29B4466B00F9BBA8 /* CellShader.cpp */,
+				74AF133E29B4466B00F9BBA8 /* CellShader.h */,
 			);
 			path = FragmentShader;
 			sourceTree = "<group>";
@@ -281,6 +286,7 @@
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
+				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
