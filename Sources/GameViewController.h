@@ -13,4 +13,8 @@
 // Our macOS view controller.
 @interface GameViewController : NSViewController
 
++(GameViewController*)instance;
+
+@property(readonly, nonatomic) Renderer* renderer;
+
 @end

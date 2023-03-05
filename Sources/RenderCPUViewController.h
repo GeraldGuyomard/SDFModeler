@@ -10,4 +10,8 @@
 // Our macOS view controller.
 @interface RenderCPUViewController : NSViewController
 
+- (IBAction) render:(id)sender;
+
+@property(nonatomic) IBOutlet NSImageView* renderView;
+
 @end

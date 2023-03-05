@@ -6,7 +6,6 @@
 //
 
 #import "GameViewController.h"
-#import "Renderer.h"
 #include "CommonDefinitions.h"
 
 #include "World.h"
@@ -22,10 +21,24 @@
     simd_float3 _orbitOrigin;
 }
 
+static GameViewController* s_Instance = nil;
+
++(GameViewController*)instance
+{
+    return s_Instance;
+}
+
+- (Renderer*)renderer
+{
+    return _renderer;
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
+    s_Instance = self;
+    
     _view = (MTKView *)self.view;
 
     _view.device = MTLCreateSystemDefaultDevice();
@@ -50,12 +63,9 @@
     
     NSRect r = self.view.frame;
     float2 size { float(r.size.width), float(r.size.height) };
-    
     float2 p { float(ptInPixels.x), float(ptInPixels.y) };
     
-    // NDC [-1, +1]
-    p.x = 2.f * (p.x - (0.5f * size.x)) / size.x;
-    p.y = 2.f * (p.y - (0.5f * size.y)) / size.y;
+    p = pixelToNDC(size, p);
     
     PhongShader shader;
     const auto* uniforms = _renderer.uniforms;
