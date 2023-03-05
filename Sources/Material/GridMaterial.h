@@ -14,7 +14,7 @@ class GridMaterial final
 {
 public:
     
-    GridMaterial(float cellSize, float4 color)
+    GridMaterial(float2 cellSize, float4 color)
     : _cellSize(cellSize), _color(color)
     {}
     
@@ -36,6 +36,6 @@ public:
     }
     
 private:
-    const float _cellSize;
+    const float2 _cellSize;
     const float4 _color;
 };

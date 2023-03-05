@@ -20,5 +20,4 @@
 
 @end
 
-float2 pixelToNDC(float2 viewportSize, float2 pixelCoordinates);
 

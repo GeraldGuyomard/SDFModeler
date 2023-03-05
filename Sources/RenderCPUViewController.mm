@@ -25,8 +25,9 @@
 
 - (IBAction) render:(id)sender
 {
-    CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-
+    //CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
+    auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+    
     auto gameViewController = [GameViewController instance];
     auto renderer = gameViewController.renderer;
     

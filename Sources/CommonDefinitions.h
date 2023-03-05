@@ -87,7 +87,7 @@
 
     inline float2 step(float m, float2 in)
     {
-        return step(in, float2 { m });
+        return step(in, float2 { m, m });
     }
 
 #endif
@@ -292,4 +292,13 @@ INLINE float4x4 recompose(float4x4Decomposition decomp)
     m.columns[3].xyz = decomp.position;
     
     return m;
+}
+
+INLINE float2 pixelToNDC(float2 viewportSize, float2 p)
+{
+    // NDC [-1, +1]
+    p.x = 2.f * (p.x - (0.5f * viewportSize.x)) / viewportSize.x;
+    p.y = 2.f * (p.y - (0.5f * viewportSize.y)) / viewportSize.y;
+    
+    return p;
 }

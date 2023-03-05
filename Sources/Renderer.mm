@@ -256,11 +256,3 @@ Vertex s_Vertices[4] = {
 
 @end
 
-float2 pixelToNDC(float2 viewportSize, float2 p)
-{
-    // NDC [-1, +1]
-    p.x = 2.f * (p.x - (0.5f * viewportSize.x)) / viewportSize.x;
-    p.y = 2.f * (p.y - (0.5f * viewportSize.y)) / viewportSize.y;
-    
-    return p;
-}
