@@ -28,7 +28,8 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 }
 
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
-                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]])
+                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+                               device MutableState& mutableState [[ buffer(BufferIndexMutableStates) ]])
 {
     PhongShader shader;
     //CellShader shader;

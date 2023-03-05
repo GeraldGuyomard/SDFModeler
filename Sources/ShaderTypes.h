@@ -17,7 +17,8 @@ enum BufferIndex : EnumBackingType
 {
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
-    BufferIndexUniforms         = 2
+    BufferIndexUniforms         = 2,
+    BufferIndexMutableStates = 3
 };
 
 enum VertexAttribute : EnumBackingType
@@ -33,4 +34,7 @@ struct Vertex final
 };
 
 
-
+struct MutableState final
+{
+    bool culled[16];
+};

@@ -16,6 +16,7 @@
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
+constexpr size_t kAlignedMutableStatesSize = (sizeof(MutableState) & ~0xFF) + 0x100;
 
 Vertex s_Vertices[4] = {
     { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
@@ -31,17 +32,21 @@ Vertex s_Vertices[4] = {
     id <MTLCommandQueue> _commandQueue;
 
     id <MTLBuffer> _dynamicUniformBuffer;
+    id <MTLBuffer> _dynamicMutableStateBuffer;
+    
     id <MTLBuffer> _quadVertexBuffer;
     id <MTLRenderPipelineState> _pipelineState;
     id <MTLDepthStencilState> _depthState;
     MTLVertexDescriptor *_mtlVertexDescriptor;
 
     uint32_t _uniformBufferOffset;
-
     uint8_t _uniformBufferIndex;
-
     void* _uniformBufferAddress;
 
+    uint32_t _mutableStateBufferOffset;
+    uint8_t _mutableStateBufferIndex;
+    void* _mutableStateBufferAddress;
+    
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
     
@@ -117,13 +122,25 @@ Vertex s_Vertices[4] = {
     depthStateDesc.depthWriteEnabled = YES;
     _depthState = [_device newDepthStencilStateWithDescriptor:depthStateDesc];
 
-    const NSUInteger uniformBufferSize = kAlignedUniformsSize * kMaxBuffersInFlight;
+    {
+        const NSUInteger bufferSize = kAlignedUniformsSize * kMaxBuffersInFlight;
 
-    _dynamicUniformBuffer = [_device newBufferWithLength:uniformBufferSize
-                                                 options:MTLResourceStorageModeShared];
+        _dynamicUniformBuffer = [_device newBufferWithLength:bufferSize
+                                                     options:MTLResourceStorageModeShared];
 
-    _dynamicUniformBuffer.label = @"UniformBuffer";
+        _dynamicUniformBuffer.label = @"UniformBuffer";
+    }
 
+    {
+        const NSUInteger bufferSize = kAlignedMutableStatesSize * kMaxBuffersInFlight;
+
+        _dynamicMutableStateBuffer = [_device newBufferWithLength:bufferSize
+                                                     options:MTLResourceStorageModeShared];
+
+        _dynamicMutableStateBuffer.label = @"MutableStateBuffer";
+    }
+
+    
     _quadVertexBuffer = [_device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
     
@@ -138,10 +155,12 @@ Vertex s_Vertices[4] = {
     /// Update the state of our uniform buffers before rendering
 
     _uniformBufferIndex = (_uniformBufferIndex + 1) % kMaxBuffersInFlight;
-
     _uniformBufferOffset = kAlignedUniformsSize * _uniformBufferIndex;
-
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
+    
+    _mutableStateBufferIndex = (_mutableStateBufferIndex + 1) % kMaxBuffersInFlight;
+    _mutableStateBufferOffset = kAlignedMutableStatesSize * _uniformBufferIndex;
+    _mutableStateBufferAddress = ((uint8_t*)_dynamicMutableStateBuffer.contents) + _mutableStateBufferOffset;
 }
 
 - (float4x4)cameraTransform
@@ -168,10 +187,6 @@ Vertex s_Vertices[4] = {
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.cameraMatrix = _cameraTransform;
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
-    
-    // test
-    //const auto near = viewToWorld(simd_float2 {0, 0}, 0, *uniforms);
-    //const auto far = viewToWorld(simd_float2 {0, 0}, 1, *uniforms);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
@@ -214,14 +229,13 @@ Vertex s_Vertices[4] = {
         [renderEncoder setRenderPipelineState:_pipelineState];
         [renderEncoder setDepthStencilState:_depthState];
 
-        [renderEncoder setVertexBuffer:_dynamicUniformBuffer
-                                offset:_uniformBufferOffset
-                               atIndex:BufferIndexUniforms];
-
         [renderEncoder setFragmentBuffer:_dynamicUniformBuffer
                                   offset:_uniformBufferOffset
                                  atIndex:BufferIndexUniforms];
 
+        [renderEncoder setFragmentBuffer:_dynamicMutableStateBuffer
+                                  offset:_mutableStateBufferIndex
+                                 atIndex:BufferIndexMutableStates];
 
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer
