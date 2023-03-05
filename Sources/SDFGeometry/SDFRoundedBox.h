@@ -23,7 +23,19 @@ public:
         return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - _radius;
     }
     
+    float3 halfSize() const { return _halfSize; }
+    
 private:
     const float3 _halfSize;
     const float _radius;
 };
+
+template <>
+INLINE bool evaluateCulling<SDFRoundedBox>(SDFRoundedBox box, Ray ray)
+{
+    const float3 size = box.halfSize();
+    
+    const float r = max(max(size.x, size.y), size.z) * 2.f;
+    
+    return evaluateSphereCulling(r, ray);
+}

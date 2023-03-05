@@ -48,10 +48,10 @@ public:
         
         constexpr float s = 0.5f;
         
-        Box whiteBox
+        RoundedBox whiteBox
         {
             ray,
-            { float3 { 0.4f, 0.4f, 0.4f } }, // geometry
+            { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
             { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
@@ -59,7 +59,7 @@ public:
         Box whiteBoxHalf
         {
             ray,
-            { float3 { 0.4f * s, 0.4f * s, 0.4f * s } }, // geometry
+            { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
             { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
