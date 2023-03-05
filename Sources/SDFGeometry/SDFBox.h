@@ -13,8 +13,8 @@ class SDFBox final
 {
 public:
     
-    SDFBox(float3 size)
-    : _halfSize(size * 0.5f)
+    SDFBox(float3 halfSize)
+    : _halfSize(halfSize)
     {}
     
     float computeDistance(float3 p) const

@@ -13,8 +13,8 @@ class SDFRoundedBox final
 {
 public:
     
-    SDFRoundedBox(float3 size, float radius)
-    : _halfSize(size * 0.5f), _radius(radius)
+    SDFRoundedBox(float3 halfSize, float radius)
+    : _halfSize(halfSize), _radius(radius)
     {}
     
     float computeDistance(float3 p) const

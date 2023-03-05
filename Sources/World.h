@@ -50,7 +50,8 @@ public:
             { float4 { 1, 1, 1, 1 } } // material
         };
         
-        Box whiteBoxHalf {
+        Box whiteBoxHalf
+        {
             { float3 { 0.4f * s, 0.4f * s, 0.4f * s } }, // geometry
             { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
             { float4 { 1, 1, 1, 1 } } // material
