@@ -19,12 +19,14 @@
 
 #include "SDFGeometry/SDFSphere.h"
 #include "SDFGeometry/SDFPlane.h"
+#include "SDFGeometry/SDFBox.h"
 #include "SDFGeometry/SDFRoundedBox.h"
 #include "SDFGeometry/SDFUnion.h"
 
 using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
 using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
 using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
+using Box = SDFObject<SDFBox, ConstTransformer, ConstMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, ConstTransformer, ConstMaterial>;
 
 class Scene
@@ -35,44 +37,43 @@ public:
     {
         constexpr float kZ = 0;
         
-        Sphere sphere1 { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
-        
+        Sphere redSphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
         
         float3 pos = float3 {0.5, 0, kZ};
         
         constexpr float s = 0.5f;
         
-        ConstTransformer transformer { pos, float3 {1, 1, 0}, degToRad(45.f), s };
-        //ConstTransformer transformer { float3 {0.5, 0, kZ}, float3 {0, 0, 1}, degToRad(45.f)  };
-        
-        RoundedBox box {
-            { float3 { 0.2f, 0.8f, 0.2f }, 0.1 }, // geometry
-            transformer, // transform
+        Box whiteBox
+        {
+            { float3 { 0.4f, 0.4f, 0.4f } }, // geometry
+            { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
             { float4 { 1, 1, 1, 1 } } // material
         };
         
-#if 1
-        Sphere sphere2 { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
-        Sphere sphere3 { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
+        Box whiteBoxHalf {
+            { float3 { 0.4f * s, 0.4f * s, 0.4f * s } }, // geometry
+            { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
+            { float4 { 1, 1, 1, 1 } } // material
+        };
         
-        Sphere sphere4 { { 0.4f }, // geom
+        Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
+        Sphere greenSphere { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
+        
+        Sphere spherePart { { 0.4f }, // geom
             { float3 { -1.5, 0.6, kZ + 2.5f } } // material
         };
         
-        RoundedBox box2 {
+        RoundedBox boxPart {
             { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
             { float3 { -1.5, 0, kZ + 2.5f } } // transform
         };
         
         using TUnion = SDFUnion<Sphere, RoundedBox>;
-        TUnion sdfUnion(sphere4, box2);
+        TUnion sdfUnion(spherePart, boxPart);
         
         SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
         
-        return ::rayMarch(ray, sphere1, sphere2, sphere3, box, uni);
-#else
-        return ::rayMarch(ray, box, sphere1);
-#endif
+        return ::rayMarch(ray, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     }
 };
 

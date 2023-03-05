@@ -9,21 +9,20 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 
-class SDFRoundedBox final
+class SDFBox final
 {
 public:
     
-    SDFRoundedBox(float3 size, float radius)
-    : _halfSize(size * 0.5f), _radius(radius)
+    SDFBox(float3 size)
+    : _halfSize(size * 0.5f)
     {}
     
     float computeDistance(float3 p) const
     {
         float3 q = abs(p) - _halfSize;
-        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - _radius;
+        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f);
     }
     
 private:
     const float3 _halfSize;
-    const float _radius;
 };

@@ -30,6 +30,7 @@
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 		74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
 		74DAA71029AEEE7200171C03 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
+		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,8 @@
 		74DAA70C29ADBC5700171C03 /* SDFUnion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFUnion.h; sourceTree = "<group>"; };
 		74DAA70E29AEEE7200171C03 /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
 		74DAA70F29AEEE7200171C03 /* World.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = World.h; sourceTree = "<group>"; };
+		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
+		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +155,8 @@
 				74DAA6F129ADB5A200171C03 /* SDFGeometry.h */,
 				74DAA6F229ADB5A200171C03 /* SDFSphere.h */,
 				74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */,
+				74FB546529B433CD00A20E26 /* SDFBox.cpp */,
+				74FB546429B433CD00A20E26 /* SDFBox.h */,
 				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
 				74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */,
 				74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */,
@@ -254,6 +259,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
+				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* ConstTransformer.cpp in Sources */,
