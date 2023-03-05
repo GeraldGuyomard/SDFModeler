@@ -22,6 +22,14 @@
     using EnumBackingType = metal::int32_t;
     #define VB_ATTRIBUTE(a) [[attribute(a)]]
 
+    float3x3 float3x3_identity()
+    {
+        return float3x3 {   {1, 0, 0},
+                            {0, 1, 0},
+                            {0, 0, 1},
+        };
+    }
+
     float4x4 float4x4_identity()
     {
         return float4x4 {   {1, 0, 0, 0},
@@ -41,6 +49,11 @@
 
     using EnumBackingType = int32_t;
     #define VB_ATTRIBUTE(a)
+
+    inline float3x3 float3x3_identity()
+    {
+        return matrix_identity_float3x3;
+    }
 
     inline float4x4 float4x4_identity()
     {
@@ -184,6 +197,21 @@ INLINE float4x4 matrix4x4_scale(float3 s)
     m.columns[3] = { 0,   0,  0,  1 };
     
     return m;
+}
+
+INLINE float3x3 matrix3x3_rotation(float radians, float3 axis)
+{
+    axis = normalize(axis);
+    float ct = cos(radians);
+    float st = sin(radians);
+    float ci = 1 - ct;
+    float x = axis.x, y = axis.y, z = axis.z;
+
+    return (simd_float3x3) {{
+        { ct + x * x * ci,     y * x * ci + z * st, z * x * ci - y * st },
+        { x * y * ci - z * st,     ct + y * y * ci, z * y * ci + x * st },
+        { x * z * ci + y * st, y * z * ci - x * st,     ct + z * z * ci }
+    }};
 }
 
 INLINE float4x4 matrix4x4_rotation(float radians, float3 axis)

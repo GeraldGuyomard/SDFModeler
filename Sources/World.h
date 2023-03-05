@@ -13,7 +13,7 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
-#include "Transformer/ConstTransformer.h"
+#include "Transformer/StandardTransformers.h"
 #include "Material/ConstMaterial.h"
 #include "Material/GridMaterial.h"
 
@@ -23,11 +23,11 @@
 #include "SDFGeometry/SDFRoundedBox.h"
 #include "SDFGeometry/SDFUnion.h"
 
-using Sphere = SDFObject<SDFSphere, ConstTransformer, ConstMaterial>;
-using Plane = SDFObject<SDFPlane, ConstTransformer, ConstMaterial>;
-using Grid = SDFObject<SDFPlane, ConstTransformer, GridMaterial>;
-using Box = SDFObject<SDFBox, ConstTransformer, ConstMaterial>;
-using RoundedBox = SDFObject<SDFRoundedBox, ConstTransformer, ConstMaterial>;
+using Sphere = SDFObject<SDFSphere, RSTTransformer, ConstMaterial>;
+using Plane = SDFObject<SDFPlane, RSTTransformer, ConstMaterial>;
+using Grid = SDFObject<SDFPlane, RSTTransformer, GridMaterial>;
+using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
+using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
 
 class Scene
 {
@@ -72,7 +72,7 @@ public:
         using TUnion = SDFUnion<Sphere, RoundedBox>;
         TUnion sdfUnion(spherePart, boxPart);
         
-        SDFObject<TUnion, ConstTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
+        SDFObject<TUnion, RSTTransformer, ConstMaterial> uni(sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
         
         return ::rayMarch(ray, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     }

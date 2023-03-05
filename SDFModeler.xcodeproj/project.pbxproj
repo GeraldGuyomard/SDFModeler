@@ -22,7 +22,7 @@
 		74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
 		74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */; };
 		74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */; };
-		74DAA6FC29ADB5B900171C03 /* ConstTransformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */; };
+		74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F929ADB5B900171C03 /* StandardTransformers.cpp */; };
 		74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FA29ADB5B900171C03 /* Transformer.cpp */; };
 		74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */; };
 		74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
@@ -64,8 +64,8 @@
 		74DAA6F129ADB5A200171C03 /* SDFGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFGeometry.h; sourceTree = "<group>"; };
 		74DAA6F229ADB5A200171C03 /* SDFSphere.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFSphere.h; sourceTree = "<group>"; };
 		74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFGeometry.cpp; sourceTree = "<group>"; };
-		74DAA6F829ADB5B900171C03 /* ConstTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstTransformer.h; sourceTree = "<group>"; };
-		74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstTransformer.cpp; sourceTree = "<group>"; };
+		74DAA6F829ADB5B900171C03 /* StandardTransformers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StandardTransformers.h; sourceTree = "<group>"; };
+		74DAA6F929ADB5B900171C03 /* StandardTransformers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StandardTransformers.cpp; sourceTree = "<group>"; };
 		74DAA6FA29ADB5B900171C03 /* Transformer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transformer.cpp; sourceTree = "<group>"; };
 		74DAA6FB29ADB5B900171C03 /* Transformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transformer.h; sourceTree = "<group>"; };
 		74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstMaterial.cpp; sourceTree = "<group>"; };
@@ -168,8 +168,8 @@
 		74DAA6F729ADB5B900171C03 /* Transformer */ = {
 			isa = PBXGroup;
 			children = (
-				74DAA6F829ADB5B900171C03 /* ConstTransformer.h */,
-				74DAA6F929ADB5B900171C03 /* ConstTransformer.cpp */,
+				74DAA6F829ADB5B900171C03 /* StandardTransformers.h */,
+				74DAA6F929ADB5B900171C03 /* StandardTransformers.cpp */,
 				74DAA6FA29ADB5B900171C03 /* Transformer.cpp */,
 				74DAA6FB29ADB5B900171C03 /* Transformer.h */,
 			);
@@ -262,7 +262,7 @@
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
-				74DAA6FC29ADB5B900171C03 /* ConstTransformer.cpp in Sources */,
+				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
