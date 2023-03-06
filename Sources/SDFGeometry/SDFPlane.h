@@ -19,4 +19,9 @@ public:
     {
         return p.y;
     }
+    
+    bool evaluateCulling(Ray ray) const
+    {
+        return false;
+    }
 };

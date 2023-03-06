@@ -23,9 +23,3 @@ INLINE bool evaluateSphereCulling(float radius, Ray ray)
     
     return d < 0.f;
 }
-
-template <typename TSDFGeometry>
-INLINE bool evaluateCulling(TSDFGeometry geometry, Ray ray)
-{
-    return false;
-}

@@ -19,12 +19,29 @@ public:
     
     float computeDistance(float3 p) const
     {
-        const float d1 = _p1.computeDistance(p);
-        const float d2 = _p2.computeDistance(p);
-        return min(d1, d2);
+        if (_p1.culled())
+        {
+            return _p2.computeDistance(p);
+        }
+        else if (_p2.culled())
+        {
+            return _p1.computeDistance(p);
+        }
+        else
+        {
+            const float d1 = _p1.computeDistance(p);
+            const float d2 = _p2.computeDistance(p);
+            return min(d1, d2);
+        }
+    }
+    
+    bool evaluateCulling(Ray ray) const
+    {
+        return _p1.culled() && _p2.culled();
     }
     
 private:
     const P1 _p1;
     const P2 _p2;
 };
+

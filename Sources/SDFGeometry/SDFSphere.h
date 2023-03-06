@@ -24,6 +24,11 @@ public:
         return length(p) - _radius;
     }
     
+    bool evaluateCulling(Ray ray) const
+    {
+        return evaluateSphereCulling(_radius, ray);
+    }
+    
     float radius() const { return _radius; }
     
 private:
@@ -38,9 +43,4 @@ float3 computeNormal<SDFSphere>(Sphere sphere, Ray ray, float dist, float3 posit
 }
 */
 
-template <>
-INLINE bool evaluateCulling<SDFSphere>(SDFSphere sphere, Ray ray)
-{
-    return evaluateSphereCulling(sphere.radius(), ray);
-}
 

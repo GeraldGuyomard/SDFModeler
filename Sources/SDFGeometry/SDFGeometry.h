@@ -16,6 +16,7 @@ class SDFGeometry final
 public:
     
     float computeDistance(float3 p) const;
+    bool evaluateCulling(Ray ray) const;
     
 private:
     SDFGeometry() = delete;

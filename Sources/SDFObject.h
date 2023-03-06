@@ -24,7 +24,7 @@ public:
     _material(material)
     {
         const Ray localRay = _transformer.localRay(ray);
-        _culled = evaluateCulling(_geometry, localRay);
+        _culled = _geometry.evaluateCulling(localRay);
     }
     
     bool culled() const
