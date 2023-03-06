@@ -26,6 +26,7 @@
 #include "SDFGeometry/SDFBox.h"
 #include "SDFGeometry/SDFRoundedBox.h"
 #include "SDFGeometry/SDFUnion.h"
+#include "SDFGeometry/SDFSubstraction.h"
 
 using Sphere = SDFObject<SDFSphere, RSTTransformer, ConstMaterial>;
 using Plane = SDFObject<SDFPlane, RSTTransformer, ConstMaterial>;
@@ -68,7 +69,7 @@ public:
         Sphere greenSphere { ray, { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
         
         Sphere spherePart { ray, { 0.4f }, // geom
-            { float3 { -2., 0.6, kZ + 0.5f } } // material
+            { float3 { -2., 0.6, kZ + 0.5f } } // transform
         };
         
         RoundedBox boxPart { ray,
@@ -76,10 +77,17 @@ public:
             { float3 { -2., 0, kZ + 0.5f } } // transform
         };
         
+        Sphere negativeSpherePart { ray, { 0.4f }, // geom
+            { float3 { -2., 0.3, kZ + 1.f } } // transform
+        };
+        
         using TUnion = SDFUnion<Sphere, RoundedBox>;
         TUnion sdfUnion(spherePart, boxPart);
         
-        SDFObject<TUnion, RSTTransformer, ConstMaterial> uni(ray, sdfUnion, {}, { float4 { 0, 1, 1, 1 } } );
+        using TComposite = SDFSubstraction<TUnion, Sphere>;
+        TComposite composite(sdfUnion, negativeSpherePart);
+        
+        SDFObject<TComposite, RSTTransformer, ConstMaterial> uni(ray, composite, {}, { float4 { 0, 1, 1, 1 } } );
         
         return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     }

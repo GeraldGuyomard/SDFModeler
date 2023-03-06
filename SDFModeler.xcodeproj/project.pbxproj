@@ -19,6 +19,7 @@
 		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
 		74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */; };
 		74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
+		74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134729B5BAC300F9BBA8 /* SDFSubstraction.cpp */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
@@ -62,6 +63,8 @@
 		74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCPUViewController.h; sourceTree = "<group>"; };
 		74AF134429B53D5300F9BBA8 /* Culling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Culling.cpp; sourceTree = "<group>"; };
 		74AF134529B53D5300F9BBA8 /* Culling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Culling.h; sourceTree = "<group>"; };
+		74AF134729B5BAC300F9BBA8 /* SDFSubstraction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFSubstraction.cpp; sourceTree = "<group>"; };
+		74AF134829B5BAC300F9BBA8 /* SDFSubstraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFSubstraction.h; sourceTree = "<group>"; };
 		74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonDefinitions.h; sourceTree = "<group>"; };
 		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
@@ -194,6 +197,8 @@
 				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
 				74DAA70C29ADBC5700171C03 /* SDFUnion.h */,
 				74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */,
+				74AF134729B5BAC300F9BBA8 /* SDFSubstraction.cpp */,
+				74AF134829B5BAC300F9BBA8 /* SDFSubstraction.h */,
 			);
 			path = SDFGeometry;
 			sourceTree = "<group>";
@@ -305,6 +310,7 @@
 				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
+				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
