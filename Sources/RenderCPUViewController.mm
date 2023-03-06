@@ -36,9 +36,10 @@
     std::vector<uint32_t> buffer;
     buffer.resize(size.width * size.height);
     
-    const float2 viewportSize { (float)size.width, (float)size.height };
-    const PhongShader shader;
     const auto* uniforms = renderer.uniforms;
+    
+    const float2 viewportSize { (float)size.width, (float)size.height };
+    const PhongShader shader(uniforms->lightDirection);
     
     for (float y=0; y < size.height; ++y)
     {

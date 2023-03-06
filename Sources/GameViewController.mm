@@ -67,8 +67,10 @@ static GameViewController* s_Instance = nil;
     
     p = pixelToNDC(size, p);
     
-    PhongShader shader;
     const auto* uniforms = _renderer.uniforms;
+    
+    PhongShader shader(uniforms->lightDirection);
+    
     const auto pixel = render(p, shader, *uniforms);
     
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);

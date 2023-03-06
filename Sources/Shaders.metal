@@ -31,7 +31,7 @@ fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
                                device MutableState& mutableState [[ buffer(BufferIndexMutableStates) ]])
 {
-    PhongShader shader;
+    PhongShader shader(uniforms.lightDirection);
     //CellShader shader;
     return render(in.viewportNDC, shader, uniforms);
 }

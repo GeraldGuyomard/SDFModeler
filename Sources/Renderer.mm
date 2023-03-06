@@ -187,6 +187,7 @@ Vertex s_Vertices[4] = {
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.cameraMatrix = _cameraTransform;
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
+    uniforms.lightDirection = float3 { -1, -1, -1 };
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
