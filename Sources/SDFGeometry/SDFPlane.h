@@ -22,6 +22,12 @@ public:
     
     bool evaluateCulling(Ray ray) const
     {
-        return false;
+        // https://en.wikipedia.org/wiki/Line–plane_intersection
+        // d = (p0 - l0) . n / (l . n)
+        // p0 = (0, 0, 0), n = (0, 1, 0)
+        // -> -l0. y / l.y
+        const float d = -ray.origin.y / ray.direction.y;
+        
+        return (d < 0) || (d > ray.maxLength);
     }
 };
