@@ -11,7 +11,7 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "Ray.h"
 
-constexpr static CONSTANT float kDistanceEpsilon = 1e-2f;
+constexpr static CONSTANT float kDistanceEpsilon = 1e-3f;
 
 struct SDFResult final
 {
