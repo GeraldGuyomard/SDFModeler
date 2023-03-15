@@ -14,6 +14,7 @@
 		7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DD29A1CB64009632C3 /* Assets.xcassets */; };
 		7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DF29A1CB64009632C3 /* Main.storyboard */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
+		7451041729C1538200F69BC4 /* DynamicSDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* DynamicSDFObject.cpp */; };
 		74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
 		74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
 		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
@@ -53,6 +54,8 @@
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
+		7451041529C1538100F69BC4 /* DynamicSDFObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicSDFObject.cpp; sourceTree = "<group>"; };
+		7451041629C1538100F69BC4 /* DynamicSDFObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicSDFObject.h; sourceTree = "<group>"; };
 		74AF133829B442AE00F9BBA8 /* PhongShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhongShader.cpp; sourceTree = "<group>"; };
 		74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FragmentShader.cpp; sourceTree = "<group>"; };
 		74AF133A29B442AE00F9BBA8 /* FragmentShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FragmentShader.h; sourceTree = "<group>"; };
@@ -157,6 +160,8 @@
 				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
+				7451041529C1538100F69BC4 /* DynamicSDFObject.cpp */,
+				7451041629C1538100F69BC4 /* DynamicSDFObject.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
 				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
 				74DAA70E29AEEE7200171C03 /* World.cpp */,
@@ -307,6 +312,7 @@
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
+				7451041729C1538200F69BC4 /* DynamicSDFObject.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
