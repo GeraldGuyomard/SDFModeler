@@ -16,7 +16,7 @@
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
-constexpr size_t kAlignedMutableStatesSize = (sizeof(MutableState) & ~0xFF) + 0x100;
+constexpr size_t kAlignedDynamicScenesSize = (sizeof(DynamicScene) & ~0xFF) + 0x100;
 
 Vertex s_Vertices[4] = {
     { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
@@ -32,7 +32,7 @@ Vertex s_Vertices[4] = {
     id <MTLCommandQueue> _commandQueue;
 
     id <MTLBuffer> _dynamicUniformBuffer;
-    id <MTLBuffer> _dynamicMutableStateBuffer;
+    id <MTLBuffer> _dynamicDynamicSceneBuffer;
     
     id <MTLBuffer> _quadVertexBuffer;
     id <MTLRenderPipelineState> _pipelineState;
@@ -43,9 +43,9 @@ Vertex s_Vertices[4] = {
     uint8_t _uniformBufferIndex;
     void* _uniformBufferAddress;
 
-    uint32_t _mutableStateBufferOffset;
-    uint8_t _mutableStateBufferIndex;
-    void* _mutableStateBufferAddress;
+    uint32_t _dynamicSceneBufferOffset;
+    uint8_t _dynamicSceneBufferIndex;
+    void* _dynamicSceneBufferAddress;
     
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
@@ -132,12 +132,12 @@ Vertex s_Vertices[4] = {
     }
 
     {
-        const NSUInteger bufferSize = kAlignedMutableStatesSize * kMaxBuffersInFlight;
+        const NSUInteger bufferSize = kAlignedDynamicScenesSize * kMaxBuffersInFlight;
 
-        _dynamicMutableStateBuffer = [_device newBufferWithLength:bufferSize
+        _dynamicDynamicSceneBuffer = [_device newBufferWithLength:bufferSize
                                                      options:MTLResourceStorageModeShared];
 
-        _dynamicMutableStateBuffer.label = @"MutableStateBuffer";
+        _dynamicDynamicSceneBuffer.label = @"DynamicSceneBuffer";
     }
 
     
@@ -158,9 +158,9 @@ Vertex s_Vertices[4] = {
     _uniformBufferOffset = kAlignedUniformsSize * _uniformBufferIndex;
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
     
-    _mutableStateBufferIndex = (_mutableStateBufferIndex + 1) % kMaxBuffersInFlight;
-    _mutableStateBufferOffset = kAlignedMutableStatesSize * _uniformBufferIndex;
-    _mutableStateBufferAddress = ((uint8_t*)_dynamicMutableStateBuffer.contents) + _mutableStateBufferOffset;
+    _dynamicSceneBufferIndex = (_dynamicSceneBufferIndex + 1) % kMaxBuffersInFlight;
+    _dynamicSceneBufferOffset = kAlignedDynamicScenesSize * _uniformBufferIndex;
+    _dynamicSceneBufferAddress = ((uint8_t*)_dynamicDynamicSceneBuffer.contents) + _dynamicSceneBufferOffset;
 }
 
 - (float4x4)cameraTransform
@@ -178,6 +178,12 @@ Vertex s_Vertices[4] = {
     return (Uniforms*)_uniformBufferAddress;
 }
 
+-(const DynamicScene*) mutableState
+{
+    return (DynamicScene*)_dynamicSceneBufferAddress;
+}
+
+
 - (void)_updateGameState
 {
     /// Update any game state before encoding renderint commands to our drawable
@@ -188,6 +194,9 @@ Vertex s_Vertices[4] = {
     uniforms.cameraMatrix = _cameraTransform;
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
+    
+    DynamicScene& state = *((DynamicScene*) _dynamicSceneBufferAddress);
+    state.size = 0;
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
@@ -234,9 +243,9 @@ Vertex s_Vertices[4] = {
                                   offset:_uniformBufferOffset
                                  atIndex:BufferIndexUniforms];
 
-        [renderEncoder setFragmentBuffer:_dynamicMutableStateBuffer
-                                  offset:_mutableStateBufferIndex
-                                 atIndex:BufferIndexMutableStates];
+        [renderEncoder setFragmentBuffer:_dynamicDynamicSceneBuffer
+                                  offset:_dynamicSceneBufferOffset
+                                 atIndex:BufferIndexDynamicScenes];
 
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer

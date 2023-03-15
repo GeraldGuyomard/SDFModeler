@@ -18,6 +18,19 @@ struct Uniforms final
     float3 lightDirection;
 };
 
+enum class ObjectType : uint32_t
+{
+    sphere = 0,
+    box = 1
+};
+
+struct DynamicScene final
+{
+    uint32_t size;
+    uint8_t buffer[2048];
+};
+
+
 INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)
 {
     auto p = uniforms.ndcToWorldTransform * float4 { ndc.x, ndc.y, z, 1 };

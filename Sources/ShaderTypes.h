@@ -18,7 +18,7 @@ enum BufferIndex : EnumBackingType
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
     BufferIndexUniforms         = 2,
-    BufferIndexMutableStates = 3
+    BufferIndexDynamicScenes = 3
 };
 
 enum VertexAttribute : EnumBackingType
@@ -31,10 +31,4 @@ struct Vertex final
 {
     simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
     simd_float2 viewportNDC VB_ATTRIBUTE(VertexAttributeViewportNDC);
-};
-
-
-struct MutableState final
-{
-    bool culled[16];
 };

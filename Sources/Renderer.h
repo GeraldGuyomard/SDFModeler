@@ -17,6 +17,7 @@
 
 @property(nonatomic) float4x4 cameraTransform;
 @property(nonatomic, readonly, nonnull) const Uniforms* uniforms;
+@property(nonatomic, readonly, nonnull) const DynamicScene* mutableState;
 
 @end
 

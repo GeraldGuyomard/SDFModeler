@@ -37,6 +37,7 @@
     buffer.resize(size.width * size.height);
     
     const auto* uniforms = renderer.uniforms;
+    const auto* mutableState = renderer.mutableState;
     
     const float2 viewportSize { (float)size.width, (float)size.height };
     const PhongShader shader(uniforms->lightDirection);
@@ -50,7 +51,7 @@
             
             const auto p = pixelToNDC(viewportSize, pixelCoordinates);
             
-            const auto fragment = render(p, shader, *uniforms);
+            const auto fragment = render(p, shader, *uniforms, *mutableState);
             const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
             const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;
             const uint8_t b = clamp(fragment.b, 0.f, 1.f) * 255.f;
