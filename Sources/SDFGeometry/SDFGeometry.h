@@ -10,6 +10,7 @@
 
 #include "CommonDefinitions.h"
 #include "Ray.h"
+#include "Uniforms.h"
 
 class SDFGeometry final
 {
@@ -21,6 +22,12 @@ public:
 private:
     SDFGeometry() = delete;
 };
+
+template <typename TSDFGeometry>
+ObjectType objectType()
+{
+    return ObjectType::invalid;
+}
 
 template <typename TSDFGeometry>
 float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)

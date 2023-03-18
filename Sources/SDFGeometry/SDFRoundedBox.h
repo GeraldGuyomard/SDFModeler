@@ -37,3 +37,9 @@ private:
     const float3 _halfSize;
     const float _radius;
 };
+
+template <>
+INLINE ObjectType objectType<SDFRoundedBox>()
+{
+    return ObjectType::roundedBox;
+}

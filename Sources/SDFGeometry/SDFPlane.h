@@ -31,3 +31,9 @@ public:
         return (d < 0) || (d > ray.maxLength);
     }
 };
+
+template <>
+INLINE ObjectType objectType<SDFPlane>()
+{
+    return ObjectType::plane;
+}

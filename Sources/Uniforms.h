@@ -18,15 +18,35 @@ struct Uniforms final
     float3 lightDirection;
 };
 
-enum class ObjectType : uint32_t
+enum class ObjectType : int32_t
 {
+    invalid = -1,
+    
     sphere = 0,
-    box = 1
+    box = 1,
+    roundedBox = 2,
+    plane = 3
+};
+
+struct ObjectHeader final
+{
+    uint32_t    byteSize;
+    ObjectType  objectType;
+    uint8_t     firstByte;
+    
+    ObjectHeader(uint32_t byteSize, ObjectType objectType)
+    : byteSize(byteSize), objectType(objectType)
+    {}
+    
+    template <typename TObject>
+    ObjectHeader()
+    : byteSize(sizeof(TObject)), objectType(TObject::kObjectType)
+    {}
 };
 
 struct DynamicScene final
 {
-    uint32_t size;
+    uint32_t objectCount = 0;
     uint8_t buffer[2048];
 };
 

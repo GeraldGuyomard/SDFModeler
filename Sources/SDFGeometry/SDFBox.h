@@ -36,3 +36,9 @@ public:
 private:
     const float3 _halfSize;
 };
+
+template <>
+INLINE ObjectType objectType<SDFBox>()
+{
+    return ObjectType::box;
+}

@@ -45,36 +45,36 @@ public:
     float computeDistance(float3 p) const
     {
         CONSTANT uint8_t* ptr = &_dynamicScene.buffer[0];
-        CONSTANT uint8_t* end = ptr + _dynamicScene.size;
         
-        while (ptr < end)
+        float minDistance = 1e7;
+        
+        for (uint32_t i=0; i < _dynamicScene.objectCount; ++i)
         {
-            CONSTANT ObjectType* pType = (CONSTANT ObjectType*)ptr;
+            CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
             
-            const ObjectType type = *pType;
-            ptr += sizeof(type);
+            const ObjectType type = header->objectType;
             
             switch(type)
             {
                 case ObjectType::sphere:
                 {
-                    CONSTANT Sphere* sphere = (CONSTANT Sphere*) ptr;
-                    CONSTANT uint8_t* dataEnd = ptr + sizeof(Sphere);
+                    CONSTANT Sphere* sphere = (CONSTANT Sphere*) &(header->firstByte);
                     
-                    //return sphere->computeDistance(p);
+                    const Sphere s = *sphere;
                     
-                    ptr = dataEnd;
+                    const float d = s.computeDistance(p);
+                    minDistance = min(minDistance, d);
+                    
                     break;
                 }
                     
-                case ObjectType::box:
-                {
-                    break;
-                }
+                default: break;
             }
+            
+            ptr += header->byteSize;
         }
         
-        return +1e5;
+        return minDistance;
     }
     
     float4 computeAlbedo(float3 p) const

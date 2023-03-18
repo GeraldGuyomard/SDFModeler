@@ -10,6 +10,7 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
+#include "Uniforms.h"
 
 class SDFSphere final
 {
@@ -34,6 +35,12 @@ public:
 private:
     const float _radius;
 };
+
+template <>
+INLINE ObjectType objectType<SDFSphere>()
+{
+    return ObjectType::sphere;
+}
 
 /*
 template <>

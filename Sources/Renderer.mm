@@ -195,8 +195,8 @@ Vertex s_Vertices[4] = {
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    DynamicScene& state = *((DynamicScene*) _dynamicSceneBufferAddress);
-    state.size = 0;
+    DynamicScene& dynScene = *((DynamicScene*) _dynamicSceneBufferAddress);
+    dynScene.objectCount = 0;
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
