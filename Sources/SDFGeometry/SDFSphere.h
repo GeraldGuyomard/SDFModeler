@@ -33,11 +33,11 @@ public:
     float radius() const { return _radius; }
     
 private:
-    const float _radius;
+    float _radius;
 };
 
 template <>
-INLINE ObjectType objectType<SDFSphere>()
+INLINE ObjectType getObjectType<SDFSphere>()
 {
     return ObjectType::sphere;
 }

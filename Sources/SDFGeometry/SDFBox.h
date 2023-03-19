@@ -38,7 +38,7 @@ private:
 };
 
 template <>
-INLINE ObjectType objectType<SDFBox>()
+INLINE ObjectType getObjectType<SDFBox>()
 {
     return ObjectType::box;
 }

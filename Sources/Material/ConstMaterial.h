@@ -26,5 +26,5 @@ public:
     }
     
 private:
-    const float4 _albedo = { 0 };
+    float4 _albedo = { 0 };
 };

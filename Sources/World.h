@@ -23,8 +23,10 @@ class Scene
 public:
     
     template <typename TShader>
-    SDFResult rayMarch(Ray ray, TShader shader)
+    SDFResult rayMarch(Ray ray, TShader shader, CONSTANT DynamicScene& dynScene)
     {
+        DynamicObject<TShader> dynObject { ray, dynScene };
+        
         constexpr float kZ = 0;
         
         Sphere redSphere { ray, { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
@@ -73,7 +75,7 @@ public:
         
         SDFObject<TComposite, RSTTransformer, ConstMaterial> uni(ray, composite, {}, { float4 { 0, 1, 1, 1 } } );
         
-        return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
+        return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
     }
 };
 
@@ -106,28 +108,22 @@ public:
 };
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& mutableState)
+INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
-    DynamicObject<TShader> dynObject { mutableState };
-    auto res = dynObject.rayMarch(ray, shader);
+    Scene scene;
+    const auto res = scene.rayMarch(ray, shader, dynamicScene);
+    
     if (res.isValid())
     {
         return res.color;
     }
     
-    Scene scene;
-    res = scene.rayMarch(ray, shader);
-    if (res.isValid())
-    {
-        return res.color;
-    }
-
     // Test Env Last
     Environment env;
-    res = env.rayMarch(ray, shader);
+    const auto envRes = env.rayMarch(ray, shader);
 
-    return res.color;
+    return envRes.color;
 }
 

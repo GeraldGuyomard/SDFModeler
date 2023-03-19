@@ -13,6 +13,9 @@
 // Include header shared between C code here, which executes Metal API commands, and .metal files
 #import "ShaderTypes.h"
 
+#include "DynamicSDFObject.h"
+
+
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
@@ -195,8 +198,18 @@ Vertex s_Vertices[4] = {
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    DynamicScene& dynScene = *((DynamicScene*) _dynamicSceneBufferAddress);
-    dynScene.objectCount = 0;
+    DynamicScene* dynScene = ((DynamicScene*) _dynamicSceneBufferAddress);
+    dynScene->objectCount = 0;
+    
+    uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
+    
+    ObjectHeader* h = (ObjectHeader*) p;
+    
+    Sphere s {  { 0.9f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } };
+    
+    ObjectHeader::copy(h, s);
+    
+    dynScene->objectCount++;
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view

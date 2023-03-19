@@ -107,7 +107,7 @@ public:
     }
     
 private:
-    const float3x3 _invRotTransform = float3x3_identity();
-    const float3 _translation = { 0.f };
-    const float _scale = 1.f;
+    float3x3 _invRotTransform = float3x3_identity();
+    float3 _translation = { 0.f };
+    float _scale = 1.f;
 };

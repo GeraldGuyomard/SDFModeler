@@ -18,10 +18,26 @@ class SDFObject final
 {
 public:
     
+    SDFObject(TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
+    : _geometry(geometry),
+    _transformer(transformer),
+    _material(material)
+    {}
+    
     SDFObject(Ray ray, TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
     : _geometry(geometry),
     _transformer(transformer),
     _material(material)
+    {
+        setupCull(ray);
+    }
+    
+    ObjectType objectType() const
+    {
+        return getObjectType<TGeometry>();
+    }
+    
+    void setupCull(Ray ray)
     {
         const Ray localRay = _transformer.localRay(ray);
         _culled = _geometry.evaluateCulling(localRay);
@@ -43,10 +59,10 @@ public:
     }
     
 private:
-    const TGeometry _geometry;
-    const TTransformer _transformer;
-    const TMaterial _material;
+    TGeometry _geometry;
+    TTransformer _transformer;
+    TMaterial _material;
     
-    bool _culled;
+    bool _culled = false;
 };
 

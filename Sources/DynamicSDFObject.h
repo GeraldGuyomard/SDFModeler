@@ -33,13 +33,13 @@ template <typename TShader>
 class DynamicObject final
 {
 public:
-    DynamicObject(CONSTANT DynamicScene& mutableState)
+    DynamicObject(Ray ray, CONSTANT DynamicScene& mutableState)
     : _dynamicScene(mutableState)
     {}
     
     bool culled() const
     {
-        return false;
+        return _culled;
     }
     
     float computeDistance(float3 p) const
@@ -58,7 +58,8 @@ public:
             {
                 case ObjectType::sphere:
                 {
-                    CONSTANT Sphere* sphere = (CONSTANT Sphere*) &(header->firstByte);
+                    CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
+                    CONSTANT Sphere* sphere = (CONSTANT Sphere*) firstBytePtr;
                     
                     const Sphere s = *sphere;
                     
@@ -82,33 +83,7 @@ public:
         return { 1, 0, 0, 1};
     }
     
-    SDFResult rayMarch(Ray ray, TShader shader) const
-    {
-        constexpr int kNbSteps = 100;
-        
-        float d = 0.f;
-        
-        for (int i=0; i < kNbSteps; ++i)
-        {
-            float3 p = ray.pt(d);
-            auto result = computeSDF(p, ray, shader, *this);
-            
-            if (result.hit())
-            {
-                return result;
-            }
-            
-            d += result.distance;
-            
-            if (d > ray.maxLength)
-            {
-                break;
-            }
-        }
-        
-        return {};
-    }
-    
 private:
     CONSTANT DynamicScene& _dynamicScene;
+    bool _culled = false;
 };

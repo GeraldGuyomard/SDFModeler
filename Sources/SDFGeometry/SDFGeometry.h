@@ -24,12 +24,6 @@ private:
 };
 
 template <typename TSDFGeometry>
-ObjectType objectType()
-{
-    return ObjectType::invalid;
-}
-
-template <typename TSDFGeometry>
 float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)
 {
 #if 1

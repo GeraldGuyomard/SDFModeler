@@ -39,7 +39,7 @@ private:
 };
 
 template <>
-INLINE ObjectType objectType<SDFRoundedBox>()
+INLINE ObjectType getObjectType<SDFRoundedBox>()
 {
     return ObjectType::roundedBox;
 }

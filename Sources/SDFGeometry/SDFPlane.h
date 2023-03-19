@@ -33,7 +33,7 @@ public:
 };
 
 template <>
-INLINE ObjectType objectType<SDFPlane>()
+INLINE ObjectType getObjectType<SDFPlane>()
 {
     return ObjectType::plane;
 }
