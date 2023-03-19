@@ -36,7 +36,8 @@ public:
     DynamicObject(Ray ray, CONSTANT DynamicScene& mutableState)
     : _dynamicScene(mutableState)
     {
-        
+        CullEvaluator eval(ray);
+        _culled = evaluate<CullEvaluator, bool>(eval);
     }
     
     bool culled() const
@@ -75,7 +76,20 @@ public:
         
         return evaluator.returnValue();
     }
-
+    
+    float computeDistance(float3 p) const
+    {
+        ComputeDistanceEvaluator eval(p);
+        return evaluate<ComputeDistanceEvaluator, float>(eval);
+    }
+    
+    float4 computeAlbedo(float3 p) const
+    {
+        return { 1, 0, 0, 1};
+    }
+    
+private:
+    
     struct ComputeDistanceEvaluator
     {
         ComputeDistanceEvaluator(float3 p)
@@ -98,18 +112,31 @@ public:
         float minDistance = 1e7;
     };
     
-    float computeDistance(float3 p) const
+    struct CullEvaluator
     {
-        ComputeDistanceEvaluator eval(p);
-        return evaluate<ComputeDistanceEvaluator, float>(eval);
-    }
+        CullEvaluator(Ray ray)
+        : ray(ray)
+        {}
+        
+        template <typename TPrimitive>
+        void evaluate(TPrimitive prim)
+        {
+            if (!culled)
+            {
+                prim.setupCull(ray);
+                culled = prim.culled();
+            }
+        }
+        
+        bool returnValue() const
+        {
+            return culled;
+        }
+        
+        const Ray ray;
+        bool culled = false;
+    };
     
-    float4 computeAlbedo(float3 p) const
-    {
-        return { 1, 0, 0, 1};
-    }
-    
-private:
     CONSTANT DynamicScene& _dynamicScene;
     bool _culled = false;
 };
