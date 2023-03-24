@@ -49,6 +49,59 @@ case objectType: EVALUATE(evaluator, header, TPrimitive); break; \
     } \
 } \
 
+class DistanceEvaluator
+{
+public:
+    
+    DistanceEvaluator(float3 pt)
+    : _pt(pt)
+    {}
+    
+    template <typename TPrimitive>
+    void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+    {
+        _distance = primitive.computeDistance(_pt);
+    }
+    
+    float returnValue() const
+    {
+        return _distance;
+    }
+    
+private:
+    const float3 _pt;
+    float _distance;
+};
+
+template <typename TShader>
+class ShadeEvaluator
+{
+public:
+    
+    ShadeEvaluator(Ray ray, float distance, float3 pt, TShader shader)
+    : _ray(ray), _distance(distance), _pt(pt), _shader(shader)
+    {}
+    
+    template <typename TPrimitive>
+    void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+    {
+        _color = _shader.computeShade(primitive, _ray, _distance, _pt);
+    }
+    
+    float4 returnValue() const
+    {
+        return _color;
+    }
+    
+private:
+    const Ray _ray;
+    const float _distance;
+    const float3 _pt;
+    const TShader _shader;
+    float4 _color;
+};
+
+
 template <typename TShader>
 class DynamicObject final
 {
@@ -111,7 +164,7 @@ public:
             
             if ((minDistance >= 0.f) && (minDistance <= kDistanceEpsilon))
             {
-                ShadeEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
+                ShadeEvaluator<TShader> shadeEvaluator { ray, minDistance, pt, _shader };
                 SWITCH_EVALUATOR(shadeEvaluator, minHeader);
                 const float4 color = shadeEvaluator.returnValue();
                 
@@ -164,57 +217,6 @@ private:
         ObjectsList _objectsList;
     };
 
-    class DistanceEvaluator
-    {
-    public:
-        
-        DistanceEvaluator(float3 pt)
-        : _pt(pt)
-        {}
-        
-        template <typename TPrimitive>
-        void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
-        {
-            _distance = primitive.computeDistance(_pt);
-        }
-        
-        float returnValue() const
-        {
-            return _distance;
-        }
-        
-    private:
-        const float3 _pt;
-        float _distance;
-    };
-    
-    class ShadeEvaluator
-    {
-    public:
-        
-        ShadeEvaluator(Ray ray, float distance, float3 pt, TShader shader)
-        : _ray(ray), _distance(distance), _pt(pt), _shader(shader)
-        {}
-        
-        template <typename TPrimitive>
-        void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
-        {
-            _color = _shader.computeShade(primitive, _ray, _distance, _pt);
-        }
-        
-        float4 returnValue() const
-        {
-            return _color;
-        }
-        
-    private:
-        const Ray _ray;
-        const float _distance;
-        const float3 _pt;
-        const TShader _shader;
-        float4 _color;
-    };
-    
     CONSTANT DynamicScene& _dynamicScene;
     TShader _shader;
 };
