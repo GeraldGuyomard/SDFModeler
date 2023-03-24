@@ -20,18 +20,20 @@ public:
     
     float computeDistance(float3 p) const
     {
-        float3 q = abs(p) - _halfSizeAndRadius.xyz;
-        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - _halfSizeAndRadius.w;
+        float3 q = abs(p) - halfSize();
+        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - radius();
     }
     
     bool evaluateCulling(Ray ray) const
     {
-        const float r = max(max(_halfSizeAndRadius.x, _halfSizeAndRadius.y), _halfSizeAndRadius.z) * 2.f;
+        const auto hSize = halfSize();
+        const float r = max(max(hSize.x, hSize.y), hSize.z) * 2.f;
         
         return evaluateSphereCulling(r, ray);
     }
     
     float3 halfSize() const { return _halfSizeAndRadius.xyz; }
+    float radius() const { return _halfSizeAndRadius.w; }
     
 private:
     // xyz halfsize

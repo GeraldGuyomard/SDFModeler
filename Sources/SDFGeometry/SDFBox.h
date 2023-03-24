@@ -20,13 +20,14 @@ public:
     
     float computeDistance(float3 p) const
     {
-        float3 q = abs(p) - _halfSizeAndPadding.xyz;
+        float3 q = abs(p) - halfSize();
         return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f);
     }
     
     bool evaluateCulling(Ray ray) const
     {
-        const float r = max(max(_halfSizeAndPadding.x, _halfSizeAndPadding.y), _halfSizeAndPadding.z) * 2.f;
+        const auto hSize = halfSize();
+        const float r = max(max(hSize.x, hSize.y), hSize.z) * 2.f;
         
         return evaluateSphereCulling(r, ray);
     }

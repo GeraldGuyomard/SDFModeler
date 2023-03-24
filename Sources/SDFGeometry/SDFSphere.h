@@ -22,12 +22,12 @@ public:
     
     float computeDistance(float3 p) const
     {
-        return length(p) - _radiusAndPadding.x;
+        return length(p) - radius();
     }
     
     bool evaluateCulling(Ray ray) const
     {
-        return evaluateSphereCulling(_radiusAndPadding.x, ray);
+        return evaluateSphereCulling(radius(), ray);
     }
     
     float radius() const { return _radiusAndPadding.x; }
