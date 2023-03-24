@@ -18,72 +18,6 @@
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
 
-class Scene
-{
-public:
-    
-    template <typename TShader>
-    SDFResult rayMarch(Ray ray, TShader shader, CONSTANT DynamicScene& dynScene)
-    {
-        DynamicObject<TShader> dynObject { shader, dynScene };
-        return dynObject.rayMarch(ray);
-        
-#if 0
-        constexpr float kZ = 0;
-        
-        Sphere redSphere { ray, { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
-        
-        float3 pos = float3 {0.5, 0, kZ};
-        
-        constexpr float s = 0.5f;
-        
-        RoundedBox whiteBox
-        {
-            ray,
-            { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
-            { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
-            { float4 { 1, 1, 1, 1 } } // material
-        };
-        
-        Box whiteBoxHalf
-        {
-            ray,
-            { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
-            { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
-            { float4 { 1, 1, 1, 1 } } // material
-        };
-        
-        Sphere blueSphere { ray, { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
-        Sphere greenSphere { ray, { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
-        
-        Sphere spherePart { ray, { 0.4f }, // geom
-            { float3 { -2., 0.6, kZ + 0.5f } } // transform
-        };
-        
-        RoundedBox boxPart { ray,
-            { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
-            { float3 { -2., 0, kZ + 0.5f } } // transform
-        };
-        
-        Sphere negativeSpherePart { ray, { 0.4f }, // geom
-            { float3 { -2., 0.3, kZ + 1.f } } // transform
-        };
-        
-        using TUnion = SDFUnion<Sphere, RoundedBox>;
-        TUnion sdfUnion(spherePart, boxPart);
-        
-        using TComposite = SDFSubstraction<TUnion, Sphere>;
-        TComposite composite(sdfUnion, negativeSpherePart);
-        
-        SDFObject<TComposite, RSTTransformer, ConstMaterial> uni(ray, composite, {}, { float4 { 0, 1, 1, 1 } } );
-        
-        //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
-        //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
-        return ::rayMarch(ray, shader, dynObject);
-#endif
-    }
-};
-
 class Environment
 {
 public:
@@ -117,8 +51,8 @@ INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& unif
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
-    Scene scene;
-    const auto res = scene.rayMarch(ray, shader, dynamicScene);
+    DynamicObject<TShader> dynObject { shader, dynamicScene };
+    const auto res = dynObject.rayMarch(ray);
     
     if (res.isValid())
     {
