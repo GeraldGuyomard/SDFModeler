@@ -15,27 +15,28 @@ class SDFRoundedBox final
 public:
     
     SDFRoundedBox(float3 halfSize, float radius)
-    : _halfSize(halfSize), _radius(radius)
+    : _halfSizeAndRadius { halfSize.x, halfSize.y, halfSize.z, radius }
     {}
     
     float computeDistance(float3 p) const
     {
-        float3 q = abs(p) - _halfSize;
-        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - _radius;
+        float3 q = abs(p) - _halfSizeAndRadius.xyz;
+        return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f) - _halfSizeAndRadius.w;
     }
     
     bool evaluateCulling(Ray ray) const
     {
-        const float r = max(max(_halfSize.x, _halfSize.y), _halfSize.z) * 2.f;
+        const float r = max(max(_halfSizeAndRadius.x, _halfSizeAndRadius.y), _halfSizeAndRadius.z) * 2.f;
         
         return evaluateSphereCulling(r, ray);
     }
     
-    float3 halfSize() const { return _halfSize; }
+    float3 halfSize() const { return _halfSizeAndRadius.xyz; }
     
 private:
-    float3 _halfSize;
-    float _radius;
+    // xyz halfsize
+    // w radius
+    float4 _halfSizeAndRadius;
 };
 
 template <>

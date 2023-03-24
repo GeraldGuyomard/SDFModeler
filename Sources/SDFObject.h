@@ -49,6 +49,5 @@ private:
     TGeometry _geometry;
     TTransformer _transformer;
     TMaterial _material;
-    bool _culled = false;
 };
 

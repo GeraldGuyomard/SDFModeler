@@ -26,5 +26,5 @@ public:
     }
     
 private:
-    float4 _albedo = { 0 };
+    float4 _albedo = { 0, 0, 0, 0 };
 };

@@ -56,8 +56,8 @@ public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 16;
     
-    DynamicObject(TShader shader, CONSTANT DynamicScene& mutableState)
-    : _dynamicScene(mutableState), _shader(shader)
+    DynamicObject(TShader shader, CONSTANT DynamicScene& dynamicScene)
+    : _dynamicScene(dynamicScene), _shader(shader)
     {}
     
     template <typename TEvaluator, typename TReturn>

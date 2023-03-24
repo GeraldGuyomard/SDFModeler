@@ -17,23 +17,23 @@ class SDFSphere final
 public:
     
     SDFSphere(float radius)
-    : _radius(radius)
+    : _radiusAndPadding(radius)
     {}
     
     float computeDistance(float3 p) const
     {
-        return length(p) - _radius;
+        return length(p) - _radiusAndPadding.x;
     }
     
     bool evaluateCulling(Ray ray) const
     {
-        return evaluateSphereCulling(_radius, ray);
+        return evaluateSphereCulling(_radiusAndPadding.x, ray);
     }
     
-    float radius() const { return _radius; }
+    float radius() const { return _radiusAndPadding.x; }
     
 private:
-    float _radius;
+    float4 _radiusAndPadding;
 };
 
 template <>

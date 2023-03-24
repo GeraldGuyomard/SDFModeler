@@ -14,6 +14,7 @@
 #import "ShaderTypes.h"
 
 #include "DynamicSDFObject.h"
+#include "FragmentShader/PhongShader.h"
 
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
@@ -186,12 +187,25 @@ Vertex s_Vertices[4] = {
     return (DynamicScene*)_dynamicSceneBufferAddress;
 }
 
+template <typename TObject>
+static void copy(DEVICE ObjectHeader* header, const TObject& object)
+{
+    const size_t size = sizeof(TObject);
+    constexpr size_t kAlignment = 16;
+    
+    header->byteSize = (size + kAlignment) & ~kAlignment;
+    header->objectType = object.objectType();
+    
+    TObject* dst = (TObject*) &(header->firstByte);
+    memcpy(dst, &object, size);
+}
+
 template <typename TPrimitive>
 void addObject(DynamicScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
 {
     ObjectHeader* h = (ObjectHeader*) p;
     
-    ObjectHeader::copy(h, primitive);
+    copy(h, primitive);
     
     dynScene->objectCount++;
     
@@ -222,7 +236,7 @@ void populateDynamicScene(DynamicScene* dynScene)
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
     
-    addObject(dynScene, p, Sphere {  { 0.9f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
+    addObject(dynScene, p, Sphere {  { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
     
     constexpr float kZ = 0;
     
@@ -251,7 +265,7 @@ void populateDynamicScene(DynamicScene* dynScene)
     Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
     addObject(dynScene, p, blueSphere);
     
-    Sphere greenSphere { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
+    Sphere greenSphere { { 0.45f }, { float3 { -1, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
     addObject(dynScene, p, greenSphere);
     
     Sphere spherePart {  { 0.4f }, // geom
@@ -274,6 +288,26 @@ void populateDynamicScene(DynamicScene* dynScene)
     TComposite composite(sdfUnion, negativeSpherePart);
     
     SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
+    
+    PhongShader shader(uniforms.lightDirection);
+    DynamicObject<PhongShader> dynObject(shader, *dynScene);
+    
+    struct IterateEvaluator
+    {
+        template <typename TPrimitive>
+        void evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
+        {
+            
+        }
+        
+        void returnValue() const
+        {
+            
+        }
+        
+    } evaluator;
+    
+    dynObject.evaluate<IterateEvaluator, void>(evaluator);
    
 }
 

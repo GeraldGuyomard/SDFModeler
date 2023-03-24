@@ -44,22 +44,11 @@ struct ObjectHeader final
     ObjectHeader(uint32_t byteSize, ObjectType objectType)
     : byteSize(byteSize), objectType(objectType)
     {}
-    
-    template <typename TObject>
-    static void copy(DEVICE ObjectHeader* header, CONSTANT TObject& object)
-    {
-        header->byteSize = sizeof(TObject);
-        header->objectType = object.objectType();
-        
-        DEVICE TObject* dst = (DEVICE TObject*) &(header->firstByte);
-        *dst = object;
-    }
 };
 
 struct DynamicScene final
 {
     uint64_t objectCount = 0;
-    uint64_t padding = 0; // align so that buffer starts on 16 bytes alignment
     
     uint8_t buffer[2048];
 };
