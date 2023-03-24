@@ -90,29 +90,35 @@ public:
         {
             float3 pt = ray.pt(d);
             
-            SDFResult sdfResult = { 10000, 0.f };
+            float minDistance = 10000.f;
+            CONSTANT ObjectHeader* minHeader = nullptr;
             
             for (size_t objectIndex = 0; objectIndex < objectsList.nbObjects; ++objectIndex)
             {
                 CONSTANT ObjectHeader* header = objectsList.headers[objectIndex];
                 
-                ComputeSDFEvaluator sdfEvaluator { ray, _shader, pt };
-                SWITCH_EVALUATOR(sdfEvaluator, header);
+                DistanceEvaluator distanceEvaluator { pt };
+                SWITCH_EVALUATOR(distanceEvaluator, header);
                 
-                const auto res = sdfEvaluator.returnValue();
+                const float dist = distanceEvaluator.returnValue();
                 
-                if (res.distance <= sdfResult.distance)
+                if (dist <= minDistance)
                 {
-                    sdfResult = res;
+                    minDistance = dist;
+                    minHeader = header;
                 }
             }
             
-            if (sdfResult.hit())
+            if ((minDistance >= 0.f) && (minDistance <= kDistanceEpsilon))
             {
-                return sdfResult;
+                ShadeEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
+                SWITCH_EVALUATOR(shadeEvaluator, minHeader);
+                const float4 color = shadeEvaluator.returnValue();
+                
+                return { minDistance, color };
             }
             
-            d += sdfResult.distance;
+            d += minDistance;
             
             if (d > ray.maxLength)
             {
@@ -158,40 +164,55 @@ private:
         ObjectsList _objectsList;
     };
 
-    class ComputeSDFEvaluator
+    class DistanceEvaluator
     {
     public:
         
-        ComputeSDFEvaluator(Ray ray, TShader shader, float3 pt)
-        : _ray(ray), _shader(shader), _pt(pt)
+        DistanceEvaluator(float3 pt)
+        : _pt(pt)
         {}
         
         template <typename TPrimitive>
         void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
         {
-            const float d = primitive.computeDistance(_pt);
-            
-            if (d > kDistanceEpsilon)
-            {
-                _result = { d, 0.f };
-            }
-            else
-            {
-                const float4 c = _shader.computeShade(primitive, _ray, d, _pt);
-                _result = { d, c };
-            }
+            _distance = primitive.computeDistance(_pt);
         }
         
-        SDFResult returnValue() const
+        float returnValue() const
         {
-            return _result;
+            return _distance;
+        }
+        
+    private:
+        const float3 _pt;
+        float _distance;
+    };
+    
+    class ShadeEvaluator
+    {
+    public:
+        
+        ShadeEvaluator(Ray ray, float distance, float3 pt, TShader shader)
+        : _ray(ray), _distance(distance), _pt(pt), _shader(shader)
+        {}
+        
+        template <typename TPrimitive>
+        void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+        {
+            _color = _shader.computeShade(primitive, _ray, _distance, _pt);
+        }
+        
+        float4 returnValue() const
+        {
+            return _color;
         }
         
     private:
         const Ray _ray;
-        const TShader _shader;
+        const float _distance;
         const float3 _pt;
-        SDFResult _result;
+        const TShader _shader;
+        float4 _color;
     };
     
     CONSTANT DynamicScene& _dynamicScene;

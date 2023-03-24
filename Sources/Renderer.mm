@@ -188,7 +188,7 @@ Vertex s_Vertices[4] = {
 }
 
 template <typename TObject>
-static void copy(DEVICE ObjectHeader* header, const TObject& object)
+static void copy(ObjectHeader* header, const TObject& object)
 {
     const size_t size = sizeof(TObject);
     constexpr size_t kAlignment = 16;
@@ -196,8 +196,10 @@ static void copy(DEVICE ObjectHeader* header, const TObject& object)
     header->byteSize = (size + kAlignment) & ~kAlignment;
     header->objectType = object.objectType();
     
-    TObject* dst = (TObject*) &(header->firstByte);
-    memcpy(dst, &object, size);
+    uint8_t* dst = &(header->firstByte);
+    const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
+    
+    memcpy(dst, src, size);
 }
 
 template <typename TPrimitive>
@@ -236,7 +238,8 @@ void populateDynamicScene(DynamicScene* dynScene)
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
     
-    addObject(dynScene, p, Sphere {  { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
+    Sphere whiteSphere {  { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } };
+    addObject(dynScene, p, whiteSphere);
     
     constexpr float kZ = 0;
     
