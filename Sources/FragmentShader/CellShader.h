@@ -13,7 +13,9 @@ class CellShader final
 {
 public:
     
-    CellShader() = default;
+    CellShader(float3 lightDirection)
+    : _lightDirection(normalize(lightDirection))
+    {}
     
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
@@ -21,8 +23,7 @@ public:
         const float4 albedo = primitive.computeAlbedo(p);
         const float3 normal = computeNormal(primitive, dist, p);
         
-        float3 lightDir = normalize(float3 { -1.f, -1.f, -1.f });
-        float intensity = max(0.1f, dot(-normal, lightDir));
+        float intensity = max(0.1f, dot(-normal, _lightDirection));
         
         float3 color = (albedo.xyz * float3 { intensity, intensity, intensity } );
         
@@ -36,4 +37,5 @@ public:
     }
     
 private:
+    const float3 _lightDirection;
 };

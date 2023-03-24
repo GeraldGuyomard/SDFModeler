@@ -47,9 +47,11 @@ public:
 };
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
+    
+    const TShader shader { uniforms.lightDirection };
     
     DynamicObject<TShader> dynObject { shader, dynamicScene };
     const auto res = dynObject.rayMarch(ray);
@@ -66,3 +68,17 @@ INLINE float4 render(float2 viewportNDC, TShader shader, CONSTANT Uniforms& unif
     return envRes.color;
 }
 
+INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+{
+    return render<PhongShader>(viewportNDC, uniforms, dynamicScene);
+}
+
+INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+{
+    return render<CellShader>(viewportNDC, uniforms, dynamicScene);
+}
+
+INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+{
+    return renderPhong(viewportNDC, uniforms, dynamicScene);
+}

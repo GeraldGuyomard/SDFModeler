@@ -70,9 +70,7 @@ static GameViewController* s_Instance = nil;
     const auto* uniforms = _renderer.uniforms;
     const auto* mutableState = _renderer.mutableState;
     
-    PhongShader shader(uniforms->lightDirection);
-    
-    const auto pixel = render(p, shader, *uniforms, *mutableState);
+    const auto pixel = renderDefault(p, *uniforms, *mutableState);
     
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
 }
