@@ -40,11 +40,6 @@ struct SDFResult final
 template <typename TShader, typename TPrimitive>
 SDFResult computeSDF(float3 p, Ray ray, TShader shader, TPrimitive primitive)
 {
-    if (primitive.culled())
-    {
-        return { 1e5f, 0.f };
-    }
-    
     const float d = primitive.computeDistance(p);
     
     if (d > kDistanceEpsilon)

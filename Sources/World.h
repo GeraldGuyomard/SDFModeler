@@ -29,7 +29,7 @@ public:
         const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
         //Plane grid({}, { float3(-10.f) }, { color } );
         
-        Grid grid(ray, {}, { float3(-10.f) }, { 1.f , color });
+        Grid grid({}, { float3(-10.f) }, { 1.f , color });
         
         const auto res = ::rayMarch(ray, shader, grid);
         

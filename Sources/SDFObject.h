@@ -24,14 +24,6 @@ public:
     _material(material)
     {}
     
-    SDFObject(Ray ray, TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
-    : _geometry(geometry),
-    _transformer(transformer),
-    _material(material)
-    {
-        setupCull(ray);
-    }
-    
     ObjectType objectType() const
     {
         return getObjectType<TGeometry>();
@@ -41,16 +33,6 @@ public:
     {
         const Ray localRay = _transformer.localRay(ray);
         return _geometry.evaluateCulling(localRay);
-    }
-    
-    void setupCull(Ray ray)
-    {
-        _culled = evaluateCulling(ray);
-    }
-    
-    bool culled() const
-    {
-        return _culled;
     }
     
     float computeDistance(float3 p) const
@@ -67,7 +49,6 @@ private:
     TGeometry _geometry;
     TTransformer _transformer;
     TMaterial _material;
-    
     bool _culled = false;
 };
 
