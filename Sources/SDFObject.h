@@ -37,10 +37,15 @@ public:
         return getObjectType<TGeometry>();
     }
     
-    void setupCull(Ray ray)
+    bool evaluateCulling(Ray ray) const
     {
         const Ray localRay = _transformer.localRay(ray);
-        _culled = _geometry.evaluateCulling(localRay);
+        return _geometry.evaluateCulling(localRay);
+    }
+    
+    void setupCull(Ray ray)
+    {
+        _culled = evaluateCulling(ray);
     }
     
     bool culled() const

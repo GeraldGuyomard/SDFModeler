@@ -29,21 +29,36 @@ using Grid = SDFObject<SDFPlane, RSTTransformer, GridMaterial>;
 using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
 
+#define EVALUATE(evaluator, header, TPrimitive) { \
+    CONSTANT uint8_t* firstBytePtr = &(header->firstByte); \
+    CONSTANT TPrimitive* prim = (CONSTANT TPrimitive*) firstBytePtr; \
+    const TPrimitive p = *prim; \
+    evaluator.evaluate(header, p); }\
+
+#define CASE_EVALUATE(evaluator, header, objectType, TPrimitive) \
+case objectType: EVALUATE(evaluator, header, TPrimitive); break; \
+
+#define SWITCH_EVALUATOR(evaluator, header) { \
+    const ObjectType type = header->objectType; \
+    switch(type) { \
+        CASE_EVALUATE(evaluator, header, ObjectType::sphere, Sphere) \
+        CASE_EVALUATE(evaluator, header, ObjectType::box, Box) \
+        CASE_EVALUATE(evaluator, header, ObjectType::roundedBox, RoundedBox) \
+        CASE_EVALUATE(evaluator, header, ObjectType::plane, Plane) \
+        default: break; \
+    } \
+} \
+
 template <typename TShader>
 class DynamicObject final
 {
 public:
-    DynamicObject(Ray ray, CONSTANT DynamicScene& mutableState)
-    : _dynamicScene(mutableState)
-    {
-        CullEvaluator eval(ray);
-        _culled = evaluate<CullEvaluator, bool>(eval);
-    }
     
-    bool culled() const
-    {
-        return _culled;
-    }
+    constexpr static CONSTANT size_t kNbObjectsMax = 16;
+    
+    DynamicObject(TShader shader, CONSTANT DynamicScene& mutableState)
+    : _dynamicScene(mutableState), _shader(shader)
+    {}
     
     template <typename TEvaluator, typename TReturn>
     TReturn evaluate(TEvaluator evaluator) const
@@ -54,22 +69,7 @@ public:
         {
             CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
             
-            const ObjectType type = header->objectType;
-            CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
-            
-            switch(type)
-            {
-                case ObjectType::sphere:
-                {
-                    CONSTANT Sphere* sphere = (CONSTANT Sphere*) firstBytePtr;
-                    const Sphere s = *sphere;
-                    evaluator.evaluate(s);
-                    
-                    break;
-                }
-                    
-                default: break;
-            }
+            SWITCH_EVALUATOR(evaluator, header);
             
             ptr += header->byteSize;
         }
@@ -77,66 +77,123 @@ public:
         return evaluator.returnValue();
     }
     
-    float computeDistance(float3 p) const
+    SDFResult rayMarch(Ray ray) const
     {
-        ComputeDistanceEvaluator eval(p);
-        return evaluate<ComputeDistanceEvaluator, float>(eval);
-    }
-    
-    float4 computeAlbedo(float3 p) const
-    {
-        return { 1, 0, 0, 1};
+        BuildObjectsListEvaluator buildEvaluator { ray };
+        const auto objectsList = evaluate<BuildObjectsListEvaluator, ObjectsList>(buildEvaluator);
+        
+        constexpr size_t kNbSteps = 100;
+        
+        float d = 0.f;
+        
+        for (size_t i=0; i < kNbSteps; ++i)
+        {
+            float3 pt = ray.pt(d);
+            
+            SDFResult sdfResult = { 10000, 0.f };
+            
+            for (size_t objectIndex = 0; objectIndex < objectsList.nbObjects; ++objectIndex)
+            {
+                CONSTANT ObjectHeader* header = objectsList.headers[objectIndex];
+                
+                ComputeSDFEvaluator sdfEvaluator { ray, _shader, pt };
+                SWITCH_EVALUATOR(sdfEvaluator, header);
+                
+                const auto res = sdfEvaluator.returnValue();
+                
+                if (res.distance <= sdfResult.distance)
+                {
+                    sdfResult = res;
+                }
+            }
+            
+            if (sdfResult.hit())
+            {
+                return sdfResult;
+            }
+            
+            d += sdfResult.distance;
+            
+            if (d > ray.maxLength)
+            {
+                break;
+            }
+        }
+        
+        return {};
     }
     
 private:
     
-    struct ComputeDistanceEvaluator
+    struct ObjectsList
     {
-        ComputeDistanceEvaluator(float3 p)
-        : p(p)
-        {}
-        
-        template <typename TPrimitive>
-        void evaluate(TPrimitive prim)
-        {
-            const float d = prim.computeDistance(p);
-            minDistance = min(minDistance, d);
-        }
-        
-        float returnValue() const
-        {
-            return minDistance;
-        }
-        
-        const float3 p;
-        float minDistance = 1e7;
+        size_t nbObjects = 0;
+        CONSTANT ObjectHeader* headers[kNbObjectsMax];
     };
     
-    struct CullEvaluator
+    class BuildObjectsListEvaluator
     {
-        CullEvaluator(Ray ray)
-        : ray(ray)
+    public:
+        BuildObjectsListEvaluator(Ray ray)
+        : _ray(ray)
         {}
         
         template <typename TPrimitive>
-        void evaluate(TPrimitive prim)
+        void evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
         {
-            if (!culled)
+            if (!prim.evaluateCulling(_ray))
             {
-                prim.setupCull(ray);
-                culled = prim.culled();
+                // possibly intersecting ray
+                _objectsList.headers[_objectsList.nbObjects++] = header;
             }
         }
         
-        bool returnValue() const
+        ObjectsList returnValue() const
         {
-            return culled;
+            return _objectsList;
         }
         
-        const Ray ray;
-        bool culled = false;
+    private:
+        Ray _ray;
+        ObjectsList _objectsList;
+    };
+
+    class ComputeSDFEvaluator
+    {
+    public:
+        
+        ComputeSDFEvaluator(Ray ray, TShader shader, float3 pt)
+        : _ray(ray), _shader(shader), _pt(pt)
+        {}
+        
+        template <typename TPrimitive>
+        void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+        {
+            const float d = primitive.computeDistance(_pt);
+            
+            if (d > kDistanceEpsilon)
+            {
+                _result = { d, 0.f };
+            }
+            else
+            {
+                const float4 c = _shader.computeShade(primitive, _ray, d, _pt);
+                _result = { d, c };
+            }
+        }
+        
+        SDFResult returnValue() const
+        {
+            return _result;
+        }
+        
+    private:
+        const Ray _ray;
+        const TShader _shader;
+        const float3 _pt;
+        SDFResult _result;
     };
     
     CONSTANT DynamicScene& _dynamicScene;
-    bool _culled = false;
+    TShader _shader;
 };

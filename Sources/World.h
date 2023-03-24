@@ -25,8 +25,10 @@ public:
     template <typename TShader>
     SDFResult rayMarch(Ray ray, TShader shader, CONSTANT DynamicScene& dynScene)
     {
-        DynamicObject<TShader> dynObject { ray, dynScene };
+        DynamicObject<TShader> dynObject { shader, dynScene };
+        return dynObject.rayMarch(ray);
         
+#if 0
         constexpr float kZ = 0;
         
         Sphere redSphere { ray, { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } };
@@ -76,7 +78,9 @@ public:
         SDFObject<TComposite, RSTTransformer, ConstMaterial> uni(ray, composite, {}, { float4 { 0, 1, 1, 1 } } );
         
         //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
-        return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
+        //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
+        return ::rayMarch(ray, shader, dynObject);
+#endif
     }
 };
 

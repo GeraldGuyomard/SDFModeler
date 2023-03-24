@@ -34,8 +34,8 @@ public:
     float3 halfSize() const { return _halfSize; }
     
 private:
-    const float3 _halfSize;
-    const float _radius;
+    float3 _halfSize;
+    float _radius;
 };
 
 template <>

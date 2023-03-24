@@ -34,7 +34,7 @@ public:
     float3 halfSize() const { return _halfSize; }
     
 private:
-    const float3 _halfSize;
+    float3 _halfSize;
 };
 
 template <>

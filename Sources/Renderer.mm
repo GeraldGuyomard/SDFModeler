@@ -186,6 +186,25 @@ Vertex s_Vertices[4] = {
     return (DynamicScene*)_dynamicSceneBufferAddress;
 }
 
+template <typename TPrimitive>
+void addObject(DynamicScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
+{
+    ObjectHeader* h = (ObjectHeader*) p;
+    
+    ObjectHeader::copy(h, primitive);
+    
+    dynScene->objectCount++;
+    
+    p += h->byteSize;
+}
+
+
+void populateDynamicScene(DynamicScene* dynScene)
+{
+    //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
+    //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
+
+}
 
 - (void)_updateGameState
 {
@@ -203,13 +222,59 @@ Vertex s_Vertices[4] = {
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
     
-    ObjectHeader* h = (ObjectHeader*) p;
+    addObject(dynScene, p, Sphere {  { 0.9f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
     
-    Sphere s {  { 0.9f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } };
+    constexpr float kZ = 0;
     
-    ObjectHeader::copy(h, s);
+    addObject(dynScene, p, Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
     
-    dynScene->objectCount++;
+    float3 pos = float3 {0.5, 0, kZ};
+    
+    constexpr float s = 0.5f;
+    
+    RoundedBox roundedYellowBox
+    {
+        { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
+        { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
+        { float4 { 1, 1, 0, 1 } } // material
+    };
+    addObject(dynScene, p, roundedYellowBox);
+    
+    Box whiteBoxHalf
+    {
+        { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
+        { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
+        { float4 { 1, 1, 1, 1 } } // material
+    };
+    addObject(dynScene, p, whiteBoxHalf);
+    
+    Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
+    addObject(dynScene, p, blueSphere);
+    
+    Sphere greenSphere { { 0.7f }, { float3 { 0, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
+    addObject(dynScene, p, greenSphere);
+    
+    Sphere spherePart {  { 0.4f }, // geom
+        { float3 { -2., 0.6, kZ + 0.5f } } // transform
+    };
+    
+    RoundedBox boxPart {
+        { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
+        { float3 { -2., 0, kZ + 0.5f } } // transform
+    };
+    
+    Sphere negativeSpherePart {  { 0.4f }, // geom
+        { float3 { -2., 0.3, kZ + 1.f } } // transform
+    };
+    
+    using TUnion = SDFUnion<Sphere, RoundedBox>;
+    TUnion sdfUnion(spherePart, boxPart);
+    
+    using TComposite = SDFSubstraction<TUnion, Sphere>;
+    TComposite composite(sdfUnion, negativeSpherePart);
+    
+    SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
+   
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
