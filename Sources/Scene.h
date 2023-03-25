@@ -31,24 +31,24 @@ using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
 
 template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
-    CONSTANT TPrimitive* prim = (CONSTANT TPrimitive*) firstBytePtr;
+    CONSTANT TPrimitive* prim = reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
     const TPrimitive p = *prim;
     return evaluator.evaluate(header, p);
 }
 
 template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluateAnonymousPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     const ObjectType type = header->objectType;
     switch(type)
     {
-        case ObjectType::sphere: return evaluatePrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
-        case ObjectType::box: return evaluatePrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);;
-        case ObjectType::roundedBox: return evaluatePrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
-        case ObjectType::plane: return evaluatePrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
+        case ObjectType::sphere: return evaluateTypedPrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
+        case ObjectType::box: return evaluateTypedPrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);;
+        case ObjectType::roundedBox: return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
+        case ObjectType::plane: return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
 
         //CASE_EVALUATE(evaluator, header, ObjectType::compositeUnion, CompositeUnion)
         default: break;
@@ -60,6 +60,11 @@ INLINE TReturnValue evaluateAnonymousPrimitive(TEvaluator evaluator, CONSTANT Ob
 struct SerializedScene final
 {
     uint64_t objectCount = 0;
+    
+    uint64_t padding;
+    
+    // should be aligned on 16 bytes
+    // for SSE float moves
     
     // buffer is an array of SerializedObject
     // that starts with ObjectHeaders
@@ -120,15 +125,21 @@ public:
     
     SDFResult rayMarch(Ray ray) const
     {
+        struct ObjectsList
+        {
+            size_t nbObjects = 0;
+            CONSTANT ObjectHeader* headers[kNbObjectsMax];
+        };
+        
         ObjectsList objectsList;
+        CullEvaluator cullEvaluator { ray };
         
         CONSTANT uint8_t* ptr = &_serializedScene.buffer[0];
         for (size_t i=0; i < _serializedScene.objectCount; ++i)
         {
             CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
             
-            CullEvaluator cullEvaluator { ray };
-            const bool culled = evaluateAnonymousPrimitive<CullEvaluator, bool>(cullEvaluator, header);
+            const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
             {
                 objectsList.headers[objectsList.nbObjects++] = header;
@@ -147,13 +158,13 @@ public:
             
             float minDistance = 10000.f;
             CONSTANT ObjectHeader* minHeader = nullptr;
+            DistanceEvaluator distanceEvaluator { pt };
             
             for (size_t objectIndex = 0; objectIndex < objectsList.nbObjects; ++objectIndex)
             {
                 CONSTANT ObjectHeader* header = objectsList.headers[objectIndex];
                 
-                DistanceEvaluator distanceEvaluator { pt };
-                const float dist = evaluateAnonymousPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                 
                 if (dist <= minDistance)
                 {
@@ -166,7 +177,7 @@ public:
             {
                 using MyShaderEvaluator = ShadeEvaluator<TShader>;
                 MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
-                const float4 color = evaluateAnonymousPrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
+                const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
                 
                 return { minDistance, color };
             }
@@ -183,12 +194,6 @@ public:
     }
     
 private:
-    
-    struct ObjectsList
-    {
-        size_t nbObjects = 0;
-        CONSTANT ObjectHeader* headers[kNbObjectsMax];
-    };
     
     class CullEvaluator
     {
