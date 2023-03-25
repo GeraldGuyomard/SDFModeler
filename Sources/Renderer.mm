@@ -16,6 +16,7 @@
 #include "Scene.h"
 #include "FragmentShader/PhongShader.h"
 
+#include "Serializer.h"
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
@@ -187,40 +188,6 @@ Vertex s_Vertices[4] = {
     return (SerializedScene*)_serializedSceneBufferAddress;
 }
 
-template <typename TObject>
-static void copy(ObjectHeader* header, const TObject& object)
-{
-    const size_t size = sizeof(TObject);
-    
-    header->byteSize = alignedSize(size);
-    header->objectType = object.objectType();
-    
-    uint8_t* dst = &(header->firstByte);
-    const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
-    
-    memcpy(dst, src, size);
-}
-
-template <typename TPrimitive>
-void addObject(SerializedScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
-{
-    ObjectHeader* h = (ObjectHeader*) p;
-    
-    copy(h, primitive);
-    
-    dynScene->objectCount++;
-    
-    p += h->byteSize;
-}
-
-
-void populateSerializedScene(SerializedScene* dynScene)
-{
-    //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
-    //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
-
-}
-
 - (void)_updateGameState
 {
     /// Update any game state before encoding renderint commands to our drawable
@@ -238,11 +205,11 @@ void populateSerializedScene(SerializedScene* dynScene)
     uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
     
     Sphere whiteSphere {  { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } };
-    addObject(dynScene, p, whiteSphere);
+    serializeObject(dynScene, p, whiteSphere);
     
     constexpr float kZ = 0;
     
-    addObject(dynScene, p, Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
+    serializeObject(dynScene, p, Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
     
     float3 pos = float3 {0.5, 0, kZ};
     
@@ -254,7 +221,7 @@ void populateSerializedScene(SerializedScene* dynScene)
         { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
         { float4 { 1, 1, 0, 1 } } // material
     };
-    addObject(dynScene, p, roundedYellowBox);
+    serializeObject(dynScene, p, roundedYellowBox);
     
     Box whiteBoxHalf
     {
@@ -262,13 +229,13 @@ void populateSerializedScene(SerializedScene* dynScene)
         { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
         { float4 { 1, 1, 1, 1 } } // material
     };
-    addObject(dynScene, p, whiteBoxHalf);
+    serializeObject(dynScene, p, whiteBoxHalf);
     
     Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
-    addObject(dynScene, p, blueSphere);
+    serializeObject(dynScene, p, blueSphere);
     
     Sphere greenSphere { { 0.45f }, { float3 { -1, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
-    addObject(dynScene, p, greenSphere);
+    serializeObject(dynScene, p, greenSphere);
     
     Sphere spherePart {  { 0.4f }, // geom
         { float3 { -2., 0.6, kZ + 0.5f } } // transform
@@ -290,9 +257,7 @@ void populateSerializedScene(SerializedScene* dynScene)
     TComposite composite(sdfUnion, negativeSpherePart);
     
     SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
-    
-    PhongShader shader(uniforms.lightDirection);
-    Scene<PhongShader> dynObject(shader, *dynScene);
+
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
