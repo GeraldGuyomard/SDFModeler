@@ -77,18 +77,11 @@ public:
     template <typename TPrimitive>
     float evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
     {
-        _distance = primitive.computeDistance(_pt);
-        return _distance;
-    }
-    
-    float returnValue() const
-    {
-        return _distance;
+        return primitive.computeDistance(_pt);
     }
     
 private:
     const float3 _pt;
-    float _distance;
 };
 
 template <typename TShader>
@@ -103,13 +96,7 @@ public:
     template <typename TPrimitive>
     float4 evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
     {
-        _color = _shader.computeShade(primitive, _ray, _distance, _pt);
-        return _color;
-    }
-    
-    float4 returnValue() const
-    {
-        return _color;
+        return _shader.computeShade(primitive, _ray, _distance, _pt);
     }
     
 private:
@@ -117,7 +104,6 @@ private:
     const float _distance;
     const float3 _pt;
     const TShader _shader;
-    float4 _color;
 };
 
 
@@ -131,23 +117,6 @@ public:
     Scene(TShader shader, CONSTANT SerializedScene& serializedScene)
     : _serializedScene(serializedScene), _shader(shader)
     {}
-    
-    template <typename TEvaluator, typename TReturn>
-    TReturn evaluate(TEvaluator evaluator) const
-    {
-        CONSTANT uint8_t* ptr = &_serializedScene.buffer[0];
-        
-        for (size_t i=0; i < _serializedScene.objectCount; ++i)
-        {
-            CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
-            
-            evaluateAnonymousPrimitive<TEvaluator, TReturn>(evaluator, header);
-            
-            ptr += header->byteSize;
-        }
-        
-        return evaluator.returnValue();
-    }
     
     SDFResult rayMarch(Ray ray) const
     {
@@ -231,18 +200,11 @@ private:
         template <typename TPrimitive>
         bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
         {
-            _culling = prim.evaluateCulling(_ray);
-            return _culling;
-        }
-        
-        bool returnValue() const
-        {
-            return _culling;
+            return prim.evaluateCulling(_ray);
         }
         
     private:
         Ray _ray;
-        bool _culling;
     };
 
     CONSTANT SerializedScene& _serializedScene;

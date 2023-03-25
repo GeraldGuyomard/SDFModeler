@@ -294,24 +294,6 @@ void populateSerializedScene(SerializedScene* dynScene)
     
     PhongShader shader(uniforms.lightDirection);
     Scene<PhongShader> dynObject(shader, *dynScene);
-    
-    struct IterateEvaluator
-    {
-        template <typename TPrimitive>
-        int evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
-        {
-            return 0;
-        }
-        
-        int returnValue() const
-        {
-            return 0;
-        }
-        
-    } evaluator;
-    
-    dynObject.evaluate<IterateEvaluator, int>(evaluator);
-   
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view

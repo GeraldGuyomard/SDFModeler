@@ -38,6 +38,8 @@
 		74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
 		74DAA71029AEEE7200171C03 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
 		74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
+		74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
+		74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 /* End PBXBuildFile section */
 
@@ -104,6 +106,10 @@
 		74DAA70F29AEEE7200171C03 /* World.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = World.h; sourceTree = "<group>"; };
 		74F7646129CE87CF00CD5259 /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectType.cpp; sourceTree = "<group>"; };
 		74F7646229CE87CF00CD5259 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectType.h; sourceTree = "<group>"; };
+		74F7646429CE8A0300CD5259 /* Composition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composition.cpp; sourceTree = "<group>"; };
+		74F7646529CE8A0300CD5259 /* Composition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composition.h; sourceTree = "<group>"; };
+		74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeader.cpp; sourceTree = "<group>"; };
+		74F7646829CE8BFC00CD5259 /* ObjectHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeader.h; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -167,6 +173,10 @@
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 				7451041529C1538100F69BC4 /* Scene.cpp */,
 				7451041629C1538100F69BC4 /* Scene.h */,
+				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
+				74F7646829CE8BFC00CD5259 /* ObjectHeader.h */,
+				74F7646429CE8A0300CD5259 /* Composition.cpp */,
+				74F7646529CE8A0300CD5259 /* Composition.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
 				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
 				74DAA70E29AEEE7200171C03 /* World.cpp */,
@@ -307,6 +317,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
+				74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */,
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
@@ -336,6 +347,7 @@
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */,
+				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
