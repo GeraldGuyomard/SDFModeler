@@ -7,7 +7,7 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
-#include "ObjectHeader.h"
+#include "PrimitiveEvaluator.h"
 
 enum class CompositionOperation : uint64_t
 {
@@ -50,12 +50,43 @@ public:
     
     bool evaluateCulling(Ray ray) const
     {
+        CullEvaluator cullEvaluator { ray };
+        
+        switch (_operation)
+        {
+            case CompositionOperation::addition:
+            {
+                return evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header1)
+                && evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header2);
+            }
+                
+            case CompositionOperation::substraction:
+            {
+                return evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header1);
+            }
+        }
+        
         return false;
     }
     
     float computeDistance(float3 pt) const
     {
-        //ComputeDistanceEvaluator ev;
+        DistanceEvaluator distanceEvaluator { pt };
+        const float d1 = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _header1);
+        const float d2 = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _header2);
+        
+        switch (_operation)
+        {
+            case CompositionOperation::addition:
+            {
+                return min(d1, d2);
+            }
+                
+            case CompositionOperation::substraction:
+            {
+                return max(d1, -d2);
+            }
+        }
         
         return 0.f;
     }
