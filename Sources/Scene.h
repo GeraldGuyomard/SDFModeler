@@ -30,17 +30,10 @@ using Grid = SDFObject<SDFPlane, RSTTransformer, GridMaterial>;
 using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
 
-template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
-INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
-{
-    CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
-    CONSTANT TPrimitive* prim = reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
-    const TPrimitive p = *prim;
-    return evaluator.evaluate(header, p);
-}
+using Composition = SDFComposition<RSTTransformer, ConstMaterial>;
 
 template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     const ObjectType type = header->objectType;
     switch(type)
@@ -50,11 +43,26 @@ INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeade
         case ObjectType::roundedBox: return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
         case ObjectType::plane: return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
 
-        //CASE_EVALUATE(evaluator, header, ObjectType::compositeUnion, CompositeUnion)
         default: break;
     }
     
     return {};
+}
+
+template <typename TEvaluator, typename TReturnValue>
+INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+{
+    if (header->objectType == ObjectType::composition)
+    {
+        auto serializedComposition = typedPrimitive<Composition::Serialized>(header);
+        Composition composition(serializedComposition);
+        
+        return evaluator.evaluate(header, composition);
+    }
+    else
+    {
+        return evaluateAtomicPrimitive<TEvaluator, TReturnValue>(evaluator, header);
+    }
 }
 
 struct SerializedScene final
@@ -66,7 +74,7 @@ struct SerializedScene final
     // should be aligned on 16 bytes
     // for SSE float moves
     
-    // buffer is an array of SerializedObject
+    // buffer is an array of serialized objects
     // that starts with ObjectHeaders
     uint8_t buffer[2048];
 };

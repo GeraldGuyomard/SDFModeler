@@ -17,7 +17,7 @@ enum class ObjectType : int64_t
     roundedBox = 2,
     plane = 3,
     
-    compositeUnion = 10
+    composition = 10
 };
 
 template <typename TSDFGeometry>
