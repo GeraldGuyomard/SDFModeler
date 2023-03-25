@@ -40,6 +40,7 @@
 		74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
 		74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
 		74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
+		74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 /* End PBXBuildFile section */
 
@@ -110,6 +111,8 @@
 		74F7646529CE8A0300CD5259 /* Composition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composition.h; sourceTree = "<group>"; };
 		74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeader.cpp; sourceTree = "<group>"; };
 		74F7646829CE8BFC00CD5259 /* ObjectHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeader.h; sourceTree = "<group>"; };
+		74F7646A29CF8FC500CD5259 /* PrimitiveEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrimitiveEvaluator.h; sourceTree = "<group>"; };
+		74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrimitiveEvaluator.cpp; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -175,6 +178,8 @@
 				7451041629C1538100F69BC4 /* Scene.h */,
 				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
 				74F7646829CE8BFC00CD5259 /* ObjectHeader.h */,
+				74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */,
+				74F7646A29CF8FC500CD5259 /* PrimitiveEvaluator.h */,
 				74F7646429CE8A0300CD5259 /* Composition.cpp */,
 				74F7646529CE8A0300CD5259 /* Composition.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
@@ -328,6 +333,7 @@
 				74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */,
+				74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
 				7451041729C1538200F69BC4 /* Scene.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,

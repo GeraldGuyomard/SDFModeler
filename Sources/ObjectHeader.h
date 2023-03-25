@@ -28,10 +28,3 @@ INLINE CONSTANT TPrimitive* typedPrimitive(CONSTANT ObjectHeader* header)
     return reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
 }
 
-template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
-INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
-{
-    CONSTANT TPrimitive* prim = typedPrimitive<TPrimitive>(header);
-    const TPrimitive p = *prim;
-    return evaluator.evaluate(header, p);
-}
