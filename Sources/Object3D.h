@@ -9,6 +9,7 @@
 #include "CommonDefinitions.h"
 #include <memory>
 #include "Scene.h"
+#include "Serializer.h"
 #include <vector>
 
 class Object3D

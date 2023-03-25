@@ -30,19 +30,19 @@ static void copy(ObjectHeader* header, const TObject& object)
 }
 
 template <typename TPrimitive>
-INLINE void serializeObject(SerializedScene* serializedScene, uint8_t*& p, const TPrimitive& primitive)
+INLINE void serializeObject(SerializedScene& serializedScene, uint8_t*& p, const TPrimitive& primitive)
 {
     ObjectHeader* h = (ObjectHeader*) p;
     
     copy(h, primitive);
     
-    serializedScene->objectCount++;
+    serializedScene.objectCount++;
     
     p += h->byteSize;
 }
 
 template <>
-INLINE void serializeObject<Composition>(SerializedScene* dynScene, uint8_t*& p, const Composition& primitive)
+INLINE void serializeObject<Composition>(SerializedScene& dynScene, uint8_t*& p, const Composition& primitive)
 {
     
 }

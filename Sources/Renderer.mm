@@ -16,7 +16,7 @@
 #include "Scene.h"
 #include "FragmentShader/PhongShader.h"
 
-#include "Serializer.h"
+#include "Object3D.h"
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
@@ -199,44 +199,55 @@ Vertex s_Vertices[4] = {
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    SerializedScene* dynScene = ((SerializedScene*) _serializedSceneBufferAddress);
-    dynScene->objectCount = 0;
+    SerializedScene* serializedScene = ((SerializedScene*) _serializedSceneBufferAddress);
     
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
+    World world;
     
-    Sphere whiteSphere {  { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } };
-    serializeObject(dynScene, p, whiteSphere);
+    auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
+    world.addObject(std::move(whiteSphere));
     
     constexpr float kZ = 0;
     
-    serializeObject(dynScene, p, Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
+    auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
+    world.addObject(std::move(redSphere));
     
     float3 pos = float3 {0.5, 0, kZ};
     
     constexpr float s = 0.5f;
     
-    RoundedBox roundedYellowBox
+    auto roundedYellowBox = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
         { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
         { float4 { 1, 1, 0, 1 } } // material
-    };
-    serializeObject(dynScene, p, roundedYellowBox);
+    });
+    world.addObject(std::move(roundedYellowBox));
     
-    Box whiteBoxHalf
+    auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
     {
         { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
         { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
         { float4 { 1, 1, 1, 1 } } // material
-    };
-    serializeObject(dynScene, p, whiteBoxHalf);
+    });
+    world.addObject(std::move(whiteBoxHalf));
     
-    Sphere blueSphere { { 0.4f }, { pos }, { float4 { 0, 0, 1, 1 } } };
-    serializeObject(dynScene, p, blueSphere);
+    auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
+    {
+        { 0.4f },
+        { pos },
+        { float4 { 0, 0, 1, 1 } }
+    });
+    world.addObject(std::move(blueSphere));
     
-    Sphere greenSphere { { 0.45f }, { float3 { -1, 1, kZ } }, { float4 { 0, 1, 0, 1 } } };
-    serializeObject(dynScene, p, greenSphere);
+    auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
+    {
+        { 0.45f },
+        { float3 { -1, 1, kZ } },
+        { float4 { 0, 1, 0, 1 } }
+    });
+    world.addObject(std::move(greenSphere));
     
+    /*
     Sphere spherePart {  { 0.4f }, // geom
         { float3 { -2., 0.6, kZ + 0.5f } } // transform
     };
@@ -257,7 +268,9 @@ Vertex s_Vertices[4] = {
     TComposite composite(sdfUnion, negativeSpherePart);
     
     SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
-
+*/
+    
+    world.serialize(*serializedScene);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
