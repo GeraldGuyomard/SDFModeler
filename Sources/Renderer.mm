@@ -191,9 +191,8 @@ template <typename TObject>
 static void copy(ObjectHeader* header, const TObject& object)
 {
     const size_t size = sizeof(TObject);
-    constexpr size_t kAlignment = 16;
     
-    header->byteSize = (size + kAlignment) & ~kAlignment;
+    header->byteSize = alignedSize(size);
     header->objectType = object.objectType();
     
     uint8_t* dst = &(header->firstByte);

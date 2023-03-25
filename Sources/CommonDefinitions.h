@@ -92,6 +92,21 @@
 
 #endif
 
+// Alignment utilities
+// SSE limitations and also GPU perfs
+constexpr static CONSTANT size_t kMemoryAlignment = 16;
+constexpr static CONSTANT size_t kMemoryAlignmentMask = ~(kMemoryAlignment - 1);
+
+INLINE size_t alignedSize(size_t size)
+{
+    return (size + kMemoryAlignment) & kMemoryAlignmentMask;
+}
+
+INLINE bool isAligned(size_t size)
+{
+    return (size & kMemoryAlignmentMask) == 0;
+}
+
 static constexpr CONSTANT float PI = 3.141592653589793238;
 
 INLINE float radToDeg(float r)
