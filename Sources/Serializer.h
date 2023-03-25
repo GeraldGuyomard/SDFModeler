@@ -15,12 +15,12 @@
 #include <assert.h>
 
 template <typename TObject>
-static void copy(ObjectHeader* header, const TObject& object)
+static void copy(ObjectType objectType, ObjectHeader* header, const TObject& object)
 {
     const size_t size = sizeof(TObject);
     
     header->byteSize = alignedSize(size);
-    header->objectType = object.objectType();
+    header->objectType = objectType;
     assert(header->objectType != ObjectType::invalid);
     
     uint8_t* dst = &(header->firstByte);
@@ -28,6 +28,13 @@ static void copy(ObjectHeader* header, const TObject& object)
     
     memcpy(dst, src, size);
 }
+
+template <typename TObject>
+static void copy(ObjectHeader* header, const TObject& object)
+{
+    copy<TObject>(object.objectType(), header, object);
+}
+
 
 template <typename TPrimitive>
 INLINE void serializeObject(SerializedScene& serializedScene, uint8_t*& p, const TPrimitive& primitive)

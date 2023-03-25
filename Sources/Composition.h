@@ -30,6 +30,11 @@ struct SDFSerializedComposition final
     SDFSerializedComposition(CompositionOperation op, TTransformer transformer, TMaterial material)
     : operation(op), transformer(transformer), material(material)
     {}
+    
+    ObjectType objectType() const
+    {
+        return ObjectType::composition;
+    }
 };
 
 template <typename TTransformer, typename TMaterial>
@@ -38,6 +43,8 @@ class SDFComposition final
 public:
     
     using Serialized = SDFSerializedComposition<TTransformer, TMaterial>;
+    using Transformer = TTransformer;
+    using Material = TMaterial;
     
     SDFComposition(CONSTANT Serialized* serializedComposition)
     : _operation(serializedComposition->operation),
@@ -107,5 +114,4 @@ private:
     CONSTANT ObjectHeader* _header1;
     CONSTANT ObjectHeader* _header2;
 };
-
 

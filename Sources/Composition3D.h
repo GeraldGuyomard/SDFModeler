@@ -10,7 +10,7 @@
 #include "Composition.h"
 
 template <typename TPrimitive1, typename TPrimitive2, typename TTransformer, typename TMaterial>
-class TComposition3D final : public Object3D
+class TComposition3D : public Object3D
 {
 public:
     
@@ -51,8 +51,27 @@ private:
     
     CompositionOperation _operation;
     TPrimitive1 _primitive1;
-    TPrimitive1 _primitive2;
+    TPrimitive2 _primitive2;
     
     TTransformer _transformer;
     TMaterial _material;
 };
+
+template <typename TPrimitive1, typename TPrimitive2>
+class Composition3D final : public TComposition3D<TPrimitive1, TPrimitive2, Composition::Transformer, Composition::Material>
+{
+public:
+    using _inherited = TComposition3D<TPrimitive1, TPrimitive2, Composition::Transformer, Composition::Material>;
+    
+    using Transformer = Composition::Transformer;
+    using Material = Composition::Material;
+    
+    Composition3D(CompositionOperation operation,
+                   const TPrimitive1& p1,
+                   const TPrimitive2& p2,
+                   const Transformer& transformer,
+                   const Material& material)
+    : _inherited(operation, p1, p2, transformer, material)
+    {}
+};
+

@@ -17,6 +17,7 @@
 #include "FragmentShader/PhongShader.h"
 
 #include "Object3D.h"
+#include "Composition3D.h"
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
@@ -247,7 +248,6 @@ Vertex s_Vertices[4] = {
     });
     world.addObject(std::move(greenSphere));
     
-    /*
     Sphere spherePart {  { 0.4f }, // geom
         { float3 { -2., 0.6, kZ + 0.5f } } // transform
     };
@@ -257,6 +257,16 @@ Vertex s_Vertices[4] = {
         { float3 { -2., 0, kZ + 0.5f } } // transform
     };
     
+    
+    auto sdfUnion = std::make_unique<Composition3D<Sphere, RoundedBox>>(CompositionOperation::addition,
+                                    spherePart,
+                                    boxPart,
+                                    RSTTransformer {} /* transform*/,
+                                    ConstMaterial { float4 { 0, 1, 1, 1 } } /* material */);
+    
+    world.addObject(std::move(sdfUnion));
+    
+    /*
     Sphere negativeSpherePart {  { 0.4f }, // geom
         { float3 { -2., 0.3, kZ + 1.f } } // transform
     };
