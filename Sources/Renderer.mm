@@ -13,14 +13,14 @@
 // Include header shared between C code here, which executes Metal API commands, and .metal files
 #import "ShaderTypes.h"
 
-#include "DynamicSDFObject.h"
+#include "Scene.h"
 #include "FragmentShader/PhongShader.h"
 
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
-constexpr size_t kAlignedDynamicScenesSize = (sizeof(DynamicScene) & ~0xFF) + 0x100;
+constexpr size_t kAlignedSerializedScenesSize = (sizeof(SerializedScene) & ~0xFF) + 0x100;
 
 Vertex s_Vertices[4] = {
     { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
@@ -36,7 +36,7 @@ Vertex s_Vertices[4] = {
     id <MTLCommandQueue> _commandQueue;
 
     id <MTLBuffer> _dynamicUniformBuffer;
-    id <MTLBuffer> _dynamicDynamicSceneBuffer;
+    id <MTLBuffer> _dynamicSerializedSceneBuffer;
     
     id <MTLBuffer> _quadVertexBuffer;
     id <MTLRenderPipelineState> _pipelineState;
@@ -47,9 +47,9 @@ Vertex s_Vertices[4] = {
     uint8_t _uniformBufferIndex;
     void* _uniformBufferAddress;
 
-    uint32_t _dynamicSceneBufferOffset;
-    uint8_t _dynamicSceneBufferIndex;
-    void* _dynamicSceneBufferAddress;
+    uint32_t _serializedSceneBufferOffset;
+    uint8_t _serializedSceneBufferIndex;
+    void* _serializedSceneBufferAddress;
     
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
@@ -136,12 +136,12 @@ Vertex s_Vertices[4] = {
     }
 
     {
-        const NSUInteger bufferSize = kAlignedDynamicScenesSize * kMaxBuffersInFlight;
+        const NSUInteger bufferSize = kAlignedSerializedScenesSize * kMaxBuffersInFlight;
 
-        _dynamicDynamicSceneBuffer = [_device newBufferWithLength:bufferSize
+        _dynamicSerializedSceneBuffer = [_device newBufferWithLength:bufferSize
                                                      options:MTLResourceStorageModeShared];
 
-        _dynamicDynamicSceneBuffer.label = @"DynamicSceneBuffer";
+        _dynamicSerializedSceneBuffer.label = @"SerializedSceneBuffer";
     }
 
     
@@ -162,9 +162,9 @@ Vertex s_Vertices[4] = {
     _uniformBufferOffset = kAlignedUniformsSize * _uniformBufferIndex;
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
     
-    _dynamicSceneBufferIndex = (_dynamicSceneBufferIndex + 1) % kMaxBuffersInFlight;
-    _dynamicSceneBufferOffset = kAlignedDynamicScenesSize * _uniformBufferIndex;
-    _dynamicSceneBufferAddress = ((uint8_t*)_dynamicDynamicSceneBuffer.contents) + _dynamicSceneBufferOffset;
+    _serializedSceneBufferIndex = (_serializedSceneBufferIndex + 1) % kMaxBuffersInFlight;
+    _serializedSceneBufferOffset = kAlignedSerializedScenesSize * _uniformBufferIndex;
+    _serializedSceneBufferAddress = ((uint8_t*)_dynamicSerializedSceneBuffer.contents) + _serializedSceneBufferOffset;
 }
 
 - (float4x4)cameraTransform
@@ -182,9 +182,9 @@ Vertex s_Vertices[4] = {
     return (Uniforms*)_uniformBufferAddress;
 }
 
--(const DynamicScene*) mutableState
+-(const SerializedScene*) mutableState
 {
-    return (DynamicScene*)_dynamicSceneBufferAddress;
+    return (SerializedScene*)_serializedSceneBufferAddress;
 }
 
 template <typename TObject>
@@ -203,7 +203,7 @@ static void copy(ObjectHeader* header, const TObject& object)
 }
 
 template <typename TPrimitive>
-void addObject(DynamicScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
+void addObject(SerializedScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
 {
     ObjectHeader* h = (ObjectHeader*) p;
     
@@ -215,7 +215,7 @@ void addObject(DynamicScene* dynScene, uint8_t*& p, const TPrimitive& primitive)
 }
 
 
-void populateDynamicScene(DynamicScene* dynScene)
+void populateSerializedScene(SerializedScene* dynScene)
 {
     //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni);
     //return ::rayMarch(ray, shader, redSphere, blueSphere, greenSphere, whiteBox, whiteBoxHalf, uni, dynObject);
@@ -233,7 +233,7 @@ void populateDynamicScene(DynamicScene* dynScene)
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    DynamicScene* dynScene = ((DynamicScene*) _dynamicSceneBufferAddress);
+    SerializedScene* dynScene = ((SerializedScene*) _serializedSceneBufferAddress);
     dynScene->objectCount = 0;
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(dynScene->buffer));
@@ -293,7 +293,7 @@ void populateDynamicScene(DynamicScene* dynScene)
     SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
     
     PhongShader shader(uniforms.lightDirection);
-    DynamicObject<PhongShader> dynObject(shader, *dynScene);
+    Scene<PhongShader> dynObject(shader, *dynScene);
     
     struct IterateEvaluator
     {
@@ -358,9 +358,9 @@ void populateDynamicScene(DynamicScene* dynScene)
                                   offset:_uniformBufferOffset
                                  atIndex:BufferIndexUniforms];
 
-        [renderEncoder setFragmentBuffer:_dynamicDynamicSceneBuffer
-                                  offset:_dynamicSceneBufferOffset
-                                 atIndex:BufferIndexDynamicScenes];
+        [renderEncoder setFragmentBuffer:_dynamicSerializedSceneBuffer
+                                  offset:_serializedSceneBufferOffset
+                                 atIndex:BufferIndexSerializedScenes];
 
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer

@@ -49,6 +49,27 @@ case objectType: EVALUATE(evaluator, header, TPrimitive); break; \
     } \
 } \
 
+struct ObjectHeader final
+{
+    size_t    byteSize;
+    ObjectType  objectType;
+    
+    uint8_t     firstByte;
+    
+    ObjectHeader(uint32_t byteSize, ObjectType objectType)
+    : byteSize(byteSize), objectType(objectType)
+    {}
+};
+
+struct SerializedScene final
+{
+    uint64_t objectCount = 0;
+    
+    // buffer is an array of SerializedObject
+    // that starts with ObjectHeaders
+    uint8_t buffer[2048];
+};
+
 class DistanceEvaluator
 {
 public:
@@ -103,22 +124,22 @@ private:
 
 
 template <typename TShader>
-class DynamicObject final
+class Scene final
 {
 public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 16;
     
-    DynamicObject(TShader shader, CONSTANT DynamicScene& dynamicScene)
-    : _dynamicScene(dynamicScene), _shader(shader)
+    Scene(TShader shader, CONSTANT SerializedScene& serializedScene)
+    : _serializedScene(serializedScene), _shader(shader)
     {}
     
     template <typename TEvaluator, typename TReturn>
     TReturn evaluate(TEvaluator evaluator) const
     {
-        CONSTANT uint8_t* ptr = &_dynamicScene.buffer[0];
+        CONSTANT uint8_t* ptr = &_serializedScene.buffer[0];
         
-        for (size_t i=0; i < _dynamicScene.objectCount; ++i)
+        for (size_t i=0; i < _serializedScene.objectCount; ++i)
         {
             CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
             
@@ -217,6 +238,6 @@ private:
         ObjectsList _objectsList;
     };
 
-    CONSTANT DynamicScene& _dynamicScene;
+    CONSTANT SerializedScene& _serializedScene;
     TShader _shader;
 };

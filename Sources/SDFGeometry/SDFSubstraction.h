@@ -8,6 +8,7 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
+#include "ObjectType.h"
 
 template<typename P, typename PToRemove>
 class SDFSubstraction final

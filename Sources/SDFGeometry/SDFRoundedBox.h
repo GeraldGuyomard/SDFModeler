@@ -9,6 +9,7 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
+#include "ObjectType.h"
 
 class SDFRoundedBox final
 {

@@ -10,7 +10,7 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
-#include "Uniforms.h"
+#include "ObjectType.h"
 
 class SDFSphere final
 {

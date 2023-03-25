@@ -1,8 +1,8 @@
 //
-//  SDFObject.cpp
+//  Scene.cpp
 //  SDFModeler
 //
 //  Created by Gérald Guyomard on 2/26/23.
 //
 
-#include "DynamicSDFObject.h"
+#include "Scene.h"

@@ -13,7 +13,7 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
-#include "DynamicSDFObject.h"
+#include "Scene.h"
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
@@ -47,13 +47,13 @@ public:
 };
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
     const TShader shader { uniforms.lightDirection };
     
-    DynamicObject<TShader> dynObject { shader, dynamicScene };
+    Scene<TShader> dynObject { shader, serializedScene };
     const auto res = dynObject.rayMarch(ray);
     
     if (res.isValid())
@@ -68,17 +68,17 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT D
     return envRes.color;
 }
 
-INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
 {
-    return render<PhongShader>(viewportNDC, uniforms, dynamicScene);
+    return render<PhongShader>(viewportNDC, uniforms, serializedScene);
 }
 
-INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
 {
-    return render<CellShader>(viewportNDC, uniforms, dynamicScene);
+    return render<CellShader>(viewportNDC, uniforms, serializedScene);
 }
 
-INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT DynamicScene& dynamicScene)
+INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
 {
-    return renderPhong(viewportNDC, uniforms, dynamicScene);
+    return renderPhong(viewportNDC, uniforms, serializedScene);
 }

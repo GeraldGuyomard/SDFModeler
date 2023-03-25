@@ -29,7 +29,7 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
 
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-                               constant DynamicScene& mutableState [[ buffer(BufferIndexDynamicScenes) ]])
+                               constant SerializedScene& mutableState [[ buffer(BufferIndexSerializedScenes) ]])
 {
     return renderDefault(in.viewportNDC, uniforms, mutableState);
 }

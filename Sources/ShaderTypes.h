@@ -18,7 +18,7 @@ enum BufferIndex : EnumBackingType
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
     BufferIndexUniforms         = 2,
-    BufferIndexDynamicScenes = 3
+    BufferIndexSerializedScenes = 3
 };
 
 enum VertexAttribute : EnumBackingType

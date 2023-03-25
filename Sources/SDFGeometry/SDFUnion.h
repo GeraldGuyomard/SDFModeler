@@ -8,6 +8,7 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
+#include "ObjectType.h"
 
 template<typename P1, typename P2>
 class SDFUnion final

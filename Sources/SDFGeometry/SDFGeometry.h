@@ -10,7 +10,7 @@
 
 #include "CommonDefinitions.h"
 #include "Ray.h"
-#include "Uniforms.h"
+#include "ObjectType.h"
 
 class SDFGeometry final
 {

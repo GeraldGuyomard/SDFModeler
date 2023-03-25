@@ -8,6 +8,7 @@
 #import <MetalKit/MetalKit.h>
 #import "CommonDefinitions.h"
 #import "Uniforms.h"
+#import "Scene.h"
 
 // Our platform independent renderer class.   Implements the MTKViewDelegate protocol which
 //   allows it to accept per-frame update and drawable resize callbacks.
@@ -17,7 +18,7 @@
 
 @property(nonatomic) float4x4 cameraTransform;
 @property(nonatomic, readonly, nonnull) const Uniforms* uniforms;
-@property(nonatomic, readonly, nonnull) const DynamicScene* mutableState;
+@property(nonatomic, readonly, nonnull) const SerializedScene* mutableState;
 
 @end
 
