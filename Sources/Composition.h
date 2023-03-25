@@ -27,6 +27,9 @@ struct SDFSerializedComposition final
     // what should come next is
     // 2 ObjectHeaders
     
+    SDFSerializedComposition(CompositionOperation op, TTransformer transformer, TMaterial material)
+    : operation(op), transformer(transformer), material(material)
+    {}
 };
 
 template <typename TTransformer, typename TMaterial>

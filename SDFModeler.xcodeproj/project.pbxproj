@@ -43,6 +43,7 @@
 		74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
+		74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647429CF9B0F00CD5259 /* Composition3D.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 /* End PBXBuildFile section */
 
@@ -119,6 +120,8 @@
 		74F7646E29CF93FD00CD5259 /* Serializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Serializer.h; sourceTree = "<group>"; };
 		74F7647029CF95D400CD5259 /* Object3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3D.h; sourceTree = "<group>"; };
 		74F7647129CF95D400CD5259 /* Object3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3D.cpp; sourceTree = "<group>"; };
+		74F7647329CF9B0F00CD5259 /* Composition3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composition3D.h; sourceTree = "<group>"; };
+		74F7647429CF9B0F00CD5259 /* Composition3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composition3D.cpp; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -163,6 +166,8 @@
 				74F7646E29CF93FD00CD5259 /* Serializer.h */,
 				74F7647129CF95D400CD5259 /* Object3D.cpp */,
 				74F7647029CF95D400CD5259 /* Object3D.h */,
+				74F7647429CF9B0F00CD5259 /* Composition3D.cpp */,
+				74F7647329CF9B0F00CD5259 /* Composition3D.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
 				7444A4D729A1CB63009632C3 /* GameViewController.h */,
@@ -364,6 +369,7 @@
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */,
+				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
 				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
 			);

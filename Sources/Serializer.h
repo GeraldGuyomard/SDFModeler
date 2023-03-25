@@ -44,5 +44,5 @@ INLINE void serializeObject(SerializedScene& serializedScene, uint8_t*& p, const
 template <>
 INLINE void serializeObject<Composition>(SerializedScene& dynScene, uint8_t*& p, const Composition& primitive)
 {
-    
+    assert(false);
 }
