@@ -10,18 +10,19 @@
 #include "Uniforms.h"
 #include "SDFResult.h"
 
-#include "Transformer/StandardTransformers.h"
-#include "Material/ConstMaterial.h"
-#include "Material/GridMaterial.h"
-
 #include "SDFGeometry/SDFSphere.h"
 #include "SDFGeometry/SDFPlane.h"
 #include "SDFGeometry/SDFBox.h"
 #include "SDFGeometry/SDFRoundedBox.h"
 #include "SDFGeometry/SDFUnion.h"
 #include "SDFGeometry/SDFSubstraction.h"
+#include "Composition.h"
 
 #include "SDFObject.h"
+
+#include "Transformer/StandardTransformers.h"
+#include "Material/ConstMaterial.h"
+#include "Material/GridMaterial.h"
 
 using Sphere = SDFObject<SDFSphere, RSTTransformer, ConstMaterial>;
 using Plane = SDFObject<SDFPlane, RSTTransformer, ConstMaterial>;
@@ -29,37 +30,32 @@ using Grid = SDFObject<SDFPlane, RSTTransformer, GridMaterial>;
 using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
 using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
 
-#define EVALUATE(evaluator, header, TPrimitive) { \
-    CONSTANT uint8_t* firstBytePtr = &(header->firstByte); \
-    CONSTANT TPrimitive* prim = (CONSTANT TPrimitive*) firstBytePtr; \
-    const TPrimitive p = *prim; \
-    evaluator.evaluate(header, p); }\
-
-#define CASE_EVALUATE(evaluator, header, objectType, TPrimitive) \
-case objectType: EVALUATE(evaluator, header, TPrimitive); break; \
-
-#define SWITCH_EVALUATOR(evaluator, header) { \
-    const ObjectType type = header->objectType; \
-    switch(type) { \
-        CASE_EVALUATE(evaluator, header, ObjectType::sphere, Sphere) \
-        CASE_EVALUATE(evaluator, header, ObjectType::box, Box) \
-        CASE_EVALUATE(evaluator, header, ObjectType::roundedBox, RoundedBox) \
-        CASE_EVALUATE(evaluator, header, ObjectType::plane, Plane) \
-        default: break; \
-    } \
-} \
-
-struct ObjectHeader final
+template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
+INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
-    size_t    byteSize;
-    ObjectType  objectType;
+    CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
+    CONSTANT TPrimitive* prim = (CONSTANT TPrimitive*) firstBytePtr;
+    const TPrimitive p = *prim;
+    return evaluator.evaluate(header, p);
+}
+
+template <typename TEvaluator, typename TReturnValue>
+INLINE TReturnValue evaluateAnonymousPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+{
+    const ObjectType type = header->objectType;
+    switch(type)
+    {
+        case ObjectType::sphere: return evaluatePrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
+        case ObjectType::box: return evaluatePrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);;
+        case ObjectType::roundedBox: return evaluatePrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
+        case ObjectType::plane: return evaluatePrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
+
+        //CASE_EVALUATE(evaluator, header, ObjectType::compositeUnion, CompositeUnion)
+        default: break;
+    }
     
-    uint8_t     firstByte;
-    
-    ObjectHeader(uint32_t byteSize, ObjectType objectType)
-    : byteSize(byteSize), objectType(objectType)
-    {}
-};
+    return {};
+}
 
 struct SerializedScene final
 {
@@ -79,9 +75,10 @@ public:
     {}
     
     template <typename TPrimitive>
-    void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+    float evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
     {
         _distance = primitive.computeDistance(_pt);
+        return _distance;
     }
     
     float returnValue() const
@@ -104,9 +101,10 @@ public:
     {}
     
     template <typename TPrimitive>
-    void evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
+    float4 evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive)
     {
         _color = _shader.computeShade(primitive, _ray, _distance, _pt);
+        return _color;
     }
     
     float4 returnValue() const
@@ -143,7 +141,7 @@ public:
         {
             CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
             
-            SWITCH_EVALUATOR(evaluator, header);
+            evaluateAnonymousPrimitive<TEvaluator, TReturn>(evaluator, header);
             
             ptr += header->byteSize;
         }
@@ -153,8 +151,22 @@ public:
     
     SDFResult rayMarch(Ray ray) const
     {
-        BuildObjectsListEvaluator buildEvaluator { ray };
-        const auto objectsList = evaluate<BuildObjectsListEvaluator, ObjectsList>(buildEvaluator);
+        ObjectsList objectsList;
+        
+        CONSTANT uint8_t* ptr = &_serializedScene.buffer[0];
+        for (size_t i=0; i < _serializedScene.objectCount; ++i)
+        {
+            CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
+            
+            CullEvaluator cullEvaluator { ray };
+            const bool culled = evaluateAnonymousPrimitive<CullEvaluator, bool>(cullEvaluator, header);
+            if (!culled)
+            {
+                objectsList.headers[objectsList.nbObjects++] = header;
+            }
+            
+            ptr += header->byteSize;
+        }
         
         constexpr size_t kNbSteps = 100;
         
@@ -172,9 +184,7 @@ public:
                 CONSTANT ObjectHeader* header = objectsList.headers[objectIndex];
                 
                 DistanceEvaluator distanceEvaluator { pt };
-                SWITCH_EVALUATOR(distanceEvaluator, header);
-                
-                const float dist = distanceEvaluator.returnValue();
+                const float dist = evaluateAnonymousPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                 
                 if (dist <= minDistance)
                 {
@@ -185,9 +195,9 @@ public:
             
             if ((minDistance >= 0.f) && (minDistance <= kDistanceEpsilon))
             {
-                ShadeEvaluator<TShader> shadeEvaluator { ray, minDistance, pt, _shader };
-                SWITCH_EVALUATOR(shadeEvaluator, minHeader);
-                const float4 color = shadeEvaluator.returnValue();
+                using MyShaderEvaluator = ShadeEvaluator<TShader>;
+                MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
+                const float4 color = evaluateAnonymousPrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
                 
                 return { minDistance, color };
             }
@@ -211,31 +221,28 @@ private:
         CONSTANT ObjectHeader* headers[kNbObjectsMax];
     };
     
-    class BuildObjectsListEvaluator
+    class CullEvaluator
     {
     public:
-        BuildObjectsListEvaluator(Ray ray)
+        CullEvaluator(Ray ray)
         : _ray(ray)
         {}
         
         template <typename TPrimitive>
-        void evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
+        bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
         {
-            if (!prim.evaluateCulling(_ray))
-            {
-                // possibly intersecting ray
-                _objectsList.headers[_objectsList.nbObjects++] = header;
-            }
+            _culling = prim.evaluateCulling(_ray);
+            return _culling;
         }
         
-        ObjectsList returnValue() const
+        bool returnValue() const
         {
-            return _objectsList;
+            return _culling;
         }
         
     private:
         Ray _ray;
-        ObjectsList _objectsList;
+        bool _culling;
     };
 
     CONSTANT SerializedScene& _serializedScene;

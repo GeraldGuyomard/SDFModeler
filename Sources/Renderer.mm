@@ -298,19 +298,19 @@ void populateSerializedScene(SerializedScene* dynScene)
     struct IterateEvaluator
     {
         template <typename TPrimitive>
-        void evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
+        int evaluate(CONSTANT ObjectHeader* header, TPrimitive prim)
         {
-            
+            return 0;
         }
         
-        void returnValue() const
+        int returnValue() const
         {
-            
+            return 0;
         }
         
     } evaluator;
     
-    dynObject.evaluate<IterateEvaluator, void>(evaluator);
+    dynObject.evaluate<IterateEvaluator, int>(evaluator);
    
 }
 
