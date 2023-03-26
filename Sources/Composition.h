@@ -49,28 +49,24 @@ public:
     _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract)
     {
         auto ptr = reinterpret_cast<CONSTANT uint8_t*>(serializedComposition);
-        auto headerPtr = ptr + sizeof(Serialized);
-        
-        const auto nbHeaders = _nbObjectsToAdd + _nbObjectsToSubstract;
-        for (uint64_t i=0; i < nbHeaders; ++i)
-        {
-            const auto header = reinterpret_cast<CONSTANT ObjectHeader*>(headerPtr);
-            _headers[i] = header;
-            headerPtr += header->byteSize;
-        }
+        _firstHeader = reinterpret_cast<CONSTANT ObjectHeader*>(ptr + sizeof(Serialized));
     }
     
     bool evaluateCulling(Ray ray) const
     {
         CullEvaluator cullEvaluator { ray };
         
+        CONSTANT ObjectHeader* header = _firstHeader;
+        
         for (uint64_t i=0; i < _nbObjectsToAdd; ++i)
         {
-            const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _headers[i]);
+            const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
             {
                 return false;
             }
+            
+            header = ObjectHeader::next(header);
         }
         
         return true;
@@ -80,20 +76,24 @@ public:
     {
         DistanceEvaluator distanceEvaluator { pt };
         
+        CONSTANT ObjectHeader* header = _firstHeader;
+        
         uint64_t i = 0;
         float distanceOfAddition = 1e7f;
         for (; i < _nbObjectsToAdd; ++i)
         {
-            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _headers[i]);
+            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
             distanceOfAddition = min(distanceOfAddition, d);
+            header = ObjectHeader::next(header);
         }
         
         const uint64_t n = _nbObjectsToAdd + _nbObjectsToSubstract;
         float distanceOfSubstraction = 1e7f;
         for (; i < n; ++i)
         {
-            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _headers[i]);
+            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
             distanceOfSubstraction = min(distanceOfSubstraction, d);
+            header = ObjectHeader::next(header);
         }
         
         return max(distanceOfAddition, -distanceOfSubstraction);
@@ -110,6 +110,6 @@ private:
     
     uint64_t _nbObjectsToAdd;
     uint64_t _nbObjectsToSubstract;
-    CONSTANT ObjectHeader* _headers[kNbObjectsMax];
+    CONSTANT ObjectHeader* _firstHeader;
 };
 

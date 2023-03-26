@@ -23,3 +23,20 @@ INLINE bool evaluateSphereCulling(float radius, Ray ray)
     
     return d < 0.f;
 }
+
+INLINE bool evaluateBoxCulling(float3 halfSize, Ray ray)
+{
+    const float3 boxMin = -halfSize;
+    const float3 boxMax = halfSize;
+    
+    const float3 invDir = float3 { 1, 1, 1 } / ray.direction;
+    
+    float3 tMin = (boxMin - ray.origin) * invDir;
+    float3 tMax = (boxMax - ray.origin) * invDir;
+    float3 t1 = min(tMin, tMax);
+    float3 t2 = max(tMin, tMax);
+    float tNear = max(max(t1.x, t1.y), t1.z);
+    float tFar = min(min(t2.x, t2.y), t2.z);
+    
+    return tNear > tFar;
+}

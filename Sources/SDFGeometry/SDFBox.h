@@ -27,10 +27,14 @@ public:
     
     bool evaluateCulling(Ray ray) const
     {
+#if 0
+        return evaluateBoxCulling(halfSize(), ray);
+#else
         const auto hSize = halfSize();
         const float r = max(max(hSize.x, hSize.y), hSize.z) * 2.f;
         
         return evaluateSphereCulling(r, ray);
+#endif
     }
     
     float3 halfSize() const { return _halfSizeAndPadding.xyz; }

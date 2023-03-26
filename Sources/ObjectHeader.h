@@ -19,6 +19,12 @@ struct ObjectHeader final
     ObjectHeader(uint32_t byteSize, ObjectType objectType)
     : byteSize(byteSize), objectType(objectType)
     {}
+    
+    static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
+    {
+        CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);
+        return reinterpret_cast<CONSTANT ObjectHeader*>(ptr + header->byteSize);
+    }
 };
 
 template <typename TPrimitive>
