@@ -85,6 +85,10 @@
     CGImageRelease(cgImage);
     
     [self.renderView setImage:img];
+    
+    // label
+    NSString* title = [NSString stringWithFormat:@"Resolution %d x %d", int(size.width), int(size.height)];
+    [self.resolutionLabel setStringValue:title];
 }
 
 @end

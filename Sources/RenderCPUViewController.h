@@ -13,5 +13,6 @@
 - (IBAction) render:(id)sender;
 
 @property(nonatomic) IBOutlet NSImageView* renderView;
+@property(nonatomic) IBOutlet NSTextField* resolutionLabel;
 
 @end
