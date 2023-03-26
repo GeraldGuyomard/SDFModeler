@@ -70,18 +70,18 @@ public:
         ObjectsList objectsList;
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* ptr = &_serializedScene.buffer[0];
+        CONSTANT uint8_t* buffer = &_serializedScene.buffer[0];
+        CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
+        
         for (size_t i=0; i < _serializedScene.objectCount; ++i)
         {
-            CONSTANT ObjectHeader* header = (CONSTANT ObjectHeader*)ptr;
-            
             const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
             {
                 objectsList.headers[objectsList.nbObjects++] = header;
             }
             
-            ptr += header->byteSize;
+            header = ObjectHeader::next(header);
         }
         
         constexpr size_t kNbSteps = 100;
