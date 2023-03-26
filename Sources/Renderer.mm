@@ -19,6 +19,8 @@
 #include "Object3D.h"
 #include "Composition3D.h"
 
+#include "GameViewController.h"
+
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
@@ -202,81 +204,7 @@ Vertex s_Vertices[4] = {
     
     SerializedScene* serializedScene = ((SerializedScene*) _serializedSceneBufferAddress);
     
-    World world;
-    
-    auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
-    world.addObject(std::move(whiteSphere));
-    
-    constexpr float kZ = 0;
-    
-    auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
-    world.addObject(std::move(redSphere));
-    
-    float3 pos = float3 {0.5, 0, kZ};
-    
-    constexpr float s = 0.5f;
-    
-    auto roundedYellowBox = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
-    {
-        { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
-        { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
-        { float4 { 1, 1, 0, 1 } } // material
-    });
-    world.addObject(std::move(roundedYellowBox));
-    
-    auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
-    {
-        { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
-        { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
-        { float4 { 1, 1, 1, 1 } } // material
-    });
-    world.addObject(std::move(whiteBoxHalf));
-    
-    auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f },
-        { pos },
-        { float4 { 0, 0, 1, 1 } }
-    });
-    world.addObject(std::move(blueSphere));
-    
-    auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
-    {
-        { 0.45f },
-        { float3 { -1, 1, kZ } },
-        { float4 { 0, 1, 0, 1 } }
-    });
-    world.addObject(std::move(greenSphere));
-    
-    auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f }, // geom
-        { float3 { -2., 0.6, kZ + 0.5f } }
-    });
-    
-    auto boxPart = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
-    {
-        { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
-        { float3 { -2., 0, kZ + 0.5f } } // transform
-    });
-    
-    auto negativeSpherePart = std::make_unique<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f }, // geom
-        { float3 { -2., 0.3, kZ + 1.f } } // transform
-    });
-    
-    auto sdfUnion = std::make_unique<Composition3D>(
-                                    RSTTransformer {} /* transform*/,
-                                    ConstMaterial { float4 { 0, 1, 1, 1 } } /* material */);
-    
-    sdfUnion->addAdditiveObject(std::move(spherePart));
-    sdfUnion->addAdditiveObject(std::move(boxPart));
-    sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
-    
-    world.addObject(std::move(sdfUnion));
-    
-    world.serialize(*serializedScene);
+    [GameViewController instance].world.serialize(*serializedScene);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
