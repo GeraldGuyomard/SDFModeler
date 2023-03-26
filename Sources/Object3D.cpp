@@ -21,6 +21,7 @@ World::serialize(SerializedScene& serializedScene) const
     
     for (const auto& object : _objects)
     {
-        object->serialize(serializedScene, p);
+        object->serialize(p);
+        serializedScene.objectCount++;
     }
 }

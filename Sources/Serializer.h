@@ -8,7 +8,6 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectHeader.h"
-#include "Scene.h"
 #include "Composition.h"
 
 #include <cstring>
@@ -37,19 +36,10 @@ static void copy(ObjectHeader* header, const TObject& object)
 
 
 template <typename TPrimitive>
-INLINE void serializeObject(SerializedScene& serializedScene, uint8_t*& p, const TPrimitive& primitive)
+INLINE void serializeObject(uint8_t*& p, const TPrimitive& primitive)
 {
     ObjectHeader* h = (ObjectHeader*) p;
-    
     copy(h, primitive);
     
-    serializedScene.objectCount++;
-    
     p += h->byteSize;
-}
-
-template <>
-INLINE void serializeObject<Composition>(SerializedScene& dynScene, uint8_t*& p, const Composition& primitive)
-{
-    assert(false);
 }

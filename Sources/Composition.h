@@ -9,26 +9,20 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "PrimitiveEvaluator.h"
 
-enum class CompositionOperation : uint64_t
-{
-    addition,
-    substraction
-};
-
 template <typename TTransformer, typename TMaterial>
 struct SDFSerializedComposition final
 {
-    CompositionOperation operation;
-    uint64_t padding = 0;
+    uint64_t nbObjectsToAdd;
+    uint64_t nbObjectsToSubstract;
     
     TTransformer transformer;
     TMaterial material;
     
     // what should come next is
-    // 2 ObjectHeaders
+    // nbObjectsToAdd + nbObjectsToSubstract objects with ObjectHeaders
     
-    SDFSerializedComposition(CompositionOperation op, TTransformer transformer, TMaterial material)
-    : operation(op), transformer(transformer), material(material)
+    SDFSerializedComposition(uint64_t nbObjectsToAdd, uint64_t nbObjectsToSubstract, TTransformer transformer, TMaterial material)
+    : nbObjectsToAdd(nbObjectsToAdd), nbObjectsToSubstract(nbObjectsToSubstract), transformer(transformer), material(material)
     {}
     
     ObjectType objectType() const
@@ -42,63 +36,67 @@ class SDFComposition final
 {
 public:
     
+    constexpr static CONSTANT size_t kNbObjectsMax = 16;
+    
     using Serialized = SDFSerializedComposition<TTransformer, TMaterial>;
     using Transformer = TTransformer;
     using Material = TMaterial;
     
-    SDFComposition(CONSTANT Serialized* serializedComposition)
-    : _operation(serializedComposition->operation),
+    SDFComposition(CONSTANT Serialized* serializedComposition) :
     _transformer(serializedComposition->transformer),
-    _material(serializedComposition->material)
+    _material(serializedComposition->material),
+    _nbObjectsToAdd(serializedComposition->nbObjectsToAdd),
+    _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract)
     {
         auto ptr = reinterpret_cast<CONSTANT uint8_t*>(serializedComposition);
-        auto headersStart = ptr + sizeof(Serialized);
+        auto headerPtr = ptr + sizeof(Serialized);
         
-        _header1 = reinterpret_cast<CONSTANT ObjectHeader*>(headersStart);
-        _header2 = reinterpret_cast<CONSTANT ObjectHeader*>(headersStart + _header1->byteSize);
+        const auto nbHeaders = _nbObjectsToAdd + _nbObjectsToSubstract;
+        for (uint64_t i=0; i < nbHeaders; ++i)
+        {
+            const auto header = reinterpret_cast<CONSTANT ObjectHeader*>(headerPtr);
+            _headers[i] = header;
+            headerPtr += header->byteSize;
+        }
     }
     
     bool evaluateCulling(Ray ray) const
     {
         CullEvaluator cullEvaluator { ray };
         
-        switch (_operation)
+        for (uint64_t i=0; i < _nbObjectsToAdd; ++i)
         {
-            case CompositionOperation::addition:
+            const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _headers[i]);
+            if (!culled)
             {
-                return evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header1)
-                && evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header2);
-            }
-                
-            case CompositionOperation::substraction:
-            {
-                return evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, _header1);
+                return false;
             }
         }
         
-        return false;
+        return true;
     }
     
     float computeDistance(float3 pt) const
     {
         DistanceEvaluator distanceEvaluator { pt };
-        const float d1 = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _header1);
-        const float d2 = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _header2);
         
-        switch (_operation)
+        uint64_t i = 0;
+        float distanceOfAddition = 1e7f;
+        for (; i < _nbObjectsToAdd; ++i)
         {
-            case CompositionOperation::addition:
-            {
-                return min(d1, d2);
-            }
-                
-            case CompositionOperation::substraction:
-            {
-                return max(d1, -d2);
-            }
+            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _headers[i]);
+            distanceOfAddition = min(distanceOfAddition, d);
         }
         
-        return 0.f;
+        const uint64_t n = _nbObjectsToAdd + _nbObjectsToSubstract;
+        float distanceOfSubstraction = 1e7f;
+        for (; i < n; ++i)
+        {
+            const float d = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, _headers[i]);
+            distanceOfSubstraction = min(distanceOfSubstraction, d);
+        }
+        
+        return max(distanceOfAddition, -distanceOfSubstraction);
     }
     
     float4 computeAlbedo(float3 pt) const
@@ -107,11 +105,11 @@ public:
     }
     
 private:
-    const CompositionOperation _operation;
     const TTransformer _transformer;
     const TMaterial _material;
     
-    CONSTANT ObjectHeader* _header1;
-    CONSTANT ObjectHeader* _header2;
+    uint64_t _nbObjectsToAdd;
+    uint64_t _nbObjectsToSubstract;
+    CONSTANT ObjectHeader* _headers[kNbObjectsMax];
 };
 

@@ -248,37 +248,33 @@ Vertex s_Vertices[4] = {
     });
     world.addObject(std::move(greenSphere));
     
-    Sphere spherePart {  { 0.4f }, // geom
-        { float3 { -2., 0.6, kZ + 0.5f } } // transform
-    };
+    auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
+    {
+        { 0.4f }, // geom
+        { float3 { -2., 0.6, kZ + 0.5f } }
+    });
     
-    RoundedBox boxPart {
+    auto boxPart = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
+    {
         { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
         { float3 { -2., 0, kZ + 0.5f } } // transform
-    };
+    });
     
+    auto negativeSpherePart = std::make_unique<TObject3D<Sphere>>(Sphere
+    {
+        { 0.4f }, // geom
+        { float3 { -2., 0.3, kZ + 1.f } } // transform
+    });
     
-    auto sdfUnion = std::make_unique<Composition3D<Sphere, RoundedBox>>(CompositionOperation::addition,
-                                    spherePart,
-                                    boxPart,
+    auto sdfUnion = std::make_unique<Composition3D>(
                                     RSTTransformer {} /* transform*/,
                                     ConstMaterial { float4 { 0, 1, 1, 1 } } /* material */);
     
+    sdfUnion->addAdditiveObject(std::move(spherePart));
+    sdfUnion->addAdditiveObject(std::move(boxPart));
+    sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
+    
     world.addObject(std::move(sdfUnion));
-    
-    /*
-    Sphere negativeSpherePart {  { 0.4f }, // geom
-        { float3 { -2., 0.3, kZ + 1.f } } // transform
-    };
-    
-    using TUnion = SDFUnion<Sphere, RoundedBox>;
-    TUnion sdfUnion(spherePart, boxPart);
-    
-    using TComposite = SDFSubstraction<TUnion, Sphere>;
-    TComposite composite(sdfUnion, negativeSpherePart);
-    
-    SDFObject<TComposite, RSTTransformer, ConstMaterial> uni( composite, {}, { float4 { 0, 1, 1, 1 } } );
-*/
     
     world.serialize(*serializedScene);
 }

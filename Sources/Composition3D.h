@@ -9,34 +9,51 @@
 #include "Object3D.h"
 #include "Composition.h"
 
-template <typename TPrimitive1, typename TPrimitive2, typename TTransformer, typename TMaterial>
+template <typename TTransformer, typename TMaterial>
 class TComposition3D : public Object3D
 {
 public:
     
-    TComposition3D(CompositionOperation operation,
-                   const TPrimitive1& p1,
-                   const TPrimitive2& p2,
-                   const TTransformer& transformer,
+    TComposition3D(const TTransformer& transformer,
                    const TMaterial& material)
-    : _operation(operation), _primitive1(p1), _primitive2(p2), _transformer(transformer), _material(material)
+    : _transformer(transformer), _material(material)
+    {}
+    
+    void addAdditiveObject(Object3D::Ptr object)
     {
-        
+        _additiveObjects.push_back(std::move(object));
     }
     
-    void serialize(SerializedScene& serializedScene, uint8_t*& ptr) const override
+    void addSubstractiveObject(Object3D::Ptr object)
+    {
+        _substractiveObjects.push_back(std::move(object));
+    }
+    
+    void serialize(uint8_t*& ptr) const override
     {
         ObjectHeader* const h = (ObjectHeader*) ptr;
         
-        SDFSerializedComposition<TTransformer, TMaterial> serializedComp { _operation, _transformer, _material };
+        SDFSerializedComposition<TTransformer, TMaterial> serializedComp
+        {
+            _additiveObjects.size(),
+            _substractiveObjects.size(),
+            _transformer,
+            _material
+        };
+        
         copy(h, serializedComp);
         ptr += h->byteSize;
         
-        // then copy the 2 primitives
-        _copyPrimitive(ptr, _primitive1);
-        _copyPrimitive(ptr, _primitive2);
+        // then copy the primitives
+        for (const auto& obj : _additiveObjects)
+        {
+            obj->serialize(ptr);
+        }
         
-        serializedScene.objectCount++;
+        for (const auto& obj : _substractiveObjects)
+        {
+            obj->serialize(ptr);
+        }
     }
     
 private:
@@ -49,29 +66,23 @@ private:
         ptr += h->byteSize;
     }
     
-    CompositionOperation _operation;
-    TPrimitive1 _primitive1;
-    TPrimitive2 _primitive2;
-    
     TTransformer _transformer;
     TMaterial _material;
+    
+    std::vector<Object3D::Ptr> _additiveObjects;
+    std::vector<Object3D::Ptr> _substractiveObjects;
 };
 
-template <typename TPrimitive1, typename TPrimitive2>
-class Composition3D final : public TComposition3D<TPrimitive1, TPrimitive2, Composition::Transformer, Composition::Material>
+class Composition3D final : public TComposition3D<Composition::Transformer, Composition::Material>
 {
 public:
-    using _inherited = TComposition3D<TPrimitive1, TPrimitive2, Composition::Transformer, Composition::Material>;
+    using _inherited = TComposition3D<Composition::Transformer, Composition::Material>;
     
     using Transformer = Composition::Transformer;
     using Material = Composition::Material;
     
-    Composition3D(CompositionOperation operation,
-                   const TPrimitive1& p1,
-                   const TPrimitive2& p2,
-                   const Transformer& transformer,
-                   const Material& material)
-    : _inherited(operation, p1, p2, transformer, material)
+    Composition3D(const Transformer& transformer, const Material& material)
+    : _inherited(transformer, material)
     {}
 };
 

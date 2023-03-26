@@ -8,8 +8,8 @@
 
 #include "CommonDefinitions.h"
 #include <memory>
-#include "Scene.h"
 #include "Serializer.h"
+#include "Scene.h"
 #include <vector>
 
 class Object3D
@@ -19,7 +19,7 @@ public:
     
     virtual ~Object3D() = default;
     
-    virtual void serialize(SerializedScene&, uint8_t*& ptr) const = 0;
+    virtual void serialize(uint8_t*& ptr) const = 0;
 };
 
 template <typename TPrimitive>
@@ -30,9 +30,9 @@ public:
     : _primitive(prim)
     {}
     
-    void serialize(SerializedScene& serializedScene, uint8_t*& ptr) const override
+    void serialize(uint8_t*& ptr) const override
     {
-        serializeObject<TPrimitive>(serializedScene, ptr, _primitive);
+        serializeObject<TPrimitive>(ptr, _primitive);
     }
     
 private:
