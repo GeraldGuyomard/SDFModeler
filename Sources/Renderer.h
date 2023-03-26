@@ -16,6 +16,8 @@
 
 -(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
 
+@property(nonatomic, nonnull) MTKView* view;
+
 @property(nonatomic) float4x4 cameraTransform;
 @property(nonatomic, readonly, nonnull) const Uniforms* uniforms;
 @property(nonatomic, readonly, nonnull) const SerializedScene* mutableState;

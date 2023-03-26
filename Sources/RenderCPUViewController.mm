@@ -31,7 +31,7 @@
     auto gameViewController = [GameViewController instance];
     auto renderer = gameViewController.renderer;
     
-    const auto size = gameViewController.view.bounds.size;
+    const auto size = renderer.view.drawableSize;
     
     std::vector<uint32_t> buffer;
     buffer.resize(size.width * size.height);

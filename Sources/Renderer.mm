@@ -35,6 +35,8 @@ Vertex s_Vertices[4] = {
 
 @implementation Renderer
 {
+    __weak MTKView* _mtkView;
+    
     dispatch_semaphore_t _inFlightSemaphore;
     id <MTLDevice> _device;
     id <MTLCommandQueue> _commandQueue;
@@ -66,6 +68,7 @@ Vertex s_Vertices[4] = {
     self = [super init];
     if(self)
     {
+        _mtkView = view;
         _device = view.device;
         _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
         [self _loadMetalWithView:view];
@@ -169,6 +172,11 @@ Vertex s_Vertices[4] = {
     _serializedSceneBufferIndex = (_serializedSceneBufferIndex + 1) % kMaxBuffersInFlight;
     _serializedSceneBufferOffset = kAlignedSerializedScenesSize * _uniformBufferIndex;
     _serializedSceneBufferAddress = ((uint8_t*)_dynamicSerializedSceneBuffer.contents) + _serializedSceneBufferOffset;
+}
+
+- (MTKView*)view
+{
+    return _mtkView;
 }
 
 - (float4x4)cameraTransform
