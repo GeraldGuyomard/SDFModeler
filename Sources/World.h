@@ -18,73 +18,51 @@
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
 
-class Environment
+template <typename TShader>
+INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
-public:
-    
-    template <typename TShader>
-    SDFResult rayMarch(Ray ray, TShader shader)
-    {
-        constexpr float kGridGreyLevel = 0.5f;
-        const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
-        //Plane grid({}, { float3(-10.f) }, { color } );
-        
-        Grid grid({}, { float3(-10.f) }, { 1.f , color });
-        
-        const auto res = ::rayMarch(ray, shader, grid);
-        
-        if (res.isValid())
-        {
-            return res;
-        }
-        
-        // cos angle
-        const float grey = abs(ray.direction.y);
-        const float4 c = { grey, grey, grey, 1.f };
-        
-        return { 0.f, c };
-    }
-};
+    Objects<TShader> env { shader, serializedWorld.environment };
+    return env.rayMarch(ray);
+}
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
+INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
     const TShader shader { uniforms.lightDirection };
     
-    Scene<TShader> dynObject { shader, serializedScene };
-    const auto res = dynObject.rayMarch(ray);
+    Objects<TShader> content { shader, serializedWorld.content };
+    const auto contentRes = content.rayMarch(ray);
     
-    if (res.isValid())
+    if (contentRes.isValid())
     {
-        return res.color;
+        return contentRes.color;
     }
     
-    // cos angle
+    const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
+    if (envRes.isValid())
+    {
+        return envRes.color;
+    }
+    
+    // Background
     const float grey = abs(ray.direction.y);
     const float4 c = { grey, grey, grey, 1.f };
-    
     return c;
-    /*
-    // Test Env Last
-    Environment env;
-    const auto envRes = env.rayMarch(ray, shader);
-
-    return envRes.color;*/
 }
 
-INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
+INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
-    return render<PhongShader>(viewportNDC, uniforms, serializedScene);
+    return render<PhongShader>(viewportNDC, uniforms, serializedWorld);
 }
 
-INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
+INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
-    return render<CellShader>(viewportNDC, uniforms, serializedScene);
+    return render<CellShader>(viewportNDC, uniforms, serializedWorld);
 }
 
-INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)
+INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
-    return renderPhong(viewportNDC, uniforms, serializedScene);
+    return renderPhong(viewportNDC, uniforms, serializedWorld);
 }

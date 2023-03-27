@@ -13,10 +13,7 @@
 
 #include "Composition.h"
 
-
 using Composition = SDFComposition<RSTTransformer, ConstMaterial>;
-
-
 
 template <typename TEvaluator, typename TReturnValue>
 INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
@@ -34,7 +31,7 @@ INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeade
     }
 }
 
-struct SerializedScene final
+struct SerializedObjects final
 {
     uint64_t objectCount = 0;
     
@@ -48,15 +45,21 @@ struct SerializedScene final
     uint8_t buffer[16536];
 };
 
+struct SerializedWorld final
+{
+    SerializedObjects content;
+    SerializedObjects environment;
+};
+
 template <typename TShader>
-class Scene final
+class Objects final
 {
 public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 16;
     
-    Scene(TShader shader, CONSTANT SerializedScene& serializedScene)
-    : _serializedScene(serializedScene), _shader(shader)
+    Objects(TShader shader, CONSTANT SerializedObjects& serializedObjects)
+    : _serializedObjects(serializedObjects), _shader(shader)
     {}
     
     SDFResult rayMarch(Ray ray) const
@@ -70,10 +73,10 @@ public:
         ObjectsList objectsList;
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* buffer = &_serializedScene.buffer[0];
+        CONSTANT uint8_t* buffer = &_serializedObjects.buffer[0];
         CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        for (size_t i=0; i < _serializedScene.objectCount; ++i)
+        for (size_t i=0; i < _serializedObjects.objectCount; ++i)
         {
             const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
@@ -130,7 +133,6 @@ public:
     }
     
 private:
-    
-    CONSTANT SerializedScene& _serializedScene;
+    CONSTANT SerializedObjects& _serializedObjects;
     TShader _shader;
 };

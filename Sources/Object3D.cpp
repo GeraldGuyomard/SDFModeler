@@ -11,22 +11,29 @@ Grid3D::Grid3D(const Grid& grid)
 {}
 
 void
-World::addObject(Object3D::Ptr object)
+Object3DCollection::addObject(Object3D::Ptr object)
 {
     _objects.push_back(std::move(object));
 }
 
 void
-World::serialize(SerializedScene& serializedScene) const
+Object3DCollection::serialize(SerializedObjects& serializedObjects) const
 {
-    serializedScene.objectCount = 0;
+    serializedObjects.objectCount = 0;
     
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedScene.buffer));
+    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedObjects.buffer));
     
     for (const auto& object : _objects)
     {
         const size_t size = object->serialize(p);
         p += size;
-        serializedScene.objectCount++;
+        serializedObjects.objectCount++;
     }
+}
+
+void
+World::serialize(SerializedWorld& serializedWorld) const
+{
+    _content.serialize(serializedWorld.content);
+    _environment.serialize(serializedWorld.environment);
 }

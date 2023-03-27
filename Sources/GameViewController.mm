@@ -43,13 +43,15 @@ static GameViewController* s_Instance = nil;
 
 - (void)loadWorld
 {
+    auto& content = _world.content();
+    
     auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
-    _world.addObject(std::move(whiteSphere));
+    content.addObject(std::move(whiteSphere));
     
     constexpr float kZ = 0;
     
     auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
-    _world.addObject(std::move(redSphere));
+    content.addObject(std::move(redSphere));
     
     float3 pos = float3 {0.5, 0, kZ};
     
@@ -61,7 +63,7 @@ static GameViewController* s_Instance = nil;
         { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
         { float4 { 1, 1, 0, 1 } } // material
     });
-    _world.addObject(std::move(roundedYellowBox));
+    content.addObject(std::move(roundedYellowBox));
     
     auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
     {
@@ -69,7 +71,7 @@ static GameViewController* s_Instance = nil;
         { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
         { float4 { 1, 1, 1, 1 } } // material
     });
-    _world.addObject(std::move(whiteBoxHalf));
+    content.addObject(std::move(whiteBoxHalf));
     
     auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -77,7 +79,7 @@ static GameViewController* s_Instance = nil;
         { pos },
         { float4 { 0, 0, 1, 1 } }
     });
-    _world.addObject(std::move(blueSphere));
+    content.addObject(std::move(blueSphere));
     
     auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -85,7 +87,7 @@ static GameViewController* s_Instance = nil;
         { float3 { -1, 1, kZ } },
         { float4 { 0, 1, 0, 1 } }
     });
-    _world.addObject(std::move(greenSphere));
+    content.addObject(std::move(greenSphere));
     
     auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -120,7 +122,7 @@ static GameViewController* s_Instance = nil;
     sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
     sdfUnion->addSubstractiveObject(std::move(negativeRoundedBoxPart));
     
-    _world.addObject(std::move(sdfUnion));
+    content.addObject(std::move(sdfUnion));
     
     constexpr float kGridGreyLevel = 0.5f;
     const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
@@ -128,7 +130,8 @@ static GameViewController* s_Instance = nil;
     
     Grid grid({}, { float3(-0.5f) }, { 0.1f , color });
     auto grid3d = std::make_unique<Grid3D>(grid);
-    _world.addObject(std::move(grid3d));
+    
+    _world.environment().addObject(std::move(grid3d));
 }
 
 - (void)viewDidLoad
@@ -167,9 +170,9 @@ static GameViewController* s_Instance = nil;
     p = pixelToNDC(size, p);
     
     const auto* uniforms = _renderer.uniforms;
-    const auto* mutableState = _renderer.mutableState;
+    const auto* serializedWorld = _renderer.serializedWorld;
     
-    const auto pixel = renderDefault(p, *uniforms, *mutableState);
+    const auto pixel = renderDefault(p, *uniforms, *serializedWorld);
     
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
 }

@@ -24,7 +24,7 @@
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
 constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
-constexpr size_t kAlignedSerializedScenesSize = (sizeof(SerializedScene) & ~0xFF) + 0x100;
+constexpr size_t kAlignedSerializedWorldSize = (sizeof(SerializedWorld) & ~0xFF) + 0x100;
 
 Vertex s_Vertices[4] = {
     { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
@@ -42,7 +42,7 @@ Vertex s_Vertices[4] = {
     id <MTLCommandQueue> _commandQueue;
 
     id <MTLBuffer> _dynamicUniformBuffer;
-    id <MTLBuffer> _dynamicSerializedSceneBuffer;
+    id <MTLBuffer> _dynamicSerializedWorldBuffer;
     
     id <MTLBuffer> _quadVertexBuffer;
     id <MTLRenderPipelineState> _pipelineState;
@@ -53,9 +53,9 @@ Vertex s_Vertices[4] = {
     uint8_t _uniformBufferIndex;
     void* _uniformBufferAddress;
 
-    uint32_t _serializedSceneBufferOffset;
-    uint8_t _serializedSceneBufferIndex;
-    void* _serializedSceneBufferAddress;
+    uint32_t _serializedWorldBufferOffset;
+    uint8_t _serializedWorldBufferIndex;
+    void* _serializedWorldBufferAddress;
     
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
@@ -143,12 +143,12 @@ Vertex s_Vertices[4] = {
     }
 
     {
-        const NSUInteger bufferSize = kAlignedSerializedScenesSize * kMaxBuffersInFlight;
+        const NSUInteger bufferSize = kAlignedSerializedWorldSize * kMaxBuffersInFlight;
 
-        _dynamicSerializedSceneBuffer = [_device newBufferWithLength:bufferSize
+        _dynamicSerializedWorldBuffer = [_device newBufferWithLength:bufferSize
                                                      options:MTLResourceStorageModeShared];
 
-        _dynamicSerializedSceneBuffer.label = @"SerializedSceneBuffer";
+        _dynamicSerializedWorldBuffer.label = @"SerializedSceneBuffer";
     }
 
     
@@ -169,9 +169,9 @@ Vertex s_Vertices[4] = {
     _uniformBufferOffset = kAlignedUniformsSize * _uniformBufferIndex;
     _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
     
-    _serializedSceneBufferIndex = (_serializedSceneBufferIndex + 1) % kMaxBuffersInFlight;
-    _serializedSceneBufferOffset = kAlignedSerializedScenesSize * _uniformBufferIndex;
-    _serializedSceneBufferAddress = ((uint8_t*)_dynamicSerializedSceneBuffer.contents) + _serializedSceneBufferOffset;
+    _serializedWorldBufferIndex = (_serializedWorldBufferIndex + 1) % kMaxBuffersInFlight;
+    _serializedWorldBufferOffset = kAlignedSerializedWorldSize * _serializedWorldBufferIndex;
+    _serializedWorldBufferAddress = ((uint8_t*)_dynamicSerializedWorldBuffer.contents) + _serializedWorldBufferOffset;
 }
 
 - (MTKView*)view
@@ -194,9 +194,9 @@ Vertex s_Vertices[4] = {
     return (Uniforms*)_uniformBufferAddress;
 }
 
--(const SerializedScene*) mutableState
+-(const SerializedWorld*) serializedWorld
 {
-    return (SerializedScene*)_serializedSceneBufferAddress;
+    return (SerializedWorld*) _serializedWorldBufferAddress;
 }
 
 - (void)_updateGameState
@@ -210,9 +210,9 @@ Vertex s_Vertices[4] = {
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    SerializedScene* serializedScene = ((SerializedScene*) _serializedSceneBufferAddress);
+    SerializedWorld* serializedWorld = ((SerializedWorld*) _serializedWorldBufferAddress);
     
-    [GameViewController instance].world.serialize(*serializedScene);
+    [GameViewController instance].world.serialize(*serializedWorld);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view
@@ -259,9 +259,9 @@ Vertex s_Vertices[4] = {
                                   offset:_uniformBufferOffset
                                  atIndex:BufferIndexUniforms];
 
-        [renderEncoder setFragmentBuffer:_dynamicSerializedSceneBuffer
-                                  offset:_serializedSceneBufferOffset
-                                 atIndex:BufferIndexSerializedScenes];
+        [renderEncoder setFragmentBuffer:_dynamicSerializedWorldBuffer
+                                  offset:_serializedWorldBufferOffset
+                                 atIndex:BufferIndexSerializedWorld];
 
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer

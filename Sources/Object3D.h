@@ -58,15 +58,32 @@ public:
     }
 };
 
+class Object3DCollection final
+{
+public:
+    
+    Object3DCollection() = default;
+    
+    void addObject(Object3D::Ptr);
+    
+    void serialize(SerializedObjects&) const;
+    
+private:
+    std::vector<Object3D::Ptr> _objects;
+};
+
+
 class World final
 {
 public:
     World() = default;
     
-    void addObject(Object3D::Ptr);
+    Object3DCollection& content() { return _content; }
+    Object3DCollection& environment() { return _environment; }
     
-    void serialize(SerializedScene&) const;
+    void serialize(SerializedWorld&) const;
     
 private:
-    std::vector<Object3D::Ptr> _objects;
+    Object3DCollection _content;
+    Object3DCollection _environment;
 };

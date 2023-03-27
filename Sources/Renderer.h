@@ -20,7 +20,7 @@
 
 @property(nonatomic) float4x4 cameraTransform;
 @property(nonatomic, readonly, nonnull) const Uniforms* uniforms;
-@property(nonatomic, readonly, nonnull) const SerializedScene* mutableState;
+@property(nonatomic, readonly, nonnull) const SerializedWorld* serializedWorld;
 
 @end
 

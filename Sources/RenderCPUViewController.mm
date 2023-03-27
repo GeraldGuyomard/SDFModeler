@@ -37,7 +37,7 @@
     buffer.resize(size.width * size.height);
     
     const auto* uniforms = renderer.uniforms;
-    const auto* mutableState = renderer.mutableState;
+    const auto* serializedWorld = renderer.serializedWorld;
     
     const float2 viewportSize { (float)size.width, (float)size.height };
     
@@ -50,7 +50,7 @@
             
             const auto p = pixelToNDC(viewportSize, pixelCoordinates);
             
-            const auto fragment = renderDefault(p, *uniforms, *mutableState);
+            const auto fragment = renderDefault(p, *uniforms, *serializedWorld);
             const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
             const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;
             const uint8_t b = clamp(fragment.b, 0.f, 1.f) * 255.f;
