@@ -29,17 +29,17 @@ static void copy(ObjectType objectType, ObjectHeader* header, const TObject& obj
 }
 
 template <typename TObject>
-static void copy(ObjectHeader* header, const TObject& object)
+static void copy(ObjectHeader* header, const TObject& object, ObjectType objectType)
 {
-    copy<TObject>(object.objectType(), header, object);
+    copy<TObject>(objectType, header, object);
 }
 
 
 template <typename TPrimitive>
-INLINE void serializeObject(uint8_t*& p, const TPrimitive& primitive)
+INLINE void serializeObject(uint8_t*& p, const TPrimitive& primitive, ObjectType objectType)
 {
     ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive);
+    copy(h, primitive, objectType);
     
     p += h->byteSize;
 }

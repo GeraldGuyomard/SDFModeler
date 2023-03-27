@@ -24,7 +24,7 @@ public:
     _material(material)
     {}
     
-    ObjectType objectType() const
+    static ObjectType objectType()
     {
         return getObjectType<TGeometry>();
     }

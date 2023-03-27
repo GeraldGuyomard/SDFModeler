@@ -6,6 +6,10 @@
 
 #include "Object3D.h"
 
+Grid3D::Grid3D(const Grid& grid)
+: _inherited(grid)
+{}
+
 void
 World::addObject(Object3D::Ptr object)
 {

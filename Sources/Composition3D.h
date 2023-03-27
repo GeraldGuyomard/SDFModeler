@@ -29,6 +29,11 @@ public:
         _substractiveObjects.push_back(std::move(object));
     }
     
+    ObjectType objectType() const override
+    {
+        return ObjectType::composition;
+    }
+    
     void serialize(uint8_t*& ptr) const override
     {
         ObjectHeader* const h = (ObjectHeader*) ptr;
@@ -41,7 +46,7 @@ public:
             _material
         };
         
-        copy(h, serializedComp);
+        copy(h, serializedComp, ObjectType::composition);
         ptr += h->byteSize;
         
         // then copy the primitives

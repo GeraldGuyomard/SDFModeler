@@ -13,14 +13,15 @@ enum class ObjectType : int64_t
     invalid = -1,
     
     sphere = 0,
-    box = 1,
-    roundedBox = 2,
-    plane = 3,
+    box,
+    roundedBox,
+    plane,
+    grid,
     
     composition = 10
 };
 
-template <typename TSDFGeometry>
+template <typename TObject>
 ObjectType getObjectType()
 {
     return ObjectType::invalid;

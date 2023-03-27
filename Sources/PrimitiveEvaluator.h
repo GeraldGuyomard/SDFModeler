@@ -113,6 +113,7 @@ INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT Objec
         case ObjectType::box: return evaluateTypedPrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);;
         case ObjectType::roundedBox: return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
         case ObjectType::plane: return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
+        case ObjectType::grid: return evaluateTypedPrimitive<TEvaluator, Grid, TReturnValue>(evaluator, header);
 
         default: break;
     }

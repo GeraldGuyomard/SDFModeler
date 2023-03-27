@@ -19,6 +19,7 @@ public:
     
     virtual ~Object3D() = default;
     
+    virtual ObjectType objectType() const = 0;
     virtual void serialize(uint8_t*& ptr) const = 0;
 };
 
@@ -30,13 +31,31 @@ public:
     : _primitive(prim)
     {}
     
-    void serialize(uint8_t*& ptr) const override
+    ObjectType objectType() const override
     {
-        serializeObject<TPrimitive>(ptr, _primitive);
+        return TPrimitive::objectType();
+    }
+    
+    void serialize(uint8_t*& ptr) const final override
+    {
+        serializeObject<TPrimitive>(ptr, _primitive, objectType());
     }
     
 private:
     TPrimitive _primitive;
+};
+
+class Grid3D : public TObject3D<Grid>
+{
+public:
+    using _inherited = TObject3D<Grid>;
+    
+    Grid3D(const Grid& grid);
+    
+    ObjectType objectType() const override
+    {
+        return ObjectType::grid;
+    }
 };
 
 class World final
