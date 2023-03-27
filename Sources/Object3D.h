@@ -20,7 +20,7 @@ public:
     virtual ~Object3D() = default;
     
     virtual ObjectType objectType() const = 0;
-    virtual void serialize(uint8_t*& ptr) const = 0;
+    virtual size_t serialize(uint8_t* ptr) const = 0;
 };
 
 template <typename TPrimitive>
@@ -36,9 +36,9 @@ public:
         return TPrimitive::objectType();
     }
     
-    void serialize(uint8_t*& ptr) const final override
+    size_t serialize(uint8_t* ptr) const final override
     {
-        serializeObject<TPrimitive>(ptr, _primitive, objectType());
+        return serializeObject<TPrimitive>(ptr, _primitive, objectType());
     }
     
 private:

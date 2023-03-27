@@ -61,11 +61,17 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT S
         return res.color;
     }
     
+    // cos angle
+    const float grey = abs(ray.direction.y);
+    const float4 c = { grey, grey, grey, 1.f };
+    
+    return c;
+    /*
     // Test Env Last
     Environment env;
     const auto envRes = env.rayMarch(ray, shader);
 
-    return envRes.color;
+    return envRes.color;*/
 }
 
 INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedScene& serializedScene)

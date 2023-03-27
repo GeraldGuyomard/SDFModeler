@@ -121,6 +121,14 @@ static GameViewController* s_Instance = nil;
     sdfUnion->addSubstractiveObject(std::move(negativeRoundedBoxPart));
     
     _world.addObject(std::move(sdfUnion));
+    
+    constexpr float kGridGreyLevel = 0.5f;
+    const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, 1 };
+    //Plane grid({}, { float3(-10.f) }, { color } );
+    
+    Grid grid({}, { float3(-0.5f) }, { 0.1f , color });
+    auto grid3d = std::make_unique<Grid3D>(grid);
+    _world.addObject(std::move(grid3d));
 }
 
 - (void)viewDidLoad

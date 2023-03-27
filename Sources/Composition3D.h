@@ -34,9 +34,9 @@ public:
         return ObjectType::composition;
     }
     
-    void serialize(uint8_t*& ptr) const override
+    size_t serialize(uint8_t* ptr) const override
     {
-        ObjectHeader* const h = (ObjectHeader*) ptr;
+        ObjectHeader* const header = (ObjectHeader*) ptr;
         
         SDFSerializedComposition<TTransformer, TMaterial> serializedComp
         {
@@ -46,19 +46,29 @@ public:
             _material
         };
         
-        copy(h, serializedComp, ObjectType::composition);
-        ptr += h->byteSize;
+        copy(header, serializedComp, ObjectType::composition);
+        ptr += header->byteSize;
         
+        size_t subHeadersSize = 0;
         // then copy the primitives
         for (const auto& obj : _additiveObjects)
         {
-            obj->serialize(ptr);
+            const size_t s = obj->serialize(ptr);
+            subHeadersSize += s;
+            ptr += s;
         }
         
         for (const auto& obj : _substractiveObjects)
         {
-            obj->serialize(ptr);
+            const size_t s = obj->serialize(ptr);
+            subHeadersSize += s;
+            ptr += s;
         }
+        
+        // update the true header size that includes all the sub headers
+        header->byteSize += subHeadersSize;
+        
+        return header->byteSize;
     }
     
 private:

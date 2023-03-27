@@ -45,7 +45,7 @@ struct SerializedScene final
     
     // buffer is an array of serialized objects
     // that starts with ObjectHeaders
-    uint8_t buffer[2048];
+    uint8_t buffer[16536];
 };
 
 template <typename TShader>

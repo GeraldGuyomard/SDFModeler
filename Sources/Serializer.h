@@ -36,10 +36,10 @@ static void copy(ObjectHeader* header, const TObject& object, ObjectType objectT
 
 
 template <typename TPrimitive>
-INLINE void serializeObject(uint8_t*& p, const TPrimitive& primitive, ObjectType objectType)
+INLINE size_t serializeObject(uint8_t* p, const TPrimitive& primitive, ObjectType objectType)
 {
     ObjectHeader* h = (ObjectHeader*) p;
     copy(h, primitive, objectType);
     
-    p += h->byteSize;
+    return h->byteSize;
 }
