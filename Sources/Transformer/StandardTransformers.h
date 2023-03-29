@@ -20,6 +20,10 @@ public:
     : _translation(translation)
     {}
     
+    static TransformerType transformerType()
+    {
+        return TransformerType::translation;
+    }
     
     template <typename TSDFGeometry>
     float computeDistance(TSDFGeometry primitive, float3 p) const
@@ -51,6 +55,11 @@ public:
     RTTransformer(float3 translation, float3 rotationAxis, float angle)
     : _translation(translation), _invRotTransform(matrix3x3_rotation(-angle, rotationAxis))
     {}
+    
+    static TransformerType transformerType()
+    {
+        return TransformerType::translationRotation;
+    }
     
     template <typename TSDFGeometry>
     float computeDistance(TSDFGeometry primitive, float3 p) const
@@ -88,6 +97,11 @@ public:
     RSTTransformer(float3 translation, float3 rotationAxis, float angle, float scale = 1.f)
     : _translation(translation), _invRotTransform(matrix3x3_rotation(-angle, rotationAxis)), _scale(scale)
     {}
+    
+    static TransformerType transformerType()
+    {
+        return TransformerType::translationScaleRotation;
+    }
     
     template <typename TSDFGeometry>
     float computeDistance(TSDFGeometry primitive, float3 p) const

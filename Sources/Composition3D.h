@@ -34,6 +34,11 @@ public:
         return ObjectType::composition;
     }
     
+    TransformerType transformerType() const override
+    {
+        return TTransformer::transformerType();
+    }
+    
     size_t serialize(uint8_t* ptr) const override
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
@@ -46,7 +51,7 @@ public:
             _material
         };
         
-        copy(header, serializedComp, ObjectType::composition);
+        copy(header, serializedComp, ObjectType::composition, TTransformer::transformerType());
         ptr += header->byteSize;
         
         size_t subHeadersSize = 0;

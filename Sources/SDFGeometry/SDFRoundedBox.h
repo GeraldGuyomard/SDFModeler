@@ -15,6 +15,8 @@ class SDFRoundedBox final
 {
 public:
     
+    static ObjectType objectType() { return ObjectType::roundedBox; }
+    
     SDFRoundedBox(float3 halfSize, float radius)
     : _halfSizeAndRadius { halfSize.x, halfSize.y, halfSize.z, radius }
     {}
@@ -41,9 +43,3 @@ private:
     // w radius
     float4 _halfSizeAndRadius;
 };
-
-template <>
-INLINE ObjectType getObjectType<SDFRoundedBox>()
-{
-    return ObjectType::roundedBox;
-}

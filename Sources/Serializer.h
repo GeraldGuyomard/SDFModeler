@@ -14,13 +14,14 @@
 #include <assert.h>
 
 template <typename TObject>
-static void copy(ObjectType objectType, ObjectHeader* header, const TObject& object)
+static void copy(ObjectType objectType, TransformerType transformerType, ObjectHeader* header, const TObject& object)
 {
+    assert(objectType != ObjectType::invalid);
+    
     const size_t size = sizeof(TObject);
     
     header->byteSize = alignedSize(size);
-    header->objectType = objectType;
-    assert(header->objectType != ObjectType::invalid);
+    header->objectCode = computeObjectCode(objectType, transformerType);
     
     uint8_t* dst = &(header->firstByte);
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
@@ -29,17 +30,17 @@ static void copy(ObjectType objectType, ObjectHeader* header, const TObject& obj
 }
 
 template <typename TObject>
-static void copy(ObjectHeader* header, const TObject& object, ObjectType objectType)
+static void copy(ObjectHeader* header, const TObject& object, ObjectType objectType, TransformerType transformerType)
 {
-    copy<TObject>(objectType, header, object);
+    copy<TObject>(objectType, transformerType, header, object);
 }
 
 
 template <typename TPrimitive>
-INLINE size_t serializeObject(uint8_t* p, const TPrimitive& primitive, ObjectType objectType)
+INLINE size_t serializeObject(uint8_t* p, const TPrimitive& primitive, ObjectType objectType, TransformerType transformerType)
 {
     ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive, objectType);
+    copy(h, primitive, objectType, transformerType);
     
     return h->byteSize;
 }

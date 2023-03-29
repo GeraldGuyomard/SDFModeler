@@ -15,6 +15,8 @@ class SDFBox final
 {
 public:
     
+    static ObjectType objectType() { return ObjectType::box; }
+    
     SDFBox(float3 halfSize)
     : _halfSizeAndPadding { halfSize.x, halfSize.y, halfSize.z }
     {}
@@ -38,8 +40,3 @@ private:
     float4 _halfSizeAndPadding;
 };
 
-template <>
-INLINE ObjectType getObjectType<SDFBox>()
-{
-    return ObjectType::box;
-}

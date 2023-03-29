@@ -8,16 +8,30 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectType.h"
+#include "Transformer/Transformer.h"
+
+CONSTANT static constexpr uint64_t kObjectTypeShift = 2;
+
+INLINE constexpr uint64_t computeObjectCode(ObjectType objectType, TransformerType transformerType)
+{
+    return (uint64_t(objectType) << kObjectTypeShift) | uint64_t(transformerType);
+}
+
+template <typename TObject, typename TTransformer>
+INLINE constexpr uint64_t computeObjectCode()
+{
+    return computeObjectCode(TObject::objectType(), TTransformer::transformerType());
+}
 
 struct ObjectHeader final
 {
     size_t    byteSize;
-    ObjectType  objectType;
+    uint64_t  objectCode;
     
-    uint8_t     firstByte;
+    uint8_t   firstByte;
     
-    ObjectHeader(uint32_t byteSize, ObjectType objectType)
-    : byteSize(byteSize), objectType(objectType)
+    ObjectHeader(uint32_t byteSize, ObjectType objectType, TransformerType transformerType)
+    : byteSize(byteSize), objectCode(computeObjectCode(objectType, transformerType))
     {}
     
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)

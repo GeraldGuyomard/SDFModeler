@@ -106,16 +106,27 @@ INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT Object
 template <typename TEvaluator, typename TReturnValue>
 INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
-    const ObjectType type = header->objectType;
-    switch(type)
+    const auto objectCode = header->objectCode;
+    
+    if (objectCode == computeObjectCode<SDFSphere, RSTTransformer>())
     {
-        case ObjectType::sphere: return evaluateTypedPrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
-        case ObjectType::box: return evaluateTypedPrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);;
-        case ObjectType::roundedBox: return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
-        case ObjectType::plane: return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
-        case ObjectType::grid: return evaluateTypedPrimitive<TEvaluator, Grid, TReturnValue>(evaluator, header);
-
-        default: break;
+        return evaluateTypedPrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
+    }
+    else if (objectCode == computeObjectCode<Box, RSTTransformer>())
+    {
+        return evaluateTypedPrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);
+    }
+    else if (objectCode == computeObjectCode<RoundedBox, RSTTransformer>())
+    {
+        return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
+    }
+    else if (objectCode == computeObjectCode<Plane, RSTTransformer>())
+    {
+        return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
+    }
+    else if (objectCode == computeObjectCode<Grid, RSTTransformer>())
+    {
+        return evaluateTypedPrimitive<TEvaluator, Grid, TReturnValue>(evaluator, header);
     }
     
     return {};

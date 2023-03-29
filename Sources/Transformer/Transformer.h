@@ -11,6 +11,13 @@
 #include "CommonDefinitions.h"
 #include "Ray.h"
 
+enum class TransformerType : uint64_t
+{
+    translation = 0,
+    translationRotation = 1,
+    translationScaleRotation = 2
+};
+
 class Transformer final
 {
 public:
@@ -19,6 +26,8 @@ public:
     float computeSDF(TSDFGeometry primitive, float3 p) const;
     
     Ray localRay(Ray ray) const;
+    
+    TransformerType transformerType() const;
     
 private:
     Transformer() = delete;

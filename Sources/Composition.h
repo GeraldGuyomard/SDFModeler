@@ -42,6 +42,8 @@ public:
     using Transformer = TTransformer;
     using Material = TMaterial;
     
+    static ObjectType objectType() { return ObjectType::composition; }
+    
     SDFComposition(CONSTANT Serialized* serializedComposition) :
     _transformer(serializedComposition->transformer),
     _material(serializedComposition->material),

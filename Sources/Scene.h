@@ -18,7 +18,7 @@ using Composition = SDFComposition<RSTTransformer, ConstMaterial>;
 template <typename TEvaluator, typename TReturnValue>
 INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
-    if (header->objectType == ObjectType::composition)
+    if (header->objectCode == computeObjectCode<Composition, RSTTransformer>())
     {
         auto serializedComposition = typedPrimitive<Composition::Serialized>(header);
         Composition composition(serializedComposition);

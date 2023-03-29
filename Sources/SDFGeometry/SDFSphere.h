@@ -16,6 +16,8 @@ class SDFSphere final
 {
 public:
     
+    static ObjectType objectType() { return ObjectType::sphere; }
+    
     SDFSphere(float radius)
     : _radiusAndPadding(radius)
     {}
@@ -35,12 +37,6 @@ public:
 private:
     float4 _radiusAndPadding;
 };
-
-template <>
-INLINE ObjectType getObjectType<SDFSphere>()
-{
-    return ObjectType::sphere;
-}
 
 /*
 template <>

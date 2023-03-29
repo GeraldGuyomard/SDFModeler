@@ -20,6 +20,8 @@ public:
     virtual ~Object3D() = default;
     
     virtual ObjectType objectType() const = 0;
+    virtual TransformerType transformerType() const = 0;
+    
     virtual size_t serialize(uint8_t* ptr) const = 0;
 };
 
@@ -36,9 +38,14 @@ public:
         return TPrimitive::objectType();
     }
     
+    TransformerType transformerType() const override
+    {
+        return TPrimitive::Transformer::transformerType();
+    }
+    
     size_t serialize(uint8_t* ptr) const final override
     {
-        return serializeObject<TPrimitive>(ptr, _primitive, objectType());
+        return serializeObject<TPrimitive>(ptr, _primitive, objectType(), transformerType());
     }
     
 private:

@@ -14,6 +14,8 @@ class SDFPlane final
 {
 public:
     
+    static ObjectType objectType() { return ObjectType::plane; }
+    
     SDFPlane() = default;
     
     float computeDistance(float3 p) const
@@ -33,8 +35,3 @@ public:
     }
 };
 
-template <>
-INLINE ObjectType getObjectType<SDFPlane>()
-{
-    return ObjectType::plane;
-}

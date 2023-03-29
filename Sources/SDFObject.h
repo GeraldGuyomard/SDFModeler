@@ -18,6 +18,9 @@ class SDFObject final
 {
 public:
     
+    using Geometry = TGeometry;
+    using Transformer = TTransformer;
+    
     SDFObject(TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
     : _geometry(geometry),
     _transformer(transformer),
@@ -26,7 +29,7 @@ public:
     
     static ObjectType objectType()
     {
-        return getObjectType<TGeometry>();
+        return TGeometry::objectType();
     }
     
     bool evaluateCulling(Ray ray) const

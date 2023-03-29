@@ -21,9 +21,4 @@ enum class ObjectType : int64_t
     composition = 10
 };
 
-template <typename TObject>
-ObjectType getObjectType()
-{
-    return ObjectType::invalid;
-}
 
