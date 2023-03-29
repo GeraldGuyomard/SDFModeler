@@ -103,31 +103,76 @@ INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT Object
     return evaluator.evaluate(header, p);
 }
 
-template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+template <typename TReturnValue>
+struct EvaluationReturn
+{
+    const bool processed;
+    TReturnValue returnValue;
+    
+    EvaluationReturn()
+    : processed(false)
+    {}
+    
+    EvaluationReturn(TReturnValue returnValue)
+    : processed(true), returnValue(returnValue)
+    {}
+    
+    operator bool() const
+    {
+        return processed;
+    }
+};
+
+template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
+INLINE EvaluationReturn<TReturnValue>
+computeEvaluationReturn(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     const auto objectCode = header->objectCode;
     
-    if (objectCode == computeObjectCode<SDFSphere, RSTTransformer>())
+    if (objectCode == computeObjectCode<TPrimitive, RSTTransformer>())
     {
-        return evaluateTypedPrimitive<TEvaluator, Sphere, TReturnValue>(evaluator, header);
+        using Object = SDFObject<TPrimitive, RSTTransformer, ConstMaterial>;
+        return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
-    else if (objectCode == computeObjectCode<Box, RSTTransformer>())
+    else if (objectCode == computeObjectCode<TPrimitive, RTTransformer>())
     {
-        return evaluateTypedPrimitive<TEvaluator, Box, TReturnValue>(evaluator, header);
+        using Object = SDFObject<TPrimitive, RTTransformer, ConstMaterial>;
+        return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
-    else if (objectCode == computeObjectCode<RoundedBox, RSTTransformer>())
+    else if (objectCode == computeObjectCode<TPrimitive, TranslationTransformer>())
     {
-        return evaluateTypedPrimitive<TEvaluator, RoundedBox, TReturnValue>(evaluator, header);
+        using Object = SDFObject<TPrimitive, TranslationTransformer, ConstMaterial>;
+        return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
-    else if (objectCode == computeObjectCode<Plane, RSTTransformer>())
+    else
     {
-        return evaluateTypedPrimitive<TEvaluator, Plane, TReturnValue>(evaluator, header);
+        return {};
     }
-    else if (objectCode == computeObjectCode<Grid, RSTTransformer>())
+}
+
+template <typename TEvaluator, typename TReturnValue>
+INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+{
+    if (auto ret = computeEvaluationReturn<TEvaluator, SDFSphere, TReturnValue>(evaluator, header))
     {
-        return evaluateTypedPrimitive<TEvaluator, Grid, TReturnValue>(evaluator, header);
+        return ret.returnValue;
     }
-    
+    else if (auto ret = computeEvaluationReturn<TEvaluator, SDFBox, TReturnValue>(evaluator, header))
+    {
+        return ret.returnValue;
+    }
+    else if (auto ret = computeEvaluationReturn<TEvaluator, SDFRoundedBox, TReturnValue>(evaluator, header))
+    {
+        return ret.returnValue;
+    }
+    else if (auto ret = computeEvaluationReturn<TEvaluator, SDFPlane, TReturnValue>(evaluator, header))
+    {
+        return ret.returnValue;
+    }
+    /*else if (auto ret = computeEvaluationReturn<TEvaluator, SDFGrid, TReturnValue>(evaluator, header))
+    {
+        return ret.returnValue;
+    }*/
+   
     return {};
 }
