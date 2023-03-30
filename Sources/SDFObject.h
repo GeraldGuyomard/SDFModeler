@@ -32,6 +32,11 @@ public:
         return TGeometry::objectType();
     }
     
+    static TransformerType transformerType()
+    {
+        return TTransformer::transformerType();
+    }
+    
     bool evaluateCulling(Ray ray) const
     {
         const Ray localRay = _transformer.localRay(ray);
@@ -47,6 +52,10 @@ public:
     {
         return _material.computeAlbedo(p);
     }
+    
+    TGeometry geometry() const { return _geometry; }
+    TTransformer transformer() const { return _transformer; }
+    TMaterial material() const { return _material; }
     
 private:
     TGeometry _geometry;

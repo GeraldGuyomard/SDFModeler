@@ -33,3 +33,12 @@ private:
     Transformer() = delete;
 };
 
+#if !defined(__METAL_VERSION__)
+
+template <typename TSourceTransformer, typename TDestTransformer>
+INLINE bool convert(const TSourceTransformer& src, TDestTransformer& dst)
+{
+    return false;
+}
+
+#endif

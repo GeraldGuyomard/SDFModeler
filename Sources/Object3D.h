@@ -45,7 +45,27 @@ public:
     
     size_t serialize(uint8_t* ptr) const final override
     {
-        return serializeObject<TPrimitive>(ptr, _primitive, objectType(), transformerType());
+        const auto geometry = _primitive.geometry();
+        const auto transformer = _primitive.transformer();
+        const auto material = _primitive.material();
+        
+        RTTransformer rtTransformer;
+        TranslationTransformer translationTransformer;
+        
+        if (convert<typename TPrimitive::Transformer, TranslationTransformer>(transformer, translationTransformer))
+        {
+            SDFObject object { geometry, translationTransformer, material };
+            return serializeObject(ptr, object, object.objectType(), object.transformerType());
+        }
+        else if (convert<typename TPrimitive::Transformer, RTTransformer>(transformer, rtTransformer))
+        {
+            SDFObject object { geometry, rtTransformer, material };
+            return serializeObject(ptr, object, object.objectType(), object.transformerType());
+        }
+        else
+        {
+            return serializeObject<TPrimitive>(ptr, _primitive, objectType(), transformer.transformerType());
+        }
     }
     
 private:

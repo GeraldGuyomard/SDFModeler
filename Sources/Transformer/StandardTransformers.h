@@ -39,7 +39,8 @@ public:
     }
     
 private:
-    const float3 _translation = { 0.f };
+    float3 _translation = { 0.f };
+    float _padding;
 };
 
 class RTTransformer final
@@ -54,6 +55,10 @@ public:
     
     RTTransformer(float3 translation, float3 rotationAxis, float angle)
     : _translation(translation), _invRotTransform(matrix3x3_rotation(-angle, rotationAxis))
+    {}
+    
+    RTTransformer(float3 translation, float3x3 invRotTransform)
+    : _translation(translation), _invRotTransform(invRotTransform)
     {}
     
     static TransformerType transformerType()
@@ -79,8 +84,9 @@ public:
     }
     
 private:
-    const float3x3 _invRotTransform = float3x3_identity();
-    const float3 _translation = { 0.f };
+    float3x3 _invRotTransform = float3x3_identity();
+    float3 _translation = { 0.f };
+    float _padding;
 };
 
 
@@ -120,8 +126,40 @@ public:
         return r;
     }
     
+    float3x3 invRotTransform() const { return _invRotTransform; }
+    float3 translation() const { return _translation; }
+    float scale() const { return _scale; }
+    
 private:
     float3x3 _invRotTransform = float3x3_identity();
     float3 _translation = { 0.f };
     float _scale = 1.f;
 };
+
+#if !defined(__METAL_VERSION__)
+
+template <>
+INLINE bool convert<RSTTransformer, RTTransformer>(CONSTANT RSTTransformer& src, DEVICE RTTransformer& dst)
+{
+    if (src.scale() == 1.f)
+    {
+        dst = { src.translation(), src.invRotTransform() };
+        return true;
+    }
+    
+    return false;
+}
+
+template <>
+INLINE bool convert<RSTTransformer, TranslationTransformer>(CONSTANT RSTTransformer& src, DEVICE TranslationTransformer& dst)
+{
+    if ((src.scale() == 1.f) && (src.invRotTransform() == float3x3_identity()))
+    {
+        dst = { src.translation() };
+        return true;
+    }
+    
+    return false;
+}
+
+#endif
