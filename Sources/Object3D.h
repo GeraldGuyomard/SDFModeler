@@ -45,8 +45,9 @@ public:
     
     size_t serialize(uint8_t* ptr) const final override
     {
-        const auto geometry = _primitive.geometry();
         const auto transformer = _primitive.transformer();
+        
+        /*const auto geometry = _primitive.geometry();
         const auto material = _primitive.material();
         
         RTTransformer rtTransformer;
@@ -62,7 +63,7 @@ public:
             SDFObject object { geometry, rtTransformer, material };
             return serializeObject(ptr, object, object.objectType(), object.transformerType());
         }
-        else
+        else*/
         {
             return serializeObject<TPrimitive>(ptr, _primitive, objectType(), transformer.transformerType());
         }

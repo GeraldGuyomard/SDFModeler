@@ -104,13 +104,13 @@ static GameViewController* s_Instance = nil;
     auto negativeSpherePart = std::make_unique<TObject3D<Sphere>>(Sphere
     {
         { 0.4f }, // geom
-        { float3 { -2., 0.3, kZ + 1.f } } // transform
+        { float3 { -2., 0.25, kZ + 1.f } } // transform
     });
     
     auto negativeRoundedBoxPart = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
     {
-        { float3 { 0.3f, 0.3f, 0.3f }, 0.05f }, // geom
-        { float3 { -2., 0, kZ + 1.f } } // transform
+        { float3 { 0.1f, 0.1f, 0.3f }, 0.05f }, // geom
+        { float3 { -2., -0.5, kZ + 1.f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
     });
     
     auto sdfUnion = std::make_unique<Composition3D>(
