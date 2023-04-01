@@ -16,8 +16,7 @@ struct VertexShaderOut
     float2 viewportNDC;
 };
 
-vertex VertexShaderOut vertexShader(Vertex in [[stage_in]],
-                                    constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+vertex VertexShaderOut vertexShader(Vertex in [[stage_in]])
 {
     VertexShaderOut out;
 

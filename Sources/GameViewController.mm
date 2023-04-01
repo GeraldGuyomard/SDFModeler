@@ -24,7 +24,7 @@
     simd_float3 _orbitOrigin;
 }
 
-static GameViewController* s_Instance = nil;
+static __weak GameViewController* s_Instance = nil;
 
 +(GameViewController*)instance
 {

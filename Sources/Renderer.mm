@@ -246,7 +246,7 @@ Vertex s_Vertices[4] = {
         [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         renderEncoder.label = @"MyRenderEncoder";
 
-        [renderEncoder pushDebugGroup:@"DrawBox"];
+        [renderEncoder pushDebugGroup:@"RayMrch"];
 
         //[renderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
         //[renderEncoder setCullMode:MTLCullModeBack];
