@@ -8,8 +8,6 @@
 
 #import "CommonDefinitions.h"
 
-#import <Metal/Metal.h>
-#import <MetalKit/MetalKit.h>
 #import "Renderer.h"
 #import "Object3D.h"
 

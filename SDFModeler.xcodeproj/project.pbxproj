@@ -17,6 +17,8 @@
 		74A18A8529D8B2B80010F1B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74A18A8029D8B2B70010F1B4 /* Assets.xcassets */; };
 		74A18A8629D8B2B80010F1B4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74A18A8129D8B2B70010F1B4 /* Main.storyboard */; };
 		74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8429D8B2B70010F1B4 /* AppDelegate.m */; };
+		74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8C29D8B4D00010F1B4 /* MainViewControllerMacOS.mm */; };
+		74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */; };
 		74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF26329D7BBC800D322DB /* AppDelegate.m */; };
 		74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF26E29D7BBC800D322DB /* Main.storyboard */; };
 		74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27129D7BBC900D322DB /* Assets.xcassets */; };
@@ -106,6 +108,10 @@
 		74A18A8429D8B2B70010F1B4 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		74A18A8929D8B3190010F1B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		74A18A8B29D8B3280010F1B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		74A18A8C29D8B4D00010F1B4 /* MainViewControllerMacOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewControllerMacOS.mm; sourceTree = "<group>"; };
+		74A18A8D29D8B4D00010F1B4 /* MainViewControllerMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewControllerMacOS.h; sourceTree = "<group>"; };
+		74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewControllerIOS.mm; sourceTree = "<group>"; };
+		74A18A9029D8B67C0010F1B4 /* MainViewControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewControllerIOS.h; sourceTree = "<group>"; };
 		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -285,6 +291,8 @@
 				74A18A8129D8B2B70010F1B4 /* Main.storyboard */,
 				74A18A8329D8B2B70010F1B4 /* SDFModeler.entitlements */,
 				74A18A8429D8B2B70010F1B4 /* AppDelegate.m */,
+				74A18A8C29D8B4D00010F1B4 /* MainViewControllerMacOS.mm */,
+				74A18A8D29D8B4D00010F1B4 /* MainViewControllerMacOS.h */,
 			);
 			path = macOS;
 			sourceTree = "<group>";
@@ -298,6 +306,8 @@
 				74AAF27129D7BBC900D322DB /* Assets.xcassets */,
 				74AAF27329D7BBC900D322DB /* LaunchScreen.storyboard */,
 				74AAF27629D7BBC900D322DB /* main.m */,
+				74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */,
+				74A18A9029D8B67C0010F1B4 /* MainViewControllerIOS.h */,
 			);
 			path = iOS;
 			sourceTree = "<group>";
@@ -494,6 +504,7 @@
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
+				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
 				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
 			);
@@ -510,6 +521,7 @@
 				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,
 				74AAF28D29D7BCD300D322DB /* RayMarch.cpp in Sources */,
 				74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */,
+				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
 				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,
 				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
 				74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */,
