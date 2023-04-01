@@ -102,12 +102,6 @@
 		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		74AAF26529D7BBC800D322DB /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
-		74AAF26629D7BBC800D322DB /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
-		74AAF26829D7BBC800D322DB /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		74AAF26929D7BBC800D322DB /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
-		74AAF26B29D7BBC800D322DB /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
-		74AAF26D29D7BBC800D322DB /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		74AAF26F29D7BBC800D322DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		74AAF27129D7BBC900D322DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		74AAF27429D7BBC900D322DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -272,12 +266,6 @@
 			children = (
 				74AAF26229D7BBC800D322DB /* AppDelegate.h */,
 				74AAF26329D7BBC800D322DB /* AppDelegate.m */,
-				74AAF26529D7BBC800D322DB /* Renderer.h */,
-				74AAF26629D7BBC800D322DB /* Renderer.m */,
-				74AAF26829D7BBC800D322DB /* GameViewController.h */,
-				74AAF26929D7BBC800D322DB /* GameViewController.m */,
-				74AAF26B29D7BBC800D322DB /* Shaders.metal */,
-				74AAF26D29D7BBC800D322DB /* ShaderTypes.h */,
 				74AAF26E29D7BBC800D322DB /* Main.storyboard */,
 				74AAF27129D7BBC900D322DB /* Assets.xcassets */,
 				74AAF27329D7BBC900D322DB /* LaunchScreen.storyboard */,

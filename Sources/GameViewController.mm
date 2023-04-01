@@ -256,6 +256,38 @@ static GameViewController* s_Instance = nil;
     _renderer.cameraTransform = transform;
 }
 
+#else
+
+// iOS
+- (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
+{
+    UIView* view = self.view;
+    CAMetalLayer* metalLayer = (CAMetalLayer *)view.layer;
+    
+    metalLayer.contentsScale = sf;
+    
+    CGSize drawableSize;
+    drawableSize.width = size.width * sf;
+    drawableSize.height = size.height * sf;
+    
+    metalLayer.drawableSize = drawableSize;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    const CGSize size = self.view.bounds.size;
+    [self setContentScaleFactor:1.f size:size];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    [self setContentScaleFactor:1.f size:size];
+}
+
 #endif // TARGET_OS_OSX
 
 @end
