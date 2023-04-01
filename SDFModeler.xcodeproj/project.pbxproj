@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D229A1CB63009632C3 /* AppDelegate.m */; };
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* GameViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
-		7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DD29A1CB64009632C3 /* Assets.xcassets */; };
-		7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DF29A1CB64009632C3 /* Main.storyboard */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
 		74A18A7B29D8199E0010F1B4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74A18A7A29D8199E0010F1B4 /* Metal.framework */; };
 		74A18A7D29D819A40010F1B4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74A18A7C29D819A40010F1B4 /* MetalKit.framework */; };
+		74A18A8529D8B2B80010F1B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74A18A8029D8B2B70010F1B4 /* Assets.xcassets */; };
+		74A18A8629D8B2B80010F1B4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74A18A8129D8B2B70010F1B4 /* Main.storyboard */; };
+		74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8429D8B2B70010F1B4 /* AppDelegate.m */; };
 		74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF26329D7BBC800D322DB /* AppDelegate.m */; };
 		74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF26E29D7BBC800D322DB /* Main.storyboard */; };
 		74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27129D7BBC900D322DB /* Assets.xcassets */; };
@@ -87,22 +87,25 @@
 
 /* Begin PBXFileReference section */
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7444A4D129A1CB63009632C3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		7444A4D229A1CB63009632C3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
 		7444A4D729A1CB63009632C3 /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
 		7444A4D829A1CB63009632C3 /* GameViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameViewController.mm; sourceTree = "<group>"; };
 		7444A4DA29A1CB63009632C3 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		7444A4DC29A1CB63009632C3 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
-		7444A4DD29A1CB64009632C3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
 		7451041529C1538100F69BC4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		7451041629C1538100F69BC4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		74A18A7A29D8199E0010F1B4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		74A18A7C29D819A40010F1B4 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
+		74A18A7F29D8B2B70010F1B4 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		74A18A8029D8B2B70010F1B4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		74A18A8229D8B2B70010F1B4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		74A18A8329D8B2B70010F1B4 /* SDFModeler.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
+		74A18A8429D8B2B70010F1B4 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		74A18A8929D8B3190010F1B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
+		74A18A8B29D8B3280010F1B4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Main.strings; sourceTree = "<group>"; };
 		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -197,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				7444A4D029A1CB63009632C3 /* Sources */,
+				74A18A7E29D8B2B70010F1B4 /* macOS */,
 				74AAF26129D7BBC800D322DB /* iOS */,
 				7444A4CF29A1CB63009632C3 /* Products */,
 				74A18A7929D8199D0010F1B4 /* Frameworks */,
@@ -219,8 +223,6 @@
 				74DAA6FE29ADB5C100171C03 /* Material */,
 				74DAA6F729ADB5B900171C03 /* Transformer */,
 				74DAA6ED29ADB5A200171C03 /* SDFGeometry */,
-				7444A4D129A1CB63009632C3 /* AppDelegate.h */,
-				7444A4D229A1CB63009632C3 /* AppDelegate.m */,
 				74F7646D29CF93FD00CD5259 /* Serializer.cpp */,
 				74F7646E29CF93FD00CD5259 /* Serializer.h */,
 				74F7647129CF95D400CD5259 /* Object3D.cpp */,
@@ -260,10 +262,8 @@
 				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
 				74DAA70E29AEEE7200171C03 /* World.cpp */,
 				74DAA70F29AEEE7200171C03 /* World.h */,
-				7444A4DD29A1CB64009632C3 /* Assets.xcassets */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
-				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -275,6 +275,18 @@
 				74A18A7A29D8199E0010F1B4 /* Metal.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		74A18A7E29D8B2B70010F1B4 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				74A18A7F29D8B2B70010F1B4 /* AppDelegate.h */,
+				74A18A8029D8B2B70010F1B4 /* Assets.xcassets */,
+				74A18A8129D8B2B70010F1B4 /* Main.storyboard */,
+				74A18A8329D8B2B70010F1B4 /* SDFModeler.entitlements */,
+				74A18A8429D8B2B70010F1B4 /* AppDelegate.m */,
+			);
+			path = macOS;
 			sourceTree = "<group>";
 		};
 		74AAF26129D7BBC800D322DB /* iOS */ = {
@@ -426,8 +438,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */,
-				7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */,
+				74A18A8629D8B2B80010F1B4 /* Main.storyboard in Resources */,
+				74A18A8529D8B2B80010F1B4 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -468,6 +480,7 @@
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
+				74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				74DAA70529ADB5C100171C03 /* ConstMaterial.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
@@ -480,7 +493,6 @@
 				7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
-				7444A4D329A1CB63009632C3 /* AppDelegate.m in Sources */,
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
 				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
@@ -538,10 +550,20 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
+		74A18A8129D8B2B70010F1B4 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				74A18A8229D8B2B70010F1B4 /* Base */,
+				74A18A8929D8B3190010F1B4 /* en */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
 		74AAF26E29D7BBC800D322DB /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				74AAF26F29D7BBC800D322DB /* Base */,
+				74A18A8B29D8B3280010F1B4 /* en */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -675,7 +697,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Sources/SDFModeler.entitlements;
+				CODE_SIGN_ENTITLEMENTS = macOS/SDFModeler.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -702,7 +724,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = Sources/SDFModeler.entitlements;
+				CODE_SIGN_ENTITLEMENTS = macOS/SDFModeler.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
