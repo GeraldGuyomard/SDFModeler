@@ -19,7 +19,7 @@
 #include "Object3D.h"
 #include "Composition3D.h"
 
-#include "GameViewController.h"
+#include "MainViewController.h"
 
 constexpr NSUInteger kMaxBuffersInFlight = 3;
 
@@ -212,7 +212,7 @@ Vertex s_Vertices[4] = {
     
     SerializedWorld* serializedWorld = ((SerializedWorld*) _serializedWorldBufferAddress);
     
-    [GameViewController instance].world.serialize(*serializedWorld);
+    [MainViewController instance].world.serialize(*serializedWorld);
 }
 
 - (void)drawInMTKView:(nonnull MTKView *)view

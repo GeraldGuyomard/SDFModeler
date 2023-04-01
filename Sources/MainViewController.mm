@@ -1,17 +1,17 @@
 //
-//  GameViewController.m
+//  MainViewController.m
 //  TestRayMarching
 //
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
-#import "GameViewController.h"
+#import "MainViewController.h"
 #include "CommonDefinitions.h"
 
 #include "World.h"
 #include "Composition3D.h"
 
-@implementation GameViewController
+@implementation MainViewController
 {
     MTKView* _view;
     Renderer* _renderer;
@@ -24,9 +24,9 @@
     simd_float3 _orbitOrigin;
 }
 
-static __weak GameViewController* s_Instance = nil;
+static __weak MainViewController* s_Instance = nil;
 
-+(GameViewController*)instance
++(MainViewController*)instance
 {
     return s_Instance;
 }

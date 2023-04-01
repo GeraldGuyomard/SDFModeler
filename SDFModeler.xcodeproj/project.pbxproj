@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
-		7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* GameViewController.mm */; };
+		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
@@ -51,7 +51,7 @@
 		74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
-		74AAF29829D7BEE900D322DB /* GameViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* GameViewController.mm */; };
+		74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
 		74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
@@ -89,8 +89,8 @@
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
-		7444A4D729A1CB63009632C3 /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
-		7444A4D829A1CB63009632C3 /* GameViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = GameViewController.mm; sourceTree = "<group>"; };
+		7444A4D729A1CB63009632C3 /* MainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		7444A4D829A1CB63009632C3 /* MainViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewController.mm; sourceTree = "<group>"; };
 		7444A4DA29A1CB63009632C3 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		7444A4DC29A1CB63009632C3 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -231,8 +231,8 @@
 				74F7647329CF9B0F00CD5259 /* Composition3D.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
-				7444A4D729A1CB63009632C3 /* GameViewController.h */,
-				7444A4D829A1CB63009632C3 /* GameViewController.mm */,
+				7444A4D729A1CB63009632C3 /* MainViewController.h */,
+				7444A4D829A1CB63009632C3 /* MainViewController.mm */,
 				74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */,
 				74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */,
 				7444A4DA29A1CB63009632C3 /* Shaders.metal */,
@@ -490,7 +490,7 @@
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
-				7444A4D929A1CB63009632C3 /* GameViewController.mm in Sources */,
+				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
@@ -503,7 +503,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				74AAF29829D7BEE900D322DB /* GameViewController.mm in Sources */,
+				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* ConstMaterial.cpp in Sources */,
 				74AAF27729D7BBC900D322DB /* main.m in Sources */,
 				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,

@@ -1,5 +1,5 @@
 //
-//  GameViewController.h
+//  MainViewController.h
 //  TestRayMarching
 //
 //  Created by Gérald Guyomard on 2/18/23.
@@ -14,9 +14,9 @@
 #import "Object3D.h"
 
 // Our macOS view controller.
-@interface GameViewController : ViewControllerBase
+@interface MainViewController : ViewControllerBase
 
-+(GameViewController*)instance;
++(MainViewController*)instance;
 
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) const World& world;
