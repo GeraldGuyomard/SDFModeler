@@ -5,14 +5,16 @@
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
-#import <Cocoa/Cocoa.h>
+
+#import "CommonDefinitions.h"
+
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 #import "Renderer.h"
 #import "Object3D.h"
 
 // Our macOS view controller.
-@interface GameViewController : NSViewController
+@interface GameViewController : ViewControllerBase
 
 +(GameViewController*)instance;
 

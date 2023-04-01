@@ -15,6 +15,42 @@
 		7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7444A4DF29A1CB64009632C3 /* Main.storyboard */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
+		74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF26329D7BBC800D322DB /* AppDelegate.m */; };
+		74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF26E29D7BBC800D322DB /* Main.storyboard */; };
+		74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27129D7BBC900D322DB /* Assets.xcassets */; };
+		74AAF27529D7BBC900D322DB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27329D7BBC900D322DB /* LaunchScreen.storyboard */; };
+		74AAF27729D7BBC900D322DB /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF27629D7BBC900D322DB /* main.m */; };
+		74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
+		74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
+		74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
+		74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
+		74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
+		74AAF28029D7BCA400D322DB /* ConstMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FF29ADB5C100171C03 /* ConstMaterial.cpp */; };
+		74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F929ADB5B900171C03 /* StandardTransformers.cpp */; };
+		74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FA29ADB5B900171C03 /* Transformer.cpp */; };
+		74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */; };
+		74AAF28429D7BCB100D322DB /* SDFSubstraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134729B5BAC300F9BBA8 /* SDFSubstraction.cpp */; };
+		74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
+		74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */; };
+		74AAF28729D7BCB100D322DB /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
+		74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
+		74AAF28929D7BCB100D322DB /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
+		74AAF28A29D7BCB800D322DB /* Composition3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647429CF9B0F00CD5259 /* Composition3D.cpp */; };
+		74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
+		74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
+		74AAF28D29D7BCD300D322DB /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
+		74AAF28E29D7BCD300D322DB /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
+		74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
+		74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
+		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
+		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
+		74AAF29329D7BCD300D322DB /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
+		74AAF29429D7BCD300D322DB /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
+		74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
+		74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
+		74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
+		74AAF29829D7BEE900D322DB /* GameViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* GameViewController.mm */; };
+		74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
 		74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
 		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
@@ -63,6 +99,19 @@
 		7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SDFModeler.entitlements; sourceTree = "<group>"; };
 		7451041529C1538100F69BC4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		7451041629C1538100F69BC4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
+		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		74AAF26529D7BBC800D322DB /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
+		74AAF26629D7BBC800D322DB /* Renderer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Renderer.m; sourceTree = "<group>"; };
+		74AAF26829D7BBC800D322DB /* GameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GameViewController.h; sourceTree = "<group>"; };
+		74AAF26929D7BBC800D322DB /* GameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GameViewController.m; sourceTree = "<group>"; };
+		74AAF26B29D7BBC800D322DB /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		74AAF26D29D7BBC800D322DB /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		74AAF26F29D7BBC800D322DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		74AAF27129D7BBC900D322DB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		74AAF27429D7BBC900D322DB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		74AAF27629D7BBC900D322DB /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		74AF133829B442AE00F9BBA8 /* PhongShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PhongShader.cpp; sourceTree = "<group>"; };
 		74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FragmentShader.cpp; sourceTree = "<group>"; };
 		74AF133A29B442AE00F9BBA8 /* FragmentShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FragmentShader.h; sourceTree = "<group>"; };
@@ -134,6 +183,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		74AAF25D29D7BBC800D322DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -141,6 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				7444A4D029A1CB63009632C3 /* Sources */,
+				74AAF26129D7BBC800D322DB /* iOS */,
 				7444A4CF29A1CB63009632C3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -149,6 +206,7 @@
 			isa = PBXGroup;
 			children = (
 				7444A4CE29A1CB63009632C3 /* SDFModeler.app */,
+				74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -207,6 +265,25 @@
 				7444A4E429A1CB64009632C3 /* SDFModeler.entitlements */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		74AAF26129D7BBC800D322DB /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				74AAF26229D7BBC800D322DB /* AppDelegate.h */,
+				74AAF26329D7BBC800D322DB /* AppDelegate.m */,
+				74AAF26529D7BBC800D322DB /* Renderer.h */,
+				74AAF26629D7BBC800D322DB /* Renderer.m */,
+				74AAF26829D7BBC800D322DB /* GameViewController.h */,
+				74AAF26929D7BBC800D322DB /* GameViewController.m */,
+				74AAF26B29D7BBC800D322DB /* Shaders.metal */,
+				74AAF26D29D7BBC800D322DB /* ShaderTypes.h */,
+				74AAF26E29D7BBC800D322DB /* Main.storyboard */,
+				74AAF27129D7BBC900D322DB /* Assets.xcassets */,
+				74AAF27329D7BBC900D322DB /* LaunchScreen.storyboard */,
+				74AAF27629D7BBC900D322DB /* main.m */,
+			);
+			path = iOS;
 			sourceTree = "<group>";
 		};
 		74AF133729B442AE00F9BBA8 /* FragmentShader */ = {
@@ -287,6 +364,23 @@
 			productReference = 7444A4CE29A1CB63009632C3 /* SDFModeler.app */;
 			productType = "com.apple.product-type.application";
 		};
+		74AAF25F29D7BBC800D322DB /* SDFModeler iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 74AAF27A29D7BBC900D322DB /* Build configuration list for PBXNativeTarget "SDFModeler iOS" */;
+			buildPhases = (
+				74AAF25C29D7BBC800D322DB /* Sources */,
+				74AAF25D29D7BBC800D322DB /* Frameworks */,
+				74AAF25E29D7BBC800D322DB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SDFModeler iOS";
+			productName = SDFModel;
+			productReference = 74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -297,6 +391,9 @@
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					7444A4CD29A1CB63009632C3 = {
+						CreatedOnToolsVersion = 14.2;
+					};
+					74AAF25F29D7BBC800D322DB = {
 						CreatedOnToolsVersion = 14.2;
 					};
 				};
@@ -315,6 +412,7 @@
 			projectRoot = "";
 			targets = (
 				7444A4CD29A1CB63009632C3 /* SDFModeler */,
+				74AAF25F29D7BBC800D322DB /* SDFModeler iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -326,6 +424,16 @@
 			files = (
 				7444A4DE29A1CB64009632C3 /* Assets.xcassets in Resources */,
 				7444A4E129A1CB64009632C3 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		74AAF25E29D7BBC800D322DB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74AAF27529D7BBC900D322DB /* LaunchScreen.storyboard in Resources */,
+				74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */,
+				74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +483,46 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		74AAF25C29D7BBC800D322DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				74AAF29829D7BEE900D322DB /* GameViewController.mm in Sources */,
+				74AAF28029D7BCA400D322DB /* ConstMaterial.cpp in Sources */,
+				74AAF27729D7BBC900D322DB /* main.m in Sources */,
+				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,
+				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,
+				74AAF28D29D7BCD300D322DB /* RayMarch.cpp in Sources */,
+				74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */,
+				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,
+				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
+				74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */,
+				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,
+				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
+				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
+				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
+				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
+				74AAF28E29D7BCD300D322DB /* Composition.cpp in Sources */,
+				74AAF28929D7BCB100D322DB /* SDFUnion.cpp in Sources */,
+				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
+				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
+				74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */,
+				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
+				74AAF28429D7BCB100D322DB /* SDFSubstraction.cpp in Sources */,
+				74AAF28A29D7BCB800D322DB /* Composition3D.cpp in Sources */,
+				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
+				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
+				74AAF29429D7BCD300D322DB /* Scene.cpp in Sources */,
+				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
+				74AAF29329D7BCD300D322DB /* World.cpp in Sources */,
+				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
+				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,
+				74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */,
+				74AAF28729D7BCB100D322DB /* SDFBox.cpp in Sources */,
+				74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
@@ -384,6 +532,22 @@
 				7444A4E029A1CB64009632C3 /* Base */,
 			);
 			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		74AAF26E29D7BBC800D322DB /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				74AAF26F29D7BBC800D322DB /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		74AAF27329D7BBC900D322DB /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				74AAF27429D7BBC900D322DB /* Base */,
+			);
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -556,6 +720,69 @@
 			};
 			name = Release;
 		};
+		74AAF27829D7BBC900D322DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = metal;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		74AAF27929D7BBC900D322DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.graphics-design";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIRequiredDeviceCapabilities = metal;
+				INFOPLIST_KEY_UIStatusBarHidden = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -573,6 +800,15 @@
 			buildConfigurations = (
 				7444A4E829A1CB64009632C3 /* Debug */,
 				7444A4E929A1CB64009632C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		74AAF27A29D7BBC900D322DB /* Build configuration list for PBXNativeTarget "SDFModeler iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74AAF27829D7BBC900D322DB /* Debug */,
+				74AAF27929D7BBC900D322DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

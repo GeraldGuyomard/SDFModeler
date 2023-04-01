@@ -41,6 +41,22 @@
 
 #else
 
+#include <TargetConditionals.h>
+
+#if defined(__OBJC__)
+
+    #if TARGET_OS_OSX
+        #import <AppKit/AppKit.h>
+        typedef NSViewController ViewControllerBase;
+        typedef NSView View;
+    #else
+        #import <UIKit/UIKit.h>
+        typedef UIViewController ViewControllerBase;
+        typedef UIView View;
+    #endif
+
+#endif // __OBJC__
+
     using namespace simd;
 
     #define CONSTANT const

@@ -148,7 +148,7 @@ static GameViewController* s_Instance = nil;
     if(!_view.device)
     {
         NSLog(@"Metal is not supported on this device");
-        self.view = [[NSView alloc] initWithFrame:self.view.frame];
+        self.view = [[View alloc] initWithFrame:self.view.frame];
         return;
     }
 
@@ -158,6 +158,8 @@ static GameViewController* s_Instance = nil;
 
     _view.delegate = _renderer;
 }
+
+#if TARGET_OS_OSX
 
 - (void)rightMouseDown:(NSEvent *)event
 {
@@ -253,5 +255,7 @@ static GameViewController* s_Instance = nil;
     
     _renderer.cameraTransform = transform;
 }
+
+#endif // TARGET_OS_OSX
 
 @end
