@@ -20,6 +20,15 @@ public:
     
     float4 computeAlbedo(Ray ray, float dist, float3 p) const
     {
+        return computeAlbedoNearest(ray, dist);
+    }
+    
+private:
+    
+    float4 computeAlbedoNearest(Ray ray, float dist) const
+    {
+        const float3 p = ray.pt(dist);
+        
         float2 xy = p.xz;
         
         float2 s = sign(xy);
@@ -29,7 +38,8 @@ public:
         
         xy = max(-s, 0.f) + (s * xy);
 
-        xy = step(0.98, xy);
+        xy = smoothstep(0.95, 0.98, xy);
+        //xy = step(0.98, xy);
         
         float pixelVisible = min(1.f, xy.x + xy.y);
         float4 c = _color * pixelVisible;
@@ -43,8 +53,6 @@ public:
         
         return c;
     }
-    
-private:
     
     const float2 _cellSize;
     const float4 _color;
