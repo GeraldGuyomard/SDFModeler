@@ -55,7 +55,7 @@ class Objects final
 {
 public:
     
-    constexpr static CONSTANT size_t kNbObjectsMax = 16;
+    constexpr static CONSTANT size_t kNbObjectsMax = 128;
     
     Objects(TShader shader, CONSTANT SerializedObjects& serializedObjects)
     : _serializedObjects(serializedObjects), _shader(shader)

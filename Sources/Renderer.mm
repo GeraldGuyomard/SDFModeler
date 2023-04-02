@@ -20,11 +20,6 @@
 
 #include "MainViewController.h"
 
-constexpr NSUInteger kMaxBuffersInFlight = 3;
-
-constexpr size_t kAlignedUniformsSize = (sizeof(Uniforms) & ~0xFF) + 0x100;
-constexpr size_t kAlignedSerializedWorldSize = (sizeof(SerializedWorld) & ~0xFF) + 0x100;
-
 Vertex s_Vertices[4] = {
     { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
     { {-1.f, -1.f , 0.0f, 1.f}, {-1.f, -1.f} },
@@ -162,25 +157,9 @@ Renderer::init()
     depthStateDesc.depthWriteEnabled = YES;
     _depthState = [_device newDepthStencilStateWithDescriptor:depthStateDesc];
 
-    {
-        const NSUInteger bufferSize = kAlignedUniformsSize * kMaxBuffersInFlight;
+    _uniformsBuffer = std::make_unique<UniformsBuffer>(_device, @"UniformBuffer");
+    _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(_device, @"SerializedSceneBuffer");
 
-        _dynamicUniformBuffer = [_device newBufferWithLength:bufferSize
-                                                     options:MTLResourceStorageModeShared];
-
-        _dynamicUniformBuffer.label = @"UniformBuffer";
-    }
-
-    {
-        const NSUInteger bufferSize = kAlignedSerializedWorldSize * kMaxBuffersInFlight;
-
-        _dynamicSerializedWorldBuffer = [_device newBufferWithLength:bufferSize
-                                                     options:MTLResourceStorageModeShared];
-
-        _dynamicSerializedWorldBuffer.label = @"SerializedSceneBuffer";
-    }
-
-    
     _quadVertexBuffer = [_device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
     
@@ -194,15 +173,8 @@ Renderer::init()
 void
 Renderer::updateDynamicBufferState()
 {
-    /// Update the state of our uniform buffers before rendering
-
-    _uniformBufferIndex = (_uniformBufferIndex + 1) % kMaxBuffersInFlight;
-    _uniformBufferOffset = kAlignedUniformsSize * _uniformBufferIndex;
-    _uniformBufferAddress = ((uint8_t*)_dynamicUniformBuffer.contents) + _uniformBufferOffset;
-    
-    _serializedWorldBufferIndex = (_serializedWorldBufferIndex + 1) % kMaxBuffersInFlight;
-    _serializedWorldBufferOffset = kAlignedSerializedWorldSize * _serializedWorldBufferIndex;
-    _serializedWorldBufferAddress = ((uint8_t*)_dynamicSerializedWorldBuffer.contents) + _serializedWorldBufferOffset;
+    _uniformsBuffer->update();
+    _serializedWorldBuffer->update();
 }
 
 void Renderer::setCamera(const Camera::Ptr& cam)
@@ -214,20 +186,20 @@ void Renderer::setCamera(const Camera::Ptr& cam)
 const Uniforms&
 Renderer::uniforms() const
 {
-    return *((Uniforms*)_uniformBufferAddress);
+    return _uniformsBuffer->uniform();
 }
 
 const SerializedWorld&
 Renderer::serializedWorld() const
 {
-    return *((SerializedWorld*) _serializedWorldBufferAddress);
+    return _serializedWorldBuffer->uniform();
 }
 
 void
 Renderer::updateUniforms()
 {
     /// Update any game state before encoding renderint commands to our drawable
-    Uniforms& uniforms = *((Uniforms*)_uniformBufferAddress);
+    auto& uniforms = _uniformsBuffer->uniform();
 
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.cameraMatrix = _camera->worldTransform();
@@ -241,9 +213,9 @@ Renderer::updateUniforms()
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    SerializedWorld* serializedWorld = ((SerializedWorld*) _serializedWorldBufferAddress);
+    auto& serializedWorld = _serializedWorldBuffer->uniform();
     
-    [MainViewController instance].world.serialize(*serializedWorld);
+    [MainViewController instance].world.serialize(serializedWorld);
 }
 
 void
@@ -288,13 +260,8 @@ Renderer::render()
         [renderEncoder setRenderPipelineState:_pipelineState];
         [renderEncoder setDepthStencilState:_depthState];
 
-        [renderEncoder setFragmentBuffer:_dynamicUniformBuffer
-                                  offset:_uniformBufferOffset
-                                 atIndex:BufferIndexUniforms];
-
-        [renderEncoder setFragmentBuffer:_dynamicSerializedWorldBuffer
-                                  offset:_serializedWorldBufferOffset
-                                 atIndex:BufferIndexSerializedWorld];
+        _uniformsBuffer->setFragmentBuffer(renderEncoder);
+        _serializedWorldBuffer->setFragmentBuffer(renderEncoder);
 
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer
