@@ -9,6 +9,19 @@
 
 @implementation MainViewControllerIOS
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
+    [self.view addGestureRecognizer:panRecognizer];
+}
+
+- (void)onPan:(UIGestureRecognizer*)recognizer
+{
+    
+}
+
 - (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
 {
     UIView* view = self.view;
