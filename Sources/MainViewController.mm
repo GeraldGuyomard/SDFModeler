@@ -16,7 +16,7 @@
 @implementation MainViewController
 {
     MTKView* _view;
-    Renderer* _renderer;
+    std::unique_ptr<Renderer> _renderer;
     
     World _world;
 }
@@ -35,7 +35,7 @@ static __weak MainViewController* s_Instance = nil;
 
 - (Renderer*)renderer
 {
-    return _renderer;
+    return _renderer.get();
 }
 
 - (void)loadWorld
@@ -149,11 +149,7 @@ static __weak MainViewController* s_Instance = nil;
         return;
     }
 
-    _renderer = [[Renderer alloc] initWithMetalKitView:_view];
-
-    [_renderer mtkView:_view drawableSizeWillChange:_view.bounds.size];
-
-    _view.delegate = _renderer;
+    _renderer = std::make_unique<Renderer>(_view);
 }
 
 @end

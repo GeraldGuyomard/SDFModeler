@@ -10,7 +10,6 @@
 
 #import "Renderer.h"
 
-// Include header shared between C code here, which executes Metal API commands, and .metal files
 #import "ShaderTypes.h"
 
 #include "Scene.h"
@@ -33,54 +32,83 @@ Vertex s_Vertices[4] = {
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
 
-@implementation Renderer
+@interface RendererMTKViewDelegate : NSObject<MTKViewDelegate>
+
+- (instancetype) initWithRenderer:(Renderer*)renderer;
+- (void)invalidate;
+
+@end
+
+@implementation RendererMTKViewDelegate
 {
-    __weak MTKView* _mtkView;
-    
-    dispatch_semaphore_t _inFlightSemaphore;
-    id <MTLDevice> _device;
-    id <MTLCommandQueue> _commandQueue;
-
-    id <MTLBuffer> _dynamicUniformBuffer;
-    id <MTLBuffer> _dynamicSerializedWorldBuffer;
-    
-    id <MTLBuffer> _quadVertexBuffer;
-    id <MTLRenderPipelineState> _pipelineState;
-    id <MTLDepthStencilState> _depthState;
-    MTLVertexDescriptor *_mtlVertexDescriptor;
-
-    uint32_t _uniformBufferOffset;
-    uint8_t _uniformBufferIndex;
-    void* _uniformBufferAddress;
-
-    uint32_t _serializedWorldBufferOffset;
-    uint8_t _serializedWorldBufferIndex;
-    void* _serializedWorldBufferAddress;
-    
-    float4x4 _projectionMatrix;
-    float4x4 _invProjectionMatrix;
-    
-    float4x4 _cameraTransform;
+    Renderer* _renderer;
 }
 
--(nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)view;
+- (instancetype) initWithRenderer:(Renderer*)renderer
 {
-    self = [super init];
-    if(self)
+    if (self = [self init])
     {
-        _mtkView = view;
-        _device = view.device;
-        _inFlightSemaphore = dispatch_semaphore_create(kMaxBuffersInFlight);
-        [self _loadMetalWithView:view];
-        
-        _cameraTransform = matrix4x4_translation(float3 {0, 0, 5.f});
+        _renderer = renderer;
     }
-
+    
     return self;
 }
 
-- (void)_loadMetalWithView:(nonnull MTKView *)view;
+- (void)invalidate
 {
+    _renderer = nullptr;
+}
+
+- (void)drawInMTKView:(nonnull MTKView *)view
+{
+    if (_renderer != nullptr)
+    {
+        _renderer->render();
+    }
+}
+
+- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
+{
+    if (_renderer != nullptr)
+    {
+        _renderer->onRenderSizeChanged(size);
+    }
+}
+
+@end
+
+Renderer::Renderer(MTKView* _Nonnull view)
+: _mtkView(view),
+_device(view.device),
+_inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight)),
+_camera(std::make_shared<Camera>())
+{
+    _mtkViewDelegate = [[RendererMTKViewDelegate alloc] initWithRenderer:this];
+    _mtkView.delegate = _mtkViewDelegate;
+    
+    const auto camTransform = matrix4x4_translation(float3 {0, 0, 5.f});
+    _camera->setWorldTransform(camTransform);
+    
+    init();
+    onRenderSizeChanged(_mtkView.bounds.size);
+}
+
+Renderer::~Renderer()
+{
+    [_mtkViewDelegate invalidate];
+}
+
+CGSize
+Renderer::renderSize() const
+{
+    return _mtkView.drawableSize;
+}
+
+void
+Renderer::init()
+{
+    auto view = _mtkView;
+    
     /// Load Metal state objects and initialize renderer dependent view properties
 
     view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
@@ -161,7 +189,9 @@ Vertex s_Vertices[4] = {
     _commandQueue = [_device newCommandQueue];
 }
 
-- (void)_updateDynamicBufferState
+
+void
+Renderer::updateDynamicBufferState()
 {
     /// Update the state of our uniform buffers before rendering
 
@@ -174,39 +204,32 @@ Vertex s_Vertices[4] = {
     _serializedWorldBufferAddress = ((uint8_t*)_dynamicSerializedWorldBuffer.contents) + _serializedWorldBufferOffset;
 }
 
-- (MTKView*)view
+void Renderer::setCamera(const Camera::Ptr& cam)
 {
-    return _mtkView;
+    _camera = cam;
 }
 
-- (float4x4)cameraTransform
+
+const Uniforms&
+Renderer::uniforms() const
 {
-    return _cameraTransform;
+    return *((Uniforms*)_uniformBufferAddress);
 }
 
-- (void)setCameraTransform:(float4x4)cameraTransform
+const SerializedWorld&
+Renderer::serializedWorld() const
 {
-    _cameraTransform = cameraTransform;
+    return *((SerializedWorld*) _serializedWorldBufferAddress);
 }
 
--(const Uniforms*) uniforms
-{
-    return (Uniforms*)_uniformBufferAddress;
-}
-
--(const SerializedWorld*) serializedWorld
-{
-    return (SerializedWorld*) _serializedWorldBufferAddress;
-}
-
-- (void)_updateGameState
+void
+Renderer::updateUniforms()
 {
     /// Update any game state before encoding renderint commands to our drawable
-
     Uniforms& uniforms = *((Uniforms*)_uniformBufferAddress);
 
     uniforms.invProjectionMatrix = _invProjectionMatrix;
-    uniforms.cameraMatrix = _cameraTransform;
+    uniforms.cameraMatrix = _camera->worldTransform();
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
@@ -215,7 +238,8 @@ Vertex s_Vertices[4] = {
     [MainViewController instance].world.serialize(*serializedWorld);
 }
 
-- (void)drawInMTKView:(nonnull MTKView *)view
+void
+Renderer::render()
 {
     /// Per frame updates here
 
@@ -230,16 +254,17 @@ Vertex s_Vertices[4] = {
          dispatch_semaphore_signal(block_sema);
      }];
 
-    [self _updateDynamicBufferState];
+    updateDynamicBufferState();
+    updateUniforms();
 
-    [self _updateGameState];
-
+    auto view = _mtkView;
+    
     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
     MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
 
-    if(renderPassDescriptor != nil) {
-
+    if(renderPassDescriptor != nil)
+    {
         /// Final pass rendering code here
 
         id <MTLRenderCommandEncoder> renderEncoder =
@@ -284,15 +309,12 @@ Vertex s_Vertices[4] = {
     [commandBuffer commit];
 }
 
-- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
+void
+Renderer::onRenderSizeChanged(const CGSize& size)
 {
-    /// Respond to drawable size or orientation changes here
-
     float aspect = size.width / (float)size.height;
     const float farZ = 100.f;
     _projectionMatrix = matrix_perspective_right_hand(45.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
-
-@end
 

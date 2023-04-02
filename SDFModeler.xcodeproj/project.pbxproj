@@ -19,6 +19,8 @@
 		74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8429D8B2B70010F1B4 /* AppDelegate.m */; };
 		74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8C29D8B4D00010F1B4 /* MainViewControllerMacOS.mm */; };
 		74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */; };
+		74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9229D8B7990010F1B4 /* Camera.cpp */; };
+		74A18A9529D9012A0010F1B4 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9229D8B7990010F1B4 /* Camera.cpp */; };
 		74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF26329D7BBC800D322DB /* AppDelegate.m */; };
 		74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF26E29D7BBC800D322DB /* Main.storyboard */; };
 		74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27129D7BBC900D322DB /* Assets.xcassets */; };
@@ -112,6 +114,8 @@
 		74A18A8D29D8B4D00010F1B4 /* MainViewControllerMacOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewControllerMacOS.h; sourceTree = "<group>"; };
 		74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MainViewControllerIOS.mm; sourceTree = "<group>"; };
 		74A18A9029D8B67C0010F1B4 /* MainViewControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewControllerIOS.h; sourceTree = "<group>"; };
+		74A18A9229D8B7990010F1B4 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
+		74A18A9329D8B7990010F1B4 /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
 		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -270,6 +274,8 @@
 				74DAA70F29AEEE7200171C03 /* World.h */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
+				74A18A9229D8B7990010F1B4 /* Camera.cpp */,
+				74A18A9329D8B7990010F1B4 /* Camera.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -502,6 +508,7 @@
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
+				74A18A9529D9012A0010F1B4 /* Camera.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
 				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
@@ -516,6 +523,7 @@
 			files = (
 				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* ConstMaterial.cpp in Sources */,
+				74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */,
 				74AAF27729D7BBC900D322DB /* main.m in Sources */,
 				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,
 				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,

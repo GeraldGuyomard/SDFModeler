@@ -28,10 +28,10 @@
     
     auto renderer = self.renderer;
     
-    const auto* uniforms = renderer.uniforms;
-    const auto* serializedWorld = renderer.serializedWorld;
+    const auto& uniforms = renderer->uniforms();
+    const auto& serializedWorld = renderer->serializedWorld();
     
-    const auto pixel = renderDefault(p, *uniforms, *serializedWorld);
+    const auto pixel = renderDefault(p, uniforms, serializedWorld);
     
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
 }
@@ -41,7 +41,7 @@
     _shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
     
     _initialPos = event.locationInWindow;
-    _initialCameraTransform = self.renderer.cameraTransform;
+    _initialCameraTransform = self.renderer->camera()->worldTransform();
     
     const auto position = _initialCameraTransform.columns[3].xyz;
     const auto direction = simd_normalize(_initialCameraTransform.columns[2].xyz);
@@ -66,7 +66,7 @@
         decomp.position += decomp.up * delta.y;
         
         auto newTransform = recompose(decomp);
-        self.renderer.cameraTransform = newTransform;
+        self.renderer->camera()->setWorldTransform(newTransform);
     }
     else
     {
@@ -96,7 +96,7 @@
         
         newTransform = recompose(decomp);
         
-        self.renderer.cameraTransform = newTransform;
+        self.renderer->camera()->setWorldTransform(newTransform);
     }
 }
 
@@ -104,13 +104,15 @@
 {
     float d = event.scrollingDeltaY / 1000.f;
     
-    auto transform = self.renderer.cameraTransform;
+    auto camera = self.renderer->camera();
+    
+    auto transform = camera->worldTransform();
     auto pos = translation(transform);
     
     pos += d * forward(transform);
     setTranslation(transform, pos);
     
-    self.renderer.cameraTransform = transform;
+    camera->setWorldTransform(transform);
 }
 
 @end
