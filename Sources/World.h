@@ -68,7 +68,8 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT S
     }
     
     // Background
-    const float grey = abs(ray.direction.y);
+    //const float grey = max(ray.direction.y, 0.f);
+    const float grey = 0.f;
     const float4 c = { grey, grey, grey, 1.f };
     return c;
 }

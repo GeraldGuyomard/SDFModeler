@@ -103,7 +103,7 @@
 
     inline float2 step(float m, float2 in)
     {
-        return step(in, float2 { m, m });
+        return step(float2 { m, m }, in);
     }
 
     inline float4 mix(float4 a, float4 b, float c)

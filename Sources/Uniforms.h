@@ -14,6 +14,7 @@ struct Uniforms final
     float4x4 invProjectionMatrix;
     float4x4 cameraMatrix;
     float4x4 ndcToWorldTransform;
+    float2 rayDiff;
     
     float3 lightDirection;
 };

@@ -19,7 +19,7 @@ public:
     Renderer(MTKView* _Nonnull);
     ~Renderer();
     
-    CGSize renderSize() const;
+    float2 renderSize() const;
     
     Camera::Ptr camera() const { return _camera; }
     void setCamera(const Camera::Ptr&);
@@ -41,28 +41,28 @@ private:
     Camera::Ptr _camera;
     RendererMTKViewDelegate* _Nonnull _mtkViewDelegate;
     
-    const __weak MTKView* _mtkView;
-    const id <MTLDevice> _device;
+    const __weak MTKView* _Nullable _mtkView;
+    const id <MTLDevice> _Nonnull _device;
     
-    dispatch_semaphore_t _inFlightSemaphore;
+    dispatch_semaphore_t _Nonnull _inFlightSemaphore;
     
-    id <MTLCommandQueue> _commandQueue;
+    id <MTLCommandQueue> _Nonnull _commandQueue;
 
-    id <MTLBuffer> _dynamicUniformBuffer;
-    id <MTLBuffer> _dynamicSerializedWorldBuffer;
+    id <MTLBuffer> _Nonnull _dynamicUniformBuffer;
+    id <MTLBuffer> _Nonnull _dynamicSerializedWorldBuffer;
     
-    id <MTLBuffer> _quadVertexBuffer;
-    id <MTLRenderPipelineState> _pipelineState;
-    id <MTLDepthStencilState> _depthState;
-    MTLVertexDescriptor *_mtlVertexDescriptor;
+    id <MTLBuffer> _Nonnull _quadVertexBuffer;
+    id <MTLRenderPipelineState> _Nonnull _pipelineState;
+    id <MTLDepthStencilState> _Nonnull _depthState;
+    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
 
     uint32_t _uniformBufferOffset = 0;
     uint8_t _uniformBufferIndex = 0;
-    void* _uniformBufferAddress = nullptr;
+    void* _Nullable _uniformBufferAddress = nullptr;
 
     uint32_t _serializedWorldBufferOffset = 0;
     uint8_t _serializedWorldBufferIndex = 0;
-    void* _serializedWorldBufferAddress = nullptr;
+    void* _Nullable _serializedWorldBufferAddress = nullptr;
     
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;

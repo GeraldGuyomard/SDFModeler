@@ -98,10 +98,11 @@ Renderer::~Renderer()
     [_mtkViewDelegate invalidate];
 }
 
-CGSize
+float2
 Renderer::renderSize() const
 {
-    return _mtkView.drawableSize;
+    const CGSize size = _mtkView.drawableSize;
+    return float2 { float(size.width), float(size.height) };
 }
 
 void
@@ -231,6 +232,13 @@ Renderer::updateUniforms()
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.cameraMatrix = _camera->worldTransform();
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
+    
+    const auto renderSize = this->renderSize();
+    
+    // [0, renderSize.width] -> [-1, +1]
+    uniforms.rayDiff.x = 2.f / renderSize.x;
+    uniforms.rayDiff.y = 2.f / renderSize.y;
+    
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
     SerializedWorld* serializedWorld = ((SerializedWorld*) _serializedWorldBufferAddress);

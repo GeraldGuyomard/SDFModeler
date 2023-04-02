@@ -20,40 +20,31 @@ public:
     
     float4 computeAlbedo(Ray ray, float dist, float3 p) const
     {
-        const float3 eps { 0.001f * dist, 0, 0 };
-        
-        const float4 c0 = computeAlbedoNearest(p);
-        const float4 c1 = computeAlbedoNearest(p + eps.xyy);
-        const float4 c2 = computeAlbedoNearest(p + eps.xyx);
-        const float4 c3 = computeAlbedoNearest(p + eps.yyx);
-        
-        const float4 c01 = mix(c0, c1, 0.5f);
-        const float4 c23 = mix(c2, c3, 0.5f);
-        
-        return mix(c01, c23, 0.5f);
-    }
-    
-private:
-    
-    float4 computeAlbedoNearest(float3 p) const
-    {
         float2 xy = p.xz;
         
         float2 s = sign(xy);
         xy *= s;
         
-        xy = fmod(xy, _cellSize) / _cellSize;
+        xy = fract(xy / _cellSize);
         
         xy = max(-s, 0.f) + (s * xy);
 
-        xy = step(0.9, xy);
+        xy = step(0.98, xy);
         
-        float l = length(xy);
-        float4 c = _color * l;
-        c = min(float4 {1, 1, 1, 1}, c);
+        float pixelVisible = min(1.f, xy.x + xy.y);
+        float4 c = _color * pixelVisible;
+        
+        // Fade to black (Fog)
+        const float4 fogColor = { 0, 0, 0, 0};
+        float fogRatio = dist / 10.f;
+        fogRatio = pow(fogRatio, 1.5f);
+        
+        c = mix(c, fogColor, fogRatio);
         
         return c;
     }
+    
+private:
     
     const float2 _cellSize;
     const float4 _color;
