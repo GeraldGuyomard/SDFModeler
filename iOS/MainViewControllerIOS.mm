@@ -15,6 +15,9 @@
     
     UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
     [self.view addGestureRecognizer:panRecognizer];
+    
+    UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
+    [self.view addGestureRecognizer:pinchRecognizer];
 }
 
 - (void)onPan:(UIGestureRecognizer*)recognizer
@@ -40,6 +43,40 @@
                 const float2 p { float(pos.x), float(pos.y) };
                 
                 orbitController->orbit(p);
+            }
+            break;
+        }
+            
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        {
+            [self setCameraController:nullptr];
+            break;
+        }
+            
+        default: break;
+    }
+}
+
+- (void)onPinch:(UIPinchGestureRecognizer*)recognizer
+{
+    auto camera = self.renderer->camera();
+    
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateBegan:
+        {
+            auto camController = std::make_unique<DollyCameraController>(camera);
+            [self setCameraController:std::move(camController)];
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged:
+        {
+            if (auto dollyController = dynamic_cast<DollyCameraController*>(self.cameraController))
+            {
+                const float d = -recognizer.velocity * 0.02f;
+                dollyController->dolly(d);
             }
             break;
         }
