@@ -10,4 +10,7 @@
 #import "MainViewController.h"
 
 @interface MainViewControllerIOS : MainViewController
+
+@property(nonatomic) IBOutlet UILabel* fpsLabel;
+
 @end

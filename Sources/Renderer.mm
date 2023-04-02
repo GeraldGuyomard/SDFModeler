@@ -171,7 +171,7 @@ Renderer::init()
 
 
 void
-Renderer::updateDynamicBufferState()
+Renderer::updateBuffersState()
 {
     _uniformsBuffer->update();
     _serializedWorldBuffer->update();
@@ -219,55 +219,61 @@ Renderer::updateUniforms()
 }
 
 void
+Renderer::setRenderCallback(const RenderCallback& cb)
+{
+    _renderCallback = cb;
+}
+
+void
 Renderer::render()
 {
     /// Per frame updates here
-
+    
     dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
-
+    
     id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     commandBuffer.label = @"MyCommand";
-
+    
     __block dispatch_semaphore_t block_sema = _inFlightSemaphore;
     [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer)
      {
-         dispatch_semaphore_signal(block_sema);
-     }];
-
-    updateDynamicBufferState();
+        dispatch_semaphore_signal(block_sema);
+    }];
+    
+    updateBuffersState();
     updateUniforms();
-
+    
     auto view = _mtkView;
     
     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
     MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
-
+    
     if(renderPassDescriptor != nil)
     {
         /// Final pass rendering code here
-
+        
         id <MTLRenderCommandEncoder> renderEncoder =
         [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         renderEncoder.label = @"MyRenderEncoder";
-
+        
         [renderEncoder pushDebugGroup:@"RayMrch"];
-
+        
         //[renderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
         //[renderEncoder setCullMode:MTLCullModeBack];
         [renderEncoder setCullMode:MTLCullModeNone];
         
         [renderEncoder setRenderPipelineState:_pipelineState];
         [renderEncoder setDepthStencilState:_depthState];
-
+        
         _uniformsBuffer->setFragmentBuffer(renderEncoder);
         _serializedWorldBuffer->setFragmentBuffer(renderEncoder);
-
+        
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer
                                 offset:0
                                atIndex:BufferIndexMeshPositions];
-
+        
         [renderEncoder setVertexBuffer:_quadVertexBuffer
                                 offset:0
                                atIndex:BufferIndexMeshViewportNDCs];
@@ -275,13 +281,18 @@ Renderer::render()
         [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
         
         [renderEncoder popDebugGroup];
-
+        
         [renderEncoder endEncoding];
-
+        
         [commandBuffer presentDrawable:view.currentDrawable];
     }
-
+    
     [commandBuffer commit];
+    
+    if (_renderCallback != nullptr)
+    {
+        _renderCallback(*this);
+    }
 }
 
 void

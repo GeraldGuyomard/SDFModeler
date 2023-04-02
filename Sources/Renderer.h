@@ -14,6 +14,8 @@
 #include "Scene.h"
 #include "Camera.h"
 
+#include <functional>
+
 @class RendererMTKViewDelegate;
 
 template <typename TUniform, BufferIndex bufferIndex, size_t TMaxBuffersInFlight>
@@ -72,6 +74,9 @@ public:
     const Uniforms& uniforms() const;
     const SerializedWorld& serializedWorld() const;
     
+    using RenderCallback = std::function<void(Renderer&)>;
+    void setRenderCallback(const RenderCallback&);
+    
 public:
     void render();
     void onRenderSizeChanged(const CGSize&);
@@ -82,7 +87,7 @@ private:
     
     void init();
     
-    void updateDynamicBufferState();
+    void updateBuffersState();
     void updateUniforms();
     
     Camera::Ptr _camera;
@@ -108,4 +113,6 @@ private:
 
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
+    
+    RenderCallback _renderCallback;
 };

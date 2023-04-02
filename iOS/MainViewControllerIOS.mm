@@ -6,8 +6,14 @@
 //
 
 #include "MainViewControllerIOS.h"
+#include <chrono>
+
+using HighResClock = std::chrono::high_resolution_clock;
 
 @implementation MainViewControllerIOS
+{
+    HighResClock::time_point _lastRenderTime;
+}
 
 - (void)viewDidLoad
 {
@@ -24,6 +30,25 @@
     
     UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
+    
+    _lastRenderTime = HighResClock::now();
+    
+    __weak auto wSelf = self;
+    self.renderer->setRenderCallback([wSelf](auto& renderer)
+    {
+        if (auto self = wSelf)
+        {
+            auto now = HighResClock::now();
+            const auto dT = now - _lastRenderTime;
+            _lastRenderTime = now;
+            
+            const float millis = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+            const float fps = 1000.f / millis;
+            
+            self.fpsLabel.text = [NSString stringWithFormat:@"FPS = %2.2f", fps];
+            [self.fpsLabel sizeToFit];
+        }
+    });
 }
 
 - (void)onOrbit:(UIPanGestureRecognizer*)recognizer
