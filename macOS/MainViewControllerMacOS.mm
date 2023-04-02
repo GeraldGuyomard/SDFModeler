@@ -9,12 +9,6 @@
 #include "World.h"
 
 @implementation MainViewControllerMacOS
-{
-    bool _shift;
-    CGPoint _initialPos;
-    simd_float4x4 _initialCameraTransform;
-    simd_float3 _orbitOrigin;
-}
 
 - (void)rightMouseDown:(NSEvent *)event
 {
@@ -38,81 +32,53 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
-    _shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
+    auto camera = self.renderer->camera();
     
-    _initialPos = event.locationInWindow;
-    _initialCameraTransform = self.renderer->camera()->worldTransform();
+    const auto locInWindow = event.locationInWindow;
+    const float2 initialPos { float(locInWindow.x), float(locInWindow.y) };
     
-    const auto position = _initialCameraTransform.columns[3].xyz;
-    const auto direction = simd_normalize(_initialCameraTransform.columns[2].xyz);
+    CameraController::Ptr cameraController;
+    const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
+    if (shift)
+    {
+        cameraController = std::make_unique<PanCameraController>(camera, initialPos);
+    }
+    else
+    {
+        cameraController = std::make_unique<OrbitCameraController>(camera, initialPos);
+    }
     
-    _orbitOrigin = position - (direction * 5.f);
+    [self setCameraController:std::move(cameraController)];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    auto pt = event.locationInWindow;
-    simd_float2 delta { float(pt.x - _initialPos.x), float(pt.y - _initialPos.y) };
+    auto locInWindow = event.locationInWindow;
+    const float2 pos { float(locInWindow.x), float(locInWindow.y) };
     
-    auto decomp = decompose(_initialCameraTransform);
-    
-    if (_shift)
+    auto cameraController = self.cameraController;
+    if (auto orbit = dynamic_cast<OrbitCameraController*>(cameraController))
     {
-        constexpr float k = -1.f / 1000.f;
-        
-        delta *= k;
-        
-        decomp.position += decomp.right * delta.x;
-        decomp.position += decomp.up * delta.y;
-        
-        auto newTransform = recompose(decomp);
-        self.renderer->camera()->setWorldTransform(newTransform);
+        orbit->orbit(pos);
     }
-    else
+    else if (auto pan = dynamic_cast<PanCameraController*>(cameraController))
     {
-        // Orbit
-        
-        // yaw
-        const auto yaw = matrix4x4_rotation(-delta.x * 1e-3f, float3 { 0, 1, 0 }, _orbitOrigin);
-        
-        auto newPos = yaw * make_float4(decomp.position, 1.f);
-        decomp.position = newPos.xyz;
-        
-        decomp.forward = normalize(decomp.position - _orbitOrigin);
-        decomp.right = cross(decomp.up, decomp.forward);
-        
-        auto newTransform = recompose(decomp);
-        
-        // pitch
-        decomp = decompose(newTransform);
-        
-        const auto pitch = matrix4x4_rotation(delta.y * 1e-3f, float3 { 1, 0, 0 }, _orbitOrigin);
-        
-        newPos = pitch * make_float4(decomp.position, 1.f);
-        decomp.position = newPos.xyz;
-        
-        decomp.forward = normalize(decomp.position - _orbitOrigin);
-        decomp.up = (yaw * make_float4(decomp.up, 0.f)).xyz;
-        
-        newTransform = recompose(decomp);
-        
-        self.renderer->camera()->setWorldTransform(newTransform);
+        pan->pan(pos);
     }
+}
+
+- (void)mouseUp:(NSEvent *)event
+{
+    [self setCameraController:nullptr];
 }
 
 - (void)scrollWheel:(NSEvent*)event
 {
     float d = event.scrollingDeltaY / 1000.f;
     
-    auto camera = self.renderer->camera();
-    
-    auto transform = camera->worldTransform();
-    auto pos = translation(transform);
-    
-    pos += d * forward(transform);
-    setTranslation(transform, pos);
-    
-    camera->setWorldTransform(transform);
+    auto camController = std::make_unique<DollyCameraController>(self.renderer->camera());
+    camController->dolly(d);
+    [self setCameraController:std::move(camController)];
 }
 
 @end

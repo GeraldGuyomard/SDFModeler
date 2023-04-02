@@ -10,6 +10,7 @@
 
 #import "Renderer.h"
 #import "Object3D.h"
+#import "CameraController.h"
 
 // Our macOS view controller.
 @interface MainViewController : ViewControllerBase
@@ -18,5 +19,8 @@
 
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) const World& world;
+
+-(CameraController*) cameraController;
+-(void)setCameraController:(CameraController::Ptr)cameraController;
 
 @end

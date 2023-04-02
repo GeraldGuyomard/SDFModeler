@@ -33,7 +33,7 @@ _orbitOrigin(computeOrbitOrigin(_initialCameraTransform))
 }
 
 void
-OrbitCameraController::drag(const float2& pt)
+OrbitCameraController::orbit(const float2& pt)
 {
     simd_float2 delta = pt - _initialPos;
     
@@ -66,8 +66,8 @@ OrbitCameraController::drag(const float2& pt)
     camera()->setWorldTransform(newTransform);
 }
 
-DollyCameraController::DollyCameraController(const Camera::Ptr& camera, const float2& initialPos)
-: _inherited(camera), _initialPos(initialPos)
+DollyCameraController::DollyCameraController(const Camera::Ptr& camera)
+: _inherited(camera)
 {}
 
 void
@@ -85,7 +85,7 @@ DollyCameraController::dolly(float delta)
 }
 
 PanCameraController::PanCameraController(const Camera::Ptr& camera, const float2& initialPos)
-: _inherited(camera), _initialPos(initialPos)
+: _inherited(camera), _previousPos(initialPos)
 {
     auto decomp = decompose(camera->worldTransform());
     _right = decomp.right;
@@ -95,9 +95,11 @@ PanCameraController::PanCameraController(const Camera::Ptr& camera, const float2
 void
 PanCameraController::pan(const float2& pos)
 {
-    float2 delta = pos - _initialPos;
+    float2 delta = pos - _previousPos;
     constexpr float k = -1.f / 1000.f;
     delta *= k;
+    
+    _previousPos = pos;
     
     auto camera = this->camera();
     float4x4 worldTransform = camera->worldTransform();

@@ -12,6 +12,8 @@
 class CameraController
 {
 public:
+    using Ptr = std::unique_ptr<CameraController>;
+    
     virtual ~CameraController() = default;
     
     const Camera::Ptr& camera() const { return _camera; }
@@ -30,7 +32,7 @@ public:
     
     OrbitCameraController(const Camera::Ptr&, const float2& initialPos);
     
-    void drag(const float2& pos);
+    void orbit(const float2& pos);
     
 private:
     const float2 _initialPos;
@@ -43,12 +45,9 @@ class DollyCameraController : public CameraController
 public:
     using _inherited = CameraController;
     
-    DollyCameraController(const Camera::Ptr& camera, const float2& initialPos);
+    DollyCameraController(const Camera::Ptr& camera);
     
     void dolly(float delta);
-    
-private:
-    const float2 _initialPos;
 };
 
 class PanCameraController : public CameraController
@@ -61,7 +60,7 @@ public:
     void pan(const float2& pos);
     
 private:
-    const float2 _initialPos;
+    float2 _previousPos;
     float3 _right;
     float3 _up;
 };

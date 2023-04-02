@@ -19,6 +19,8 @@
     std::unique_ptr<Renderer> _renderer;
     
     World _world;
+    
+    CameraController::Ptr _cameraController;
 }
 
 static __weak MainViewController* s_Instance = nil;
@@ -26,6 +28,16 @@ static __weak MainViewController* s_Instance = nil;
 +(MainViewController*)instance
 {
     return s_Instance;
+}
+
+-(CameraController*) cameraController
+{
+    return _cameraController.get();
+}
+
+-(void)setCameraController:(CameraController::Ptr)cameraController
+{
+    _cameraController = std::move(cameraController);
 }
 
 - (const World&) world
