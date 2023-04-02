@@ -53,7 +53,7 @@ OrbitCameraController::orbit(const float2& pt)
     // pitch
     decomp = decompose(newTransform);
     
-    const auto pitch = matrix4x4_rotation(delta.y * 1e-3f, float3 { 1, 0, 0 }, _orbitOrigin);
+    const auto pitch = matrix4x4_rotation(-delta.y * 1e-3f, float3 { 1, 0, 0 }, _orbitOrigin);
     
     newPos = pitch * make_float4(decomp.position, 1.f);
     decomp.position = newPos.xyz;

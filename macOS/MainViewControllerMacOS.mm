@@ -30,11 +30,17 @@
     NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
 }
 
+- (CGPoint) position:(CGPoint)position
+{
+    position.y = self.view.frame.size.height - position.y;
+    return position;
+}
+
 - (void)mouseDown:(NSEvent *)event
 {
     auto camera = self.renderer->camera();
     
-    const auto locInWindow = event.locationInWindow;
+    const auto locInWindow = [self position:event.locationInWindow];
     const float2 initialPos { float(locInWindow.x), float(locInWindow.y) };
     
     CameraController::Ptr cameraController;
@@ -53,7 +59,7 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    auto locInWindow = event.locationInWindow;
+    auto locInWindow = [self position:event.locationInWindow];
     const float2 pos { float(locInWindow.x), float(locInWindow.y) };
     
     auto cameraController = self.cameraController;

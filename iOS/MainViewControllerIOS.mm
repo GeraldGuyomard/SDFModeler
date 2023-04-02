@@ -19,7 +19,40 @@
 
 - (void)onPan:(UIGestureRecognizer*)recognizer
 {
+    auto camera = self.renderer->camera();
     
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateBegan:
+        {
+            const auto pos = [recognizer locationInView:self.view];
+            const float2 p { float(pos.x), float(pos.y) };
+            auto camController = std::make_unique<OrbitCameraController>(camera, p);
+            [self setCameraController:std::move(camController)];
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged:
+        {
+            if (auto orbitController = dynamic_cast<OrbitCameraController*>(self.cameraController))
+            {
+                const auto pos = [recognizer locationInView:self.view];
+                const float2 p { float(pos.x), float(pos.y) };
+                
+                orbitController->orbit(p);
+            }
+            break;
+        }
+            
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        {
+            [self setCameraController:nullptr];
+            break;
+        }
+            
+        default: break;
+    }
 }
 
 - (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
