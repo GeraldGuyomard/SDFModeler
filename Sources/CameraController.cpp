@@ -38,31 +38,15 @@ OrbitCameraController::orbit(const float2& pt)
 {
     simd_float2 delta = pt - _initialPos;
     
-    auto decomp = decompose(_initialCameraTransform);
-    
     // yaw
     const auto yaw = matrix4x4_rotation(-delta.x * _speed, float3 { 0, 1, 0 }, _orbitOrigin);
     
-    auto newPos = yaw * make_float4(decomp.position, 1.f);
-    decomp.position = newPos.xyz;
+    // pitch on new right axis
+    const auto transformAfterYaw = yaw * _initialCameraTransform;
+    const float3 pitchAxis = right(transformAfterYaw);
+    const auto pitch = matrix4x4_rotation(-delta.y * _speed, pitchAxis, _orbitOrigin);
     
-    decomp.forward = normalize(decomp.position - _orbitOrigin);
-    decomp.right = cross(decomp.up, decomp.forward);
-    
-    auto newTransform = recompose(decomp);
-    
-    // pitch
-    decomp = decompose(newTransform);
-    
-    const auto pitch = matrix4x4_rotation(-delta.y * _speed, float3 { 1, 0, 0 }, _orbitOrigin);
-    
-    newPos = pitch * make_float4(decomp.position, 1.f);
-    decomp.position = newPos.xyz;
-    
-    decomp.forward = normalize(decomp.position - _orbitOrigin);
-    decomp.up = (yaw * make_float4(decomp.up, 0.f)).xyz;
-    
-    newTransform = recompose(decomp);
+    const auto newTransform = pitch * transformAfterYaw;
     
     camera()->setWorldTransform(newTransform);
 }
