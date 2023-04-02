@@ -13,14 +13,20 @@
 {
     [super viewDidLoad];
     
+    UIPanGestureRecognizer* orbitRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onOrbit:)];
+    orbitRecognizer.minimumNumberOfTouches = 1;
+    orbitRecognizer.maximumNumberOfTouches = 1;
+    [self.view addGestureRecognizer:orbitRecognizer];
+
     UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
+    panRecognizer.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:panRecognizer];
     
     UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
     [self.view addGestureRecognizer:pinchRecognizer];
 }
 
-- (void)onPan:(UIGestureRecognizer*)recognizer
+- (void)onOrbit:(UIPanGestureRecognizer*)recognizer
 {
     auto camera = self.renderer->camera();
     
@@ -30,7 +36,7 @@
         {
             const auto pos = [recognizer locationInView:self.view];
             const float2 p { float(pos.x), float(pos.y) };
-            auto camController = std::make_unique<OrbitCameraController>(camera, p);
+            auto camController = std::make_unique<OrbitCameraController>(camera, p, 2e-3f);
             [self setCameraController:std::move(camController)];
             break;
         }
@@ -57,6 +63,45 @@
         default: break;
     }
 }
+
+- (void)onPan:(UIPanGestureRecognizer*)recognizer
+{
+    auto camera = self.renderer->camera();
+    
+    switch (recognizer.state)
+    {
+        case UIGestureRecognizerStateBegan:
+        {
+            const auto pos = [recognizer locationInView:self.view];
+            const float2 p { float(pos.x), float(pos.y) };
+            auto camController = std::make_unique<PanCameraController>(camera, p);
+            [self setCameraController:std::move(camController)];
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged:
+        {
+            if (auto panController = dynamic_cast<PanCameraController*>(self.cameraController))
+            {
+                const auto pos = [recognizer locationInView:self.view];
+                const float2 p { float(pos.x), float(pos.y) };
+                
+                panController->pan(p);
+            }
+            break;
+        }
+            
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateEnded:
+        {
+            [self setCameraController:nullptr];
+            break;
+        }
+            
+        default: break;
+    }
+}
+
 
 - (void)onPinch:(UIPinchGestureRecognizer*)recognizer
 {

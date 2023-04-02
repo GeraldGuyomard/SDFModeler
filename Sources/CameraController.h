@@ -30,7 +30,7 @@ class OrbitCameraController : public CameraController
 public:
     using _inherited = CameraController;
     
-    OrbitCameraController(const Camera::Ptr&, const float2& initialPos);
+    OrbitCameraController(const Camera::Ptr&, const float2& initialPos, float speed = 1e-3f);
     
     void orbit(const float2& pos);
     
@@ -38,6 +38,7 @@ private:
     const float2 _initialPos;
     const float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
+    const float _speed;
 };
 
 class DollyCameraController : public CameraController

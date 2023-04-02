@@ -24,11 +24,12 @@ float3 computeOrbitOrigin(const float4x4& cameraTransform)
 
 }
 
-OrbitCameraController::OrbitCameraController(const Camera::Ptr& camera, const float2& initialPos)
+OrbitCameraController::OrbitCameraController(const Camera::Ptr& camera, const float2& initialPos, float speed)
 : _inherited(camera),
 _initialPos(initialPos),
 _initialCameraTransform(camera->worldTransform()),
-_orbitOrigin(computeOrbitOrigin(_initialCameraTransform))
+_orbitOrigin(computeOrbitOrigin(_initialCameraTransform)),
+_speed(speed)
 {
 }
 
@@ -40,7 +41,7 @@ OrbitCameraController::orbit(const float2& pt)
     auto decomp = decompose(_initialCameraTransform);
     
     // yaw
-    const auto yaw = matrix4x4_rotation(-delta.x * 1e-3f, float3 { 0, 1, 0 }, _orbitOrigin);
+    const auto yaw = matrix4x4_rotation(-delta.x * _speed, float3 { 0, 1, 0 }, _orbitOrigin);
     
     auto newPos = yaw * make_float4(decomp.position, 1.f);
     decomp.position = newPos.xyz;
@@ -53,7 +54,7 @@ OrbitCameraController::orbit(const float2& pt)
     // pitch
     decomp = decompose(newTransform);
     
-    const auto pitch = matrix4x4_rotation(-delta.y * 1e-3f, float3 { 1, 0, 0 }, _orbitOrigin);
+    const auto pitch = matrix4x4_rotation(-delta.y * _speed, float3 { 1, 0, 0 }, _orbitOrigin);
     
     newPos = pitch * make_float4(decomp.position, 1.f);
     decomp.position = newPos.xyz;
@@ -96,7 +97,7 @@ void
 PanCameraController::pan(const float2& pos)
 {
     float2 delta = pos - _previousPos;
-    constexpr float k = -1.f / 1000.f;
+    constexpr float k = -2e-3f;
     delta *= k;
     
     _previousPos = pos;
@@ -106,7 +107,7 @@ PanCameraController::pan(const float2& pos)
     
     float3 cameraPos = translation(worldTransform);
     cameraPos += _right * delta.x;
-    cameraPos += _up * delta.y;
+    cameraPos += _up * -delta.y;
     
     setTranslation(worldTransform, cameraPos);
     
