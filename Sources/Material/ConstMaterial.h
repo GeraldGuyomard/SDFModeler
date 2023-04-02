@@ -20,7 +20,7 @@ public:
     : _albedo(albedo)
     {}
     
-    float4 computeAlbedo(float3 p) const
+    float4 computeAlbedo(Ray ray, float dist, float3 p) const
     {
         return _albedo;
     }

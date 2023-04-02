@@ -101,9 +101,9 @@ public:
         return max(distanceOfAddition, -distanceOfSubstraction);
     }
     
-    float4 computeAlbedo(float3 pt) const
+    float4 computeAlbedo(Ray ray, float dist, float3 pt) const
     {
-        return _material.computeAlbedo(pt);
+        return _material.computeAlbedo(ray, dist, pt);
     }
     
 private:

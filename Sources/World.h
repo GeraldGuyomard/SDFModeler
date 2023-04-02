@@ -21,8 +21,23 @@
 template <typename TShader>
 INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
-    Objects<TShader> env { shader, serializedWorld.environment };
-    return env.rayMarch(ray);
+    constexpr float kGridGreyLevel = 0.5f;
+    const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
+    
+    Grid grid({}, { float3(-0.5f) }, { 0.5f , color });
+    
+    SDFResult res;
+    res.distance = grid.raycast(ray);
+    if ((res.distance >= 0) && (res.distance <= ray.maxLength))
+    {
+        const float3 p = ray.pt(res.distance);
+        res.color = grid.computeAlbedo(ray, res.distance, p);
+        return res;
+    }
+    else
+    {
+        return {};
+    }
 }
 
 template <typename TShader>
@@ -34,14 +49,20 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT S
     
     Objects<TShader> content { shader, serializedWorld.content };
     const auto contentRes = content.rayMarch(ray);
+    const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
     
     if (contentRes.isValid())
     {
-        return contentRes.color;
+        if (envRes.colorIsValid())
+        {
+            return (contentRes.distance <= envRes.distance) ? contentRes.color : envRes.color;
+        }
+        else
+        {
+            return contentRes.color;
+        }
     }
-    
-    const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
-    if (envRes.isValid())
+    else if (envRes.colorIsValid())
     {
         return envRes.color;
     }

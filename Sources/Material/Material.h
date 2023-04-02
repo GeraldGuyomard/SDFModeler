@@ -9,12 +9,13 @@
 #pragma once
 
 #include "CommonDefinitions.h"
+#include "Ray.h"
 
 class Material final
 {
 public:
     
-    float4 computeAlbedo(float3 p) const;
+    float4 computeAlbedo(Ray ray, float dist, float3 p) const;
     
 private:
     Material() = delete;

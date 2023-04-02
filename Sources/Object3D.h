@@ -107,11 +107,9 @@ public:
     World() = default;
     
     Object3DCollection& content() { return _content; }
-    Object3DCollection& environment() { return _environment; }
     
     void serialize(SerializedWorld&) const;
     
 private:
     Object3DCollection _content;
-    Object3DCollection _environment;
 };

@@ -106,6 +106,11 @@
         return step(in, float2 { m, m });
     }
 
+    inline float4 mix(float4 a, float4 b, float c)
+    {
+        return mix(a, b, float4 {c, c, c, c});
+    }
+
 #endif
 
 // Alignment utilities

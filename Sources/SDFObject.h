@@ -48,9 +48,15 @@ public:
         return _transformer.computeDistance(_geometry, p);
     }
     
-    float4 computeAlbedo(float3 p) const
+    float4 computeAlbedo(Ray ray, float dist, float3 p) const
     {
-        return _material.computeAlbedo(p);
+        return _material.computeAlbedo(ray, dist, p);
+    }
+    
+    float raycast(Ray ray) const
+    {
+        const Ray localRay = _transformer.localRay(ray);
+        return _geometry.raycast(localRay);
     }
     
     TGeometry geometry() const { return _geometry; }

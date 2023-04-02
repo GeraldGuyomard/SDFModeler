@@ -48,7 +48,6 @@ struct SerializedObjects final
 struct SerializedWorld final
 {
     SerializedObjects content;
-    SerializedObjects environment;
 };
 
 template <typename TShader>

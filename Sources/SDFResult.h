@@ -31,9 +31,14 @@ struct SDFResult final
         return (distance >= 0.f) && (distance <= kDistanceEpsilon);
     }
     
+    bool colorIsValid() const
+    {
+        return color.a != 0.f;
+    }
+    
     bool isValid() const
     {
-        return (color.a != 0.f) && hit();
+        return colorIsValid() && hit();
     }
 };
 

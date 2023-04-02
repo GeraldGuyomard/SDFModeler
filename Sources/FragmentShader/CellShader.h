@@ -20,7 +20,7 @@ public:
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
     {
-        const float4 albedo = primitive.computeAlbedo(p);
+        const float4 albedo = primitive.computeAlbedo(ray, dist, p);
         const float3 normal = computeNormal(primitive, dist, p);
         
         float intensity = max(0.1f, dot(-normal, _lightDirection));

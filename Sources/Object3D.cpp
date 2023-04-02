@@ -35,5 +35,4 @@ void
 World::serialize(SerializedWorld& serializedWorld) const
 {
     _content.serialize(serializedWorld.content);
-    _environment.serialize(serializedWorld.environment);
 }
