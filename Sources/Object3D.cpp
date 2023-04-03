@@ -6,6 +6,12 @@
 
 #include "Object3D.h"
 
+void
+Object3D::setId(ObjectID id)
+{
+    _id = id;
+}
+
 Grid3D::Grid3D(const Grid& grid)
 : _inherited(grid)
 {}
@@ -35,4 +41,11 @@ void
 World::serialize(SerializedWorld& serializedWorld) const
 {
     _content.serialize(serializedWorld.content);
+}
+
+void
+World::addObject(Object3D::Ptr object)
+{
+    object->setId(_nextAvailableID++);
+    _content.addObject(std::move(object));
 }

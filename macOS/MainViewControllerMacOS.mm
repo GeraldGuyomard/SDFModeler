@@ -12,36 +12,26 @@
 
 - (void)rightMouseDown:(NSEvent *)event
 {
-    NSPoint ptInPixels = [self.view convertPoint:event.locationInWindow fromView:nil];
+    const auto p = [self position:[self.view convertPoint:event.locationInWindow fromView:nil]];
     
-    NSRect r = self.view.frame;
-    float2 size { float(r.size.width), float(r.size.height) };
-    float2 p { float(ptInPixels.x), float(ptInPixels.y) };
+    const auto id = self.renderer->pickObject(p);
     
-    p = pixelToNDC(size, p);
-    
-    auto renderer = self.renderer;
-    
-    const auto& uniforms = renderer->uniforms();
-    const auto& serializedWorld = renderer->serializedWorld();
-    
-    const auto pixel = renderDefault(p, uniforms, serializedWorld);
-    
-    NSLog(@"pixel R=%2.2f G=%2.2f B=%2.2f A=%2.2f\n", pixel.r, pixel.g, pixel.b, pixel.a);
+    NSLog(@"ObjectID = %d\n", id);
 }
 
-- (CGPoint) position:(CGPoint)position
+- (float2) position:(CGPoint)position
 {
-    position.y = self.view.frame.size.height - position.y;
-    return position;
+    CGPoint physPt = [self.view convertPointToBacking:position];
+    const CGRect physRect = [self.view convertRectToBacking:self.view.frame];
+    
+    return { float(physPt.x), float(physRect.size.height - physPt.y) };
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
     auto camera = self.renderer->camera();
     
-    const auto locInWindow = [self position:event.locationInWindow];
-    const float2 initialPos { float(locInWindow.x), float(locInWindow.y) };
+    const auto initialPos = [self position:event.locationInWindow];
     
     CameraController::Ptr cameraController;
     const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
@@ -59,8 +49,7 @@
 
 - (void)mouseDragged:(NSEvent *)event
 {
-    auto locInWindow = [self position:event.locationInWindow];
-    const float2 pos { float(locInWindow.x), float(locInWindow.y) };
+    const auto pos = [self position:event.locationInWindow];
     
     auto cameraController = self.cameraController;
     if (auto orbit = dynamic_cast<OrbitCameraController*>(cameraController))

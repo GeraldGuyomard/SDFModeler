@@ -117,7 +117,7 @@ public:
                 MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
                 const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
                 
-                return { minDistance, color };
+                return { minHeader->objectId, minDistance, color };
             }
             
             d += minDistance;

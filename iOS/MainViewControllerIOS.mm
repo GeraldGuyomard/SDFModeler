@@ -19,6 +19,10 @@ using HighResClock = std::chrono::high_resolution_clock;
 {
     [super viewDidLoad];
     
+    UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
+    tapRecognizer.numberOfTapsRequired = 1;
+    [self.view addGestureRecognizer:tapRecognizer];
+    
     UIPanGestureRecognizer* orbitRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onOrbit:)];
     orbitRecognizer.minimumNumberOfTouches = 1;
     orbitRecognizer.maximumNumberOfTouches = 1;
@@ -49,6 +53,11 @@ using HighResClock = std::chrono::high_resolution_clock;
             [self.fpsLabel sizeToFit];
         }
     });
+}
+
+- (void)onTap:(UITapGestureRecognizer*)recognizer
+{
+    
 }
 
 - (void)onOrbit:(UIPanGestureRecognizer*)recognizer

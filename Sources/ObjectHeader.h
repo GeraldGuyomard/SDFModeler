@@ -12,9 +12,9 @@
 
 CONSTANT static constexpr uint64_t kObjectTypeShift = 2;
 
-INLINE constexpr uint64_t computeObjectCode(ObjectType objectType, TransformerType transformerType)
+INLINE constexpr uint32_t computeObjectCode(ObjectType objectType, TransformerType transformerType)
 {
-    return (uint64_t(objectType) << kObjectTypeShift) | uint64_t(transformerType);
+    return (uint32_t(objectType) << kObjectTypeShift) | uint32_t(transformerType);
 }
 
 template <typename TObject, typename TTransformer>
@@ -26,12 +26,13 @@ INLINE constexpr uint64_t computeObjectCode()
 struct ObjectHeader final
 {
     size_t    byteSize;
-    uint64_t  objectCode;
+    uint32_t  objectId;
+    uint32_t  objectCode;
     
     uint8_t   firstByte;
     
-    ObjectHeader(uint32_t byteSize, ObjectType objectType, TransformerType transformerType)
-    : byteSize(byteSize), objectCode(computeObjectCode(objectType, transformerType))
+    ObjectHeader(size_t byteSize, ObjectID id, ObjectType objectType, TransformerType transformerType)
+    : byteSize(byteSize), objectId(id), objectCode(computeObjectCode(objectType, transformerType))
     {}
     
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)

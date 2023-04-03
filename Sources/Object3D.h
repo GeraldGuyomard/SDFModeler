@@ -23,6 +23,13 @@ public:
     virtual TransformerType transformerType() const = 0;
     
     virtual size_t serialize(uint8_t* ptr) const = 0;
+    
+    ObjectID id() const { return _id; }
+    void setId(ObjectID);
+    
+private:
+    
+    ObjectID _id = 0;
 };
 
 template <typename TPrimitive>
@@ -65,7 +72,7 @@ public:
         }
         else*/
         {
-            return serializeObject<TPrimitive>(ptr, _primitive, objectType(), transformer.transformerType());
+            return serializeObject<TPrimitive>(ptr, _primitive, id(), objectType(), transformer.transformerType());
         }
     }
     
@@ -106,10 +113,11 @@ class World final
 public:
     World() = default;
     
-    Object3DCollection& content() { return _content; }
-    
     void serialize(SerializedWorld&) const;
+    
+    void addObject(Object3D::Ptr);
     
 private:
     Object3DCollection _content;
+    ObjectID _nextAvailableID = 1;
 };

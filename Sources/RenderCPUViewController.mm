@@ -44,7 +44,7 @@
         for (float x=0; x < size.x; ++x)
         {
             uint32_t& pixel = buffer[(y * size.x) + x];
-            const float2 pixelCoordinates { x, size.y - y - 1.f };
+            const float2 pixelCoordinates { x, y };
             
             const auto p = pixelToNDC(size, pixelCoordinates);
             

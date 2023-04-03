@@ -21,3 +21,15 @@ public:
 private:
     FragmentShader() = delete;
 };
+
+class NoShader final
+{
+public:
+    NoShader(float3 lightDirection) {}
+    
+    template <typename TPrimitive>
+    float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
+    {
+        return { 1, 1, 1, 1 };
+    }
+};

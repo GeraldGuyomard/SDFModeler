@@ -41,7 +41,7 @@ INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT Serialize
 }
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE SDFResult computeSDF(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
@@ -53,18 +53,30 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT S
     
     if (contentRes.isValid())
     {
-        if (envRes.colorIsValid())
+        if (envRes.isColorValid())
         {
-            return (contentRes.distance <= envRes.distance) ? contentRes.color : envRes.color;
+            return (contentRes.distance <= envRes.distance) ? contentRes : envRes;
         }
         else
         {
-            return contentRes.color;
+            return contentRes;
         }
     }
-    else if (envRes.colorIsValid())
+    else if (envRes.isColorValid())
     {
-        return envRes.color;
+        return envRes;
+    }
+    
+    return {};
+}
+
+template <typename TShader>
+INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+{
+    const auto res = computeSDF<TShader>(viewportNDC, uniforms, serializedWorld);
+    if (res.isColorValid())
+    {
+        return res.color;
     }
     
     // Background
@@ -87,4 +99,10 @@ INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, 
 INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
 {
     return renderPhong(viewportNDC, uniforms, serializedWorld);
+}
+
+INLINE ObjectID pickObject(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+{
+    const auto res = computeSDF<NoShader>(viewportNDC, uniforms, serializedWorld);
+    return res.objectID;
 }

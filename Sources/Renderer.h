@@ -77,6 +77,8 @@ public:
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
     
+    ObjectID pickObject(float2 pixelPosition) const;
+    
 public:
     void render();
     void onRenderSizeChanged(const CGSize&);

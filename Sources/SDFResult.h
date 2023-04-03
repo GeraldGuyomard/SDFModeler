@@ -17,9 +17,14 @@ struct SDFResult final
 {
     float distance;
     float4 color;
+    ObjectID objectID = 0;
     
     SDFResult()
     : distance(-10000), color(0.f)
+    {}
+    
+    SDFResult(ObjectID id, float distance, float4 color)
+    : distance(distance), color(color), objectID(id)
     {}
     
     SDFResult(float distance, float4 color)
@@ -31,14 +36,14 @@ struct SDFResult final
         return (distance >= 0.f) && (distance <= kDistanceEpsilon);
     }
     
-    bool colorIsValid() const
+    bool isColorValid() const
     {
         return color.a != 0.f;
     }
     
     bool isValid() const
     {
-        return colorIsValid() && hit();
+        return isColorValid() && hit();
     }
 };
 

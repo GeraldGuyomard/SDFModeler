@@ -337,6 +337,8 @@ INLINE float4x4 recompose(float4x4Decomposition decomp)
 
 INLINE float2 pixelToNDC(float2 viewportSize, float2 p)
 {
+    p.y = viewportSize.y - p.y;
+    
     // NDC [-1, +1]
     p.x = 2.f * (p.x - (0.5f * viewportSize.x)) / viewportSize.x;
     p.y = 2.f * (p.y - (0.5f * viewportSize.y)) / viewportSize.y;

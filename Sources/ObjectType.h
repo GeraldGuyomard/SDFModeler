@@ -21,4 +21,4 @@ enum class ObjectType : int64_t
     composition = 10
 };
 
-
+using ObjectID = uint32_t;

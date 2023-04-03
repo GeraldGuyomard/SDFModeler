@@ -17,6 +17,7 @@
 
 #include "Object3D.h"
 #include "Composition3D.h"
+#include "World.h"
 
 #include "MainViewController.h"
 
@@ -304,3 +305,15 @@ Renderer::onRenderSizeChanged(const CGSize& size)
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
 
+ObjectID
+Renderer::pickObject(float2 pixelPosition) const
+{
+    const auto& uniforms = this->uniforms();
+    const auto& serializedWorld = this->serializedWorld();
+    
+    const auto size = renderSize();
+    
+    const auto p = pixelToNDC(size, pixelPosition);
+    
+    return ::pickObject(p, uniforms, serializedWorld);
+}

@@ -52,15 +52,13 @@ static __weak MainViewController* s_Instance = nil;
 
 - (void)loadWorld
 {
-    auto& content = _world.content();
-    
     auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
-    content.addObject(std::move(whiteSphere));
+    _world.addObject(std::move(whiteSphere));
     
     constexpr float kZ = 0;
     
     auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
-    content.addObject(std::move(redSphere));
+    _world.addObject(std::move(redSphere));
     
     float3 pos = float3 {0.5, 0, kZ};
     
@@ -72,7 +70,7 @@ static __weak MainViewController* s_Instance = nil;
         { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
         { float4 { 1, 1, 0, 1 } } // material
     });
-    content.addObject(std::move(roundedYellowBox));
+    _world.addObject(std::move(roundedYellowBox));
     
     auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
     {
@@ -80,7 +78,7 @@ static __weak MainViewController* s_Instance = nil;
         { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
         { float4 { 1, 1, 1, 1 } } // material
     });
-    content.addObject(std::move(whiteBoxHalf));
+    _world.addObject(std::move(whiteBoxHalf));
     
     auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -88,7 +86,7 @@ static __weak MainViewController* s_Instance = nil;
         { pos },
         { float4 { 0, 0, 1, 1 } }
     });
-    content.addObject(std::move(blueSphere));
+    _world.addObject(std::move(blueSphere));
     
     auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -96,7 +94,7 @@ static __weak MainViewController* s_Instance = nil;
         { float3 { -1, 1, kZ } },
         { float4 { 0, 1, 0, 1 } }
     });
-    content.addObject(std::move(greenSphere));
+    _world.addObject(std::move(greenSphere));
     
     auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
     {
@@ -131,7 +129,7 @@ static __weak MainViewController* s_Instance = nil;
     sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
     sdfUnion->addSubstractiveObject(std::move(negativeRoundedBoxPart));
     
-    content.addObject(std::move(sdfUnion));
+    _world.addObject(std::move(sdfUnion));
 }
 
 - (void)viewDidLoad

@@ -21,6 +21,7 @@ public:
     
     void addAdditiveObject(Object3D::Ptr object)
     {
+        object->setId(id());
         _additiveObjects.push_back(std::move(object));
     }
     
@@ -51,7 +52,7 @@ public:
             _material
         };
         
-        copy(header, serializedComp, ObjectType::composition, TTransformer::transformerType());
+        copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType());
         ptr += header->byteSize;
         
         size_t subHeadersSize = 0;
