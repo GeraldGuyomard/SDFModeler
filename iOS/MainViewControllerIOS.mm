@@ -57,7 +57,15 @@ using HighResClock = std::chrono::high_resolution_clock;
 
 - (void)onTap:(UITapGestureRecognizer*)recognizer
 {
-    
+    if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        const auto pos = [recognizer locationInView:self.view];
+        const float2 p { float(pos.x), float(pos.y) };
+        
+        const auto id = self.renderer->pickObject(p);
+        
+        NSLog(@"ObjectID = %d\n", id);
+    }
 }
 
 - (void)onOrbit:(UIPanGestureRecognizer*)recognizer
