@@ -17,8 +17,10 @@ enum BufferIndex : EnumBackingType
 {
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
+    
     BufferIndexUniforms         = 2,
-    BufferIndexSerializedWorld  = 3
+    BufferIndexSerializedWorld  = 3,
+    BufferIndexMaterials        = 4
 };
 
 enum VertexAttribute : EnumBackingType

@@ -73,6 +73,7 @@ public:
     
     const Uniforms& uniforms() const;
     const SerializedWorld& serializedWorld() const;
+    const Materials& materials() const;
     
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
@@ -113,6 +114,9 @@ private:
     using SerializedWorldBuffer = TUniformBuffer<SerializedWorld, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
     std::unique_ptr<SerializedWorldBuffer> _serializedWorldBuffer;
 
+    using SerializedMaterials = TUniformBuffer<Materials, BufferIndex::BufferIndexMaterials, kMaxBuffersInFlight>;
+    std::unique_ptr<SerializedMaterials> _materialsBuffer;
+    
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
     

@@ -28,7 +28,12 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]])
 
 fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-                               constant SerializedWorld& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]])
+                               constant SerializedWorld& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
+                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
+                               )
 {
-    return renderDefault(in.viewportNDC, uniforms, serializedWorld);
+    return renderDefault(in.viewportNDC,
+                         uniforms,
+                         serializedWorld,
+                         materials);
 }

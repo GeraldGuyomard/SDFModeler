@@ -50,6 +50,11 @@ struct SerializedWorld final
     SerializedObjects content;
 };
 
+struct Materials final
+{
+    ConstMaterial material[128];
+};
+
 template <typename TShader>
 class Objects final
 {

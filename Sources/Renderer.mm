@@ -160,6 +160,7 @@ Renderer::init()
 
     _uniformsBuffer = std::make_unique<UniformsBuffer>(_device, @"UniformBuffer");
     _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(_device, @"SerializedSceneBuffer");
+    _materialsBuffer = std::make_unique<SerializedMaterials>(_device, @"Materials");
 
     _quadVertexBuffer = [_device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
@@ -176,6 +177,7 @@ Renderer::updateBuffersState()
 {
     _uniformsBuffer->update();
     _serializedWorldBuffer->update();
+    _materialsBuffer->update();
 }
 
 void Renderer::setCamera(const Camera::Ptr& cam)
@@ -194,6 +196,12 @@ const SerializedWorld&
 Renderer::serializedWorld() const
 {
     return _serializedWorldBuffer->uniform();
+}
+
+const Materials&
+Renderer::materials() const
+{
+    return _materialsBuffer->uniform();
 }
 
 void
@@ -258,7 +266,7 @@ Renderer::render()
         [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         renderEncoder.label = @"MyRenderEncoder";
         
-        [renderEncoder pushDebugGroup:@"RayMrch"];
+        [renderEncoder pushDebugGroup:@"RayMarch"];
         
         //[renderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
         //[renderEncoder setCullMode:MTLCullModeBack];
@@ -269,6 +277,7 @@ Renderer::render()
         
         _uniformsBuffer->setFragmentBuffer(renderEncoder);
         _serializedWorldBuffer->setFragmentBuffer(renderEncoder);
+        _materialsBuffer->setFragmentBuffer(renderEncoder);
         
         // Draw a quad on screen
         [renderEncoder setVertexBuffer:_quadVertexBuffer

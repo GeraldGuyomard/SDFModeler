@@ -71,7 +71,10 @@ INLINE SDFResult computeSDF(float2 viewportNDC, CONSTANT Uniforms& uniforms, CON
 }
 
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE float4 render(float2 viewportNDC,
+                     CONSTANT Uniforms& uniforms,
+                     CONSTANT SerializedWorld& serializedWorld,
+                     CONSTANT Materials& materials)
 {
     const auto res = computeSDF<TShader>(viewportNDC, uniforms, serializedWorld);
     if (res.isColorValid())
@@ -86,19 +89,28 @@ INLINE float4 render(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT S
     return c;
 }
 
-INLINE float4 renderPhong(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE float4 renderPhong(float2 viewportNDC,
+                          CONSTANT Uniforms& uniforms,
+                          CONSTANT SerializedWorld& serializedWorld,
+                          CONSTANT Materials& materials)
 {
-    return render<PhongShader>(viewportNDC, uniforms, serializedWorld);
+    return render<PhongShader>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE float4 renderCellShaded(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE float4 renderCellShaded(float2 viewportNDC,
+                               CONSTANT Uniforms& uniforms,
+                               CONSTANT SerializedWorld& serializedWorld,
+                               CONSTANT Materials& materials)
 {
-    return render<CellShader>(viewportNDC, uniforms, serializedWorld);
+    return render<CellShader>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE float4 renderDefault(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE float4 renderDefault(float2 viewportNDC,
+                            CONSTANT Uniforms& uniforms,
+                            CONSTANT SerializedWorld& serializedWorld,
+                            CONSTANT Materials& materials)
 {
-    return renderPhong(viewportNDC, uniforms, serializedWorld);
+    return renderPhong(viewportNDC, uniforms, serializedWorld, materials);
 }
 
 INLINE ObjectID pickObject(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
