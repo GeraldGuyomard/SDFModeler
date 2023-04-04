@@ -9,14 +9,13 @@
 #include "Object3D.h"
 #include "Composition.h"
 
-template <typename TTransformer, typename TMaterial>
+template <typename TTransformer>
 class TComposition3D : public Object3D
 {
 public:
     
-    TComposition3D(const TTransformer& transformer,
-                   const TMaterial& material)
-    : _transformer(transformer), _material(material)
+    TComposition3D(const TTransformer& transformer)
+    : _transformer(transformer)
     {}
     
     void addAdditiveObject(Object3D::Ptr object)
@@ -44,12 +43,12 @@ public:
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
-        SDFSerializedComposition<TTransformer, TMaterial> serializedComp
+        SDFSerializedComposition<TTransformer> serializedComp
         {
             _additiveObjects.size(),
             _substractiveObjects.size(),
             _transformer,
-            _material
+            materialID()
         };
         
         copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType());
@@ -88,22 +87,20 @@ private:
     }
     
     TTransformer _transformer;
-    TMaterial _material;
     
     std::vector<Object3D::Ptr> _additiveObjects;
     std::vector<Object3D::Ptr> _substractiveObjects;
 };
 
-class Composition3D final : public TComposition3D<Composition::Transformer, Composition::Material>
+class Composition3D final : public TComposition3D<Composition::Transformer>
 {
 public:
-    using _inherited = TComposition3D<Composition::Transformer, Composition::Material>;
+    using _inherited = TComposition3D<Composition::Transformer>;
     
     using Transformer = Composition::Transformer;
-    using Material = Composition::Material;
     
-    Composition3D(const Transformer& transformer, const Material& material)
-    : _inherited(transformer, material)
+    Composition3D(const Transformer& transformer = {})
+    : _inherited(transformer)
     {}
 };
 

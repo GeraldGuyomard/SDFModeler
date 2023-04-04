@@ -28,3 +28,14 @@ public:
 private:
     float4 _albedo = { 0, 0, 0, 0 };
 };
+
+struct Materials final
+{
+    size_t nbMaterials = 0;
+    ConstMaterial material[128];
+    
+    ConstMaterial materialByID(MaterialID id) CONSTANT
+    {
+        return material[id];
+    }
+};

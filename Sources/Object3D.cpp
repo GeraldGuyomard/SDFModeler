@@ -6,15 +6,37 @@
 
 #include "Object3D.h"
 
+Material3D::Material3D(const ConstMaterial& m)
+: _material(m)
+{}
+
+void
+Material3D::setId(MaterialID id)
+{
+    _id = id;
+}
+
 void
 Object3D::setId(ObjectID id)
 {
     _id = id;
 }
 
-Grid3D::Grid3D(const Grid& grid)
-: _inherited(grid)
-{}
+void
+Object3D::setMaterial(const Material3D::Ptr& mat)
+{
+    if (_material != mat)
+    {
+        _material = mat;
+        onMaterialChange();
+    }
+}
+
+MaterialID
+Object3D::materialID() const
+{
+    return (_material != nullptr) ? _material->id() : kNoMaterialID;
+}
 
 void
 Object3DCollection::addObject(Object3D::Ptr object)
@@ -37,15 +59,42 @@ Object3DCollection::serialize(SerializedObjects& serializedObjects) const
     }
 }
 
+World::World()
+{
+    addMaterial(float4 {1, 0, 0, 1});
+}
+
 void
-World::serialize(SerializedWorld& serializedWorld) const
+World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
 {
     _content.serialize(serializedWorld.content);
+    
+    materials.nbMaterials = _materials.size();
+    
+    for (const auto& mat : _materials)
+    {
+        materials.material[mat->id()] = mat->material();
+    }
 }
 
 void
 World::addObject(Object3D::Ptr object)
 {
-    object->setId(_nextAvailableID++);
+    object->setId(_nextAvailableObjectID++);
     _content.addObject(std::move(object));
+}
+
+void
+World::addMaterial(Material3D::Ptr mat)
+{
+    mat->setId(_materials.size());
+    _materials.push_back(mat);
+}
+
+Material3D::Ptr
+World::addMaterial(const float4& color)
+{
+    auto mat = std::make_shared<Material3D>(ConstMaterial { color });
+    addMaterial(mat);
+    return mat;
 }

@@ -9,20 +9,26 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "PrimitiveEvaluator.h"
 
-template <typename TTransformer, typename TMaterial>
+template <typename TTransformer>
 struct SDFSerializedComposition final
 {
     uint64_t nbObjectsToAdd;
     uint64_t nbObjectsToSubstract;
     
     TTransformer transformer;
-    TMaterial material;
+    MaterialID materialID;
     
     // what should come next is
     // nbObjectsToAdd + nbObjectsToSubstract objects with ObjectHeaders
     
-    SDFSerializedComposition(uint64_t nbObjectsToAdd, uint64_t nbObjectsToSubstract, TTransformer transformer, TMaterial material)
-    : nbObjectsToAdd(nbObjectsToAdd), nbObjectsToSubstract(nbObjectsToSubstract), transformer(transformer), material(material)
+    SDFSerializedComposition(uint64_t nbObjectsToAdd,
+                             uint64_t nbObjectsToSubstract,
+                             TTransformer transformer,
+                             MaterialID materialID)
+    : nbObjectsToAdd(nbObjectsToAdd),
+    nbObjectsToSubstract(nbObjectsToSubstract),
+    transformer(transformer),
+    materialID(materialID)
     {}
     
     ObjectType objectType() const
@@ -31,22 +37,21 @@ struct SDFSerializedComposition final
     }
 };
 
-template <typename TTransformer, typename TMaterial>
+template <typename TTransformer>
 class SDFComposition final
 {
 public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 16;
     
-    using Serialized = SDFSerializedComposition<TTransformer, TMaterial>;
+    using Serialized = SDFSerializedComposition<TTransformer>;
     using Transformer = TTransformer;
-    using Material = TMaterial;
     
     static ObjectType objectType() { return ObjectType::composition; }
     
     SDFComposition(CONSTANT Serialized* serializedComposition) :
     _transformer(serializedComposition->transformer),
-    _material(serializedComposition->material),
+    _materialID(serializedComposition->materialID),
     _nbObjectsToAdd(serializedComposition->nbObjectsToAdd),
     _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract)
     {
@@ -101,14 +106,11 @@ public:
         return max(distanceOfAddition, -distanceOfSubstraction);
     }
     
-    float4 computeAlbedo(Ray ray, float dist, float3 pt) const
-    {
-        return _material.computeAlbedo(ray, dist, pt);
-    }
+    MaterialID materialID() const { return _materialID; }
     
 private:
     const TTransformer _transformer;
-    const TMaterial _material;
+    const MaterialID _materialID;
     
     uint64_t _nbObjectsToAdd;
     uint64_t _nbObjectsToSubstract;

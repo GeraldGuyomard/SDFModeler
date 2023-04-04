@@ -21,17 +21,19 @@
 template <typename TShader>
 INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
-    constexpr float kGridGreyLevel = 0.5f;
-    const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
-    
-    Grid grid({}, { float3(-0.5f) }, { 0.5f , color });
+    Plane grid({}, { float3(-0.5f) });
     
     SDFResult res;
     res.distance = grid.raycast(ray);
     if ((res.distance >= 0) && (res.distance <= ray.maxLength))
     {
         const float3 p = ray.pt(res.distance);
-        res.color = grid.computeAlbedo(ray, res.distance, p);
+        
+        constexpr float kGridGreyLevel = 0.5f;
+        const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
+        GridMaterial mat(0.5f, color);
+        
+        res.color = mat.computeAlbedo(ray, res.distance, p);
         return res;
     }
     else
@@ -41,11 +43,14 @@ INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT Serialize
 }
 
 template <typename TShader>
-INLINE SDFResult computeSDF(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE SDFResult computeSDF(float2 viewportNDC,
+                            CONSTANT Uniforms& uniforms,
+                            CONSTANT SerializedWorld& serializedWorld,
+                            CONSTANT Materials& materials)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
     
-    const TShader shader { uniforms.lightDirection };
+    const TShader shader { uniforms, materials };
     
     Objects<TShader> content { shader, serializedWorld.content };
     const auto contentRes = content.rayMarch(ray);
@@ -76,7 +81,7 @@ INLINE float4 render(float2 viewportNDC,
                      CONSTANT SerializedWorld& serializedWorld,
                      CONSTANT Materials& materials)
 {
-    const auto res = computeSDF<TShader>(viewportNDC, uniforms, serializedWorld);
+    const auto res = computeSDF<TShader>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isColorValid())
     {
         return res.color;
@@ -113,8 +118,11 @@ INLINE float4 renderDefault(float2 viewportNDC,
     return renderPhong(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE ObjectID pickObject(float2 viewportNDC, CONSTANT Uniforms& uniforms, CONSTANT SerializedWorld& serializedWorld)
+INLINE ObjectID pickObject(float2 viewportNDC,
+                           CONSTANT Uniforms& uniforms,
+                           CONSTANT SerializedWorld& serializedWorld,
+                           CONSTANT Materials& materials)
 {
-    const auto res = computeSDF<NoShader>(viewportNDC, uniforms, serializedWorld);
+    const auto res = computeSDF<NoShader>(viewportNDC, uniforms, serializedWorld, materials);
     return res.objectID;
 }

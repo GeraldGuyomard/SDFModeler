@@ -89,11 +89,11 @@ private:
     const TShader _shader;
 };
 
-using Sphere = SDFObject<SDFSphere, RSTTransformer, ConstMaterial>;
-using Plane = SDFObject<SDFPlane, RSTTransformer, ConstMaterial>;
-using Grid = SDFObject<SDFPlane, RSTTransformer, GridMaterial>;
-using Box = SDFObject<SDFBox, RSTTransformer, ConstMaterial>;
-using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer, ConstMaterial>;
+using Sphere = SDFObject<SDFSphere, RSTTransformer>;
+using Plane = SDFObject<SDFPlane, RSTTransformer>;
+using Grid = SDFObject<SDFPlane, RSTTransformer>;
+using Box = SDFObject<SDFBox, RSTTransformer>;
+using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer>;
 
 template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
 INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
@@ -131,17 +131,17 @@ computeEvaluationReturn(TEvaluator evaluator, CONSTANT ObjectHeader* header)
     
     if (objectCode == computeObjectCode<TPrimitive, RSTTransformer>())
     {
-        using Object = SDFObject<TPrimitive, RSTTransformer, ConstMaterial>;
+        using Object = SDFObject<TPrimitive, RSTTransformer>;
         return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
     else if (objectCode == computeObjectCode<TPrimitive, RTTransformer>())
     {
-        using Object = SDFObject<TPrimitive, RTTransformer, ConstMaterial>;
+        using Object = SDFObject<TPrimitive, RTTransformer>;
         return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
     else if (objectCode == computeObjectCode<TPrimitive, TranslationTransformer>())
     {
-        using Object = SDFObject<TPrimitive, TranslationTransformer, ConstMaterial>;
+        using Object = SDFObject<TPrimitive, TranslationTransformer>;
         return { evaluateTypedPrimitive<TEvaluator, Object, TReturnValue>(evaluator, header) };
     }
     else

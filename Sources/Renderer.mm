@@ -223,8 +223,9 @@ Renderer::updateUniforms()
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
     auto& serializedWorld = _serializedWorldBuffer->uniform();
+    auto& serializedMaterials = _materialsBuffer->uniform();
     
-    [MainViewController instance].world.serialize(serializedWorld);
+    [MainViewController instance].world.serialize(serializedWorld, serializedMaterials);
 }
 
 void
@@ -319,10 +320,11 @@ Renderer::pickObject(float2 pixelPosition) const
 {
     const auto& uniforms = this->uniforms();
     const auto& serializedWorld = this->serializedWorld();
+    const auto& materials = this->materials();
     
     const auto size = renderSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    return ::pickObject(p, uniforms, serializedWorld);
+    return ::pickObject(p, uniforms, serializedWorld, materials);
 }

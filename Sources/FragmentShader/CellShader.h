@@ -13,14 +13,16 @@ class CellShader final
 {
 public:
     
-    CellShader(float3 lightDirection)
-    : _lightDirection(normalize(lightDirection))
+    CellShader(CONSTANT Uniforms& uniforms, CONSTANT Materials& materials)
+    : _lightDirection(normalize(uniforms.lightDirection)), _materials(materials)
     {}
     
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
     {
-        const float4 albedo = primitive.computeAlbedo(ray, dist, p);
+        const auto mat = _materials.materialByID(primitive.materialID());
+        
+        const float4 albedo = mat.computeAlbedo(ray, dist, p);
         const float3 normal = computeNormal(primitive, dist, p);
         
         float intensity = max(0.1f, dot(-normal, _lightDirection));
@@ -36,6 +38,12 @@ public:
         return float4 { color.r, color.g, color.b, 1.f };
     }
     
+    CONSTANT Materials& materials() const
+    {
+        return _materials;
+    }
+    
 private:
     const float3 _lightDirection;
+    CONSTANT Materials& _materials;
 };

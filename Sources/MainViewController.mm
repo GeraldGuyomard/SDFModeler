@@ -52,48 +52,59 @@ static __weak MainViewController* s_Instance = nil;
 
 - (void)loadWorld
 {
-    auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } }, { float4 { 1, 1, 1, 1 } } });
+    auto white = _world.addMaterial(float4 { 1, 1, 1, 1 });
+    auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } } });
+    whiteSphere->setMaterial(white);
+    
     _world.addObject(std::move(whiteSphere));
     
     constexpr float kZ = 0;
     
-    auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } }, { float4 { 1, 0, 0, 1 } } });
+    auto red = _world.addMaterial(float4 { 1, 0, 0, 1 });
+    auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } } });
+    redSphere->setMaterial(red);
     _world.addObject(std::move(redSphere));
     
     float3 pos = float3 {0.5, 0, kZ};
     
     constexpr float s = 0.5f;
     
+    auto yellow = _world.addMaterial(float4 { 1, 1, 0, 1 });
     auto roundedYellowBox = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
-        { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }, // transform
-        { float4 { 1, 1, 0, 1 } } // material
+        { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }
     });
+    roundedYellowBox->setMaterial(yellow);
     _world.addObject(std::move(roundedYellowBox));
     
     auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
     {
         { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
-        { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }, // transform
-        { float4 { 1, 1, 1, 1 } } // material
+        { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }
     });
+    whiteBoxHalf->setMaterial(white);
     _world.addObject(std::move(whiteBoxHalf));
+    
+    auto blue = _world.addMaterial(float4 { 0, 0, 1, 1 });
     
     auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
         { 0.4f },
-        { pos },
-        { float4 { 0, 0, 1, 1 } }
+        { pos }
     });
+    
+    blueSphere->setMaterial(blue);
     _world.addObject(std::move(blueSphere));
+    
+    auto green = _world.addMaterial(float4 { 0, 1, 0, 1 });
     
     auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
     {
         { 0.45f },
-        { float3 { -1, 1, kZ } },
-        { float4 { 0, 1, 0, 1 } }
+        { float3 { -1, 1, kZ } }
     });
+    greenSphere->setMaterial(green);
     _world.addObject(std::move(greenSphere));
     
     auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
@@ -120,9 +131,9 @@ static __weak MainViewController* s_Instance = nil;
         { float3 { -2., -0.5, kZ + 1.f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
     });
     
-    auto sdfUnion = std::make_unique<Composition3D>(
-                                    RSTTransformer {} /* transform*/,
-                                    ConstMaterial { float4 { 0, 1, 1, 1 } } /* material */);
+    auto sdfUnionMaterial = _world.addMaterial(float4 { 0, 1, 1, 1 });
+    auto sdfUnion = std::make_unique<Composition3D>();
+    sdfUnion->setMaterial(sdfUnionMaterial);
     
     sdfUnion->addAdditiveObject(std::move(spherePart));
     sdfUnion->addAdditiveObject(std::move(boxPart));

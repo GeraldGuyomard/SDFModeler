@@ -10,6 +10,7 @@
 
 #include "CommonDefinitions.h"
 #include "SDFResult.h"
+#include "Material/ConstMaterial.h"
 
 class FragmentShader final
 {
@@ -18,6 +19,8 @@ public:
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const;
     
+    CONSTANT Materials& materials() const;
+    
 private:
     FragmentShader() = delete;
 };
@@ -25,7 +28,7 @@ private:
 class NoShader final
 {
 public:
-    NoShader(float3 lightDirection) {}
+    NoShader(CONSTANT Uniforms&, CONSTANT Materials&) {}
     
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const

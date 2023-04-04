@@ -13,7 +13,7 @@
 
 #include "Composition.h"
 
-using Composition = SDFComposition<RSTTransformer, ConstMaterial>;
+using Composition = SDFComposition<RSTTransformer>;
 
 template <typename TEvaluator, typename TReturnValue>
 INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
@@ -48,11 +48,6 @@ struct SerializedObjects final
 struct SerializedWorld final
 {
     SerializedObjects content;
-};
-
-struct Materials final
-{
-    ConstMaterial material[128];
 };
 
 template <typename TShader>

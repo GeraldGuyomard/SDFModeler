@@ -12,6 +12,23 @@
 #include "Scene.h"
 #include <vector>
 
+class Material3D final
+{
+public:
+    using Ptr = std::shared_ptr<Material3D>;
+    
+    Material3D(const ConstMaterial& m);
+    
+    MaterialID id() const { return _id; }
+    void setId(MaterialID);
+    
+    const ConstMaterial& material() const { return _material; }
+    
+private:
+    MaterialID _id = kNoMaterialID;
+    ConstMaterial _material;
+};
+
 class Object3D
 {
 public:
@@ -27,9 +44,17 @@ public:
     ObjectID id() const { return _id; }
     void setId(ObjectID);
     
-private:
+    Material3D::Ptr material() const { return _material; }
+    void setMaterial(const Material3D::Ptr&);
     
+    MaterialID materialID() const;
+    
+protected:
+    virtual void onMaterialChange() {}
+    
+private:
     ObjectID _id = 0;
+    Material3D::Ptr _material;
 };
 
 template <typename TPrimitive>
@@ -77,20 +102,13 @@ public:
     }
     
 private:
-    TPrimitive _primitive;
-};
-
-class Grid3D : public TObject3D<Grid>
-{
-public:
-    using _inherited = TObject3D<Grid>;
     
-    Grid3D(const Grid& grid);
-    
-    ObjectType objectType() const override
+    void onMaterialChange() override
     {
-        return ObjectType::grid;
+        _primitive.setMaterialID(materialID());
     }
+    
+    TPrimitive _primitive;
 };
 
 class Object3DCollection final
@@ -111,13 +129,18 @@ private:
 class World final
 {
 public:
-    World() = default;
+    World();
     
-    void serialize(SerializedWorld&) const;
+    void serialize(SerializedWorld&, Materials& materials) const;
     
+    void addMaterial(Material3D::Ptr);
+    Material3D::Ptr addMaterial(const float4& color);
+   
     void addObject(Object3D::Ptr);
     
 private:
     Object3DCollection _content;
-    ObjectID _nextAvailableID = 1;
+    ObjectID _nextAvailableObjectID = 1;
+    
+    std::vector<Material3D::Ptr> _materials;
 };

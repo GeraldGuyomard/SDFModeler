@@ -13,7 +13,7 @@
 #include "Culling.h"
 #include "Ray.h"
 
-template <typename TGeometry, typename TTransformer, typename TMaterial>
+template <typename TGeometry, typename TTransformer>
 class SDFObject final
 {
 public:
@@ -21,10 +21,10 @@ public:
     using Geometry = TGeometry;
     using Transformer = TTransformer;
     
-    SDFObject(TGeometry geometry, TTransformer transformer = {}, TMaterial material = {})
+    SDFObject(TGeometry geometry, TTransformer transformer = {}, MaterialID materialID = 0)
     : _geometry(geometry),
     _transformer(transformer),
-    _material(material)
+    _materialID(materialID)
     {}
     
     static ObjectType objectType()
@@ -48,11 +48,6 @@ public:
         return _transformer.computeDistance(_geometry, p);
     }
     
-    float4 computeAlbedo(Ray ray, float dist, float3 p) const
-    {
-        return _material.computeAlbedo(ray, dist, p);
-    }
-    
     float raycast(Ray ray) const
     {
         const Ray localRay = _transformer.localRay(ray);
@@ -61,11 +56,13 @@ public:
     
     TGeometry geometry() const { return _geometry; }
     TTransformer transformer() const { return _transformer; }
-    TMaterial material() const { return _material; }
+    
+    MaterialID materialID() const { return _materialID; }
+    void setMaterialID(MaterialID id) { _materialID = id; }
     
 private:
     TGeometry _geometry;
     TTransformer _transformer;
-    TMaterial _material;
+    MaterialID _materialID;
 };
 

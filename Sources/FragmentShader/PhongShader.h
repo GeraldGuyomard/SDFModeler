@@ -13,14 +13,16 @@ class PhongShader final
 {
 public:
     
-    PhongShader(float3 lightDirection)
-    : _lightDirection(normalize(lightDirection))
+    PhongShader(CONSTANT Uniforms& uniforms, CONSTANT Materials& materials)
+    : _lightDirection(normalize(uniforms.lightDirection)), _materials(materials)
     {}
     
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
     {
-        const float4 albedo = primitive.computeAlbedo(ray, dist, p);
+        const auto mat = _materials.materialByID(primitive.materialID());
+        
+        const float4 albedo = mat.computeAlbedo(ray, dist, p);
         const float3 normal = computeNormal(primitive, dist, p);
         
         float intensity = max(0.1f, dot(-normal, _lightDirection));
@@ -34,6 +36,12 @@ public:
         return (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
     }
     
+    CONSTANT Materials& materials() const
+    {
+        return _materials;
+    }
+    
 private:
     const float3 _lightDirection;
+    CONSTANT Materials& _materials;
 };
