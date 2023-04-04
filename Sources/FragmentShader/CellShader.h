@@ -22,7 +22,7 @@ public:
     {
         const auto mat = _materials.materialByID(primitive.materialID());
         
-        const float4 albedo = mat.computeAlbedo(ray, dist, p);
+        const float4 albedo = mat.albedo();
         const float3 normal = computeNormal(primitive, dist, p);
         
         float intensity = max(0.1f, dot(-normal, _lightDirection));

@@ -15,8 +15,9 @@
     const auto p = [self position:[self.view convertPoint:event.locationInWindow fromView:nil]];
     
     const auto id = self.renderer->pickObject(p);
+    const auto pixel = self.renderer->renderPixel(p);
     
-    NSLog(@"ObjectID = %d\n", id);
+    NSLog(@"ObjectID = %d\n R=%1.4f G=%1.4f B=%1.4f A=%1.4f", id, pixel.x, pixel.y, pixel.z, pixel.w);
 }
 
 - (float2) position:(CGPoint)position

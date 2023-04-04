@@ -61,8 +61,11 @@ static __weak MainViewController* s_Instance = nil;
     constexpr float kZ = 0;
     
     auto red = _world.addMaterial(float4 { 1, 0, 0, 1 });
+    red->material().setSelected(true);
+    
     auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } } });
     redSphere->setMaterial(red);
+    
     _world.addObject(std::move(redSphere));
     
     float3 pos = float3 {0.5, 0, kZ};

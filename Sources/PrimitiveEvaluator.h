@@ -19,7 +19,7 @@
 #include "SDFObject.h"
 
 #include "Transformer/StandardTransformers.h"
-#include "Material/ConstMaterial.h"
+#include "Material/SimpleMaterial.h"
 #include "Material/GridMaterial.h"
 
 // Concept of PrimitiveEvaluator

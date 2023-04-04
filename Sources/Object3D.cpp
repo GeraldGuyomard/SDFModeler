@@ -6,7 +6,7 @@
 
 #include "Object3D.h"
 
-Material3D::Material3D(const ConstMaterial& m)
+Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
 {}
 
@@ -87,6 +87,8 @@ World::addObject(Object3D::Ptr object)
 void
 World::addMaterial(Material3D::Ptr mat)
 {
+    mat->material().setSelected(true);
+    
     mat->setId(_materials.size());
     _materials.push_back(mat);
 }
@@ -94,7 +96,7 @@ World::addMaterial(Material3D::Ptr mat)
 Material3D::Ptr
 World::addMaterial(const float4& color)
 {
-    auto mat = std::make_shared<Material3D>(ConstMaterial { color });
+    auto mat = std::make_shared<Material3D>(SimpleMaterial { color });
     addMaterial(mat);
     return mat;
 }

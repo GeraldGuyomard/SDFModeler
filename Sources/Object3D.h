@@ -17,16 +17,16 @@ class Material3D final
 public:
     using Ptr = std::shared_ptr<Material3D>;
     
-    Material3D(const ConstMaterial& m);
+    Material3D(const SimpleMaterial& m);
     
     MaterialID id() const { return _id; }
     void setId(MaterialID);
     
-    const ConstMaterial& material() const { return _material; }
+    SimpleMaterial& material() { return _material; }
     
 private:
     MaterialID _id = kNoMaterialID;
-    ConstMaterial _material;
+    SimpleMaterial _material;
 };
 
 class Object3D

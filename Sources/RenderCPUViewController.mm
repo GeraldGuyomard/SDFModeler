@@ -36,10 +36,6 @@
     std::vector<uint32_t> buffer;
     buffer.resize(size.x * size.y);
     
-    const auto& uniforms = renderer->uniforms();
-    const auto& serializedWorld = renderer->serializedWorld();
-    const auto& materials = renderer->materials();
-    
     for (float y=0; y < size.y; ++y)
     {
         for (float x=0; x < size.x; ++x)
@@ -47,9 +43,8 @@
             uint32_t& pixel = buffer[(y * size.x) + x];
             const float2 pixelCoordinates { x, y };
             
-            const auto p = pixelToNDC(size, pixelCoordinates);
+            const auto fragment = renderer->renderPixel(pixelCoordinates);
             
-            const auto fragment = renderDefault(p, uniforms, serializedWorld, materials);
             const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
             const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;
             const uint8_t b = clamp(fragment.b, 0.f, 1.f) * 255.f;

@@ -10,7 +10,7 @@
 
 #include "CommonDefinitions.h"
 #include "SDFResult.h"
-#include "Material/ConstMaterial.h"
+#include "Material/SimpleMaterial.h"
 
 class FragmentShader final
 {

@@ -22,18 +22,27 @@ public:
     {
         const auto mat = _materials.materialByID(primitive.materialID());
         
-        const float4 albedo = mat.computeAlbedo(ray, dist, p);
+        const float4 albedo = mat.albedo();
         const float3 normal = computeNormal(primitive, dist, p);
         
-        float intensity = max(0.1f, dot(-normal, _lightDirection));
-
         // L = 2 * dot(N, L) * N - L
         float3 L = (2.f * dot(normal, _lightDirection) * normal) - _lightDirection;
         
         float spec = max(0.f, dot(ray.direction, L));
         spec = 0.8f * pow(spec, 30.f);
         
-        return (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
+        float intensity = max(0.1f, dot(-normal, _lightDirection));
+        float4 color = (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
+        
+        if (mat.selected())
+        {
+            float d = 1.f - dot(normal, -ray.direction);
+            const float s = step(0.75f, d);
+            const float4 silhouetteColor { 1, 1, 1, 1 };
+            color = mix(color, silhouetteColor, s);
+        }
+        
+        return color;
     }
     
     CONSTANT Materials& materials() const

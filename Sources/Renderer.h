@@ -79,6 +79,7 @@ public:
     void setRenderCallback(const RenderCallback&);
     
     ObjectID pickObject(float2 pixelPosition) const;
+    float4 renderPixel(float2 pixelPosition) const;
     
 public:
     void render();

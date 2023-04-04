@@ -328,3 +328,17 @@ Renderer::pickObject(float2 pixelPosition) const
     
     return ::pickObject(p, uniforms, serializedWorld, materials);
 }
+
+float4
+Renderer::renderPixel(float2 pixelPosition) const
+{
+    const auto& uniforms = this->uniforms();
+    const auto& serializedWorld = this->serializedWorld();
+    const auto& materials = this->materials();
+    
+    const auto size = renderSize();
+    
+    const auto p = pixelToNDC(size, pixelPosition);
+    
+    return renderDefault(p, uniforms, serializedWorld, materials);
+}
