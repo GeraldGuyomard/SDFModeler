@@ -18,7 +18,6 @@ struct SDFSerializedComposition final
     TTransformer transformer;
     MaterialID materialID;
     
-    bool selected = false;
     float extraCullingMargin = 0.f;
     
     // what should come next is
@@ -28,13 +27,11 @@ struct SDFSerializedComposition final
                              uint64_t nbObjectsToSubstract,
                              TTransformer transformer,
                              MaterialID materialID,
-                             bool selected,
                              float extraCullingMargin)
     : nbObjectsToAdd(nbObjectsToAdd),
     nbObjectsToSubstract(nbObjectsToSubstract),
     transformer(transformer),
     materialID(materialID),
-    selected(selected),
     extraCullingMargin(extraCullingMargin)
     {}
     

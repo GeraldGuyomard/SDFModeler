@@ -65,14 +65,10 @@ public:
     float extraCullingMargin() const { return _extraCullingMargin; }
     void setExtraCullingMargin(float m) { _extraCullingMargin = m; }
     
-    bool selected() const { return _selected; }
-    void setSelected(bool selected) { _selected = selected; }
-    
 private:
     TGeometry _geometry;
     TTransformer _transformer;
     MaterialID _materialID;
     float _extraCullingMargin = 0;
-    bool _selected = false;
 };
 

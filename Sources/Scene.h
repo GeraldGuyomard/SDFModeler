@@ -65,13 +65,16 @@ public:
     
     SDFResult rayMarch(Ray ray) const
     {
-        struct ObjectsList
+        size_t nbObjects = 0;
+        
+        struct HeaderEntry
         {
-            size_t nbObjects = 0;
-            CONSTANT ObjectHeader* headers[kNbObjectsMax];
+            CONSTANT ObjectHeader* header;
+            float previousMinDistance;
         };
         
-        ObjectsList objectsList;
+        HeaderEntry headerEntries[kNbObjectsMax];
+        
         CullEvaluator cullEvaluator { ray };
         
         CONSTANT uint8_t* buffer = &_serializedObjects.buffer[0];
@@ -82,7 +85,9 @@ public:
             const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
             {
-                objectsList.headers[objectsList.nbObjects++] = header;
+                headerEntries[nbObjects].header = header;
+                headerEntries[nbObjects].previousMinDistance = 1e5f;
+                ++nbObjects;
             }
             
             header = ObjectHeader::next(header);
@@ -91,7 +96,7 @@ public:
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        bool outline = false;
+        CONSTANT ObjectHeader* outlineHeader = nullptr;
         bool hit = false;
         
         float minDistance = 1e5f;
@@ -108,11 +113,25 @@ public:
             minHeader = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
-            for (size_t objectIndex = 0; objectIndex < objectsList.nbObjects; ++objectIndex)
+            for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
             {
-                CONSTANT ObjectHeader* header = objectsList.headers[objectIndex];
+                CONSTANT ObjectHeader* header = headerEntries[objectIndex].header;
                 
                 const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                
+                if (outlineHeader == nullptr)
+                {
+                    if (header->selected)
+                    {
+                        const float kThreshold = 10.f * kDistanceEpsilon;
+                        if ((dist < kThreshold) && (headerEntries[objectIndex].previousMinDistance < dist))
+                        {
+                            outlineHeader = header;
+                        }
+                    }
+                }
+                
+                headerEntries[objectIndex].previousMinDistance = dist;
                 
                 if (dist <= minDistance)
                 {
@@ -121,23 +140,9 @@ public:
                 }
             }
             
-            if (!outline)
-            {
-                const float kThreshold = 10.f * kDistanceEpsilon;
-                if ((minDistance < kThreshold) && (prevMinDistance < minDistance))
-                {
-                    outline = true;
-                }
-            }
-            
             if (minDistance <= kDistanceEpsilon)
             {
                 hit = true;
-                break;
-            }
-            
-            if (outline && (prevMinDistance < minDistance))
-            {
                 break;
             }
             
@@ -151,17 +156,17 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (hit)
+        if ((outlineHeader != nullptr)/* && (outlineHeader != minHeader)*/)
+        {
+            return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
+        }
+        else if (hit)
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
             MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
             const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
             
             return { minHeader->objectId, minDistance, color };
-        }
-        else if (outline)
-        {
-            return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
         }
         
         return {};

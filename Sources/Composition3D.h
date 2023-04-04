@@ -50,11 +50,10 @@ public:
             _substractiveObjects.size(),
             _transformer,
             materialID(),
-            _selected,
             extraCullingMargin
         };
         
-        copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType());
+        copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType(), _selected);
         ptr += header->byteSize;
         
         size_t subHeadersSize = 0;

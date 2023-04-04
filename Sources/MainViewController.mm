@@ -141,12 +141,14 @@ static __weak MainViewController* s_Instance = nil;
     sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
     sdfUnion->addSubstractiveObject(std::move(negativeRoundedBoxPart));
     
+    sdfUnion->setSelected(true);
+    
     _world.addObject(std::move(sdfUnion));
     
-    for (const auto& object : _world.objects())
+    /*for (const auto& object : _world.objects())
     {
         object->setSelected(true);
-    }
+    }*/
 }
 
 - (void)viewDidLoad

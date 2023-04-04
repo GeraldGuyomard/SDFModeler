@@ -82,12 +82,12 @@ public:
     
     bool selected() const override
     {
-        return _primitive.selected();
+        return _selected;
     }
     
     void setSelected(bool selected) override
     {
-        _primitive.setSelected(selected);
+        _selected = selected;
         _primitive.setExtraCullingMargin(selected ? kExtraCullingMarginForOutline : 0.f);
     }
     
@@ -113,7 +113,7 @@ public:
         }
         else*/
         {
-            return serializeObject<TPrimitive>(ptr, _primitive, id(), objectType(), transformer.transformerType());
+            return serializeObject<TPrimitive>(ptr, _primitive, id(), objectType(), transformer.transformerType(), _selected);
         }
     }
     
@@ -125,6 +125,7 @@ private:
     }
     
     TPrimitive _primitive;
+    bool _selected = false;
 };
 
 class Object3DCollection final

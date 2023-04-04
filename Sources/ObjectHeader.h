@@ -25,7 +25,8 @@ INLINE constexpr uint64_t computeObjectCode()
 
 struct ObjectHeader final
 {
-    size_t    byteSize;
+    uint32_t  byteSize;
+    uint32_t  selected = false;
     uint32_t  objectId;
     uint32_t  objectCode;
     
