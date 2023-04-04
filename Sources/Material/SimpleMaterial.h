@@ -16,18 +16,14 @@ public:
     
     SimpleMaterial() = default;
     
-    SimpleMaterial(float4 albedo, bool selected = false)
-    : _albedo(albedo), _selected(false)
+    SimpleMaterial(float4 albedo)
+    : _albedo(albedo)
     {}
     
     float4 albedo() const { return _albedo; }
     
-    bool selected() const { return _selected; }
-    void setSelected(bool selected) { _selected = selected; }
-    
 private:
     float4 _albedo = { 0, 0, 0, 0 };
-    bool _selected = false;
 };
 
 struct Materials final

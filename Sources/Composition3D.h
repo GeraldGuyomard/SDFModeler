@@ -43,12 +43,15 @@ public:
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
+        float extraCullingMargin = _selected ? kExtraCullingMarginForOutline : 0;
         SDFSerializedComposition<TTransformer> serializedComp
         {
             _additiveObjects.size(),
             _substractiveObjects.size(),
             _transformer,
-            materialID()
+            materialID(),
+            _selected,
+            extraCullingMargin
         };
         
         copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType());
@@ -76,6 +79,9 @@ public:
         return header->byteSize;
     }
     
+    bool selected() const override { return _selected; }
+    void setSelected(bool selected) override { _selected = selected; }
+    
 private:
     
     template <typename TPrimitive>
@@ -90,6 +96,7 @@ private:
     
     std::vector<Object3D::Ptr> _additiveObjects;
     std::vector<Object3D::Ptr> _substractiveObjects;
+    bool _selected = false;
 };
 
 class Composition3D final : public TComposition3D<Composition::Transformer>

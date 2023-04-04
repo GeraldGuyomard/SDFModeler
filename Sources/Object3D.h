@@ -49,6 +49,11 @@ public:
     
     MaterialID materialID() const;
     
+    virtual bool selected() const = 0;
+    virtual void setSelected(bool selected) = 0;
+    
+    static constexpr float kExtraCullingMarginForOutline = 0.1f;
+    
 protected:
     virtual void onMaterialChange() {}
     
@@ -73,6 +78,17 @@ public:
     TransformerType transformerType() const override
     {
         return TPrimitive::Transformer::transformerType();
+    }
+    
+    bool selected() const override
+    {
+        return _primitive.selected();
+    }
+    
+    void setSelected(bool selected) override
+    {
+        _primitive.setSelected(selected);
+        _primitive.setExtraCullingMargin(selected ? kExtraCullingMarginForOutline : 0.f);
     }
     
     size_t serialize(uint8_t* ptr) const final override
@@ -121,6 +137,8 @@ public:
     
     void serialize(SerializedObjects&) const;
     
+    const std::vector<Object3D::Ptr>& objects() const { return _objects; }
+    
 private:
     std::vector<Object3D::Ptr> _objects;
 };
@@ -137,6 +155,7 @@ public:
     Material3D::Ptr addMaterial(const float4& color);
    
     void addObject(Object3D::Ptr);
+    const std::vector<Object3D::Ptr>& objects() const;
     
 private:
     Object3DCollection _content;

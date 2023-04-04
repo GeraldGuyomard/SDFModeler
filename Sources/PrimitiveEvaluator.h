@@ -60,12 +60,30 @@ public:
     template <typename TPrimitive>
     bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim) const
     {
-        const float outlineThickness = 0.5f;
-        return prim.evaluateCulling(_ray, outlineThickness);
+        return prim.evaluateCulling(_ray);
     }
     
 private:
     Ray _ray;
+};
+
+class CullEvaluatorWithExtraCullingMarginOverride
+{
+public:
+    CullEvaluatorWithExtraCullingMarginOverride(Ray ray, float extraCullingMargin)
+    : _ray(ray), _extraCullingMargin(extraCullingMargin)
+    {}
+    
+    template <typename TPrimitive>
+    bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim) const
+    {
+        prim.setExtraCullingMargin(_extraCullingMargin);
+        return prim.evaluateCulling(_ray);
+    }
+    
+private:
+    Ray _ray;
+    float _extraCullingMargin;
 };
 
 template <typename TShader>

@@ -93,6 +93,7 @@ public:
         float d = 0.f;
         bool outline = false;
         bool hit = false;
+        
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
@@ -123,7 +124,7 @@ public:
             if (!outline)
             {
                 const float kThreshold = 10.f * kDistanceEpsilon;
-                if (minDistance < kThreshold)
+                if ((minDistance < kThreshold) && (prevMinDistance < minDistance))
                 {
                     outline = true;
                 }

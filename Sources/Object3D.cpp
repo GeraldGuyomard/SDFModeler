@@ -84,11 +84,15 @@ World::addObject(Object3D::Ptr object)
     _content.addObject(std::move(object));
 }
 
+const std::vector<Object3D::Ptr>&
+World::objects() const
+{
+    return _content.objects();
+}
+
 void
 World::addMaterial(Material3D::Ptr mat)
 {
-    mat->material().setSelected(true);
-    
     mat->setId(_materials.size());
     _materials.push_back(mat);
 }

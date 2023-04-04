@@ -21,7 +21,9 @@ public:
     using Geometry = TGeometry;
     using Transformer = TTransformer;
     
-    SDFObject(TGeometry geometry, TTransformer transformer = {}, MaterialID materialID = 0)
+    SDFObject(TGeometry geometry,
+              TTransformer transformer = {},
+              MaterialID materialID = 0)
     : _geometry(geometry),
     _transformer(transformer),
     _materialID(materialID)
@@ -37,10 +39,10 @@ public:
         return TTransformer::transformerType();
     }
     
-    bool evaluateCulling(Ray ray, float outlineThickness) const
+    bool evaluateCulling(Ray ray) const
     {
         const Ray localRay = _transformer.localRay(ray);
-        return _geometry.evaluateCulling(localRay, outlineThickness);
+        return _geometry.evaluateCulling(localRay, _extraCullingMargin);
     }
     
     float computeDistance(float3 p) const
@@ -60,9 +62,17 @@ public:
     MaterialID materialID() const { return _materialID; }
     void setMaterialID(MaterialID id) { _materialID = id; }
     
+    float extraCullingMargin() const { return _extraCullingMargin; }
+    void setExtraCullingMargin(float m) { _extraCullingMargin = m; }
+    
+    bool selected() const { return _selected; }
+    void setSelected(bool selected) { _selected = selected; }
+    
 private:
     TGeometry _geometry;
     TTransformer _transformer;
     MaterialID _materialID;
+    float _extraCullingMargin = 0;
+    bool _selected = false;
 };
 

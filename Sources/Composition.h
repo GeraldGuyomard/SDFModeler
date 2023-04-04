@@ -18,17 +18,24 @@ struct SDFSerializedComposition final
     TTransformer transformer;
     MaterialID materialID;
     
+    bool selected = false;
+    float extraCullingMargin = 0.f;
+    
     // what should come next is
     // nbObjectsToAdd + nbObjectsToSubstract objects with ObjectHeaders
     
     SDFSerializedComposition(uint64_t nbObjectsToAdd,
                              uint64_t nbObjectsToSubstract,
                              TTransformer transformer,
-                             MaterialID materialID)
+                             MaterialID materialID,
+                             bool selected,
+                             float extraCullingMargin)
     : nbObjectsToAdd(nbObjectsToAdd),
     nbObjectsToSubstract(nbObjectsToSubstract),
     transformer(transformer),
-    materialID(materialID)
+    materialID(materialID),
+    selected(selected),
+    extraCullingMargin(extraCullingMargin)
     {}
     
     ObjectType objectType() const
@@ -41,9 +48,7 @@ template <typename TTransformer>
 class SDFComposition final
 {
 public:
-    
-    constexpr static CONSTANT size_t kNbObjectsMax = 16;
-    
+
     using Serialized = SDFSerializedComposition<TTransformer>;
     using Transformer = TTransformer;
     
@@ -53,21 +58,22 @@ public:
     _transformer(serializedComposition->transformer),
     _materialID(serializedComposition->materialID),
     _nbObjectsToAdd(serializedComposition->nbObjectsToAdd),
-    _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract)
+    _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract),
+    _extraCullingMargin(serializedComposition->extraCullingMargin)
     {
         auto ptr = reinterpret_cast<CONSTANT uint8_t*>(serializedComposition);
         _firstHeader = reinterpret_cast<CONSTANT ObjectHeader*>(ptr + sizeof(Serialized));
     }
     
-    bool evaluateCulling(Ray ray, float outlineThickness) const
+    bool evaluateCulling(Ray ray) const
     {
-        CullEvaluator cullEvaluator { ray };
+        CullEvaluatorWithExtraCullingMarginOverride cullEvaluator { ray, _extraCullingMargin };
         
         CONSTANT ObjectHeader* header = _firstHeader;
         
         for (uint64_t i=0; i < _nbObjectsToAdd; ++i)
         {
-            const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, header);
+            const bool culled = evaluateAtomicPrimitive<CullEvaluatorWithExtraCullingMarginOverride, bool>(cullEvaluator, header);
             if (!culled)
             {
                 return false;
@@ -112,8 +118,10 @@ private:
     const TTransformer _transformer;
     const MaterialID _materialID;
     
-    uint64_t _nbObjectsToAdd;
-    uint64_t _nbObjectsToSubstract;
+    const uint64_t _nbObjectsToAdd;
+    const uint64_t _nbObjectsToSubstract;
     CONSTANT ObjectHeader* _firstHeader;
+    
+    float _extraCullingMargin = 0.f;
 };
 
