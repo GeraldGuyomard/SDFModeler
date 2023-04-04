@@ -104,3 +104,16 @@ World::addMaterial(const float4& color)
     addMaterial(mat);
     return mat;
 }
+
+Object3D::Ptr
+World::objectByID(ObjectID id) const
+{
+    for (const auto& object : objects())
+    {
+        if (object->id() == id)
+        {
+            return object;
+        }
+    }
+    return nullptr;
+}

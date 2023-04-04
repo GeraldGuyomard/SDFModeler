@@ -32,7 +32,7 @@ private:
 class Object3D
 {
 public:
-    using Ptr = std::unique_ptr<Object3D>;
+    using Ptr = std::shared_ptr<Object3D>;
     
     virtual ~Object3D() = default;
     
@@ -155,6 +155,8 @@ public:
    
     void addObject(Object3D::Ptr);
     const std::vector<Object3D::Ptr>& objects() const;
+    
+    Object3D::Ptr objectByID(ObjectID id) const;
     
 private:
     Object3DCollection _content;
