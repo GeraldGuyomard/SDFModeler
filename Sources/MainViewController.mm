@@ -53,102 +53,95 @@ static __weak MainViewController* s_Instance = nil;
 - (void)loadWorld
 {
     auto white = _world.addMaterial(float4 { 1, 1, 1, 1 });
-    auto whiteSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } } });
+    auto whiteSphere = std::make_shared<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } } });
     whiteSphere->setMaterial(white);
     
-    _world.addObject(std::move(whiteSphere));
+    _world.addObject(whiteSphere);
     
     constexpr float kZ = 0;
     
     auto red = _world.addMaterial(float4 { 1, 0, 0, 1 });
-    auto redSphere = std::make_unique<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } } });
+    auto redSphere = std::make_shared<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } } });
     redSphere->setMaterial(red);
     
-    _world.addObject(std::move(redSphere));
+    _world.addObject(redSphere);
     
     float3 pos = float3 {0.5, 0, kZ};
     
     constexpr float s = 0.5f;
     
     auto yellow = _world.addMaterial(float4 { 1, 1, 0, 1 });
-    auto roundedYellowBox = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
+    auto roundedYellowBox = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
         { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }
     });
     roundedYellowBox->setMaterial(yellow);
-    _world.addObject(std::move(roundedYellowBox));
+    _world.addObject(roundedYellowBox);
     
-    auto whiteBoxHalf = std::make_unique<TObject3D<Box>>(Box
+    auto whiteBoxHalf = std::make_shared<TObject3D<Box>>(Box
     {
         { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
         { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }
     });
     whiteBoxHalf->setMaterial(white);
-    _world.addObject(std::move(whiteBoxHalf));
+    _world.addObject(whiteBoxHalf);
     
     auto blue = _world.addMaterial(float4 { 0, 0, 1, 1 });
     
-    auto blueSphere = std::make_unique<TObject3D<Sphere>>(Sphere
+    auto blueSphere = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.4f },
         { pos }
     });
     
     blueSphere->setMaterial(blue);
-    _world.addObject(std::move(blueSphere));
+    _world.addObject(blueSphere);
     
     auto green = _world.addMaterial(float4 { 0, 1, 0, 1 });
     
-    auto greenSphere = std::make_unique<TObject3D<Sphere>>(Sphere
+    auto greenSphere = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.45f },
         { float3 { -1, 1, kZ } }
     });
     greenSphere->setMaterial(green);
-    _world.addObject(std::move(greenSphere));
+    _world.addObject(greenSphere);
     
-    auto spherePart = std::make_unique<TObject3D<Sphere>>(Sphere
+    auto spherePart = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.4f }, // geom
         { float3 { -2., 0.6, kZ + 0.5f } }
     });
     
-    auto boxPart = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
+    auto boxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
         { float3 { -2., 0, kZ + 0.5f } } // transform
     });
     
-    auto negativeSpherePart = std::make_unique<TObject3D<Sphere>>(Sphere
+    auto negativeSpherePart = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.4f }, // geom
         { float3 { -2., 0.25, kZ + 1.f } } // transform
     });
     
-    auto negativeRoundedBoxPart = std::make_unique<TObject3D<RoundedBox>>(RoundedBox
+    auto negativeRoundedBoxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.1f, 0.1f, 0.3f }, 0.05f }, // geom
         { float3 { -2., -0.5, kZ + 1.f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
     });
     
     auto sdfUnionMaterial = _world.addMaterial(float4 { 0, 1, 1, 1 });
-    auto sdfUnion = std::make_unique<Composition3D>();
+    auto sdfUnion = std::make_shared<Composition3D>();
     sdfUnion->setMaterial(sdfUnionMaterial);
     
-    sdfUnion->addAdditiveObject(std::move(spherePart));
-    sdfUnion->addAdditiveObject(std::move(boxPart));
-    sdfUnion->addSubstractiveObject(std::move(negativeSpherePart));
-    sdfUnion->addSubstractiveObject(std::move(negativeRoundedBoxPart));
-    
-    sdfUnion->setSelected(true);
+    sdfUnion->addAdditiveObject(spherePart);
+    sdfUnion->addAdditiveObject(boxPart);
+    sdfUnion->addSubstractiveObject(negativeSpherePart);
+    sdfUnion->addSubstractiveObject(negativeRoundedBoxPart);
     
     _world.addObject(std::move(sdfUnion));
-    
-    /*for (const auto& object : _world.objects())
-    {
-        object->setSelected(true);
-    }*/
 }
 
 - (void)viewDidLoad
