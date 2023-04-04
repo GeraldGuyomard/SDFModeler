@@ -43,7 +43,7 @@ public:
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
-        float extraCullingMargin = _selected ? kExtraCullingMarginForOutline : 0;
+        float extraCullingMargin = _selected ? kOutlineThickness : 0;
         SDFSerializedComposition<TTransformer> serializedComp
         {
             _additiveObjects.size(),

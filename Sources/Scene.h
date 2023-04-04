@@ -66,14 +66,7 @@ public:
     SDFResult rayMarch(Ray ray) const
     {
         size_t nbObjects = 0;
-        
-        struct HeaderEntry
-        {
-            CONSTANT ObjectHeader* header;
-            float previousMinDistance;
-        };
-        
-        HeaderEntry headerEntries[kNbObjectsMax];
+        CONSTANT ObjectHeader* headers[kNbObjectsMax];
         
         CullEvaluator cullEvaluator { ray };
         
@@ -85,9 +78,7 @@ public:
             const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
             {
-                headerEntries[nbObjects].header = header;
-                headerEntries[nbObjects].previousMinDistance = 1e5f;
-                ++nbObjects;
+                headers[nbObjects++] = header;
             }
             
             header = ObjectHeader::next(header);
@@ -115,23 +106,17 @@ public:
             
             for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
             {
-                CONSTANT ObjectHeader* header = headerEntries[objectIndex].header;
+                CONSTANT ObjectHeader* header = headers[objectIndex];
                 
                 const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                 
-                if (outlineHeader == nullptr)
+                if ((outlineHeader == nullptr) && header->selected)
                 {
-                    if (header->selected)
+                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        const float kThreshold = 10.f * kDistanceEpsilon;
-                        if ((dist < kThreshold) && (headerEntries[objectIndex].previousMinDistance < dist))
-                        {
-                            outlineHeader = header;
-                        }
+                        outlineHeader = header;
                     }
                 }
-                
-                headerEntries[objectIndex].previousMinDistance = dist;
                 
                 if (dist <= minDistance)
                 {
@@ -156,11 +141,15 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if ((outlineHeader != nullptr)/* && (outlineHeader != minHeader)*/)
+        if (outlineHeader != nullptr)
         {
-            return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
+            if (!hit || (outlineHeader != minHeader))
+            {
+                return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
+            }
         }
-        else if (hit)
+        
+        if (hit)
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
             MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };

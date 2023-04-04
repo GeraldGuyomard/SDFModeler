@@ -13,6 +13,8 @@
 #include "Culling.h"
 #include "Ray.h"
 
+static constexpr CONSTANT float kOutlineThickness = 2.5e-2f;
+
 template <typename TGeometry, typename TTransformer>
 class SDFObject final
 {

@@ -52,8 +52,6 @@ public:
     virtual bool selected() const = 0;
     virtual void setSelected(bool selected) = 0;
     
-    static constexpr float kExtraCullingMarginForOutline = 0.1f;
-    
 protected:
     virtual void onMaterialChange() {}
     
@@ -88,7 +86,7 @@ public:
     void setSelected(bool selected) override
     {
         _selected = selected;
-        _primitive.setExtraCullingMargin(selected ? kExtraCullingMarginForOutline : 0.f);
+        _primitive.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
     }
     
     size_t serialize(uint8_t* ptr) const final override
