@@ -27,9 +27,9 @@ public:
         return length(p) - radius();
     }
     
-    bool evaluateCulling(Ray ray) const
+    bool evaluateCulling(Ray ray, float outlineThickness) const
     {
-        return evaluateSphereCulling(radius(), ray);
+        return evaluateSphereCulling(radius() + outlineThickness, ray);
     }
     
     float radius() const { return _radiusAndPadding.x; }

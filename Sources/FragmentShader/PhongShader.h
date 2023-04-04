@@ -34,14 +34,6 @@ public:
         float intensity = max(0.1f, dot(-normal, _lightDirection));
         float4 color = (albedo * float4 { intensity, intensity, intensity, 1.f } ) + float4 { spec, spec, spec, 0.f };
         
-        if (mat.selected())
-        {
-            float d = 1.f - dot(normal, -ray.direction);
-            const float s = step(0.75f, d);
-            const float4 silhouetteColor { 1, 1, 1, 1 };
-            color = mix(color, silhouetteColor, s);
-        }
-        
         return color;
     }
     

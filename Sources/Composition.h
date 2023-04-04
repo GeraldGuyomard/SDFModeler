@@ -59,7 +59,7 @@ public:
         _firstHeader = reinterpret_cast<CONSTANT ObjectHeader*>(ptr + sizeof(Serialized));
     }
     
-    bool evaluateCulling(Ray ray) const
+    bool evaluateCulling(Ray ray, float outlineThickness) const
     {
         CullEvaluator cullEvaluator { ray };
         

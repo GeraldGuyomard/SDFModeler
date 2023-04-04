@@ -17,7 +17,7 @@ class SDFGeometry final
 public:
     
     float computeDistance(float3 p) const;
-    bool evaluateCulling(Ray ray) const;
+    bool evaluateCulling(Ray ray, float outlineThickness) const;
     
 private:
     SDFGeometry() = delete;

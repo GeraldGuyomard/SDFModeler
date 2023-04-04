@@ -27,9 +27,9 @@ public:
         return length(max(q, 0.f)) + min(max(q.x, max(q.y, q.z)), 0.f);
     }
     
-    bool evaluateCulling(Ray ray) const
+    bool evaluateCulling(Ray ray, float outlineThickness) const
     {
-        return evaluateBoxCulling(halfSize(), ray);
+        return evaluateBoxCulling(halfSize(), ray, outlineThickness);
     }
     
     float3 halfSize() const { return _halfSizeAndPadding.xyz; }

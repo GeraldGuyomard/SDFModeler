@@ -37,10 +37,10 @@ public:
         return TTransformer::transformerType();
     }
     
-    bool evaluateCulling(Ray ray) const
+    bool evaluateCulling(Ray ray, float outlineThickness) const
     {
         const Ray localRay = _transformer.localRay(ray);
-        return _geometry.evaluateCulling(localRay);
+        return _geometry.evaluateCulling(localRay, outlineThickness);
     }
     
     float computeDistance(float3 p) const

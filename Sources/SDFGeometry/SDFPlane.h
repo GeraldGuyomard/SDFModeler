@@ -23,7 +23,7 @@ public:
         return p.y;
     }
     
-    bool evaluateCulling(Ray ray) const
+    bool evaluateCulling(Ray ray, float outlineThickness) const
     {
         const float d = raycast(ray);
         

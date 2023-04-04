@@ -50,6 +50,8 @@ struct SerializedWorld final
     SerializedObjects content;
 };
 
+#define SURF_DIST 0.000001
+
 template <typename TShader>
 class Objects final
 {
@@ -89,13 +91,20 @@ public:
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
+        bool outline = false;
+        bool hit = false;
+        float minDistance = 1e5f;
+        float prevMinDistance = minDistance;
+        
+        float3 pt = ray.origin;
+        CONSTANT ObjectHeader* minHeader = nullptr;
         
         for (size_t i=0; i < kNbSteps; ++i)
         {
-            float3 pt = ray.pt(d);
+            pt = ray.pt(d);
             
-            float minDistance = 10000.f;
-            CONSTANT ObjectHeader* minHeader = nullptr;
+            minDistance = 1e5f;
+            minHeader = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
             for (size_t objectIndex = 0; objectIndex < objectsList.nbObjects; ++objectIndex)
@@ -111,13 +120,24 @@ public:
                 }
             }
             
-            if ((minDistance >= 0.f) && (minDistance <= kDistanceEpsilon))
+            if (!outline)
             {
-                using MyShaderEvaluator = ShadeEvaluator<TShader>;
-                MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
-                const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
-                
-                return { minHeader->objectId, minDistance, color };
+                const float kThreshold = 10.f * kDistanceEpsilon;
+                if (minDistance < kThreshold)
+                {
+                    outline = true;
+                }
+            }
+            
+            if (minDistance <= kDistanceEpsilon)
+            {
+                hit = true;
+                break;
+            }
+            
+            if (outline && (prevMinDistance < minDistance))
+            {
+                break;
             }
             
             d += minDistance;
@@ -126,6 +146,21 @@ public:
             {
                 break;
             }
+            
+            prevMinDistance = minDistance;
+        }
+        
+        if (hit)
+        {
+            using MyShaderEvaluator = ShadeEvaluator<TShader>;
+            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
+            const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
+            
+            return { minHeader->objectId, minDistance, color };
+        }
+        else if (outline)
+        {
+            return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
         }
         
         return {};

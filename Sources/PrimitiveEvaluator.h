@@ -60,7 +60,8 @@ public:
     template <typename TPrimitive>
     bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim) const
     {
-        return prim.evaluateCulling(_ray);
+        const float outlineThickness = 0.5f;
+        return prim.evaluateCulling(_ray, outlineThickness);
     }
     
 private:

@@ -24,10 +24,10 @@ INLINE bool evaluateSphereCulling(float radius, Ray ray)
     return d < 0.f;
 }
 
-INLINE bool evaluateBoxCulling(float3 halfSize, Ray ray)
+INLINE bool evaluateBoxCulling(float3 halfSize, Ray ray, float outlineThickness = 0.f)
 {
-    const float3 boxMin = -halfSize;
-    const float3 boxMax = halfSize;
+    const float3 boxMax = halfSize + float3 { outlineThickness, outlineThickness, outlineThickness };
+    const float3 boxMin = -boxMax;
     
     const float3 invDir = float3 { 1, 1, 1 } / ray.direction;
     
