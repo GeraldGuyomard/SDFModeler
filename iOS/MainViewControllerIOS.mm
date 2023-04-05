@@ -74,10 +74,13 @@ using HighResClock = std::chrono::high_resolution_clock;
         const auto id = self.renderer->pickObject(p);
         NSLog(@"ObjectID = %d\n", id);
         
+        Selection selection;
         if (auto object = self.world.objectByID(id))
         {
-            object->setSelected(!object->selected());
+            selection.addObject(object);
         }
+        
+        self.world.setSelection(selection);
     }
 }
 

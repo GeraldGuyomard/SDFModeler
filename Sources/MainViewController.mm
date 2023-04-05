@@ -40,7 +40,7 @@ static __weak MainViewController* s_Instance = nil;
     _cameraController = std::move(cameraController);
 }
 
-- (const World&) world
+- (World&) world
 {
     return _world;
 }

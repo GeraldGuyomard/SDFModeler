@@ -11,6 +11,7 @@
 #include "Serializer.h"
 #include "Scene.h"
 #include <vector>
+#include <set>
 
 class Material3D final
 {
@@ -138,10 +139,13 @@ public:
     
     const std::vector<Object3D::Ptr>& objects() const { return _objects; }
     
+    std::set<ObjectID> objectIDs() const;
+    
 private:
     std::vector<Object3D::Ptr> _objects;
 };
 
+using Selection = Object3DCollection;
 
 class World final
 {
@@ -158,9 +162,13 @@ public:
     
     Object3D::Ptr objectByID(ObjectID id) const;
     
+    const Selection& selection() const { return _selection; }
+    void setSelection(const Selection&);
+    
 private:
     Object3DCollection _content;
     ObjectID _nextAvailableObjectID = 1;
-    
     std::vector<Material3D::Ptr> _materials;
+    
+    Selection _selection;
 };

@@ -44,6 +44,19 @@ Object3DCollection::addObject(Object3D::Ptr object)
     _objects.push_back(std::move(object));
 }
 
+std::set<ObjectID>
+Object3DCollection::objectIDs() const
+{
+    std::set<ObjectID> ids;
+    
+    for (const auto& object : _objects)
+    {
+        ids.insert(object->id());
+    }
+    
+    return std::move(ids);
+}
+
 void
 Object3DCollection::serialize(SerializedObjects& serializedObjects) const
 {
@@ -116,4 +129,18 @@ World::objectByID(ObjectID id) const
         }
     }
     return nullptr;
+}
+
+void
+World::setSelection(const Selection& selection)
+{
+    _selection = selection;
+    
+    const auto ids = _selection.objectIDs();
+    
+    for (const auto& object : objects())
+    {
+        const bool selected = (ids.find(object->id()) != ids.end());
+        object->setSelected(selected);
+    }
 }

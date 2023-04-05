@@ -18,7 +18,7 @@
 +(MainViewController*)instance;
 
 @property(readonly, nonatomic) Renderer* renderer;
-@property(readonly, nonatomic) const World& world;
+@property(readonly, nonatomic) World& world;
 
 -(CameraController*) cameraController;
 -(void)setCameraController:(CameraController::Ptr)cameraController;
