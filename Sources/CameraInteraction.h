@@ -8,57 +8,48 @@
 #pragma once
 
 #include "Camera.h"
+#include "Interaction.h"
 
 class CameraInteraction
 {
 public:
-    using Ptr = std::unique_ptr<CameraInteraction>;
-    
-    virtual ~CameraInteraction() = default;
-    
     const Camera::Ptr& camera() const { return _camera; }
     
 protected:
     CameraInteraction(const Camera::Ptr&);
+    ~CameraInteraction() = default;
     
 private:
     Camera::Ptr _camera;
 };
 
-class OrbitCameraInteraction : public CameraInteraction
+class OrbitCameraInteraction : public PanInteraction, public CameraInteraction
 {
 public:
-    using _inherited = CameraInteraction;
-    
     OrbitCameraInteraction(const Camera::Ptr&, const float2& initialPos, float speed = 1e-3f);
     
-    void orbit(const float2& pos);
+    void pan(const float2& pos) override;
     
 private:
-    const float2 _initialPos;
     const float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
     const float _speed;
 };
 
-class DollyCameraInteraction : public CameraInteraction
+class DollyCameraInteraction : public PinchInteraction, public CameraInteraction
 {
 public:
-    using _inherited = CameraInteraction;
-    
     DollyCameraInteraction(const Camera::Ptr& camera);
     
-    void dolly(float delta);
+    void pinch(float delta) override;
 };
 
-class PanCameraInteraction : public CameraInteraction
+class PanCameraInteraction : public PanInteraction, public CameraInteraction
 {
 public:
-    using _inherited = CameraInteraction;
-    
     PanCameraInteraction(const Camera::Ptr&, const float2& initialPos);
     
-    void pan(const float2& pos);
+    void pan(const float2& pos) override;
     
 private:
     float2 _previousPos;

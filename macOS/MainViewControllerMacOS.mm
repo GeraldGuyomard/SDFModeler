@@ -7,6 +7,7 @@
 
 #include "MainViewControllerMacOS.h"
 #include "World.h"
+#include "CameraInteraction.h"
 
 @implementation MainViewControllerMacOS
 
@@ -34,7 +35,7 @@
     
     const auto initialPos = [self position:event.locationInWindow];
     
-    CameraInteraction::Ptr interaction;
+    Interaction::Ptr interaction;
     const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
     if (shift)
     {
@@ -53,13 +54,9 @@
     const auto pos = [self position:event.locationInWindow];
     
     auto interaction = self.interaction;
-    if (auto orbit = dynamic_cast<OrbitCameraInteraction*>(interaction))
+    if (auto panInteraction = dynamic_cast<PanInteraction*>(interaction))
     {
-        orbit->orbit(pos);
-    }
-    else if (auto pan = dynamic_cast<PanCameraInteraction*>(interaction))
-    {
-        pan->pan(pos);
+        panInteraction->pan(pos);
     }
 }
 
@@ -73,7 +70,7 @@
     float d = event.scrollingDeltaY / 1000.f;
     
     auto interaction = std::make_unique<DollyCameraInteraction>(self.renderer->camera());
-    interaction->dolly(d);
+    interaction->pinch(d);
     [self setInteraction:std::move(interaction)];
 }
 

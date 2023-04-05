@@ -25,8 +25,7 @@ float3 computeOrbitOrigin(const float4x4& cameraTransform)
 }
 
 OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
-: _inherited(camera),
-_initialPos(initialPos),
+: PanInteraction(initialPos), CameraInteraction(camera),
 _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(computeOrbitOrigin(_initialCameraTransform)),
 _speed(speed)
@@ -34,9 +33,9 @@ _speed(speed)
 }
 
 void
-OrbitCameraInteraction::orbit(const float2& pt)
+OrbitCameraInteraction::pan(const float2& pt)
 {
-    simd_float2 delta = pt - _initialPos;
+    simd_float2 delta = pt - initialPos();
     
     // yaw
     const auto yaw = matrix4x4_rotation(-delta.x * _speed, float3 { 0, 1, 0 }, _orbitOrigin);
@@ -52,11 +51,11 @@ OrbitCameraInteraction::orbit(const float2& pt)
 }
 
 DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera)
-: _inherited(camera)
+: CameraInteraction(camera)
 {}
 
 void
-DollyCameraInteraction::dolly(float delta)
+DollyCameraInteraction::pinch(float delta)
 {
     auto camera = this->camera();
     
@@ -70,7 +69,7 @@ DollyCameraInteraction::dolly(float delta)
 }
 
 PanCameraInteraction::PanCameraInteraction(const Camera::Ptr& camera, const float2& initialPos)
-: _inherited(camera), _previousPos(initialPos)
+: PanInteraction(initialPos), CameraInteraction(camera), _previousPos(initialPos)
 {
     auto decomp = decompose(camera->worldTransform());
     _right = decomp.right;

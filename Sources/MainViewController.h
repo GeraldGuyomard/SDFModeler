@@ -10,7 +10,7 @@
 
 #import "Renderer.h"
 #import "Object3D.h"
-#import "CameraInteraction.h"
+#import "Interaction.h"
 
 // Our macOS view controller.
 @interface MainViewController : ViewControllerBase
@@ -20,7 +20,7 @@
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) World& world;
 
--(CameraInteraction*) interaction;
--(void)setInteraction:(CameraInteraction::Ptr)interaction;
+-(Interaction*) interaction;
+-(void)setInteraction:(Interaction::Ptr)interaction;
 
 @end

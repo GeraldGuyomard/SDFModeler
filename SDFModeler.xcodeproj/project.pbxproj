@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
+		7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
@@ -92,6 +94,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		7431C49629DD116300DD4A74 /* Interaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interaction.h; sourceTree = "<group>"; };
+		7431C49729DD116300DD4A74 /* Interaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interaction.cpp; sourceTree = "<group>"; };
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
@@ -280,6 +284,8 @@
 				7444A4E229A1CB64009632C3 /* main.m */,
 				74A18A9229D8B7990010F1B4 /* Camera.cpp */,
 				74A18A9329D8B7990010F1B4 /* Camera.h */,
+				7431C49729DD116300DD4A74 /* Interaction.cpp */,
+				7431C49629DD116300DD4A74 /* Interaction.h */,
 				74A18A9629D903050010F1B4 /* CameraInteraction.cpp */,
 				74A18A9729D903050010F1B4 /* CameraInteraction.h */,
 			);
@@ -498,6 +504,7 @@
 				74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
 				7451041729C1538200F69BC4 /* Scene.cpp in Sources */,
+				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
@@ -557,6 +564,7 @@
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
 				74AAF29429D7BCD300D322DB /* Scene.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
+				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74AAF29329D7BCD300D322DB /* World.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
 				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,

@@ -7,6 +7,7 @@
 
 #include "MainViewControllerIOS.h"
 #include <chrono>
+#include "CameraInteraction.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
@@ -94,17 +95,17 @@ using HighResClock = std::chrono::high_resolution_clock;
         {
             const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
             
-            auto interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
+            Interaction::Ptr interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
             [self setInteraction:std::move(interaction)];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto orbitInteraction = dynamic_cast<OrbitCameraInteraction*>(self.interaction))
+            if (auto panInteraction = dynamic_cast<PanInteraction*>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-                orbitInteraction->orbit(p);
+                panInteraction->pan(p);
             }
             break;
         }
@@ -136,7 +137,7 @@ using HighResClock = std::chrono::high_resolution_clock;
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto panInteraction = dynamic_cast<PanCameraInteraction*>(self.interaction))
+            if (auto panInteraction = dynamic_cast<PanInteraction*>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 panInteraction->pan(p);
@@ -171,10 +172,10 @@ using HighResClock = std::chrono::high_resolution_clock;
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto dollyInteraction = dynamic_cast<DollyCameraInteraction*>(self.interaction))
+            if (auto pinchInteraction = dynamic_cast<PinchInteraction*>(self.interaction))
             {
                 const float d = -recognizer.velocity * 0.02f;
-                dollyInteraction->dolly(d);
+                pinchInteraction->pinch(d);
             }
             break;
         }
