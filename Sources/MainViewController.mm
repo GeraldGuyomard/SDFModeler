@@ -20,7 +20,7 @@
     
     World _world;
     
-    CameraController::Ptr _cameraController;
+    CameraInteraction::Ptr _interaction;
 }
 
 static __weak MainViewController* s_Instance = nil;
@@ -30,14 +30,14 @@ static __weak MainViewController* s_Instance = nil;
     return s_Instance;
 }
 
--(CameraController*) cameraController
+-(CameraInteraction*) interaction
 {
-    return _cameraController.get();
+    return _interaction.get();
 }
 
--(void)setCameraController:(CameraController::Ptr)cameraController
+-(void)setInteraction:(CameraInteraction::Ptr)interaction
 {
-    _cameraController = std::move(cameraController);
+    _interaction = std::move(interaction);
 }
 
 - (World&) world

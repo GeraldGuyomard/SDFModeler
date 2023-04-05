@@ -21,8 +21,8 @@
 		74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A8F29D8B67C0010F1B4 /* MainViewControllerIOS.mm */; };
 		74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9229D8B7990010F1B4 /* Camera.cpp */; };
 		74A18A9529D9012A0010F1B4 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9229D8B7990010F1B4 /* Camera.cpp */; };
-		74A18A9829D903050010F1B4 /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9629D903050010F1B4 /* CameraController.cpp */; };
-		74A18A9929D903050010F1B4 /* CameraController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9629D903050010F1B4 /* CameraController.cpp */; };
+		74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9629D903050010F1B4 /* CameraInteraction.cpp */; };
+		74A18A9929D903050010F1B4 /* CameraInteraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9629D903050010F1B4 /* CameraInteraction.cpp */; };
 		74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 74AAF26329D7BBC800D322DB /* AppDelegate.m */; };
 		74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF26E29D7BBC800D322DB /* Main.storyboard */; };
 		74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74AAF27129D7BBC900D322DB /* Assets.xcassets */; };
@@ -118,8 +118,8 @@
 		74A18A9029D8B67C0010F1B4 /* MainViewControllerIOS.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MainViewControllerIOS.h; sourceTree = "<group>"; };
 		74A18A9229D8B7990010F1B4 /* Camera.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Camera.cpp; sourceTree = "<group>"; };
 		74A18A9329D8B7990010F1B4 /* Camera.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Camera.h; sourceTree = "<group>"; };
-		74A18A9629D903050010F1B4 /* CameraController.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CameraController.cpp; sourceTree = "<group>"; };
-		74A18A9729D903050010F1B4 /* CameraController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraController.h; sourceTree = "<group>"; };
+		74A18A9629D903050010F1B4 /* CameraInteraction.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CameraInteraction.cpp; sourceTree = "<group>"; };
+		74A18A9729D903050010F1B4 /* CameraInteraction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraInteraction.h; sourceTree = "<group>"; };
 		74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler iOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		74AAF26229D7BBC800D322DB /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		74AAF26329D7BBC800D322DB /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -280,8 +280,8 @@
 				7444A4E229A1CB64009632C3 /* main.m */,
 				74A18A9229D8B7990010F1B4 /* Camera.cpp */,
 				74A18A9329D8B7990010F1B4 /* Camera.h */,
-				74A18A9629D903050010F1B4 /* CameraController.cpp */,
-				74A18A9729D903050010F1B4 /* CameraController.h */,
+				74A18A9629D903050010F1B4 /* CameraInteraction.cpp */,
+				74A18A9729D903050010F1B4 /* CameraInteraction.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -510,7 +510,7 @@
 				74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */,
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
-				74A18A9829D903050010F1B4 /* CameraController.cpp in Sources */,
+				74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
@@ -562,7 +562,7 @@
 				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,
 				74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */,
 				74AAF28729D7BCB100D322DB /* SDFBox.cpp in Sources */,
-				74A18A9929D903050010F1B4 /* CameraController.cpp in Sources */,
+				74A18A9929D903050010F1B4 /* CameraInteraction.cpp in Sources */,
 				74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

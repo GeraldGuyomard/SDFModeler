@@ -23,10 +23,10 @@ using HighResClock = std::chrono::high_resolution_clock;
     tapRecognizer.numberOfTapsRequired = 1;
     [self.view addGestureRecognizer:tapRecognizer];
     
-    UIPanGestureRecognizer* orbitRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onOrbit:)];
-    orbitRecognizer.minimumNumberOfTouches = 1;
-    orbitRecognizer.maximumNumberOfTouches = 1;
-    [self.view addGestureRecognizer:orbitRecognizer];
+    UIPanGestureRecognizer* panOneFingerRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanOneFinger:)];
+    panOneFingerRecognizer.minimumNumberOfTouches = 1;
+    panOneFingerRecognizer.maximumNumberOfTouches = 1;
+    [self.view addGestureRecognizer:panOneFingerRecognizer];
 
     UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
     panRecognizer.minimumNumberOfTouches = 2;
@@ -84,7 +84,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     }
 }
 
-- (void)onOrbit:(UIPanGestureRecognizer*)recognizer
+- (void)onPanOneFinger:(UIPanGestureRecognizer*)recognizer
 {
     auto camera = self.renderer->camera();
     
@@ -93,17 +93,18 @@ using HighResClock = std::chrono::high_resolution_clock;
         case UIGestureRecognizerStateBegan:
         {
             const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-            auto camController = std::make_unique<OrbitCameraController>(camera, p, 2e-3f);
-            [self setCameraController:std::move(camController)];
+            
+            auto interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
+            [self setInteraction:std::move(interaction)];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto orbitController = dynamic_cast<OrbitCameraController*>(self.cameraController))
+            if (auto orbitInteraction = dynamic_cast<OrbitCameraInteraction*>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-                orbitController->orbit(p);
+                orbitInteraction->orbit(p);
             }
             break;
         }
@@ -111,7 +112,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded:
         {
-            [self setCameraController:nullptr];
+            [self setInteraction:nullptr];
             break;
         }
             
@@ -128,17 +129,17 @@ using HighResClock = std::chrono::high_resolution_clock;
         case UIGestureRecognizerStateBegan:
         {
             const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-            auto camController = std::make_unique<PanCameraController>(camera, p);
-            [self setCameraController:std::move(camController)];
+            auto interaction = std::make_unique<PanCameraInteraction>(camera, p);
+            [self setInteraction:std::move(interaction)];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto panController = dynamic_cast<PanCameraController*>(self.cameraController))
+            if (auto panInteraction = dynamic_cast<PanCameraInteraction*>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-                panController->pan(p);
+                panInteraction->pan(p);
             }
             break;
         }
@@ -146,7 +147,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded:
         {
-            [self setCameraController:nullptr];
+            [self setInteraction:nullptr];
             break;
         }
             
@@ -163,17 +164,17 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         case UIGestureRecognizerStateBegan:
         {
-            auto camController = std::make_unique<DollyCameraController>(camera);
-            [self setCameraController:std::move(camController)];
+            auto interaction = std::make_unique<DollyCameraInteraction>(camera);
+            [self setInteraction:std::move(interaction)];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto dollyController = dynamic_cast<DollyCameraController*>(self.cameraController))
+            if (auto dollyInteraction = dynamic_cast<DollyCameraInteraction*>(self.interaction))
             {
                 const float d = -recognizer.velocity * 0.02f;
-                dollyController->dolly(d);
+                dollyInteraction->dolly(d);
             }
             break;
         }
@@ -181,7 +182,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateEnded:
         {
-            [self setCameraController:nullptr];
+            [self setInteraction:nullptr];
             break;
         }
             

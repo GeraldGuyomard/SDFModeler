@@ -34,30 +34,30 @@
     
     const auto initialPos = [self position:event.locationInWindow];
     
-    CameraController::Ptr cameraController;
+    CameraInteraction::Ptr interaction;
     const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
     if (shift)
     {
-        cameraController = std::make_unique<PanCameraController>(camera, initialPos);
+        interaction = std::make_unique<PanCameraInteraction>(camera, initialPos);
     }
     else
     {
-        cameraController = std::make_unique<OrbitCameraController>(camera, initialPos);
+        interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
     }
     
-    [self setCameraController:std::move(cameraController)];
+    [self setInteraction:std::move(interaction)];
 }
 
 - (void)mouseDragged:(NSEvent *)event
 {
     const auto pos = [self position:event.locationInWindow];
     
-    auto cameraController = self.cameraController;
-    if (auto orbit = dynamic_cast<OrbitCameraController*>(cameraController))
+    auto interaction = self.interaction;
+    if (auto orbit = dynamic_cast<OrbitCameraInteraction*>(interaction))
     {
         orbit->orbit(pos);
     }
-    else if (auto pan = dynamic_cast<PanCameraController*>(cameraController))
+    else if (auto pan = dynamic_cast<PanCameraInteraction*>(interaction))
     {
         pan->pan(pos);
     }
@@ -65,16 +65,16 @@
 
 - (void)mouseUp:(NSEvent *)event
 {
-    [self setCameraController:nullptr];
+    [self setInteraction:nullptr];
 }
 
 - (void)scrollWheel:(NSEvent*)event
 {
     float d = event.scrollingDeltaY / 1000.f;
     
-    auto camController = std::make_unique<DollyCameraController>(self.renderer->camera());
-    camController->dolly(d);
-    [self setCameraController:std::move(camController)];
+    auto interaction = std::make_unique<DollyCameraInteraction>(self.renderer->camera());
+    interaction->dolly(d);
+    [self setInteraction:std::move(interaction)];
 }
 
 @end

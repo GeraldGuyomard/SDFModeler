@@ -5,9 +5,9 @@
 //  Created by Gérald Guyomard on 4/1/23.
 //
 
-#include "CameraController.h"
+#include "CameraInteraction.h"
 
-CameraController::CameraController(const Camera::Ptr& camera)
+CameraInteraction::CameraInteraction(const Camera::Ptr& camera)
 : _camera(camera)
 {}
 
@@ -24,7 +24,7 @@ float3 computeOrbitOrigin(const float4x4& cameraTransform)
 
 }
 
-OrbitCameraController::OrbitCameraController(const Camera::Ptr& camera, const float2& initialPos, float speed)
+OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
 : _inherited(camera),
 _initialPos(initialPos),
 _initialCameraTransform(camera->worldTransform()),
@@ -34,7 +34,7 @@ _speed(speed)
 }
 
 void
-OrbitCameraController::orbit(const float2& pt)
+OrbitCameraInteraction::orbit(const float2& pt)
 {
     simd_float2 delta = pt - _initialPos;
     
@@ -51,12 +51,12 @@ OrbitCameraController::orbit(const float2& pt)
     camera()->setWorldTransform(newTransform);
 }
 
-DollyCameraController::DollyCameraController(const Camera::Ptr& camera)
+DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera)
 : _inherited(camera)
 {}
 
 void
-DollyCameraController::dolly(float delta)
+DollyCameraInteraction::dolly(float delta)
 {
     auto camera = this->camera();
     
@@ -69,7 +69,7 @@ DollyCameraController::dolly(float delta)
     camera->setWorldTransform(transform);
 }
 
-PanCameraController::PanCameraController(const Camera::Ptr& camera, const float2& initialPos)
+PanCameraInteraction::PanCameraInteraction(const Camera::Ptr& camera, const float2& initialPos)
 : _inherited(camera), _previousPos(initialPos)
 {
     auto decomp = decompose(camera->worldTransform());
@@ -78,7 +78,7 @@ PanCameraController::PanCameraController(const Camera::Ptr& camera, const float2
 }
 
 void
-PanCameraController::pan(const float2& pos)
+PanCameraInteraction::pan(const float2& pos)
 {
     float2 delta = pos - _previousPos;
     constexpr float k = -2e-3f;
