@@ -55,12 +55,21 @@ using HighResClock = std::chrono::high_resolution_clock;
     });
 }
 
+- (float2) convertPointToPixel:(CGPoint)pt
+{
+    UIView* view = self.view;
+    CAMetalLayer* metalLayer = (CAMetalLayer*) view.layer;
+    
+    const float contentScale = metalLayer.contentsScale;
+    
+    return { float(pt.x) * contentScale, float(pt.y) * contentScale };
+}
+
 - (void)onTap:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
     {
-        const auto pos = [recognizer locationInView:self.view];
-        const float2 p { float(pos.x), float(pos.y) };
+        const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
         
         const auto id = self.renderer->pickObject(p);
         NSLog(@"ObjectID = %d\n", id);
@@ -80,8 +89,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         case UIGestureRecognizerStateBegan:
         {
-            const auto pos = [recognizer locationInView:self.view];
-            const float2 p { float(pos.x), float(pos.y) };
+            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
             auto camController = std::make_unique<OrbitCameraController>(camera, p, 2e-3f);
             [self setCameraController:std::move(camController)];
             break;
@@ -91,9 +99,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         {
             if (auto orbitController = dynamic_cast<OrbitCameraController*>(self.cameraController))
             {
-                const auto pos = [recognizer locationInView:self.view];
-                const float2 p { float(pos.x), float(pos.y) };
-                
+                const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 orbitController->orbit(p);
             }
             break;
@@ -118,8 +124,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         case UIGestureRecognizerStateBegan:
         {
-            const auto pos = [recognizer locationInView:self.view];
-            const float2 p { float(pos.x), float(pos.y) };
+            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
             auto camController = std::make_unique<PanCameraController>(camera, p);
             [self setCameraController:std::move(camController)];
             break;
@@ -129,9 +134,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         {
             if (auto panController = dynamic_cast<PanCameraController*>(self.cameraController))
             {
-                const auto pos = [recognizer locationInView:self.view];
-                const float2 p { float(pos.x), float(pos.y) };
-                
+                const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 panController->pan(p);
             }
             break;
@@ -197,19 +200,21 @@ using HighResClock = std::chrono::high_resolution_clock;
     metalLayer.drawableSize = drawableSize;
 }
 
+static constexpr CGFloat kContentScaleFactor = 2.f;
+
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     const CGSize size = self.view.bounds.size;
-    [self setContentScaleFactor:1.f size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [self setContentScaleFactor:1.f size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 
