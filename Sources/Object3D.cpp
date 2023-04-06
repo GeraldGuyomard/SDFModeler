@@ -54,7 +54,21 @@ Object3DCollection::objectIDs() const
         ids.insert(object->id());
     }
     
-    return std::move(ids);
+    return ids;
+}
+
+bool
+Object3DCollection::contains(const Object3D::Ptr& object) const
+{
+    for (const auto& o : _objects)
+    {
+        if (o == object)
+        {
+            return true;
+        }
+    }
+    
+    return false;
 }
 
 void

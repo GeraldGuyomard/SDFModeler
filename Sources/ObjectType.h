@@ -7,6 +7,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
+#include "Ray.h"
 
 enum class ObjectType : int64_t
 {
@@ -23,8 +24,39 @@ enum class ObjectType : int64_t
 
 using ObjectID = uint32_t;
 
-struct PickResult
+class RayMarchResult
 {
+public:
+    const Ray ray;
+    
+    ObjectID objectID = 0;
+    float4 color = { 0 };
+    float distance = -1;
+    
+    RayMarchResult(Ray ray)
+    : ray(ray)
+    {}
+    
+    RayMarchResult(Ray ray, ObjectID objectID, float4 color,  float distance)
+    : ray(ray), objectID(objectID), color(color), distance(distance)
+    {}
+    
+    bool isValid() const
+    {
+        return distance >= 0;
+    }
+};
+
+class PickResult
+{
+public:
     ObjectID objectID = 0;
     float3 position = { 0 };
+    
+    PickResult() = default;
+    
+    PickResult(ObjectID objectID, float3 position)
+    : objectID(objectID), position(position)
+    {}
+    
 };

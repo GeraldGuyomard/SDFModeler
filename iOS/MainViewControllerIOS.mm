@@ -106,16 +106,21 @@ using HighResClock = std::chrono::high_resolution_clock;
             Interaction::Ptr interaction;
             
             const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-            const auto selection = [self selectionFromPosition:p];
             
-            if (selection.empty())
+            const auto pickResult = self.renderer->pick(p);
+            
+            if (auto object = self.world.objectByID(pickResult.objectID))
+            {
+                const Selection selection = self.world.selection();
+                if (selection.contains(object))
+                {
+                    interaction = std::make_unique<DragObject3DInteraction>(object, pickResult.position, p, *self.renderer);
+                }
+            }
+            
+            if (interaction == nullptr)
             {
                 interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
-            }
-            else
-            {
-                self.world.setSelection(selection);
-                interaction = std::make_unique<DragObject3DInteraction>(selection.objects().front(), p, *self.renderer);
             }
             
             [self setInteraction:std::move(interaction)];

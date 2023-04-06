@@ -63,7 +63,7 @@ public:
     : _serializedObjects(serializedObjects), _shader(shader)
     {}
     
-    SDFResult rayMarch(Ray ray) const
+    RayMarchResult rayMarch(Ray ray) const
     {
         size_t nbObjects = 0;
         CONSTANT ObjectHeader* headers[kNbObjectsMax];
@@ -145,7 +145,7 @@ public:
         {
             if (!hit || (outlineHeader != minHeader))
             {
-                return { minHeader->objectId, 0, float4{1, 1, 1, 1} };
+                return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
         
@@ -155,10 +155,10 @@ public:
             MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
             const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
             
-            return { minHeader->objectId, minDistance, color };
+            return RayMarchResult { ray, minHeader->objectId, color, d };
         }
         
-        return {};
+        return RayMarchResult { ray };
     }
     
 private:

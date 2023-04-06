@@ -67,6 +67,16 @@ public:
     float extraCullingMargin() const { return _extraCullingMargin; }
     void setExtraCullingMargin(float m) { _extraCullingMargin = m; }
     
+    float4x4 transform() const
+    {
+        return _transformer.transform();
+    }
+    
+    void setTransform(float4x4 transform)
+    {
+        return _transformer.setTransform(transform);
+    }
+    
 private:
     TGeometry _geometry;
     TTransformer _transformer;

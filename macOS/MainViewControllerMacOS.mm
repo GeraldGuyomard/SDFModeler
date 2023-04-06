@@ -8,6 +8,7 @@
 #include "MainViewControllerMacOS.h"
 #include "World.h"
 #include "CameraInteraction.h"
+#include "Object3DInteraction.h"
 
 @implementation MainViewControllerMacOS
 
@@ -45,9 +46,13 @@
         Selection selection;
         selection.addObject(object);
         world.setSelection(selection);
+        
+        interaction = std::make_unique<DragObject3DInteraction>(object, result.position, initialPos, *self.renderer);
     }
     else
     {
+        world.setSelection({});
+        
         // camera
         const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
         if (shift)

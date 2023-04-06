@@ -39,6 +39,16 @@ public:
         return TTransformer::transformerType();
     }
     
+    float4x4 transform() const override
+    {
+        return _transformer.transform();
+    }
+    
+    void setTransform(const float4x4& transform) override
+    {
+        _transformer.setTransform(transform);
+    }
+    
     size_t serialize(uint8_t* ptr) const override
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;

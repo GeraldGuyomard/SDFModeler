@@ -19,31 +19,31 @@
 #include "FragmentShader/CellShader.h"
 
 template <typename TShader>
-INLINE SDFResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
+INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
     Plane grid({}, { float3(-0.5f) });
     
-    SDFResult res;
+    RayMarchResult res { ray };
     res.distance = grid.raycast(ray);
+    
     if ((res.distance >= 0) && (res.distance <= ray.maxLength))
     {
-        const float3 p = ray.pt(res.distance);
-        
         constexpr float kGridGreyLevel = 0.5f;
         const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
         GridMaterial mat(0.5f, color);
         
-        res.color = mat.computeAlbedo(ray, res.distance, p);
+        const auto pt = ray.pt(res.distance);
+        res.color = mat.computeAlbedo(ray, res.distance, pt);
         return res;
     }
     else
     {
-        return {};
+        return { ray };
     }
 }
 
 template <typename TShader>
-INLINE SDFResult computeSDF(float2 viewportNDC,
+INLINE RayMarchResult rayMarch(float2 viewportNDC,
                             CONSTANT Uniforms& uniforms,
                             CONSTANT SerializedWorld& serializedWorld,
                             CONSTANT Materials& materials)
@@ -58,7 +58,7 @@ INLINE SDFResult computeSDF(float2 viewportNDC,
     
     if (contentRes.isValid())
     {
-        if (envRes.isColorValid())
+        if (envRes.isValid())
         {
             return (contentRes.distance <= envRes.distance) ? contentRes : envRes;
         }
@@ -67,12 +67,12 @@ INLINE SDFResult computeSDF(float2 viewportNDC,
             return contentRes;
         }
     }
-    else if (envRes.isColorValid())
+    else if (envRes.isValid())
     {
         return envRes;
     }
     
-    return {};
+    return { ray };
 }
 
 template <typename TShader>
@@ -81,8 +81,8 @@ INLINE float4 render(float2 viewportNDC,
                      CONSTANT SerializedWorld& serializedWorld,
                      CONSTANT Materials& materials)
 {
-    const auto res = computeSDF<TShader>(viewportNDC, uniforms, serializedWorld, materials);
-    if (res.isColorValid())
+    const auto res = rayMarch<TShader>(viewportNDC, uniforms, serializedWorld, materials);
+    if (res.isValid())
     {
         return res.color;
     }
@@ -123,16 +123,12 @@ INLINE PickResult pickObject(float2 viewportNDC,
                            CONSTANT SerializedWorld& serializedWorld,
                            CONSTANT Materials& materials)
 {
-    const auto res = computeSDF<NoShader>(viewportNDC, uniforms, serializedWorld, materials);
+    const auto res = rayMarch<NoShader>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.objectID != 0)
     {
         Ray ray = Ray::make(viewportNDC, uniforms);
         
-        PickResult result;
-        result.objectID = res.objectID;
-        result.position = ray.pt(res.distance);
-        
-        return result;
+        return { res.objectID, ray.pt(res.distance) };
     }
     else
     {

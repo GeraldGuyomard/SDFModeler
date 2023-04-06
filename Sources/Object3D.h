@@ -50,6 +50,9 @@ public:
     
     MaterialID materialID() const;
     
+    virtual float4x4 transform() const = 0;
+    virtual void setTransform(const float4x4&) = 0;
+    
     virtual bool selected() const = 0;
     virtual void setSelected(bool selected) = 0;
     
@@ -77,6 +80,16 @@ public:
     TransformerType transformerType() const override
     {
         return TPrimitive::Transformer::transformerType();
+    }
+    
+    float4x4 transform() const override
+    {
+        return _primitive.transform();
+    }
+    
+    void setTransform(const float4x4& transform) override
+    {
+        _primitive.setTransform(transform);
     }
     
     bool selected() const override
@@ -141,6 +154,8 @@ public:
     const std::vector<Object3D::Ptr>& objects() const { return _objects; }
     
     std::set<ObjectID> objectIDs() const;
+    
+    bool contains(const Object3D::Ptr&) const;
     
 private:
     std::vector<Object3D::Ptr> _objects;
