@@ -21,12 +21,15 @@ public:
     void addAdditiveObject(Object3D::Ptr object)
     {
         object->setId(id());
-        _additiveObjects.push_back(std::move(object));
+        _additiveObjects.push_back(object);
+        
+        object->setParent(shared_from_this());
     }
     
     void addSubstractiveObject(Object3D::Ptr object)
     {
-        _substractiveObjects.push_back(std::move(object));
+        _substractiveObjects.push_back(object);
+        object->setParent(shared_from_this());
     }
     
     ObjectType objectType() const override
@@ -39,12 +42,12 @@ public:
         return TTransformer::transformerType();
     }
     
-    float4x4 transform() const override
+    float4x4 localTransform() const override
     {
         return _transformer.transform();
     }
     
-    void setTransform(const float4x4& transform) override
+    void setLocalTransform(const float4x4& transform) override
     {
         _transformer.setTransform(transform);
     }
@@ -53,12 +56,14 @@ public:
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
+        const TTransformer transformer { worldTransform() };
+        
         float extraCullingMargin = _selected ? kOutlineThickness : 0;
         SDFSerializedComposition<TTransformer> serializedComp
         {
             _additiveObjects.size(),
             _substractiveObjects.size(),
-            _transformer,
+            transformer,
             materialID(),
             extraCullingMargin
         };

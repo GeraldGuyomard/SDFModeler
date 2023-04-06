@@ -30,10 +30,11 @@ private:
     SimpleMaterial _material;
 };
 
-class Object3D
+class Object3D : public std::enable_shared_from_this<Object3D>
 {
 public:
     using Ptr = std::shared_ptr<Object3D>;
+    using WPtr = std::weak_ptr<Object3D>;
     
     virtual ~Object3D() = default;
     
@@ -50,11 +51,19 @@ public:
     
     MaterialID materialID() const;
     
-    virtual float4x4 transform() const = 0;
-    virtual void setTransform(const float4x4&) = 0;
+    Ptr parent() const { return _parent.lock(); }
+    
+    float4x4 worldTransform() const;
+    void setWorldTransform(const float4x4&);
+    
+    virtual float4x4 localTransform() const = 0;
+    virtual void setLocalTransform(const float4x4&) = 0;
     
     virtual bool selected() const = 0;
     virtual void setSelected(bool selected) = 0;
+    
+public:
+    void setParent(const Ptr&);
     
 protected:
     virtual void onMaterialChange() {}
@@ -62,6 +71,8 @@ protected:
 private:
     ObjectID _id = 0;
     Material3D::Ptr _material;
+    
+    Object3D::WPtr _parent;
 };
 
 template <typename TPrimitive>
@@ -82,12 +93,12 @@ public:
         return TPrimitive::Transformer::transformerType();
     }
     
-    float4x4 transform() const override
+    float4x4 localTransform() const override
     {
         return _primitive.transform();
     }
     
-    void setTransform(const float4x4& transform) override
+    void setLocalTransform(const float4x4& transform) override
     {
         _primitive.setTransform(transform);
     }
@@ -105,7 +116,7 @@ public:
     
     size_t serialize(uint8_t* ptr) const final override
     {
-        const auto transformer = _primitive.transformer();
+        typename TPrimitive::Transformer transformer { worldTransform() };
         
         /*const auto geometry = _primitive.geometry();
         const auto material = _primitive.material();
@@ -125,7 +136,10 @@ public:
         }
         else*/
         {
-            return serializeObject<TPrimitive>(ptr, _primitive, id(), objectType(), transformer.transformerType(), _selected);
+            auto primitive = _primitive;
+            primitive.setTransformer(transformer);
+            
+            return serializeObject<TPrimitive>(ptr, primitive, id(), objectType(), transformer.transformerType(), _selected);
         }
     }
     

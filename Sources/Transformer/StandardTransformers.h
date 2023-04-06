@@ -104,6 +104,8 @@ public:
     : _translation(translation), _invRotTransform(matrix3x3_rotation(-angle, rotationAxis)), _scale(scale)
     {}
     
+    RSTTransformer(float4x4 transform);
+    
     static TransformerType transformerType()
     {
         return TransformerType::translationScaleRotation;

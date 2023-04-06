@@ -59,7 +59,9 @@ public:
     }
     
     TGeometry geometry() const { return _geometry; }
+    
     TTransformer transformer() const { return _transformer; }
+    void setTransformer(TTransformer transformer) { _transformer = transformer; }
     
     MaterialID materialID() const { return _materialID; }
     void setMaterialID(MaterialID id) { _materialID = id; }

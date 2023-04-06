@@ -39,6 +39,39 @@ Object3D::materialID() const
 }
 
 void
+Object3D::setParent(const Ptr& parent)
+{
+    _parent = parent;
+}
+
+float4x4
+Object3D::worldTransform() const
+{
+    if (auto parent = this->parent())
+    {
+        return parent->worldTransform() * localTransform();
+    }
+    else
+    {
+        return localTransform();
+    }
+}
+
+void
+Object3D::setWorldTransform(const float4x4& transform)
+{
+    if (auto parent = this->parent())
+    {
+        const auto localTransform = inverse(parent->worldTransform()) * transform;
+        setLocalTransform(localTransform);
+    }
+    else
+    {
+        return setLocalTransform(transform);
+    }
+}
+
+void
 Object3DCollection::addObject(Object3D::Ptr object)
 {
     _objects.push_back(std::move(object));

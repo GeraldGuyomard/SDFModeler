@@ -16,7 +16,7 @@ DragObject3DInteraction::DragObject3DInteraction(const Object3D::Ptr& object,
 _object(object),
 _hitPos3D(hitPos3D),
 _renderer(renderer),
-_initialTransform(object->transform())
+_initialTransform(object->worldTransform())
 {}
 
 void
@@ -34,5 +34,5 @@ DragObject3DInteraction::pan(const float2& pos)
     
     setTranslation(transform, newPos);
     
-    _object->setTransform(transform);
+    _object->setWorldTransform(transform);
 }
