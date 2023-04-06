@@ -8,6 +8,7 @@
 #include "MainViewControllerIOS.h"
 #include <chrono>
 #include "CameraInteraction.h"
+#include "Object3DInteraction.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
@@ -29,7 +30,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     panOneFingerRecognizer.maximumNumberOfTouches = 1;
     [self.view addGestureRecognizer:panOneFingerRecognizer];
 
-    UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPan:)];
+    UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
     panRecognizer.minimumNumberOfTouches = 2;
     [self.view addGestureRecognizer:panRecognizer];
     
@@ -66,22 +67,31 @@ using HighResClock = std::chrono::high_resolution_clock;
     return { float(pt.x) * contentScale, float(pt.y) * contentScale };
 }
 
+- (Selection)selectionFromPosition:(float2)pt
+{
+    const auto pickResult = self.renderer->pick(pt);
+    NSLog(@"ObjectID = %d\n", pickResult.objectID);
+    
+    Selection selection;
+    if (auto object = self.world.objectByID(pickResult.objectID))
+    {
+        selection.addObject(object);
+    }
+    
+    return selection;
+}
+
+- (void)selectObjectAtPosition:(float2)pt
+{
+    self.world.setSelection([self selectionFromPosition:pt]);
+}
+
 - (void)onTap:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
     {
         const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-        
-        const auto id = self.renderer->pickObject(p);
-        NSLog(@"ObjectID = %d\n", id);
-        
-        Selection selection;
-        if (auto object = self.world.objectByID(id))
-        {
-            selection.addObject(object);
-        }
-        
-        self.world.setSelection(selection);
+        [self selectObjectAtPosition:p];
     }
 }
 
@@ -93,9 +103,21 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         case UIGestureRecognizerStateBegan:
         {
-            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+            Interaction::Ptr interaction;
             
-            Interaction::Ptr interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
+            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+            const auto selection = [self selectionFromPosition:p];
+            
+            if (selection.empty())
+            {
+                interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
+            }
+            else
+            {
+                self.world.setSelection(selection);
+                interaction = std::make_unique<DragObject3DInteraction>(selection.objects().front(), p, *self.renderer);
+            }
+            
             [self setInteraction:std::move(interaction)];
             break;
         }
@@ -121,7 +143,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     }
 }
 
-- (void)onPan:(UIPanGestureRecognizer*)recognizer
+- (void)onPanTwoFingers:(UIPanGestureRecognizer*)recognizer
 {
     auto camera = self.renderer->camera();
     

@@ -15,10 +15,10 @@
 {
     const auto p = [self position:[self.view convertPoint:event.locationInWindow fromView:nil]];
     
-    const auto id = self.renderer->pickObject(p);
+    const auto res = self.renderer->pick(p);
     const auto pixel = self.renderer->renderPixel(p);
     
-    NSLog(@"ObjectID = %d\n R=%1.4f G=%1.4f B=%1.4f A=%1.4f", id, pixel.x, pixel.y, pixel.z, pixel.w);
+    NSLog(@"ObjectID = %d\n R=%1.4f G=%1.4f B=%1.4f A=%1.4f", res.objectID, pixel.x, pixel.y, pixel.z, pixel.w);
 }
 
 - (float2) position:(CGPoint)position
@@ -36,14 +36,28 @@
     const auto initialPos = [self position:event.locationInWindow];
     
     Interaction::Ptr interaction;
-    const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
-    if (shift)
+    
+    auto& world = self.world;
+    
+    const auto result = self.renderer->pick(initialPos);
+    if (auto object = world.objectByID(result.objectID))
     {
-        interaction = std::make_unique<PanCameraInteraction>(camera, initialPos);
+        Selection selection;
+        selection.addObject(object);
+        world.setSelection(selection);
     }
     else
     {
-        interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
+        // camera
+        const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
+        if (shift)
+        {
+            interaction = std::make_unique<PanCameraInteraction>(camera, initialPos);
+        }
+        else
+        {
+            interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
+        }
     }
     
     [self setInteraction:std::move(interaction)];

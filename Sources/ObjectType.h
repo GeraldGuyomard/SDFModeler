@@ -22,3 +22,9 @@ enum class ObjectType : int64_t
 };
 
 using ObjectID = uint32_t;
+
+struct PickResult
+{
+    ObjectID objectID = 0;
+    float3 position = { 0 };
+};

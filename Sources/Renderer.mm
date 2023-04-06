@@ -315,8 +315,18 @@ Renderer::onRenderSizeChanged(const CGSize& size)
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
 
-ObjectID
-Renderer::pickObject(float2 pixelPosition) const
+Ray
+Renderer::ray(float2 pixelPosition) const
+{
+    const auto size = renderSize();
+    const auto p = pixelToNDC(size, pixelPosition);
+    
+    const auto ray = Ray::make(p, uniforms());
+    return ray;
+}
+
+PickResult
+Renderer::pick(float2 pixelPosition) const
 {
     const auto& uniforms = this->uniforms();
     const auto& serializedWorld = this->serializedWorld();

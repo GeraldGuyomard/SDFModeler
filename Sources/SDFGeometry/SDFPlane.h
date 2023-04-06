@@ -10,17 +10,28 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "ObjectType.h"
 
+INLINE float planeIntersection(Ray ray, float3 origin, float3 normal)
+{
+    // https://en.wikipedia.org/wiki/Line–plane_intersection
+    // d = (p0 - l0) . n / (l . n)
+    const float denum = dot(normal, ray.direction);
+    const float d = dot((origin - ray.origin), normal) / denum;
+    return d;
+}
+
 class SDFPlane final
 {
 public:
     
     static ObjectType objectType() { return ObjectType::plane; }
     
-    SDFPlane() = default;
+    SDFPlane(float3 origin = {0})
+    : _origin(origin)
+    {}
     
     float computeDistance(float3 p) const
     {
-        return p.y;
+        return (p - _origin).y;
     }
     
     bool evaluateCulling(Ray ray, float outlineThickness) const
@@ -32,12 +43,9 @@ public:
     
     float raycast(Ray ray) const
     {
-        // https://en.wikipedia.org/wiki/Line–plane_intersection
-        // d = (p0 - l0) . n / (l . n)
-        // p0 = (0, 0, 0), n = (0, 1, 0)
-        // -> -l0. y / l.y
-        const float d = -ray.origin.y / ray.direction.y;
-        return d;
+        return planeIntersection(ray, _origin, float3 { 0, 1, 0} );
     }
+    
+private:
+    float3 _origin;
 };
-

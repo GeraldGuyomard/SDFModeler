@@ -137,6 +137,7 @@ public:
     
     void serialize(SerializedObjects&) const;
     
+    bool empty() const { return _objects.empty(); }
     const std::vector<Object3D::Ptr>& objects() const { return _objects; }
     
     std::set<ObjectID> objectIDs() const;

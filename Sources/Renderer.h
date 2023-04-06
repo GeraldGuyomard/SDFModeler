@@ -78,7 +78,8 @@ public:
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
     
-    ObjectID pickObject(float2 pixelPosition) const;
+    Ray ray(float2 pixelPosition) const;
+    PickResult pick(float2 pixelPosition) const;
     float4 renderPixel(float2 pixelPosition) const;
     
 public:

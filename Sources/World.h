@@ -118,11 +118,24 @@ INLINE float4 renderDefault(float2 viewportNDC,
     return renderPhong(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE ObjectID pickObject(float2 viewportNDC,
+INLINE PickResult pickObject(float2 viewportNDC,
                            CONSTANT Uniforms& uniforms,
                            CONSTANT SerializedWorld& serializedWorld,
                            CONSTANT Materials& materials)
 {
     const auto res = computeSDF<NoShader>(viewportNDC, uniforms, serializedWorld, materials);
-    return res.objectID;
+    if (res.objectID != 0)
+    {
+        Ray ray = Ray::make(viewportNDC, uniforms);
+        
+        PickResult result;
+        result.objectID = res.objectID;
+        result.position = ray.pt(res.distance);
+        
+        return result;
+    }
+    else
+    {
+        return {};
+    }
 }

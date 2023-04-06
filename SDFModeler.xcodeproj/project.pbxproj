@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
+		7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
+		7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
@@ -96,6 +98,8 @@
 /* Begin PBXFileReference section */
 		7431C49629DD116300DD4A74 /* Interaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interaction.h; sourceTree = "<group>"; };
 		7431C49729DD116300DD4A74 /* Interaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interaction.cpp; sourceTree = "<group>"; };
+		7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Object3DInteraction.mm; sourceTree = "<group>"; };
+		7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3DInteraction.h; sourceTree = "<group>"; };
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
@@ -288,6 +292,8 @@
 				7431C49629DD116300DD4A74 /* Interaction.h */,
 				74A18A9629D903050010F1B4 /* CameraInteraction.cpp */,
 				74A18A9729D903050010F1B4 /* CameraInteraction.h */,
+				7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */,
+				7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -511,6 +517,7 @@
 				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
+				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
 				74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */,
@@ -535,6 +542,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* SimpleMaterial.cpp in Sources */,
 				74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */,
