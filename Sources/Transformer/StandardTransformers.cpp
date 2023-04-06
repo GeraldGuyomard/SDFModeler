@@ -32,10 +32,8 @@ RSTTransformer::setTransform(float4x4 m)
     float3x3 rot;
     for (size_t i=0; i < 3; ++i)
     {
-        rot.columns[i] = float3 {
-            m.columns[i].x,
-            m.columns[i].y,
-            m.columns[i].z };
+        const float3 v = m.columns[i].xyz / _scale;
+        rot.columns[i] = v;
     }
     _invRotTransform = inverse(rot);
     
