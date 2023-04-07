@@ -108,35 +108,38 @@ static __weak MainViewController* s_Instance = nil;
     greenSphere->setMaterial(green);
     _world.addObject(greenSphere);
     
+    const float3 compositionOrigin { -2., 0.f, kZ + 0.5f };
+    
     auto spherePart = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.4f }, // geom
-        { float3 { -2., 0.6, kZ + 0.5f } }
+        { float3 { 0, 0.6f, 0 } }
     });
     
     auto boxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
-        { float3 { -2., 0, kZ + 0.5f } } // transform
+        { float3 { 0, 0, 0 } } // transform
     });
     
     auto negativeSpherePart = std::make_shared<TObject3D<Sphere>>(Sphere
     {
         { 0.4f }, // geom
-        { float3 { -2., 0.25, kZ + 1.f } } // transform
+        { float3 { 0, 0.25, 0.5f } } // transform
     });
     negativeSpherePart->setOperation(Object3D::Operation::substraction);
     
     auto negativeRoundedBoxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.1f, 0.1f, 0.3f }, 0.05f }, // geom
-        { float3 { -2., -0.5, kZ + 1.f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
+        { float3 { 0, -0.5f, 0.5f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
     });
     negativeRoundedBoxPart->setOperation(Object3D::Operation::substraction);
     
     auto sdfUnionMaterial = _world.addMaterial(float4 { 0, 1, 1, 1 });
     auto sdfUnion = std::make_shared<Composition3D>();
     sdfUnion->setMaterial(sdfUnionMaterial);
+    sdfUnion->setLocalTransform(matrix4x4_translation(compositionOrigin));
     
     sdfUnion->addChild(spherePart);
     sdfUnion->addChild(boxPart);
