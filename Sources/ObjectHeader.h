@@ -33,7 +33,7 @@ struct ObjectHeader final
     uint8_t   firstByte;
     
     ObjectHeader(size_t byteSize, ObjectID id, ObjectType objectType, TransformerType transformerType)
-    : byteSize(byteSize), objectId(id), objectCode(computeObjectCode(objectType, transformerType))
+    : byteSize(uint32_t(byteSize)), objectId(id), objectCode(computeObjectCode(objectType, transformerType))
     {}
     
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
