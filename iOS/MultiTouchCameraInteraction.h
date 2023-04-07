@@ -43,7 +43,7 @@ private:
     void onDrag();
     
     UIView* _view;
-    const float4x4 _initialCameraTransform;
+    float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
     
     struct TrackedTouch final

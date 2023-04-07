@@ -132,12 +132,14 @@ MultiTouchCameraInteraction::onDrag()
 void
 MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
 {
+    bool touchesRemoved = false;
     for (auto it = _trackedTouches.begin(); it != _trackedTouches.end();)
     {
         const TrackedTouch& touch = *(*it);
         if ([touches containsObject:touch.touch])
         {
             it = _trackedTouches.erase(it);
+            touchesRemoved = true;
         }
         else
         {
@@ -148,6 +150,18 @@ MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
     if (_trackedTouches.empty())
     {
         _state = State::done;
+    }
+    else if (touchesRemoved)
+    {
+        _initialCameraTransform = camera()->worldTransform();
+        _orbitAngles = { 0 };
+        _dollyFactor = 0.f;
+        _panTranslation = { 0 };
+        
+        for (const auto& touch : _trackedTouches)
+        {
+            touch->initialLocation = touch->currentLocation;
+        }
     }
 }
 
