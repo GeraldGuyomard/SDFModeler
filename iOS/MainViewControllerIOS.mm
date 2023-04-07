@@ -202,7 +202,17 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         case UIGestureRecognizerStateBegan:
         {
-            auto interaction = std::make_unique<DollyCameraInteraction>(camera);
+            DollyCameraInteraction::Ptr interaction;
+            
+            if (auto object = self.world.selection().anyObject())
+            {
+                interaction = std::make_unique<DollyCameraInteraction>(camera, object);
+            }
+            else
+            {
+                interaction = std::make_unique<DollyCameraInteraction>(camera);
+            }
+            
             [self setInteraction:std::move(interaction)];
             break;
         }

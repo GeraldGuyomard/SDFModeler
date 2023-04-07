@@ -9,6 +9,7 @@
 
 #include "Camera.h"
 #include "Interaction.h"
+#include "Object3D.h"
 
 class CameraInteraction
 {
@@ -41,9 +42,15 @@ private:
 class DollyCameraInteraction : public PinchInteraction, public CameraInteraction
 {
 public:
+    using Ptr = std::unique_ptr<DollyCameraInteraction>;
+    
     DollyCameraInteraction(const Camera::Ptr& camera);
+    DollyCameraInteraction(const Camera::Ptr& camera, const Object3D::Ptr& target);
     
     void pinch(float delta) override;
+    
+private:
+    const float3 _direction;
 };
 
 class PanCameraInteraction : public PanInteraction, public CameraInteraction

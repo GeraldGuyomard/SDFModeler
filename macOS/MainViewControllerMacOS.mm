@@ -94,8 +94,21 @@
 {
     float d = event.scrollingDeltaY / 1000.f;
     
-    auto interaction = std::make_unique<DollyCameraInteraction>(self.renderer->camera());
+    auto camera = self.renderer->camera();
+    
+    DollyCameraInteraction::Ptr interaction;
+    
+    if (auto object = self.world.selection().anyObject())
+    {
+        interaction = std::make_unique<DollyCameraInteraction>(camera, object);
+    }
+    else
+    {
+        interaction = std::make_unique<DollyCameraInteraction>(camera);
+    }
+    
     interaction->pinch(d);
+    
     [self setInteraction:std::move(interaction)];
 }
 

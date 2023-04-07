@@ -54,8 +54,23 @@ OrbitCameraInteraction::pan(const float2& pt)
     camera()->setWorldTransform(newTransform);
 }
 
+namespace
+{
+    float3 computeDirection(const Camera::Ptr& camera, const Object3D::Ptr& target)
+    {
+        const float3 cameraPos = translation(camera->worldTransform());
+        const float3 targetPos = translation(target->worldTransform());
+        
+        return normalize(cameraPos - targetPos);
+    }
+}
+
+DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera, const Object3D::Ptr& target)
+: CameraInteraction(camera), _direction(computeDirection(camera, target))
+{}
+
 DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera)
-: CameraInteraction(camera)
+: CameraInteraction(camera), _direction(forward(camera->worldTransform()))
 {}
 
 void
@@ -66,7 +81,7 @@ DollyCameraInteraction::pinch(float delta)
     auto transform = camera->worldTransform();
     auto pos = translation(transform);
     
-    pos += delta * forward(transform);
+    pos += delta * _direction;
     setTranslation(transform, pos);
     
     camera->setWorldTransform(transform);
