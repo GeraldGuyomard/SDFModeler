@@ -21,9 +21,21 @@ using HighResClock = std::chrono::high_resolution_clock;
     HighResClock::time_point _lastRenderTime;
 }
 
+- (float2) convertPointToPixel:(CGPoint)pt
+{
+    UIView* view = self.view;
+    CAMetalLayer* metalLayer = (CAMetalLayer*) view.layer;
+    
+    const float contentScale = metalLayer.contentsScale;
+    
+    return { float(pt.x) * contentScale, float(pt.y) * contentScale };
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.view.multipleTouchEnabled = YES;
     
     UITapGestureRecognizer* singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
     singleTapRecognizer.numberOfTapsRequired = 1;
@@ -32,7 +44,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     panOneFingerRecognizer.minimumNumberOfTouches = 1;
     panOneFingerRecognizer.maximumNumberOfTouches = 1;
     
-    UIPanGestureRecognizer* panTwoFingersRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
+    /*UIPanGestureRecognizer* panTwoFingersRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
     panTwoFingersRecognizer.minimumNumberOfTouches = 2;
     
     UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
@@ -43,7 +55,14 @@ using HighResClock = std::chrono::high_resolution_clock;
         recognizer.delegate = self;
     }
     
-    self.view.gestureRecognizers = recognizers;
+    self.view.gestureRecognizers = recognizers;*/
+    
+    self.view.gestureRecognizers = @[singleTapRecognizer, panOneFingerRecognizer];
+    
+    for (UIGestureRecognizer* recognizer in self.view.gestureRecognizers)
+    {
+        recognizer.delegate = self;
+    }
     
     _lastRenderTime = HighResClock::now();
     
@@ -65,39 +84,106 @@ using HighResClock = std::chrono::high_resolution_clock;
     });
 }
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    if ([gestureRecognizer isKindOfClass:UIPanGestureRecognizer.class])
+    {
+        auto currentCameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction);
+        return currentCameraInteraction == nullptr;
+    }
+    else
+    {
+        return YES;
+    }
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return NO;
 }
 
-- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+class DummyObject3DInteraction : public Interaction
 {
     
+};
+
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    auto interaction = self.interaction;
+    
+    if (interaction == nullptr)
+    {
+        auto camera = self.renderer->camera();
+        
+        UITouch* touch = [touches anyObject];
+        
+        const float2 p = [self convertPointToPixel:[touch locationInView:self.view]];
+        
+        const auto pickResult = self.renderer->pick(p);
+        
+        const Selection selection = self.world.selection();
+        
+        Interaction::Ptr interaction;
+        auto object = self.world.objectByID(pickResult.objectID);
+        
+        if (object != nullptr)
+        {
+            if (selection.contains(object))
+            {
+                // drag object
+                interaction = std::make_shared<DummyObject3DInteraction>();
+            }
+        }
+        else if (auto selectedObject = selection.anyObject())
+        {
+            const float3 origin = translation(selectedObject->worldTransform());
+            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.view, origin);
+        }
+        
+        if (interaction == nullptr)
+        {
+            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.view);
+        }
+
+        [self setInteraction:interaction];
+    }
+    
+    if (auto cameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction))
+    {
+        cameraInteraction->touchesBegan(touches);
+    }
 }
 
 - (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    
+    if (auto cameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction))
+    {
+        cameraInteraction->touchesMoved(touches);
+    }
 }
 
 - (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    
+    if (auto cameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction))
+    {
+        cameraInteraction->touchesEnded(touches);
+        if (cameraInteraction->state() == MultiTouchCameraInteraction::State::done)
+        {
+            [self setInteraction:nil];
+        }
+    }
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    
-}
-
-- (float2) convertPointToPixel:(CGPoint)pt
-{
-    UIView* view = self.view;
-    CAMetalLayer* metalLayer = (CAMetalLayer*) view.layer;
-    
-    const float contentScale = metalLayer.contentsScale;
-    
-    return { float(pt.x) * contentScale, float(pt.y) * contentScale };
+    if (auto cameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction))
+    {
+        cameraInteraction->touchesEnded(touches);
+        if (cameraInteraction->state() == MultiTouchCameraInteraction::State::done)
+        {
+            [self setInteraction:nil];
+        }
+    }
 }
 
 - (Selection)selectionFromPosition:(float2)pt
@@ -130,8 +216,6 @@ using HighResClock = std::chrono::high_resolution_clock;
 
 - (void)onPanOneFinger:(UIPanGestureRecognizer*)recognizer
 {
-    auto camera = self.renderer->camera();
-    
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateBegan:
@@ -148,25 +232,10 @@ using HighResClock = std::chrono::high_resolution_clock;
                 if (selection.contains(object))
                 {
                     interaction = std::make_shared<DragObject3DInteraction>(object, pickResult.position, p, *self.renderer);
+                    [self setInteraction:interaction];
                 }
             }
             
-            if (interaction == nullptr)
-            {
-                constexpr float speed = 2e-3f;
-                
-                if (auto selectedObject = self.world.selection().anyObject())
-                {
-                    const float3 origin = translation(selectedObject->worldTransform());
-                    interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, p, speed);
-                }
-                else
-                {
-                    interaction = std::make_shared<OrbitCameraInteraction>(camera, p, speed);
-                }
-            }
-            
-            [self setInteraction:interaction];
             break;
         }
             
@@ -176,86 +245,6 @@ using HighResClock = std::chrono::high_resolution_clock;
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 panInteraction->pan(p);
-            }
-            break;
-        }
-            
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded:
-        {
-            [self setInteraction:nullptr];
-            break;
-        }
-            
-        default: break;
-    }
-}
-
-- (void)onPanTwoFingers:(UIPanGestureRecognizer*)recognizer
-{
-    auto camera = self.renderer->camera();
-    
-    switch (recognizer.state)
-    {
-        case UIGestureRecognizerStateBegan:
-        {
-            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-            auto interaction = std::make_unique<PanCameraInteraction>(camera, p);
-            [self setInteraction:std::move(interaction)];
-            break;
-        }
-            
-        case UIGestureRecognizerStateChanged:
-        {
-            if (auto panInteraction = std::dynamic_pointer_cast<PanInteraction>(self.interaction))
-            {
-                const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-                panInteraction->pan(p);
-            }
-            break;
-        }
-            
-        case UIGestureRecognizerStateCancelled:
-        case UIGestureRecognizerStateEnded:
-        {
-            [self setInteraction:nullptr];
-            break;
-        }
-            
-        default: break;
-    }
-}
-
-
-- (void)onPinch:(UIPinchGestureRecognizer*)recognizer
-{
-    auto camera = self.renderer->camera();
-    
-    switch (recognizer.state)
-    {
-        case UIGestureRecognizerStateBegan:
-        {
-            DollyCameraInteraction::Ptr interaction;
-            
-            if (auto object = self.world.selection().anyObject())
-            {
-                interaction = std::make_shared<DollyCameraInteraction>(camera, object);
-            }
-            else
-            {
-                interaction = std::make_shared<DollyCameraInteraction>(camera);
-            }
-            
-            [self setInteraction:interaction];
-            break;
-        }
-            
-        case UIGestureRecognizerStateChanged:
-        {
-            if (auto pinchInteraction = std::dynamic_pointer_cast<PinchInteraction>(self.interaction))
-            {
-                const float d = -recognizer.velocity * 0.02f;
-                pinchInteraction->pinch(d);
             }
             break;
         }

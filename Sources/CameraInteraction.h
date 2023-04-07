@@ -33,6 +33,8 @@ public:
     
     void pan(const float2& pos) override;
     
+    static float3 computeOrbitOrigin(const float4x4& cameraTransform);
+    
 private:
     const float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;

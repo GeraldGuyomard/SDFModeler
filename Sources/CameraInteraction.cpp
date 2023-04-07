@@ -11,10 +11,9 @@ CameraInteraction::CameraInteraction(const Camera::Ptr& camera)
 : _camera(camera)
 {}
 
-namespace
-{
 
-float3 computeOrbitOrigin(const float4x4& cameraTransform)
+float3
+OrbitCameraInteraction::computeOrbitOrigin(const float4x4& cameraTransform)
 {
     const auto position = cameraTransform.columns[3].xyz;
     const auto direction = simd_normalize(cameraTransform.columns[2].xyz);
@@ -22,7 +21,6 @@ float3 computeOrbitOrigin(const float4x4& cameraTransform)
     return position - (direction * 5.f);
 }
 
-}
 
 OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float3& origin, const float2& initialPos, float speed)
 : PanInteraction(initialPos), CameraInteraction(camera),
