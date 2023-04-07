@@ -39,10 +39,41 @@ Object3D::materialID() const
 }
 
 void
-Object3D::setParent(const Ptr& parent)
+Object3D::addChild(const Ptr& child)
 {
-    _parent = parent;
+    auto self = shared_from_this();
+    
+    if (child->parent() != self)
+    {
+        child->removeFromParent();
+        _children.push_back(child);
+        child->_parent = self;
+    }
 }
+
+void
+Object3D::removeFromParent()
+{
+    if (auto parent = this->parent())
+    {
+        auto self = shared_from_this();
+        _parent.reset();
+        
+        const auto end = parent->_children.end();
+        for (auto it = parent->_children.begin(); it != end; ++it)
+        {
+            auto child = *it;
+            if (self == child)
+            {
+                parent->_children.erase(it);
+                break;
+            }
+        }
+        
+        assert(false);
+    }
+}
+
 
 float4x4
 Object3D::worldTransform() const
@@ -69,6 +100,12 @@ Object3D::setWorldTransform(const float4x4& transform)
     {
         return setLocalTransform(transform);
     }
+}
+
+void
+Object3D::setOperation(Operation op)
+{
+    _operation = op;
 }
 
 void

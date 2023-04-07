@@ -62,8 +62,18 @@ public:
     virtual bool selected() const = 0;
     virtual void setSelected(bool selected) = 0;
     
-public:
-    void setParent(const Ptr&);
+    const std::vector<Ptr>& children() const { return _children; }
+    virtual void addChild(const Ptr& child);
+    void removeFromParent();
+    
+    enum class Operation
+    {
+        addition,
+        substraction
+    };
+    
+    Operation operation() const { return _operation; }
+    void setOperation(Operation);
     
 protected:
     virtual void onMaterialChange() {}
@@ -71,8 +81,10 @@ protected:
 private:
     ObjectID _id = 0;
     Material3D::Ptr _material;
+    Operation _operation = Operation::addition;
     
     Object3D::WPtr _parent;
+    std::vector<Ptr> _children;
 };
 
 template <typename TPrimitive>

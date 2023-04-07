@@ -125,23 +125,25 @@ static __weak MainViewController* s_Instance = nil;
         { 0.4f }, // geom
         { float3 { -2., 0.25, kZ + 1.f } } // transform
     });
+    negativeSpherePart->setOperation(Object3D::Operation::substraction);
     
     auto negativeRoundedBoxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
     {
         { float3 { 0.1f, 0.1f, 0.3f }, 0.05f }, // geom
         { float3 { -2., -0.5, kZ + 1.f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
     });
+    negativeRoundedBoxPart->setOperation(Object3D::Operation::substraction);
     
     auto sdfUnionMaterial = _world.addMaterial(float4 { 0, 1, 1, 1 });
     auto sdfUnion = std::make_shared<Composition3D>();
     sdfUnion->setMaterial(sdfUnionMaterial);
     
-    sdfUnion->addAdditiveObject(spherePart);
-    sdfUnion->addAdditiveObject(boxPart);
-    sdfUnion->addSubstractiveObject(negativeSpherePart);
-    sdfUnion->addSubstractiveObject(negativeRoundedBoxPart);
+    sdfUnion->addChild(spherePart);
+    sdfUnion->addChild(boxPart);
+    sdfUnion->addChild(negativeSpherePart);
+    sdfUnion->addChild(negativeRoundedBoxPart);
     
-    _world.addObject(std::move(sdfUnion));
+    _world.addObject(sdfUnion);
 }
 
 - (void)viewDidLoad

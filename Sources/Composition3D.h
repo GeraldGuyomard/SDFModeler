@@ -13,23 +13,16 @@ template <typename TTransformer>
 class TComposition3D : public Object3D
 {
 public:
+    using _inherited = Object3D;
     
     TComposition3D(const TTransformer& transformer)
     : _transformer(transformer)
     {}
     
-    void addAdditiveObject(Object3D::Ptr object)
+    void addChild(const Ptr& child) override
     {
-        object->setId(id());
-        _additiveObjects.push_back(object);
-        
-        object->setParent(shared_from_this());
-    }
-    
-    void addSubstractiveObject(Object3D::Ptr object)
-    {
-        _substractiveObjects.push_back(object);
-        object->setParent(shared_from_this());
+        _inherited::addChild(child);
+        child->setId(id());
     }
     
     ObjectType objectType() const override
@@ -58,11 +51,34 @@ public:
         
         const TTransformer transformer { worldTransform() };
         
+        std::vector<Object3D::Ptr> additiveObjects;
+        std::vector<Object3D::Ptr> substractiveObjects;
+        
+        for (const auto& child : children())
+        {
+            switch (child->operation())
+            {
+                case Operation::addition:
+                {
+                    additiveObjects.push_back(child);
+                    break;
+                }
+                    
+                case Operation::substraction:
+                {
+                    substractiveObjects.push_back(child);
+                    break;
+                }
+                    
+                default: break;
+            }
+        }
+        
         float extraCullingMargin = _selected ? kOutlineThickness : 0;
         SDFSerializedComposition<TTransformer> serializedComp
         {
-            _additiveObjects.size(),
-            _substractiveObjects.size(),
+            additiveObjects.size(),
+            substractiveObjects.size(),
             transformer,
             materialID(),
             extraCullingMargin
@@ -73,14 +89,14 @@ public:
         
         size_t subHeadersSize = 0;
         // then copy the primitives
-        for (const auto& obj : _additiveObjects)
+        for (const auto& obj : additiveObjects)
         {
             const size_t s = obj->serialize(ptr);
             subHeadersSize += s;
             ptr += s;
         }
         
-        for (const auto& obj : _substractiveObjects)
+        for (const auto& obj : substractiveObjects)
         {
             const size_t s = obj->serialize(ptr);
             subHeadersSize += s;
@@ -107,9 +123,6 @@ private:
     }
     
     TTransformer _transformer;
-    
-    std::vector<Object3D::Ptr> _additiveObjects;
-    std::vector<Object3D::Ptr> _substractiveObjects;
     bool _selected = false;
 };
 
