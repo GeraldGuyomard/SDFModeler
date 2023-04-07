@@ -9,7 +9,7 @@
 
 #include "CameraInteraction.h"
 #import <UIKit/UIKit.h>
-#include <map>
+#include <vector>
 
 class MultiTouchCameraInteraction : public Interaction, public CameraInteraction
 {
@@ -46,26 +46,21 @@ private:
     const float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
     
-    struct TouchEntry
+    struct TrackedTouch final
     {
+        UITouch* touch;
         float2 initialLocation = { 0 };
         float2 currentLocation = { 0 };
         
-        TouchEntry() = default;
-        TouchEntry(const float2& initialLocation)
-        : initialLocation(initialLocation), currentLocation(initialLocation)
-        {}
+        TrackedTouch(UITouch* touch);
         
         bool dragging() const;
         float2 dragVector() const;
     };
     
-    std::map<UITouch*, TouchEntry> _uiTouchToEntry;
+    std::vector<std::unique_ptr<TrackedTouch>> _trackedTouches;
     
     State _state = State::idle;
-    
-    UITouch* _firstTouch = nil;
-    UITouch* _secondTouch = nil;
     
     float2 _orbitAngles = { 0 };
     float _dollyFactor = 0.f;

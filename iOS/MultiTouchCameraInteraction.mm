@@ -28,14 +28,20 @@ float2 touchLocation(UITouch* touch)
     return float2 { float(loc.x), float(loc.y) };
 }
 
+MultiTouchCameraInteraction::TrackedTouch::TrackedTouch(UITouch* touch)
+: touch(touch), initialLocation(touchLocation(touch))
+{
+    currentLocation = initialLocation;
+}
+
 float2
-MultiTouchCameraInteraction::TouchEntry::dragVector() const
+MultiTouchCameraInteraction::TrackedTouch::dragVector() const
 {
     return currentLocation - initialLocation;
 }
 
 bool
-MultiTouchCameraInteraction::TouchEntry::dragging() const
+MultiTouchCameraInteraction::TrackedTouch::dragging() const
 {
     const float d = length(dragVector());
     return d >= 10.f;
@@ -46,16 +52,7 @@ MultiTouchCameraInteraction::touchesBegan(NSSet<UITouch*>* touches)
 {
     for (UITouch* touch : touches)
     {
-        _uiTouchToEntry[touch] = touchLocation(touch);
-        
-        if (_firstTouch == nil)
-        {
-            _firstTouch = touch;
-        }
-        else if (_secondTouch == nil)
-        {
-            _secondTouch = touch;
-        }
+        _trackedTouches.push_back(std::make_unique<TrackedTouch>(touch));
     }
        
     if (_state == State::idle)
@@ -67,15 +64,13 @@ MultiTouchCameraInteraction::touchesBegan(NSSet<UITouch*>* touches)
 void
 MultiTouchCameraInteraction::touchesMoved(NSSet<UITouch*>* touches)
 {
-    for (UITouch* touch in touches)
+    for (const auto& trackedTouch : _trackedTouches)
     {
-        const auto it = _uiTouchToEntry.find(touch);
-        if (it != _uiTouchToEntry.end())
+        if ([touches containsObject:trackedTouch->touch])
         {
-            auto& entry = it->second;
-            entry.currentLocation = touchLocation(touch);
+            trackedTouch->currentLocation = touchLocation(trackedTouch->touch);
             
-            if (entry.dragging())
+            if (trackedTouch->dragging())
             {
                 if (_state == State::possible)
                 {
@@ -95,22 +90,23 @@ MultiTouchCameraInteraction::touchesMoved(NSSet<UITouch*>* touches)
 void
 MultiTouchCameraInteraction::onDrag()
 {
-    if (_firstTouch == nil)
+    if (_trackedTouches.empty())
     {
         return;
     }
     
-    if (_secondTouch != nil)
+    const auto& firstTouch = *_trackedTouches[0];
+    
+    if (_trackedTouches.size() >= 2)
     {
-        const auto& firstEntry = _uiTouchToEntry.find(_firstTouch)->second;
-        const auto& secondEntry = _uiTouchToEntry.find(_secondTouch)->second;
+        const auto& secondTouch = *_trackedTouches[1];
         
         // dolly
         {
-            const float2 initialVector = secondEntry.initialLocation - firstEntry.initialLocation;
+            const float2 initialVector = secondTouch.initialLocation - firstTouch.initialLocation;
             const float initialLength = length(initialVector);
             
-            const float2 currentVector = secondEntry.currentLocation - firstEntry.currentLocation;
+            const float2 currentVector = secondTouch.currentLocation - firstTouch.currentLocation;
             const float currentLength = length(currentVector);
             
             _dollyFactor = (1.f - (currentLength / initialLength)) * kDefaultDollySpeed;
@@ -118,8 +114,8 @@ MultiTouchCameraInteraction::onDrag()
         
         // pan
         {
-            const float2 initialCentroid = (firstEntry.initialLocation + secondEntry.initialLocation) * 0.5f;
-            const float2 currentCentroid = (firstEntry.currentLocation + secondEntry.currentLocation) * 0.5f;
+            const float2 initialCentroid = (firstTouch.initialLocation + secondTouch.initialLocation) * 0.5f;
+            const float2 currentCentroid = (firstTouch.currentLocation + secondTouch.currentLocation) * 0.5f;
             
             const float2 move = initialCentroid - currentCentroid;
             _panTranslation = move * 2e-3f;
@@ -128,9 +124,7 @@ MultiTouchCameraInteraction::onDrag()
     }
     else
     {
-        const auto& firstEntry = _uiTouchToEntry.find(_firstTouch)->second;
-        
-        _orbitAngles = firstEntry.dragVector();
+        _orbitAngles = firstTouch.dragVector();
         _orbitAngles *= kDefaultOrbitSpeed;
     }
 }
@@ -138,39 +132,29 @@ MultiTouchCameraInteraction::onDrag()
 void
 MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
 {
-    for (UITouch* touch in touches)
+    for (auto it = _trackedTouches.begin(); it != _trackedTouches.end();)
     {
-        const auto it = _uiTouchToEntry.find(touch);
-        if (it != _uiTouchToEntry.end())
+        const TrackedTouch& touch = *(*it);
+        if ([touches containsObject:touch.touch])
         {
-            _uiTouchToEntry.erase(it);
+            it = _trackedTouches.erase(it);
         }
-        
-        if (touch == _firstTouch)
+        else
         {
-            _firstTouch = nil;
-        }
-        else if (touch == _secondTouch)
-        {
-            _secondTouch = nil;
+            ++it;
         }
     }
     
-    if (_uiTouchToEntry.empty())
+    if (_trackedTouches.empty())
     {
         _state = State::done;
-    }
-    else if ((_firstTouch == nil) && (_secondTouch != nil))
-    {
-        _firstTouch = _secondTouch;
-        _secondTouch = nil;
     }
 }
 
 void
 MultiTouchCameraInteraction::updateCameraTransform()
 {
-    if (_firstTouch == nil)
+    if (_trackedTouches.empty())
     {
         return;
     }
