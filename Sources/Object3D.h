@@ -178,6 +178,7 @@ public:
     
     bool empty() const { return _objects.empty(); }
     const std::vector<Object3D::Ptr>& objects() const { return _objects; }
+    Object3D::Ptr anyObject() const;
     
     std::set<ObjectID> objectIDs() const;
     

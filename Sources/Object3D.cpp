@@ -127,6 +127,12 @@ Object3DCollection::objectIDs() const
     return ids;
 }
 
+Object3D::Ptr
+Object3DCollection::anyObject() const
+{
+    return !_objects.empty() ? _objects.front() : nullptr;
+}
+
 bool
 Object3DCollection::contains(const Object3D::Ptr& object) const
 {

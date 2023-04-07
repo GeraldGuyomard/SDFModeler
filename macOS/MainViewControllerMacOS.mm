@@ -51,8 +51,6 @@
     }
     else
     {
-        world.setSelection({});
-        
         // camera
         const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
         if (shift)
@@ -61,7 +59,15 @@
         }
         else
         {
-            interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
+            if (auto selectedObject = world.selection().anyObject())
+            {
+                const float3 origin = translation(selectedObject->worldTransform());
+                interaction = std::make_unique<OrbitCameraInteraction>(camera, origin, initialPos);
+            }
+            else
+            {
+                interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
+            }
         }
     }
     

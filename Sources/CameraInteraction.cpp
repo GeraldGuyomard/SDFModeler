@@ -24,11 +24,15 @@ float3 computeOrbitOrigin(const float4x4& cameraTransform)
 
 }
 
-OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
+OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float3& origin, const float2& initialPos, float speed)
 : PanInteraction(initialPos), CameraInteraction(camera),
 _initialCameraTransform(camera->worldTransform()),
-_orbitOrigin(computeOrbitOrigin(_initialCameraTransform)),
+_orbitOrigin(origin),
 _speed(speed)
+{}
+
+OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
+: OrbitCameraInteraction(camera, computeOrbitOrigin(camera->worldTransform()), initialPos, speed)
 {
 }
 

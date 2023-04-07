@@ -120,7 +120,17 @@ using HighResClock = std::chrono::high_resolution_clock;
             
             if (interaction == nullptr)
             {
-                interaction = std::make_unique<OrbitCameraInteraction>(camera, p, 2e-3f);
+                constexpr float speed = 2e-3f;
+                
+                if (auto selectedObject = self.world.selection().anyObject())
+                {
+                    const float3 origin = translation(selectedObject->worldTransform());
+                    interaction = std::make_unique<OrbitCameraInteraction>(camera, origin, p, speed);
+                }
+                else
+                {
+                    interaction = std::make_unique<OrbitCameraInteraction>(camera, p, speed);
+                }
             }
             
             [self setInteraction:std::move(interaction)];

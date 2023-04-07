@@ -26,7 +26,9 @@ private:
 class OrbitCameraInteraction : public PanInteraction, public CameraInteraction
 {
 public:
-    OrbitCameraInteraction(const Camera::Ptr&, const float2& initialPos, float speed = 1e-3f);
+    static constexpr float kDefaultSpeed = 1e-3f;
+    OrbitCameraInteraction(const Camera::Ptr&, const float2& initialPos, float speed = kDefaultSpeed);
+    OrbitCameraInteraction(const Camera::Ptr&, const float3& origin, const float2& initialPos, float speed = kDefaultSpeed);
     
     void pan(const float2& pos) override;
     
