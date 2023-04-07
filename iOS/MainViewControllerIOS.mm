@@ -139,8 +139,7 @@ class DummyObject3DInteraction : public Interaction
             const float3 origin = translation(selectedObject->worldTransform());
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.view, origin);
         }
-        
-        if (interaction == nullptr)
+        else
         {
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.view);
         }

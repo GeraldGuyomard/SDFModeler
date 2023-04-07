@@ -69,4 +69,5 @@ private:
     
     float2 _orbitAngles = { 0 };
     float _dollyFactor = 0.f;
+    float2 _panTranslation = { 0 };
 };
