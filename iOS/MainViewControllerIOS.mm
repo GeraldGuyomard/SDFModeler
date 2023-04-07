@@ -12,6 +12,9 @@
 
 using HighResClock = std::chrono::high_resolution_clock;
 
+@interface MainViewControllerIOS()<UIGestureRecognizerDelegate>
+@end
+
 @implementation MainViewControllerIOS
 {
     HighResClock::time_point _lastRenderTime;
@@ -21,21 +24,25 @@ using HighResClock = std::chrono::high_resolution_clock;
 {
     [super viewDidLoad];
     
-    UITapGestureRecognizer* tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-    tapRecognizer.numberOfTapsRequired = 1;
-    [self.view addGestureRecognizer:tapRecognizer];
+    UITapGestureRecognizer* singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
+    singleTapRecognizer.numberOfTapsRequired = 1;
     
     UIPanGestureRecognizer* panOneFingerRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanOneFinger:)];
     panOneFingerRecognizer.minimumNumberOfTouches = 1;
     panOneFingerRecognizer.maximumNumberOfTouches = 1;
-    [self.view addGestureRecognizer:panOneFingerRecognizer];
-
-    UIPanGestureRecognizer* panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
-    panRecognizer.minimumNumberOfTouches = 2;
-    [self.view addGestureRecognizer:panRecognizer];
+    
+    UIPanGestureRecognizer* panTwoFingersRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
+    panTwoFingersRecognizer.minimumNumberOfTouches = 2;
     
     UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
-    [self.view addGestureRecognizer:pinchRecognizer];
+    
+    auto recognizers = @[singleTapRecognizer, panOneFingerRecognizer, panTwoFingersRecognizer, pinchRecognizer];
+    for (UIGestureRecognizer* recognizer in recognizers)
+    {
+        recognizer.delegate = self;
+    }
+    
+    self.view.gestureRecognizers = recognizers;
     
     _lastRenderTime = HighResClock::now();
     
@@ -55,6 +62,11 @@ using HighResClock = std::chrono::high_resolution_clock;
             [self.fpsLabel sizeToFit];
         }
     });
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return NO;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
