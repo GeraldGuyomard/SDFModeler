@@ -81,14 +81,13 @@ MultiTouchCameraInteraction::touchesMoved(NSSet<UITouch*>* touches)
                 {
                     _state = State::active;
                 }
-                
-                onDrag();
             }
         }
     }
     
     if (_state == State::active)
     {
+        onDrag();
         updateCameraTransform();
     }
 }
@@ -160,6 +159,11 @@ MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
     if (_uiTouchToEntry.empty())
     {
         _state = State::done;
+    }
+    else if ((_firstTouch == nil) && (_secondTouch != nil))
+    {
+        _firstTouch = _secondTouch;
+        _secondTouch = nil;
     }
 }
 
