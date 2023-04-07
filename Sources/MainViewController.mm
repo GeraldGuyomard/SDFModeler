@@ -30,14 +30,14 @@ static __weak MainViewController* s_Instance = nil;
     return s_Instance;
 }
 
--(Interaction*) interaction
+-(Interaction::Ptr) interaction
 {
-    return _interaction.get();
+    return _interaction;
 }
 
 -(void)setInteraction:(Interaction::Ptr)interaction
 {
-    _interaction = std::move(interaction);
+    _interaction = interaction;
 }
 
 - (World&) world

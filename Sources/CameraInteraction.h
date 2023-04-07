@@ -42,7 +42,7 @@ private:
 class DollyCameraInteraction : public PinchInteraction, public CameraInteraction
 {
 public:
-    using Ptr = std::unique_ptr<DollyCameraInteraction>;
+    using Ptr = std::shared_ptr<DollyCameraInteraction>;
     
     DollyCameraInteraction(const Camera::Ptr& camera);
     DollyCameraInteraction(const Camera::Ptr& camera, const Object3D::Ptr& target);
@@ -65,3 +65,4 @@ private:
     float3 _right;
     float3 _up;
 };
+

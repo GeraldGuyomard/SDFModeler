@@ -9,6 +9,7 @@
 #include <chrono>
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
+#include "MultiTouchCameraInteraction.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
@@ -69,6 +70,26 @@ using HighResClock = std::chrono::high_resolution_clock;
     return NO;
 }
 
+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    
+}
+
+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    
+}
+
+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    
+}
+
+- (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
+{
+    
+}
+
 - (float2) convertPointToPixel:(CGPoint)pt
 {
     UIView* view = self.view;
@@ -126,7 +147,7 @@ using HighResClock = std::chrono::high_resolution_clock;
                 const Selection selection = self.world.selection();
                 if (selection.contains(object))
                 {
-                    interaction = std::make_unique<DragObject3DInteraction>(object, pickResult.position, p, *self.renderer);
+                    interaction = std::make_shared<DragObject3DInteraction>(object, pickResult.position, p, *self.renderer);
                 }
             }
             
@@ -137,21 +158,21 @@ using HighResClock = std::chrono::high_resolution_clock;
                 if (auto selectedObject = self.world.selection().anyObject())
                 {
                     const float3 origin = translation(selectedObject->worldTransform());
-                    interaction = std::make_unique<OrbitCameraInteraction>(camera, origin, p, speed);
+                    interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, p, speed);
                 }
                 else
                 {
-                    interaction = std::make_unique<OrbitCameraInteraction>(camera, p, speed);
+                    interaction = std::make_shared<OrbitCameraInteraction>(camera, p, speed);
                 }
             }
             
-            [self setInteraction:std::move(interaction)];
+            [self setInteraction:interaction];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto panInteraction = dynamic_cast<PanInteraction*>(self.interaction))
+            if (auto panInteraction = std::dynamic_pointer_cast<PanInteraction>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 panInteraction->pan(p);
@@ -186,7 +207,7 @@ using HighResClock = std::chrono::high_resolution_clock;
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto panInteraction = dynamic_cast<PanInteraction*>(self.interaction))
+            if (auto panInteraction = std::dynamic_pointer_cast<PanInteraction>(self.interaction))
             {
                 const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
                 panInteraction->pan(p);
@@ -218,20 +239,20 @@ using HighResClock = std::chrono::high_resolution_clock;
             
             if (auto object = self.world.selection().anyObject())
             {
-                interaction = std::make_unique<DollyCameraInteraction>(camera, object);
+                interaction = std::make_shared<DollyCameraInteraction>(camera, object);
             }
             else
             {
-                interaction = std::make_unique<DollyCameraInteraction>(camera);
+                interaction = std::make_shared<DollyCameraInteraction>(camera);
             }
             
-            [self setInteraction:std::move(interaction)];
+            [self setInteraction:interaction];
             break;
         }
             
         case UIGestureRecognizerStateChanged:
         {
-            if (auto pinchInteraction = dynamic_cast<PinchInteraction*>(self.interaction))
+            if (auto pinchInteraction = std::dynamic_pointer_cast<PinchInteraction>(self.interaction))
             {
                 const float d = -recognizer.velocity * 0.02f;
                 pinchInteraction->pinch(d);

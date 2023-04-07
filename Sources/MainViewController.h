@@ -20,7 +20,7 @@
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) World& world;
 
--(Interaction*) interaction;
+-(Interaction::Ptr) interaction;
 -(void)setInteraction:(Interaction::Ptr)interaction;
 
 @end

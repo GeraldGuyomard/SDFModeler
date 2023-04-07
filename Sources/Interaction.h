@@ -12,7 +12,7 @@
 class Interaction
 {
 public:
-    using Ptr = std::unique_ptr<Interaction>;
+    using Ptr = std::shared_ptr<Interaction>;
     
     virtual ~Interaction() = default;
 };

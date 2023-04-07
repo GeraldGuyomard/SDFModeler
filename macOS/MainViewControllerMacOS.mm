@@ -47,7 +47,7 @@
         selection.addObject(object);
         world.setSelection(selection);
         
-        interaction = std::make_unique<DragObject3DInteraction>(object, result.position, initialPos, *self.renderer);
+        interaction = std::make_shared<DragObject3DInteraction>(object, result.position, initialPos, *self.renderer);
     }
     else
     {
@@ -55,18 +55,18 @@
         const bool shift = (event.modifierFlags & NSEventModifierFlagShift) != 0;
         if (shift)
         {
-            interaction = std::make_unique<PanCameraInteraction>(camera, initialPos);
+            interaction = std::make_shared<PanCameraInteraction>(camera, initialPos);
         }
         else
         {
             if (auto selectedObject = world.selection().anyObject())
             {
                 const float3 origin = translation(selectedObject->worldTransform());
-                interaction = std::make_unique<OrbitCameraInteraction>(camera, origin, initialPos);
+                interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, initialPos);
             }
             else
             {
-                interaction = std::make_unique<OrbitCameraInteraction>(camera, initialPos);
+                interaction = std::make_shared<OrbitCameraInteraction>(camera, initialPos);
             }
         }
     }
@@ -79,7 +79,7 @@
     const auto pos = [self position:event.locationInWindow];
     
     auto interaction = self.interaction;
-    if (auto panInteraction = dynamic_cast<PanInteraction*>(interaction))
+    if (auto panInteraction = std::dynamic_pointer_cast<PanInteraction>(interaction))
     {
         panInteraction->pan(pos);
     }
