@@ -25,8 +25,8 @@ public:
     
     static ObjectType objectType() { return ObjectType::plane; }
     
-    SDFPlane(float3 origin = {0})
-    : _origin(origin)
+    SDFPlane(float3 origin = {0}, float3 normal = { 0, 1, 0} )
+    : _origin(origin), _normal(normal)
     {}
     
     float computeDistance(float3 p) const
@@ -43,9 +43,10 @@ public:
     
     float raycast(Ray ray) const
     {
-        return planeIntersection(ray, _origin, float3 { 0, 1, 0} );
+        return planeIntersection(ray, _origin, _normal );
     }
     
 private:
     float3 _origin;
+    float3 _normal;
 };

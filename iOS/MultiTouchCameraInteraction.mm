@@ -6,6 +6,7 @@
 //
 
 #include "MultiTouchCameraInteraction.h"
+#include "SDFPlane.h"
 
 MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, UIView* view)
 : CameraInteraction(camera),
@@ -29,15 +30,25 @@ float2 touchLocation(UITouch* touch)
 }
 
 MultiTouchCameraInteraction::TrackedTouch::TrackedTouch(UITouch* touch)
-: touch(touch), initialLocation(touchLocation(touch))
+: _touch(touch), _initialLocation(touchLocation(touch))
+{}
+
+void
+MultiTouchCameraInteraction::TrackedTouch::resetInitialLocation()
 {
-    currentLocation = initialLocation;
+    _initialLocation = touchLocation(_touch);
+}
+
+float2
+MultiTouchCameraInteraction::TrackedTouch::currentLocation() const
+{
+    return touchLocation(_touch);
 }
 
 float2
 MultiTouchCameraInteraction::TrackedTouch::dragVector() const
 {
-    return currentLocation - initialLocation;
+    return currentLocation() - _initialLocation;
 }
 
 bool
@@ -66,10 +77,8 @@ MultiTouchCameraInteraction::touchesMoved(NSSet<UITouch*>* touches)
 {
     for (const auto& trackedTouch : _trackedTouches)
     {
-        if ([touches containsObject:trackedTouch->touch])
+        if ([touches containsObject:trackedTouch->touch()])
         {
-            trackedTouch->currentLocation = touchLocation(trackedTouch->touch);
-            
             if (trackedTouch->dragging())
             {
                 if (_state == State::possible)
@@ -95,18 +104,22 @@ MultiTouchCameraInteraction::onDrag()
         return;
     }
     
-    const auto& firstTouch = *_trackedTouches[0];
+    const auto& touch0 = *_trackedTouches[0];
+    const float2 initialLocation0 = touch0.initialLocation();
+    const float2 currentLocation0 = touch0.currentLocation();
     
     if (_trackedTouches.size() >= 2)
     {
-        const auto& secondTouch = *_trackedTouches[1];
+        const auto& touch1 = *_trackedTouches[1];
+        const float2 initialLocation1 = touch1.initialLocation();
+        const float2 currentLocation1 = touch1.currentLocation();
         
         // dolly
         {
-            const float2 initialVector = secondTouch.initialLocation - firstTouch.initialLocation;
+            const float2 initialVector = initialLocation1 - initialLocation0;
             const float initialLength = length(initialVector);
             
-            const float2 currentVector = secondTouch.currentLocation - firstTouch.currentLocation;
+            const float2 currentVector = currentLocation1 - currentLocation0;
             const float currentLength = length(currentVector);
             
             _dollyFactor = (1.f - (currentLength / initialLength)) * kDefaultDollySpeed;
@@ -114,8 +127,12 @@ MultiTouchCameraInteraction::onDrag()
         
         // pan
         {
-            const float2 initialCentroid = (firstTouch.initialLocation + secondTouch.initialLocation) * 0.5f;
-            const float2 currentCentroid = (firstTouch.currentLocation + secondTouch.currentLocation) * 0.5f;
+            const float2 initialCentroid = (initialLocation0 + initialLocation1) * 0.5f;
+            
+            SDFPlane dragPlane;
+            
+            const float2 currentCentroid = (currentLocation0 + currentLocation1) * 0.5f;
+            
             
             const float2 move = initialCentroid - currentCentroid;
             _panTranslation = move * 2e-3f;
@@ -124,7 +141,7 @@ MultiTouchCameraInteraction::onDrag()
     }
     else
     {
-        _orbitAngles = firstTouch.dragVector();
+        _orbitAngles = touch0.dragVector();
         _orbitAngles *= kDefaultOrbitSpeed;
     }
 }
@@ -136,7 +153,7 @@ MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
     for (auto it = _trackedTouches.begin(); it != _trackedTouches.end();)
     {
         const TrackedTouch& touch = *(*it);
-        if ([touches containsObject:touch.touch])
+        if ([touches containsObject:touch.touch()])
         {
             it = _trackedTouches.erase(it);
             touchesRemoved = true;
@@ -160,7 +177,7 @@ MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
         
         for (const auto& touch : _trackedTouches)
         {
-            touch->initialLocation = touch->currentLocation;
+            touch->resetInitialLocation();
         }
     }
 }

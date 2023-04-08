@@ -46,16 +46,24 @@ private:
     float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
     
-    struct TrackedTouch final
+    class TrackedTouch final
     {
-        UITouch* touch;
-        float2 initialLocation = { 0 };
-        float2 currentLocation = { 0 };
-        
+    public:
         TrackedTouch(UITouch* touch);
+        
+        UITouch* touch() const { return _touch; }
         
         bool dragging() const;
         float2 dragVector() const;
+        
+        float2 currentLocation() const;
+        float2 initialLocation() const { return _initialLocation; }
+        
+        void resetInitialLocation();
+        
+    private:
+        UITouch* _touch;
+        float2 _initialLocation = { 0 };
     };
     
     std::vector<std::unique_ptr<TrackedTouch>> _trackedTouches;
