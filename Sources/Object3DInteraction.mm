@@ -24,7 +24,7 @@ DragObject3DInteraction::pan(const float2& pos)
 {
     const Ray ray = _renderer.ray(pos);
     
-    SDFPlane plane { _hitPos3D };
+    Plane plane { SDFPlane {}, RSTTransformer { _hitPos3D } };
     float d = plane.raycast(ray);
     
     const float3 p = ray.pt(d);

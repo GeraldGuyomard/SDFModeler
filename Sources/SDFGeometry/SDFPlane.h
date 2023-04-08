@@ -19,19 +19,19 @@ INLINE float planeIntersection(Ray ray, float3 origin, float3 normal)
     return d;
 }
 
+// horizontal plane at y = 0
 class SDFPlane final
 {
 public:
     
     static ObjectType objectType() { return ObjectType::plane; }
     
-    SDFPlane(float3 origin = {0}, float3 normal = { 0, 1, 0} )
-    : _origin(origin), _normal(normal)
+    SDFPlane()
     {}
     
     float computeDistance(float3 p) const
     {
-        return (p - _origin).y;
+        return p.y;
     }
     
     bool evaluateCulling(Ray ray, float outlineThickness) const
@@ -43,10 +43,6 @@ public:
     
     float raycast(Ray ray) const
     {
-        return planeIntersection(ray, _origin, _normal );
+        return planeIntersection(ray, float3{0}, float3{ 0, 1, 0} );
     }
-    
-private:
-    float3 _origin;
-    float3 _normal;
 };
