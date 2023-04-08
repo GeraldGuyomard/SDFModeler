@@ -102,11 +102,6 @@ using HighResClock = std::chrono::high_resolution_clock;
     return NO;
 }
 
-class DummyObject3DInteraction : public Interaction
-{
-    
-};
-
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
     auto interaction = self.interaction;
@@ -128,11 +123,7 @@ class DummyObject3DInteraction : public Interaction
         
         if (object != nullptr)
         {
-            if (selection.contains(object))
-            {
-                // drag object
-                interaction = std::make_shared<DummyObject3DInteraction>();
-            }
+            // let the regular pan gesture run
         }
         else if (auto selectedObject = selection.anyObject())
         {
