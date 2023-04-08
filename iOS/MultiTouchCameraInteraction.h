@@ -19,8 +19,8 @@ public:
     static constexpr float kDefaultOrbitSpeed = 2e-3f;
     static constexpr float kDefaultDollySpeed = 2.f;
     
-    MultiTouchCameraInteraction(const Camera::Ptr&, UIView* view, const float3& orbitOrigin);
-    MultiTouchCameraInteraction(const Camera::Ptr&, UIView* view);
+    MultiTouchCameraInteraction(const Camera::Ptr&, const float3& orbitOrigin);
+    MultiTouchCameraInteraction(const Camera::Ptr&);
     ~MultiTouchCameraInteraction() override = default;
     
     enum class State

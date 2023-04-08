@@ -8,16 +8,14 @@
 #include "MultiTouchCameraInteraction.h"
 #include "SDFPlane.h"
 
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, UIView* view)
+MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera)
 : CameraInteraction(camera),
-_view(view),
 _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(OrbitCameraInteraction::computeOrbitOrigin(camera->worldTransform()))
 {}
 
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, UIView* view, const float3& orbitOrigin)
+MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const float3& orbitOrigin)
 : CameraInteraction(camera),
-_view(view),
 _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(orbitOrigin)
 {}
