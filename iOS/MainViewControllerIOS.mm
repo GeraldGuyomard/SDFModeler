@@ -232,7 +232,8 @@ struct ObjectDragInfo
         {
             if (auto info = [self objectDragInfo:recognizer])
             {
-                auto interaction = std::make_shared<DragObject3DInteraction>(info->object,
+                auto interaction = std::make_shared<DragObject3DInteraction>(self.world,
+                                                                             info->object,
                                                                              info->position3D,
                                                                              info->positionInNDC,
                                                                              *self.renderer);

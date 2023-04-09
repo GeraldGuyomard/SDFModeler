@@ -15,6 +15,8 @@ public:
     using Ptr = std::shared_ptr<Interaction>;
     
     virtual ~Interaction() = default;
+    
+    virtual void commit() {}
 };
 
 class PanInteraction : public Interaction

@@ -37,7 +37,15 @@ static __weak MainViewController* s_Instance = nil;
 
 -(void)setInteraction:(Interaction::Ptr)interaction
 {
-    _interaction = interaction;
+    if (_interaction != interaction)
+    {
+        if (_interaction != nullptr)
+        {
+            _interaction->commit();
+        }
+        
+        _interaction = interaction;
+    }
 }
 
 - (World&) world

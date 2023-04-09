@@ -7,17 +7,22 @@
 
 #include "Object3DInteraction.h"
 #include "SDFPlane.h"
+#include "Commands/TransformObjectCommand.h"
 
-DragObject3DInteraction::DragObject3DInteraction(const Object3D::Ptr& object,
+DragObject3DInteraction::DragObject3DInteraction(World& world,
+                                                 const Object3D::Ptr& object,
                                                  const float3& hitPos3D,
                                                  const float2& initialPos,
                                                  const Renderer& renderer)
 : PanInteraction(initialPos),
+_world(world),
 _object(object),
 _hitPos3D(hitPos3D),
 _renderer(renderer),
 _initialTransform(object->worldTransform())
-{}
+{
+    _transform = _initialTransform;
+}
 
 void
 DragObject3DInteraction::pan(const float2& pos)
@@ -29,10 +34,17 @@ DragObject3DInteraction::pan(const float2& pos)
     
     const float3 p = ray.pt(d);
     
-    auto transform = _initialTransform;
-    const float3 newPos = translation(transform) + p - _hitPos3D;
+    _transform = _initialTransform;
+    const float3 newPos = translation(_transform) + p - _hitPos3D;
     
-    setTranslation(transform, newPos);
+    setTranslation(_transform, newPos);
     
-    _object->setWorldTransform(transform);
+    _object->setWorldTransform(_transform);
+}
+
+void
+DragObject3DInteraction::commit()
+{
+    auto action = std::make_shared<TransformObjectCommand>(_object, _transform);
+    _world.commandHistory().run(action);
 }

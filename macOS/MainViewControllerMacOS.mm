@@ -47,7 +47,11 @@
         selection.addObject(object);
         world.setSelection(selection);
         
-        interaction = std::make_shared<DragObject3DInteraction>(object, result.position, initialPos, *self.renderer);
+        interaction = std::make_shared<DragObject3DInteraction>(world,
+                                                                object,
+                                                                result.position,
+                                                                initialPos,
+                                                                *self.renderer);
     }
     else
     {

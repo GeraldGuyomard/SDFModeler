@@ -19,7 +19,7 @@ public:
     
     virtual void run() = 0;
     virtual void undo() = 0;
-    virtual void redo() = 0;
+    virtual void redo() { run(); }
 };
 
 class CommandHistory final
