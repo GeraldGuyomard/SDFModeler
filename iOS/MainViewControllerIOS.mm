@@ -206,7 +206,7 @@ struct ObjectDragInfo
     {}
 };
 
-- (ObjectDragInfo::Ptr) objectDragInfo:(UIPanGestureRecognizer*)recognizer
+- (ObjectDragInfo::Ptr) objectDragInfo:(UIGestureRecognizer*)recognizer
 {
     const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
     
