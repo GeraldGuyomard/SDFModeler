@@ -13,6 +13,9 @@
 #include "RenderFunctions.h"
 #include "Composition3D.h"
 
+@interface MainViewController()
+@end
+
 @implementation MainViewController
 {
     MTKView* _view;

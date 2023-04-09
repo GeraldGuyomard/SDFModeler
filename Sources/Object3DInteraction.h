@@ -11,6 +11,8 @@
 #include "Object3D.h"
 #include "Renderer.h"
 
+#include "Commands/TransformObjectCommand.h"
+
 class World;
 
 class DragObject3DInteraction : public PanInteraction
@@ -23,6 +25,7 @@ public:
                             const float3& hitPos3D,
                             const float2& initialPos,
                             const Renderer&);
+    ~DragObject3DInteraction() override;
     
     void pan(const float2& pos) override;
     void commit() override;
@@ -35,4 +38,6 @@ private:
     const Renderer& _renderer;
     const float4x4 _initialTransform;
     float4x4 _transform;
+    
+    const std::shared_ptr<class TransformObjectCommand> _command;
 };

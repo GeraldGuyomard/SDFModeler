@@ -12,12 +12,17 @@
 class TransformObjectCommand : public Command
 {
 public:
-    TransformObjectCommand(const Object3D::Ptr& object, const float4x4& transform);
+    using Ptr = std::shared_ptr<TransformObjectCommand>;
+    
+    TransformObjectCommand(const Object3D::Ptr& object);
+    
+    void setTransform(const float4x4& transform);
     
     void run() override;
     void undo() override;
     
 private:
     const Object3D::Ptr _object;
+    const float4x4 _initialObjectTransform;
     float4x4 _transform;
 };

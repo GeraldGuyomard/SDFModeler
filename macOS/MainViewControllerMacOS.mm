@@ -10,7 +10,17 @@
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
 
+@interface MainViewControllerMacOS()<NSMenuItemValidation>
+@end
+
 @implementation MainViewControllerMacOS
+
+- (void)viewDidAppear
+{
+    [super viewDidAppear];
+ 
+    [self.view.window makeFirstResponder:self];
+}
 
 - (void)rightMouseDown:(NSEvent *)event
 {
@@ -114,6 +124,40 @@
     interaction->pinch(d);
     
     [self setInteraction:std::move(interaction)];
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    return NO;
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if (menuItem.action == @selector(undo:))
+    {
+        return self.world.commandHistory().canUndo();
+    }
+    else if (menuItem.action == @selector(redo:))
+    {
+        return self.world.commandHistory().canRedo();
+    }
+    
+    return NO;
+}
+
+- (void)undo:(id)object
+{
+    self.world.commandHistory().undo();
+}
+
+- (void)redo:(id)object
+{
+    self.world.commandHistory().redo();
 }
 
 @end

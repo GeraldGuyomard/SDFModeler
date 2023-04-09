@@ -6,20 +6,26 @@
 
 #include "TransformObjectCommand.h"
 
-TransformObjectCommand::TransformObjectCommand(const Object3D::Ptr& object, const float4x4& transform)
-: _object(object), _transform(transform)
-{}
+TransformObjectCommand::TransformObjectCommand(const Object3D::Ptr& object)
+: _object(object), _initialObjectTransform(object->worldTransform())
+{
+    _transform = _initialObjectTransform;
+}
+
+void
+TransformObjectCommand::setTransform(const float4x4& transform)
+{
+    _transform = transform;
+}
 
 void
 TransformObjectCommand::run()
 {
-    const auto transform = _object->worldTransform();
     _object->setWorldTransform(_transform);
-    _transform = transform;
 }
 
 void
 TransformObjectCommand::undo()
 {
-    run();
+    _object->setWorldTransform(_initialObjectTransform);
 }
