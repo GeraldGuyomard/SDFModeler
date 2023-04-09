@@ -19,7 +19,6 @@ public:
     using Ptr = std::shared_ptr<MultiTouchCameraInteraction>;
     
     static constexpr float kDefaultOrbitSpeed = 2e-3f;
-    static constexpr float kDefaultDollySpeed = 2.f;
     
     MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer, const float3& orbitOrigin);
     MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer);

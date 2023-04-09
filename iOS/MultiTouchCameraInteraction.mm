@@ -153,6 +153,8 @@ MultiTouchCameraInteraction::updateCameraTransform()
         return;
     }
     
+    auto newTransform = _initialCameraTransform;
+    
     const auto& touch0 = *_trackedTouches[0];
     const float2 initialLocation0 = touch0.initialLocation();
     const float2 currentLocation0 = touch0.currentLocation();
@@ -171,7 +173,11 @@ MultiTouchCameraInteraction::updateCameraTransform()
             const float2 currentVector = currentLocation1 - currentLocation0;
             const float currentLength = length(currentVector);
             
-            _dollyFactor = (1.f - (currentLength / initialLength)) * kDefaultDollySpeed;
+            const float3 pos = translation(newTransform);
+            const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
+            const float speed = distanceToOrbitOrigin * 0.5f;
+            
+            _dollyFactor = (1.f - (currentLength / initialLength)) * speed;
         }
         
         // pan
@@ -188,8 +194,6 @@ MultiTouchCameraInteraction::updateCameraTransform()
         _orbitAngles = touch0.dragVector();
         _orbitAngles *= kDefaultOrbitSpeed;
     }
-    
-    auto newTransform = _initialCameraTransform;
     
     // orbit
     {
@@ -220,7 +224,7 @@ MultiTouchCameraInteraction::updateCameraTransform()
         
         auto pos = translation(newTransform);
         
-        float distanceToOrbitOrigin = length(pos - _orbitOrigin);
+        const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
         const float dampeningFactor = distanceToOrbitOrigin * 0.5e-3f;
         
         pos += rightVector * _panTranslation.x * dampeningFactor;
