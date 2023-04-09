@@ -12,6 +12,7 @@
 #include "Scene.h"
 #include <vector>
 #include <set>
+#include "Command.h"
 
 class Material3D final
 {
@@ -208,10 +209,15 @@ public:
     const Selection& selection() const { return _selection; }
     void setSelection(const Selection&);
     
+    CommandHistory& commandHistory() { return _commandHistory; }
+    
 private:
+    
     Object3DCollection _content;
     ObjectID _nextAvailableObjectID = 1;
     std::vector<Material3D::Ptr> _materials;
     
     Selection _selection;
+    
+    CommandHistory _commandHistory;
 };

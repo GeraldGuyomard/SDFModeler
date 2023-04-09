@@ -17,6 +17,8 @@
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
 		7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */; };
+		7492228929E25BC700ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228729E25BC700ACCFBC /* Command.cpp */; };
+		7492228A29E25BC700ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228729E25BC700ACCFBC /* Command.cpp */; };
 		74A18A7B29D8199E0010F1B4 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74A18A7A29D8199E0010F1B4 /* Metal.framework */; };
 		74A18A7D29D819A40010F1B4 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74A18A7C29D819A40010F1B4 /* MetalKit.framework */; };
 		74A18A8529D8B2B80010F1B4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74A18A8029D8B2B70010F1B4 /* Assets.xcassets */; };
@@ -114,6 +116,8 @@
 		7451041629C1538100F69BC4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		7492228429E0988A00ACCFBC /* MultiTouchCameraInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiTouchCameraInteraction.h; sourceTree = "<group>"; };
 		7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiTouchCameraInteraction.mm; sourceTree = "<group>"; };
+		7492228729E25BC700ACCFBC /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
+		7492228829E25BC700ACCFBC /* Command.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Command.h; sourceTree = "<group>"; };
 		74A18A7A29D8199E0010F1B4 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks/Metal.framework; sourceTree = DEVELOPER_DIR; };
 		74A18A7C29D819A40010F1B4 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS16.2.sdk/System/Library/Frameworks/MetalKit.framework; sourceTree = DEVELOPER_DIR; };
 		74A18A7F29D8B2B70010F1B4 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -297,6 +301,8 @@
 				74A18A9729D903050010F1B4 /* CameraInteraction.h */,
 				7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */,
 				7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */,
+				7492228729E25BC700ACCFBC /* Command.cpp */,
+				7492228829E25BC700ACCFBC /* Command.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -500,6 +506,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
+				7492228929E25BC700ACCFBC /* Command.cpp in Sources */,
 				74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */,
 				74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */,
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
@@ -566,6 +573,7 @@
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
+				7492228A29E25BC700ACCFBC /* Command.cpp in Sources */,
 				74AAF28E29D7BCD300D322DB /* Composition.cpp in Sources */,
 				74AAF28929D7BCB100D322DB /* SDFUnion.cpp in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
