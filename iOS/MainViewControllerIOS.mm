@@ -19,6 +19,8 @@ using HighResClock = std::chrono::high_resolution_clock;
 @implementation MainViewControllerIOS
 {
     HighResClock::time_point _lastRenderTime;
+    
+    UIPanGestureRecognizer* _dragObjectRecognizer;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
@@ -40,24 +42,11 @@ using HighResClock = std::chrono::high_resolution_clock;
     UITapGestureRecognizer* singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
     singleTapRecognizer.numberOfTapsRequired = 1;
     
-    UIPanGestureRecognizer* panOneFingerRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanOneFinger:)];
-    panOneFingerRecognizer.minimumNumberOfTouches = 1;
-    panOneFingerRecognizer.maximumNumberOfTouches = 1;
+    _dragObjectRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onDragObject:)];
+    _dragObjectRecognizer.minimumNumberOfTouches = 1;
+    _dragObjectRecognizer.maximumNumberOfTouches = 1;
     
-    /*UIPanGestureRecognizer* panTwoFingersRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onPanTwoFingers:)];
-    panTwoFingersRecognizer.minimumNumberOfTouches = 2;
-    
-    UIPinchGestureRecognizer* pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(onPinch:)];
-    
-    auto recognizers = @[singleTapRecognizer, panOneFingerRecognizer, panTwoFingersRecognizer, pinchRecognizer];
-    for (UIGestureRecognizer* recognizer in recognizers)
-    {
-        recognizer.delegate = self;
-    }
-    
-    self.view.gestureRecognizers = recognizers;*/
-    
-    self.view.gestureRecognizers = @[singleTapRecognizer, panOneFingerRecognizer];
+    self.view.gestureRecognizers = @[singleTapRecognizer, _dragObjectRecognizer];
     
     for (UIGestureRecognizer* recognizer in self.view.gestureRecognizers)
     {
@@ -86,15 +75,19 @@ using HighResClock = std::chrono::high_resolution_clock;
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    if ([gestureRecognizer isKindOfClass:UIPanGestureRecognizer.class])
+    if (gestureRecognizer == _dragObjectRecognizer)
     {
         auto currentCameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction);
-        return currentCameraInteraction == nullptr;
+        if ((currentCameraInteraction != nullptr) && (currentCameraInteraction->state() == MultiTouchCameraInteraction::State::active))
+        {
+            return NO;
+        }
+        
+        auto info = [self objectDragInfo:gestureRecognizer];
+        return info != nullptr;
     }
-    else
-    {
-        return YES;
-    }
+    
+    return YES;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
@@ -121,11 +114,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         Interaction::Ptr interaction;
         auto object = self.world.objectByID(pickResult.objectID);
         
-        if (object != nullptr)
-        {
-            // let the regular pan gesture run
-        }
-        else if (auto selectedObject = selection.anyObject())
+        if (auto selectedObject = selection.anyObject())
         {
             const float3 origin = translation(selectedObject->worldTransform());
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer, origin);
@@ -204,26 +193,50 @@ using HighResClock = std::chrono::high_resolution_clock;
     }
 }
 
-- (void)onPanOneFinger:(UIPanGestureRecognizer*)recognizer
+struct ObjectDragInfo
+{
+    using Ptr = std::unique_ptr<ObjectDragInfo>;
+    
+    const Object3D::Ptr object;
+    const float2 positionInNDC;
+    const float3 position3D;
+    
+    ObjectDragInfo(const Object3D::Ptr& object, const float2& positionInNDC, const float3& position3D)
+    : object(object), positionInNDC(positionInNDC), position3D(position3D)
+    {}
+};
+
+- (ObjectDragInfo::Ptr) objectDragInfo:(UIPanGestureRecognizer*)recognizer
+{
+    const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+    
+    const auto pickResult = self.renderer->pick(p);
+    
+    if (auto object = self.world.objectByID(pickResult.objectID))
+    {
+        const Selection selection = self.world.selection();
+        if (selection.contains(object))
+        {
+            return std::make_unique<ObjectDragInfo>(object, p, pickResult.position);
+        }
+    }
+    
+    return nullptr;
+}
+
+- (void)onDragObject:(UIPanGestureRecognizer*)recognizer
 {
     switch (recognizer.state)
     {
         case UIGestureRecognizerStateBegan:
         {
-            Interaction::Ptr interaction;
-            
-            const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-            
-            const auto pickResult = self.renderer->pick(p);
-            
-            if (auto object = self.world.objectByID(pickResult.objectID))
+            if (auto info = [self objectDragInfo:recognizer])
             {
-                const Selection selection = self.world.selection();
-                if (selection.contains(object))
-                {
-                    interaction = std::make_shared<DragObject3DInteraction>(object, pickResult.position, p, *self.renderer);
-                    [self setInteraction:interaction];
-                }
+                auto interaction = std::make_shared<DragObject3DInteraction>(info->object,
+                                                                             info->position3D,
+                                                                             info->positionInNDC,
+                                                                             *self.renderer);
+                [self setInteraction:interaction];
             }
             
             break;
@@ -264,21 +277,21 @@ using HighResClock = std::chrono::high_resolution_clock;
     metalLayer.drawableSize = drawableSize;
 }
 
-static constexpr CGFloat kContentScaleFactor = 2.f;
+static constexpr CGFloat kContentScaleFactor = 1.f;
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
     const CGSize size = self.view.bounds.size;
-    [self setContentScaleFactor:kContentScaleFactor size:size];
+    //[self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    [self setContentScaleFactor:kContentScaleFactor size:size];
+    //[self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 
