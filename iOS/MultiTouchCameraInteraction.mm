@@ -7,15 +7,18 @@
 
 #include "MultiTouchCameraInteraction.h"
 #include "SDFPlane.h"
+#include "Renderer.h"
 
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera)
+MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer)
 : CameraInteraction(camera),
+_renderer(renderer),
 _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(OrbitCameraInteraction::computeOrbitOrigin(camera->worldTransform()))
 {}
 
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const float3& orbitOrigin)
+MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer, const float3& orbitOrigin)
 : CameraInteraction(camera),
+_renderer(renderer),
 _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(orbitOrigin)
 {}
@@ -89,58 +92,7 @@ MultiTouchCameraInteraction::touchesMoved(NSSet<UITouch*>* touches)
     
     if (_state == State::active)
     {
-        onDrag();
         updateCameraTransform();
-    }
-}
-
-void
-MultiTouchCameraInteraction::onDrag()
-{
-    if (_trackedTouches.empty())
-    {
-        return;
-    }
-    
-    const auto& touch0 = *_trackedTouches[0];
-    const float2 initialLocation0 = touch0.initialLocation();
-    const float2 currentLocation0 = touch0.currentLocation();
-    
-    if (_trackedTouches.size() >= 2)
-    {
-        const auto& touch1 = *_trackedTouches[1];
-        const float2 initialLocation1 = touch1.initialLocation();
-        const float2 currentLocation1 = touch1.currentLocation();
-        
-        // dolly
-        {
-            const float2 initialVector = initialLocation1 - initialLocation0;
-            const float initialLength = length(initialVector);
-            
-            const float2 currentVector = currentLocation1 - currentLocation0;
-            const float currentLength = length(currentVector);
-            
-            _dollyFactor = (1.f - (currentLength / initialLength)) * kDefaultDollySpeed;
-        }
-        
-        // pan
-        {
-            const float2 initialCentroid = (initialLocation0 + initialLocation1) * 0.5f;
-            
-            SDFPlane dragPlane;
-            
-            const float2 currentCentroid = (currentLocation0 + currentLocation1) * 0.5f;
-            
-            
-            const float2 move = initialCentroid - currentCentroid;
-            _panTranslation = move * 2e-3f;
-            _panTranslation.y *= -1.f;
-        }
-    }
-    else
-    {
-        _orbitAngles = touch0.dragVector();
-        _orbitAngles *= kDefaultOrbitSpeed;
     }
 }
 
@@ -186,6 +138,47 @@ MultiTouchCameraInteraction::updateCameraTransform()
     if (_trackedTouches.empty())
     {
         return;
+    }
+    
+    const auto& touch0 = *_trackedTouches[0];
+    const float2 initialLocation0 = touch0.initialLocation();
+    const float2 currentLocation0 = touch0.currentLocation();
+    
+    if (_trackedTouches.size() >= 2)
+    {
+        const auto& touch1 = *_trackedTouches[1];
+        const float2 initialLocation1 = touch1.initialLocation();
+        const float2 currentLocation1 = touch1.currentLocation();
+        
+        // dolly
+        {
+            const float2 initialVector = initialLocation1 - initialLocation0;
+            const float initialLength = length(initialVector);
+            
+            const float2 currentVector = currentLocation1 - currentLocation0;
+            const float currentLength = length(currentVector);
+            
+            _dollyFactor = (1.f - (currentLength / initialLength)) * kDefaultDollySpeed;
+        }
+        
+        // pan
+        {
+            const float2 initialCentroid = (initialLocation0 + initialLocation1) * 0.5f;
+            
+            SDFPlane dragPlane;
+            
+            const float2 currentCentroid = (currentLocation0 + currentLocation1) * 0.5f;
+            
+            
+            const float2 move = initialCentroid - currentCentroid;
+            _panTranslation = move * 2e-3f;
+            _panTranslation.y *= -1.f;
+        }
+    }
+    else
+    {
+        _orbitAngles = touch0.dragVector();
+        _orbitAngles *= kDefaultOrbitSpeed;
     }
     
     auto newTransform = _initialCameraTransform;

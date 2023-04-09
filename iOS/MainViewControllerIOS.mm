@@ -128,11 +128,11 @@ using HighResClock = std::chrono::high_resolution_clock;
         else if (auto selectedObject = selection.anyObject())
         {
             const float3 origin = translation(selectedObject->worldTransform());
-            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, origin);
+            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer, origin);
         }
         else
         {
-            interaction = std::make_shared<MultiTouchCameraInteraction>(camera);
+            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
         }
 
         [self setInteraction:interaction];

@@ -11,6 +11,8 @@
 #import <UIKit/UIKit.h>
 #include <vector>
 
+class Renderer;
+
 class MultiTouchCameraInteraction : public Interaction, public CameraInteraction
 {
 public:
@@ -19,8 +21,8 @@ public:
     static constexpr float kDefaultOrbitSpeed = 2e-3f;
     static constexpr float kDefaultDollySpeed = 2.f;
     
-    MultiTouchCameraInteraction(const Camera::Ptr&, const float3& orbitOrigin);
-    MultiTouchCameraInteraction(const Camera::Ptr&);
+    MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer, const float3& orbitOrigin);
+    MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer);
     ~MultiTouchCameraInteraction() override = default;
     
     enum class State
@@ -40,9 +42,9 @@ public:
 private:
     
     void updateCameraTransform();
-    void onDrag();
     
-    UIView* _view;
+    const Renderer* const _renderer;
+    
     float4x4 _initialCameraTransform;
     const float3 _orbitOrigin;
     
