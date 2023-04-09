@@ -62,6 +62,8 @@ MultiTouchCameraInteraction::TrackedTouch::dragging() const
 void
 MultiTouchCameraInteraction::touchesBegan(NSSet<UITouch*>* touches)
 {
+    const bool wasTrackingTwoTouches = _trackedTouches.size() >= 2;
+    
     for (UITouch* touch : touches)
     {
         _trackedTouches.push_back(std::make_unique<TrackedTouch>(touch));
@@ -70,6 +72,11 @@ MultiTouchCameraInteraction::touchesBegan(NSSet<UITouch*>* touches)
     if (_state == State::idle)
     {
         _state = State::possible;
+    }
+    
+    if (!wasTrackingTwoTouches)
+    {
+        reset();
     }
 }
 
@@ -120,15 +127,21 @@ MultiTouchCameraInteraction::touchesEnded(NSSet<UITouch*>* touches)
     }
     else if (touchesRemoved)
     {
-        _initialCameraTransform = camera()->worldTransform();
-        _orbitAngles = { 0 };
-        _dollyFactor = 0.f;
-        _panTranslation = { 0 };
-        
-        for (const auto& touch : _trackedTouches)
-        {
-            touch->resetInitialLocation();
-        }
+        reset();
+    }
+}
+
+void
+MultiTouchCameraInteraction::reset()
+{
+    _initialCameraTransform = camera()->worldTransform();
+    _orbitAngles = { 0 };
+    _dollyFactor = 0.f;
+    _panTranslation = { 0 };
+    
+    for (const auto& touch : _trackedTouches)
+    {
+        touch->resetInitialLocation();
     }
 }
 

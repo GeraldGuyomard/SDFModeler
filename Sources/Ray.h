@@ -26,6 +26,11 @@ struct Ray final
         return origin + (t * direction);
     }
     
+    bool containsPoint(float t) const
+    {
+        return (t >= 0) && (t <= maxLength);
+    }
+    
     static Ray make(float2 ndcPosition, CONSTANT Uniforms& uniforms)
     {
         float3 origin = viewToWorld(ndcPosition, 0, uniforms);

@@ -42,6 +42,7 @@ public:
 private:
     
     void updateCameraTransform();
+    void reset();
     
     const Renderer* const _renderer;
     
