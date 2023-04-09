@@ -177,14 +177,9 @@ MultiTouchCameraInteraction::updateCameraTransform()
         // pan
         {
             const float2 initialCentroid = (initialLocation0 + initialLocation1) * 0.5f;
-            
-            SDFPlane dragPlane;
-            
             const float2 currentCentroid = (currentLocation0 + currentLocation1) * 0.5f;
             
-            
-            const float2 move = initialCentroid - currentCentroid;
-            _panTranslation = move * 2e-3f;
+            _panTranslation = initialCentroid - currentCentroid;
             _panTranslation.y *= -1.f;
         }
     }
@@ -225,8 +220,11 @@ MultiTouchCameraInteraction::updateCameraTransform()
         
         auto pos = translation(newTransform);
         
-        pos += rightVector * _panTranslation.x;
-        pos += upVector * _panTranslation.y;
+        float distanceToOrbitOrigin = length(pos - _orbitOrigin);
+        const float dampeningFactor = distanceToOrbitOrigin * 0.5e-3f;
+        
+        pos += rightVector * _panTranslation.x * dampeningFactor;
+        pos += upVector * _panTranslation.y * dampeningFactor;
         
         setTranslation(newTransform, pos);
     }
