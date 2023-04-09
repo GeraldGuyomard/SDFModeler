@@ -10,7 +10,7 @@
 #import <Metal/Metal.h>
 #import <MetalKit/MetalKit.h>
 
-#include "World.h"
+#include "RenderFunctions.h"
 #include "Composition3D.h"
 
 @implementation MainViewController

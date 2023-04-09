@@ -8,7 +8,7 @@
 // File for Metal kernel and shader functions
 
 
-#include "World.h"
+#include "RenderFunctions.h"
 
 struct VertexShaderOut
 {

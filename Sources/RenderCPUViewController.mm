@@ -11,7 +11,7 @@
 #import "Renderer.h"
 #include "CommonDefinitions.h"
 
-#include "World.h"
+#include "RenderFunctions.h"
 
 #include "MainViewController.h"
 

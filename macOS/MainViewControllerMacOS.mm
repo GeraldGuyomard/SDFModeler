@@ -6,7 +6,7 @@
 //
 
 #include "MainViewControllerMacOS.h"
-#include "World.h"
+#include "RenderFunctions.h"
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
 

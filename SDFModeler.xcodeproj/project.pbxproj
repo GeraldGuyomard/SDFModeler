@@ -57,7 +57,7 @@
 		74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
-		74AAF29329D7BCD300D322DB /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
+		74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		74AAF29429D7BCD300D322DB /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
 		74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
@@ -85,7 +85,7 @@
 		74DAA70729ADB5C100171C03 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 		74DAA70D29ADBC5700171C03 /* SDFUnion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */; };
-		74DAA71029AEEE7200171C03 /* World.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* World.cpp */; };
+		74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
 		74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
 		74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
@@ -181,8 +181,8 @@
 		74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFRoundedBox.h; sourceTree = "<group>"; };
 		74DAA70B29ADBC5700171C03 /* SDFUnion.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFUnion.cpp; sourceTree = "<group>"; };
 		74DAA70C29ADBC5700171C03 /* SDFUnion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFUnion.h; sourceTree = "<group>"; };
-		74DAA70E29AEEE7200171C03 /* World.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = World.cpp; sourceTree = "<group>"; };
-		74DAA70F29AEEE7200171C03 /* World.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = World.h; sourceTree = "<group>"; };
+		74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFunctions.cpp; sourceTree = "<group>"; };
+		74DAA70F29AEEE7200171C03 /* RenderFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderFunctions.h; sourceTree = "<group>"; };
 		74F7646129CE87CF00CD5259 /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectType.cpp; sourceTree = "<group>"; };
 		74F7646229CE87CF00CD5259 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectType.h; sourceTree = "<group>"; };
 		74F7646429CE8A0300CD5259 /* Composition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composition.cpp; sourceTree = "<group>"; };
@@ -285,8 +285,8 @@
 				74F7646529CE8A0300CD5259 /* Composition.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
 				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
-				74DAA70E29AEEE7200171C03 /* World.cpp */,
-				74DAA70F29AEEE7200171C03 /* World.h */,
+				74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */,
+				74DAA70F29AEEE7200171C03 /* RenderFunctions.h */,
 				7444A4DF29A1CB64009632C3 /* Main.storyboard */,
 				7444A4E229A1CB64009632C3 /* main.m */,
 				74A18A9229D8B7990010F1B4 /* Camera.cpp */,
@@ -516,7 +516,7 @@
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
 				7451041729C1538200F69BC4 /* Scene.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
-				74DAA71029AEEE7200171C03 /* World.cpp in Sources */,
+				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
@@ -579,7 +579,7 @@
 				74AAF29429D7BCD300D322DB /* Scene.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
-				74AAF29329D7BCD300D322DB /* World.cpp in Sources */,
+				74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
 				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,
 				74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */,
