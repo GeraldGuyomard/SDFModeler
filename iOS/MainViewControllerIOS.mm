@@ -20,7 +20,10 @@ using HighResClock = std::chrono::high_resolution_clock;
 {
     HighResClock::time_point _lastRenderTime;
     
+    UITapGestureRecognizer* _singleTapRecognizer;
     UIPanGestureRecognizer* _dragObjectRecognizer;
+    UITapGestureRecognizer* _undoRecognizer;
+    UITapGestureRecognizer* _redoRecognizer;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
@@ -39,14 +42,23 @@ using HighResClock = std::chrono::high_resolution_clock;
     
     self.view.multipleTouchEnabled = YES;
     
-    UITapGestureRecognizer* singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
-    singleTapRecognizer.numberOfTapsRequired = 1;
+    _singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
+    _singleTapRecognizer.numberOfTapsRequired = 1;
+    _singleTapRecognizer.numberOfTouchesRequired = 1;
     
     _dragObjectRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onDragObject:)];
     _dragObjectRecognizer.minimumNumberOfTouches = 1;
     _dragObjectRecognizer.maximumNumberOfTouches = 1;
     
-    self.view.gestureRecognizers = @[singleTapRecognizer, _dragObjectRecognizer];
+    _undoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(undo:)];
+    _undoRecognizer.numberOfTapsRequired = 2;
+    _undoRecognizer.numberOfTouchesRequired = 2;
+    
+    _redoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(redo:)];
+    _redoRecognizer.numberOfTapsRequired = 2;
+    _redoRecognizer.numberOfTouchesRequired = 3;
+    
+    self.view.gestureRecognizers = @[_singleTapRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
     
     for (UIGestureRecognizer* recognizer in self.view.gestureRecognizers)
     {
@@ -88,11 +100,6 @@ using HighResClock = std::chrono::high_resolution_clock;
     }
     
     return YES;
-}
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
-{
-    return NO;
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
@@ -261,6 +268,22 @@ struct ObjectDragInfo
         }
             
         default: break;
+    }
+}
+
+- (void)undo:(UITapGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        self.world.commandHistory().undo();
+    }
+}
+
+- (void)redo:(UITapGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        self.world.commandHistory().redo();
     }
 }
 
