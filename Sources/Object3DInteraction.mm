@@ -22,6 +22,7 @@ _initialTransform(object->worldTransform()),
 _command(std::make_shared<TransformObjectCommand>(_object))
 {
     _transform = _initialTransform;
+    _world.commandHistory().enable(false);
 }
 
 DragObject3DInteraction::~DragObject3DInteraction() = default;
@@ -49,4 +50,5 @@ DragObject3DInteraction::commit()
 {
     _command->setTransform(_transform);
     _world.commandHistory().run(_command);
+    _world.commandHistory().enable(true);
 }

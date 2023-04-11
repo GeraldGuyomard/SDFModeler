@@ -31,6 +31,9 @@ public:
     
     CommandHistory(size_t undoDepth = kDefaultUndoDepth);
     
+    bool isEnabled() const;
+    void enable(bool);
+    
     void run(const Command::Ptr&);
     
     bool canUndo() const;
@@ -49,6 +52,7 @@ private:
     std::vector<Command::Ptr> _redoableCommands;
     std::vector<Command::Ptr> _undoableCommands;
     
+    int32_t _enableCount = 1;
     size_t _undoDepth;
     StateUpdateCallback _stateUpdateCallback;
 };

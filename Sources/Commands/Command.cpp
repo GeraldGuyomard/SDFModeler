@@ -19,6 +19,27 @@ CommandHistory::onStateChange()
     }
 }
 
+bool
+CommandHistory::isEnabled() const
+{
+    return _enableCount > 0;
+}
+
+void
+CommandHistory::enable(bool enable)
+{
+    if (enable)
+    {
+        ++_enableCount;
+    }
+    else
+    {
+        --_enableCount;
+    }
+    
+    onStateChange();
+}
+
 void
 CommandHistory::run(const Command::Ptr& cmd)
 {
@@ -36,7 +57,7 @@ CommandHistory::run(const Command::Ptr& cmd)
 bool
 CommandHistory::canUndo() const
 {
-    return !_undoableCommands.empty();
+    return isEnabled() && !_undoableCommands.empty();
 }
 
 void
@@ -56,7 +77,7 @@ CommandHistory::undo()
 bool
 CommandHistory::canRedo() const
 {
-    return !_redoableCommands.empty();
+    return isEnabled() && !_redoableCommands.empty();
 }
 
 void
