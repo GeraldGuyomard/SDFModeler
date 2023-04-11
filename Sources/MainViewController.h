@@ -23,4 +23,7 @@
 -(Interaction::Ptr) interaction;
 -(void)setInteraction:(Interaction::Ptr)interaction;
 
+- (IBAction)undo:(id)source;
+- (IBAction)redo:(id)source;
+
 @end

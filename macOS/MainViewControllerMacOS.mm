@@ -150,14 +150,4 @@
     return NO;
 }
 
-- (void)undo:(id)object
-{
-    self.world.commandHistory().undo();
-}
-
-- (void)redo:(id)object
-{
-    self.world.commandHistory().redo();
-}
-
 @end

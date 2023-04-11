@@ -50,12 +50,12 @@ using HighResClock = std::chrono::high_resolution_clock;
     _dragObjectRecognizer.minimumNumberOfTouches = 1;
     _dragObjectRecognizer.maximumNumberOfTouches = 1;
     
-    _undoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(undo:)];
-    _undoRecognizer.numberOfTapsRequired = 2;
+    _undoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapTwoFingers:)];
+    _undoRecognizer.numberOfTapsRequired = 1;
     _undoRecognizer.numberOfTouchesRequired = 2;
     
-    _redoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(redo:)];
-    _redoRecognizer.numberOfTapsRequired = 2;
+    _redoRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapThreeFingers:)];
+    _redoRecognizer.numberOfTapsRequired = 1;
     _redoRecognizer.numberOfTouchesRequired = 3;
     
     self.view.gestureRecognizers = @[_singleTapRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
@@ -81,6 +81,16 @@ using HighResClock = std::chrono::high_resolution_clock;
             
             self.fpsLabel.text = [NSString stringWithFormat:@"FPS = %2.2f", fps];
             [self.fpsLabel sizeToFit];
+        }
+    });
+    
+    [self updateUndoRedoButtons];
+    
+    self.world.commandHistory().setStateUpdateCallback([wSelf](const auto& history)
+    {
+        if (auto self = wSelf)
+        {
+            [self updateUndoRedoButtons];
         }
     });
 }
@@ -271,19 +281,19 @@ struct ObjectDragInfo
     }
 }
 
-- (void)undo:(UITapGestureRecognizer*)recognizer
+- (void)onTapTwoFingers:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
     {
-        self.world.commandHistory().undo();
+        [self undo:nil];
     }
 }
 
-- (void)redo:(UITapGestureRecognizer*)recognizer
+- (void)onTapThreeFingers:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
     {
-        self.world.commandHistory().redo();
+        [self redo:nil];
     }
 }
 
@@ -318,5 +328,21 @@ static constexpr CGFloat kContentScaleFactor = 1.f;
     //[self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
+namespace
+{
+    void enableButton(UIButton* button, bool enable)
+    {
+        button.enabled = enable;
+        button.alpha = enable ? 1.f : 0.5f;
+    }
+}
+
+- (void)updateUndoRedoButtons
+{
+    const auto& commandHistory = self.world.commandHistory();
+    
+    enableButton(self.undoButton, commandHistory.canUndo());
+    enableButton(self.redoButton, commandHistory.canRedo());
+}
 
 @end

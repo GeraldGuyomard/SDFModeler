@@ -9,6 +9,7 @@
 #include "CommonDefinitions.h"
 #include <memory>
 #include <vector>
+#include <functional>
 
 class Command
 {
@@ -38,9 +39,16 @@ public:
     bool canRedo() const;
     void redo();
     
+    using StateUpdateCallback = std::function<void(const CommandHistory&)>;
+    void setStateUpdateCallback(const StateUpdateCallback&);
+    
 private:
+                                              
+    void onStateChange();
+                                              
     std::vector<Command::Ptr> _redoableCommands;
     std::vector<Command::Ptr> _undoableCommands;
     
     size_t _undoDepth;
+    StateUpdateCallback _stateUpdateCallback;
 };

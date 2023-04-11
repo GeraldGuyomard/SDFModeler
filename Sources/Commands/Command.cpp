@@ -11,6 +11,15 @@ CommandHistory::CommandHistory(size_t undoDepth)
 {}
 
 void
+CommandHistory::onStateChange()
+{
+    if (_stateUpdateCallback != nullptr)
+    {
+        _stateUpdateCallback(*this);
+    }
+}
+
+void
 CommandHistory::run(const Command::Ptr& cmd)
 {
     cmd->run();
@@ -20,6 +29,8 @@ CommandHistory::run(const Command::Ptr& cmd)
     {
         _undoableCommands.erase(_undoableCommands.begin());
     }
+    
+    onStateChange();
 }
 
 bool
@@ -37,6 +48,8 @@ CommandHistory::undo()
         _undoableCommands.erase(_undoableCommands.end() - 1);
         cmd->undo();
         _redoableCommands.push_back(cmd);
+        
+        onStateChange();
     }
 }
 
@@ -55,5 +68,13 @@ CommandHistory::redo()
         _redoableCommands.erase(_redoableCommands.end() - 1);
         cmd->redo();
         _undoableCommands.push_back(cmd);
+        
+        onStateChange();
     }
+}
+
+void
+CommandHistory::setStateUpdateCallback(const StateUpdateCallback& cb)
+{
+    _stateUpdateCallback = cb;
 }

@@ -181,4 +181,14 @@ static __weak MainViewController* s_Instance = nil;
     _renderer = std::make_unique<Renderer>(_view);
 }
 
+- (IBAction)undo:(id)source
+{
+    self.world.commandHistory().undo();
+}
+
+- (IBAction)redo:(id)source
+{
+    self.world.commandHistory().redo();
+}
+
 @end
