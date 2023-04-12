@@ -189,8 +189,6 @@ private:
     std::vector<Object3D::Ptr> _objects;
 };
 
-using Selection = Object3DCollection;
-
 class World final
 {
 public:
@@ -206,8 +204,8 @@ public:
     
     Object3D::Ptr objectByID(ObjectID id) const;
     
-    const Selection& selection() const { return _selection; }
-    void setSelection(const Selection&);
+    const Object3D::Ptr& selectedObject() const { return _selectedObject; }
+    void setSelectedObject(const Object3D::Ptr&);
     
     CommandHistory& commandHistory() { return _commandHistory; }
     
@@ -217,7 +215,7 @@ private:
     ObjectID _nextAvailableObjectID = 1;
     std::vector<Material3D::Ptr> _materials;
     
-    Selection _selection;
+    Object3D::Ptr _selectedObject;
     
     CommandHistory _commandHistory;
 };

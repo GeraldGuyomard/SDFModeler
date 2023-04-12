@@ -222,15 +222,13 @@ World::objectByID(ObjectID id) const
 }
 
 void
-World::setSelection(const Selection& selection)
+World::setSelectedObject(const Object3D::Ptr& object)
 {
-    _selection = selection;
-    
-    const auto ids = _selection.objectIDs();
+    _selectedObject = object;
     
     for (const auto& object : objects())
     {
-        const bool selected = (ids.find(object->id()) != ids.end());
+        const bool selected = (object == _selectedObject);
         object->setSelected(selected);
     }
 }

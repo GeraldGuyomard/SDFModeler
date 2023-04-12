@@ -126,12 +126,12 @@ using HighResClock = std::chrono::high_resolution_clock;
         
         const auto pickResult = self.renderer->pick(p);
         
-        const Selection selection = self.world.selection();
+        const auto selectedObject = self.world.selectedObject();
         
         Interaction::Ptr interaction;
         auto object = self.world.objectByID(pickResult.objectID);
         
-        if (auto selectedObject = selection.anyObject())
+        if (selectedObject != nullptr)
         {
             const float3 origin = translation(selectedObject->worldTransform());
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer, origin);
@@ -182,23 +182,17 @@ using HighResClock = std::chrono::high_resolution_clock;
     }
 }
 
-- (Selection)selectionFromPosition:(float2)pt
+- (Object3D::Ptr)objectFromPosition:(float2)pt
 {
     const auto pickResult = self.renderer->pick(pt);
     NSLog(@"ObjectID = %d\n", pickResult.objectID);
     
-    Selection selection;
-    if (auto object = self.world.objectByID(pickResult.objectID))
-    {
-        selection.addObject(object);
-    }
-    
-    return selection;
+    return self.world.objectByID(pickResult.objectID);
 }
 
 - (void)selectObjectAtPosition:(float2)pt
 {
-    self.world.setSelection([self selectionFromPosition:pt]);
+    self.world.setSelectedObject([self objectFromPosition:pt]);
 }
 
 - (void)onTap:(UITapGestureRecognizer*)recognizer
@@ -231,8 +225,7 @@ struct ObjectDragInfo
     
     if (auto object = self.world.objectByID(pickResult.objectID))
     {
-        const Selection selection = self.world.selection();
-        if (selection.contains(object))
+        if (object->selected())
         {
             return std::make_unique<ObjectDragInfo>(object, p, pickResult.position);
         }

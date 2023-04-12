@@ -53,9 +53,7 @@
     const auto result = self.renderer->pick(initialPos);
     if (auto object = world.objectByID(result.objectID))
     {
-        Selection selection;
-        selection.addObject(object);
-        world.setSelection(selection);
+        world.setSelectedObject(object);
         
         interaction = std::make_shared<DragObject3DInteraction>(world,
                                                                 object,
@@ -73,7 +71,7 @@
         }
         else
         {
-            if (auto selectedObject = world.selection().anyObject())
+            if (auto selectedObject = world.selectedObject())
             {
                 const float3 origin = translation(selectedObject->worldTransform());
                 interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, initialPos);
@@ -112,7 +110,7 @@
     
     DollyCameraInteraction::Ptr interaction;
     
-    if (auto object = self.world.selection().anyObject())
+    if (auto object = self.world.selectedObject())
     {
         interaction = std::make_unique<DollyCameraInteraction>(camera, object);
     }
