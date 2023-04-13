@@ -109,10 +109,25 @@ Object3D::setOperation(Operation op)
 }
 
 void
-Object3DCollection::addObject(Object3D::Ptr object)
+Object3DCollection::addObject(const Object3D::Ptr& object)
 {
-    _objects.push_back(std::move(object));
+    _objects.push_back(object);
 }
+
+void
+Object3DCollection::removeObject(const Object3D::Ptr& object)
+{
+    const auto end = _objects.end();
+    for (auto it = _objects.begin(); it != end; ++it)
+    {
+        if (*it == object)
+        {
+            _objects.erase(it);
+            break;
+        }
+    }
+}
+
 
 std::set<ObjectID>
 Object3DCollection::objectIDs() const
@@ -181,10 +196,16 @@ World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
 }
 
 void
-World::addObject(Object3D::Ptr object)
+World::addObject(const Object3D::Ptr& object)
 {
     object->setId(_nextAvailableObjectID++);
-    _content.addObject(std::move(object));
+    _content.addObject(object);
+}
+
+void
+World::removeObject(const Object3D::Ptr& object)
+{
+    _content.removeObject(object);
 }
 
 const std::vector<Object3D::Ptr>&
@@ -194,7 +215,7 @@ World::objects() const
 }
 
 void
-World::addMaterial(Material3D::Ptr mat)
+World::addMaterial(const Material3D::Ptr& mat)
 {
     mat->setId(_materials.size());
     _materials.push_back(mat);

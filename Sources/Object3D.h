@@ -173,7 +173,8 @@ public:
     
     Object3DCollection() = default;
     
-    void addObject(Object3D::Ptr);
+    void addObject(const Object3D::Ptr&);
+    void removeObject(const Object3D::Ptr&);
     
     void serialize(SerializedObjects&) const;
     
@@ -196,10 +197,11 @@ public:
     
     void serialize(SerializedWorld&, Materials& materials) const;
     
-    void addMaterial(Material3D::Ptr);
+    void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);
    
-    void addObject(Object3D::Ptr);
+    void addObject(const Object3D::Ptr&);
+    void removeObject(const Object3D::Ptr&);
     const std::vector<Object3D::Ptr>& objects() const;
     
     Object3D::Ptr objectByID(ObjectID id) const;

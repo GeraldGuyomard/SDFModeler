@@ -10,10 +10,11 @@
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
 #include "MultiTouchCameraInteraction.h"
+#include "RemoveObjectCommand.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
-@interface MainViewControllerIOS()<UIGestureRecognizerDelegate>
+@interface MainViewControllerIOS()<UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate>
 @end
 
 @implementation MainViewControllerIOS
@@ -21,9 +22,12 @@ using HighResClock = std::chrono::high_resolution_clock;
     HighResClock::time_point _lastRenderTime;
     
     UITapGestureRecognizer* _singleTapRecognizer;
+    
     UIPanGestureRecognizer* _dragObjectRecognizer;
     UITapGestureRecognizer* _undoRecognizer;
     UITapGestureRecognizer* _redoRecognizer;
+    
+    UIContextMenuInteraction* _contextMenuInteraction;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
@@ -93,11 +97,14 @@ using HighResClock = std::chrono::high_resolution_clock;
             [self updateUndoRedoButtons];
         }
     });
+    
+    _contextMenuInteraction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
+    [self.view addInteraction:_contextMenuInteraction];
 }
 
-- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
 {
-    if (gestureRecognizer == _dragObjectRecognizer)
+    if (recognizer == _dragObjectRecognizer)
     {
         auto currentCameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction);
         if ((currentCameraInteraction != nullptr) && (currentCameraInteraction->state() == MultiTouchCameraInteraction::State::active))
@@ -105,7 +112,7 @@ using HighResClock = std::chrono::high_resolution_clock;
             return NO;
         }
         
-        auto info = [self objectDragInfo:gestureRecognizer];
+        auto info = [self objectDragInfo:[recognizer locationInView:self.view]];
         return info != nullptr;
     }
     
@@ -195,6 +202,15 @@ using HighResClock = std::chrono::high_resolution_clock;
     self.world.setSelectedObject([self objectFromPosition:pt]);
 }
 
+- (void)onLongPress:(UILongPressGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        int a;
+        a = 1;
+    }
+}
+
 - (void)onTap:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
@@ -217,9 +233,9 @@ struct ObjectDragInfo
     {}
 };
 
-- (ObjectDragInfo::Ptr) objectDragInfo:(UIGestureRecognizer*)recognizer
+- (ObjectDragInfo::Ptr) objectDragInfo:(CGPoint)location
 {
-    const float2 p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+    const float2 p = [self convertPointToPixel:location];
     
     const auto pickResult = self.renderer->pick(p);
     
@@ -240,7 +256,7 @@ struct ObjectDragInfo
     {
         case UIGestureRecognizerStateBegan:
         {
-            if (auto info = [self objectDragInfo:recognizer])
+            if (auto info = [self objectDragInfo:[recognizer locationInView:self.view]])
             {
                 auto interaction = std::make_shared<DragObject3DInteraction>(self.world,
                                                                              info->object,
@@ -336,6 +352,37 @@ namespace
     
     enableButton(self.undoButton, commandHistory.canUndo());
     enableButton(self.redoButton, commandHistory.canRedo());
+}
+
+- (nullable UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
+{
+    if (auto info = [self objectDragInfo:location])
+    {
+        World* world = &self.world;
+        
+        auto command = std::make_shared<RemoveObjectCommand>(world, info->object);
+        
+        auto deleteAction = [UIAction actionWithTitle:@"Delete"
+                                image:nil
+                                identifier:@"Delete"
+                                handler:^(UIAction * action)
+        {
+            world->commandHistory().run(command);
+        }];
+        
+        return [UIContextMenuConfiguration configurationWithIdentifier:@"ObjectMenu"
+        previewProvider: nil
+        actionProvider:^(NSArray<UIMenuElement*>* suggestedActions)
+        {
+            return [UIMenu menuWithTitle:@"Object 3D"
+                            image:nil
+                            identifier:@"Object3DMenu"
+                            options:0
+                            children:@[deleteAction]];
+        }];
+    }
+    
+    return nil;
 }
 
 @end
