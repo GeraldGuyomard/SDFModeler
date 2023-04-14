@@ -11,7 +11,6 @@
 
 @interface MainViewControllerIOS : MainViewController
 
-@property(nonatomic) IBOutlet UILabel* fpsLabel;
 @property(nonatomic) IBOutlet UIButton* undoButton;
 @property(nonatomic) IBOutlet UIButton* redoButton;
 

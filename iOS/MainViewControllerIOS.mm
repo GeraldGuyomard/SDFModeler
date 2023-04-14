@@ -79,12 +79,6 @@ using HighResClock = std::chrono::high_resolution_clock;
             auto now = HighResClock::now();
             const auto dT = now - _lastRenderTime;
             _lastRenderTime = now;
-            
-            const float millis = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
-            const float fps = 1000.f / millis;
-            
-            self.fpsLabel.text = [NSString stringWithFormat:@"FPS = %2.2f", fps];
-            [self.fpsLabel sizeToFit];
         }
     });
     
