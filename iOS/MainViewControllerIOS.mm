@@ -14,7 +14,7 @@
 
 using HighResClock = std::chrono::high_resolution_clock;
 
-@interface MainViewControllerIOS()<UIGestureRecognizerDelegate, UIContextMenuInteractionDelegate>
+@interface MainViewControllerIOS()<UIGestureRecognizerDelegate>
 @end
 
 @implementation MainViewControllerIOS
@@ -26,8 +26,6 @@ using HighResClock = std::chrono::high_resolution_clock;
     UIPanGestureRecognizer* _dragObjectRecognizer;
     UITapGestureRecognizer* _undoRecognizer;
     UITapGestureRecognizer* _redoRecognizer;
-    
-    UIContextMenuInteraction* _contextMenuInteraction;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
@@ -92,8 +90,8 @@ using HighResClock = std::chrono::high_resolution_clock;
         }
     });
     
-    _contextMenuInteraction = [[UIContextMenuInteraction alloc] initWithDelegate:self];
-    [self.view addInteraction:_contextMenuInteraction];
+    self.selectionActionsButton.showsMenuAsPrimaryAction = YES;
+    [self updateActionsButton];
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
@@ -194,6 +192,7 @@ using HighResClock = std::chrono::high_resolution_clock;
 - (void)selectObjectAtPosition:(float2)pt
 {
     self.world.setSelectedObject([self objectFromPosition:pt]);
+    [self updateActionsButton];
 }
 
 - (void)onLongPress:(UILongPressGestureRecognizer*)recognizer
@@ -348,13 +347,15 @@ namespace
     enableButton(self.redoButton, commandHistory.canRedo());
 }
 
-- (nullable UIContextMenuConfiguration *)contextMenuInteraction:(UIContextMenuInteraction *)interaction configurationForMenuAtLocation:(CGPoint)location
+- (void) updateActionsButton
 {
-    if (auto info = [self objectDragInfo:location])
+    UIMenu* menu = nil;
+    
+    World* world = &self.world;
+    auto selectedObject = world->selectedObject();
+    if (selectedObject != nullptr)
     {
-        World* world = &self.world;
-        
-        auto command = std::make_shared<RemoveObjectCommand>(world, info->object);
+        auto command = std::make_shared<RemoveObjectCommand>(world, selectedObject);
         
         auto deleteAction = [UIAction actionWithTitle:@"Delete"
                                 image:nil
@@ -364,19 +365,17 @@ namespace
             world->commandHistory().run(command);
         }];
         
-        return [UIContextMenuConfiguration configurationWithIdentifier:@"ObjectMenu"
-        previewProvider: nil
-        actionProvider:^(NSArray<UIMenuElement*>* suggestedActions)
-        {
-            return [UIMenu menuWithTitle:@"Object 3D"
-                            image:nil
-                            identifier:@"Object3DMenu"
-                            options:0
-                            children:@[deleteAction]];
-        }];
+        menu = [UIMenu menuWithTitle:@"Object 3D"
+                        image:nil
+                        identifier:@"Object3DMenu"
+                        options:0
+                        children:@[deleteAction]];
     }
     
-    return nil;
+    self.selectionActionsButton.enabled = (menu != nil);
+    self.selectionActionsButton.menu = menu;
+    
+    [self.selectionActionsButton sizeToFit];
 }
 
 @end

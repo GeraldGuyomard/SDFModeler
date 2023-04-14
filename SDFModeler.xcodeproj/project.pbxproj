@@ -16,6 +16,8 @@
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
+		7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
+		7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */; };
 		7492228E29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
 		7492228F29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
@@ -116,6 +118,8 @@
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		7451041529C1538100F69BC4 /* Scene.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scene.cpp; sourceTree = "<group>"; };
 		7451041629C1538100F69BC4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
+		7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveObjectCommand.cpp; sourceTree = "<group>"; };
+		7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveObjectCommand.h; sourceTree = "<group>"; };
 		7492228429E0988A00ACCFBC /* MultiTouchCameraInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiTouchCameraInteraction.h; sourceTree = "<group>"; };
 		7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiTouchCameraInteraction.mm; sourceTree = "<group>"; };
 		7492228C29E2685F00ACCFBC /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
@@ -315,6 +319,8 @@
 			children = (
 				7492229029E2689F00ACCFBC /* TransformObjectCommand.cpp */,
 				7492229129E2689F00ACCFBC /* TransformObjectCommand.h */,
+				7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */,
+				7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */,
 				7492228C29E2685F00ACCFBC /* Command.cpp */,
 				7492228D29E2685F00ACCFBC /* Command.h */,
 			);
@@ -559,6 +565,7 @@
 				74A18A9529D9012A0010F1B4 /* Camera.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
+				7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
 				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
@@ -583,6 +590,7 @@
 				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
 				74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */,
 				7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */,
+				7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,
 				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
