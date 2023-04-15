@@ -18,6 +18,8 @@
 		7451041729C1538200F69BC4 /* Scene.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* Scene.cpp */; };
 		7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
+		7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
+		7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
 		7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */; };
 		7492228E29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
 		7492228F29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
@@ -120,6 +122,8 @@
 		7451041629C1538100F69BC4 /* Scene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scene.h; sourceTree = "<group>"; };
 		7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveObjectCommand.cpp; sourceTree = "<group>"; };
 		7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveObjectCommand.h; sourceTree = "<group>"; };
+		7456FCA729EA284C00398E86 /* AddObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddObjectCommand.h; sourceTree = "<group>"; };
+		7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddObjectCommand.cpp; sourceTree = "<group>"; };
 		7492228429E0988A00ACCFBC /* MultiTouchCameraInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiTouchCameraInteraction.h; sourceTree = "<group>"; };
 		7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiTouchCameraInteraction.mm; sourceTree = "<group>"; };
 		7492228C29E2685F00ACCFBC /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
@@ -319,6 +323,8 @@
 			children = (
 				7492229029E2689F00ACCFBC /* TransformObjectCommand.cpp */,
 				7492229129E2689F00ACCFBC /* TransformObjectCommand.h */,
+				7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */,
+				7456FCA729EA284C00398E86 /* AddObjectCommand.h */,
 				7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */,
 				7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */,
 				7492228C29E2685F00ACCFBC /* Command.cpp */,
@@ -546,6 +552,7 @@
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
+				7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
@@ -602,6 +609,7 @@
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */,
+				7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
 				74AAF28429D7BCB100D322DB /* SDFSubstraction.cpp in Sources */,
 				74AAF28A29D7BCB800D322DB /* Composition3D.cpp in Sources */,

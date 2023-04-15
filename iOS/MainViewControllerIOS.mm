@@ -10,6 +10,8 @@
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
 #include "MultiTouchCameraInteraction.h"
+
+#include "AddObjectCommand.h"
 #include "RemoveObjectCommand.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
@@ -359,14 +361,12 @@ namespace
                                 identifier:title
                                 handler:^(UIAction * action)
         {
-            auto object = factory->make();
             
-            auto& world = self.world;
+            auto* world = &self.world;
             
-            auto material = world.addMaterial(float4 { 1, 0, 0, 1 });
-            object->setMaterial(material);
+            auto command = std::make_shared<AddObjectCommand>(world, factory);
+            world->commandHistory().run(command);
             
-            self.world.addObject(object);
         }];
         
         [children addObject:action];

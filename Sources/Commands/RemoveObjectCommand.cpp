@@ -33,6 +33,6 @@ RemoveObjectCommand::undo()
     }
     else
     {
-        return _world->addObject(_object);
+        _world->addObject(_object);
     }
 }
