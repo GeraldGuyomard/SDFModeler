@@ -22,6 +22,49 @@ Object3D::setId(ObjectID id)
     _id = id;
 }
 
+Object3DFactory::Object3DFactory(const std::string& name)
+: _name(name)
+{}
+
+class Object3DFactoryRegistry final
+{
+public:
+    static Object3DFactoryRegistry& instance()
+    {
+        static Object3DFactoryRegistry s_Instance;
+        return s_Instance;
+    }
+
+    void addFactory(const Object3DFactory::Ptr& factory)
+    {
+        _factories.push_back(factory);
+    }
+    
+    const std::vector<Object3DFactory::Ptr>& factories() const
+    {
+        return _factories;
+    }
+    
+private:
+    Object3DFactoryRegistry() = default;
+    Object3DFactoryRegistry(const Object3DFactoryRegistry&) = delete;
+    
+    std::vector<Object3DFactory::Ptr> _factories;
+};
+
+void
+Object3DFactory::addFactory(const Ptr& factory)
+{
+    Object3DFactoryRegistry::instance().addFactory(factory);
+}
+
+const std::vector<Object3DFactory::Ptr>&
+Object3DFactory::factories()
+{
+    return Object3DFactoryRegistry::instance().factories();
+}
+
+
 void
 Object3D::setMaterial(const Material3D::Ptr& mat)
 {

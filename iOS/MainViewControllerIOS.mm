@@ -347,9 +347,44 @@ namespace
     enableButton(self.redoButton, commandHistory.canRedo());
 }
 
+- (UIMenu*)makeAddObjectMenu
+{
+    NSMutableArray<UIMenuElement*>* children = [NSMutableArray new];
+    
+    for (const auto& factory : Object3DFactory::factories())
+    {
+        NSString* title = [NSString stringWithUTF8String:factory->name().c_str()];
+        auto action = [UIAction actionWithTitle:title
+                                image:nil
+                                identifier:title
+                                handler:^(UIAction * action)
+        {
+            auto object = factory->make();
+            
+            auto& world = self.world;
+            
+            auto material = world.addMaterial(float4 { 1, 0, 0, 1 });
+            object->setMaterial(material);
+            
+            self.world.addObject(object);
+        }];
+        
+        [children addObject:action];
+        
+    }
+    
+    UIMenu* menu = [UIMenu menuWithTitle:@"Add Object..."
+                    image:nil
+                    identifier:@"AddObjectMenu"
+                    options:0
+                    children:children];
+    
+    return menu;
+}
+
 - (void) updateActionsButton
 {
-    UIMenu* menu = nil;
+    NSMutableArray<UIMenuElement*>* children = [NSMutableArray new];
     
     World* world = &self.world;
     auto selectedObject = world->selectedObject();
@@ -358,21 +393,24 @@ namespace
         auto command = std::make_shared<RemoveObjectCommand>(world, selectedObject);
         
         auto deleteAction = [UIAction actionWithTitle:@"Delete"
-                                image:nil
-                                identifier:@"Delete"
-                                handler:^(UIAction * action)
-        {
+                                                image:nil
+                                           identifier:@"Delete"
+                                              handler:^(UIAction * action)
+                             {
             world->commandHistory().run(command);
         }];
         
-        menu = [UIMenu menuWithTitle:@"Object 3D"
-                        image:nil
-                        identifier:@"Object3DMenu"
-                        options:0
-                        children:@[deleteAction]];
+        [children addObject:deleteAction];
     }
+        
+    [children addObject:[self makeAddObjectMenu]];
     
-    self.selectionActionsButton.enabled = (menu != nil);
+    auto menu = [UIMenu menuWithTitle:@"Edit"
+                    image:nil
+                    identifier:@"Edit"
+                    options:0
+                    children:children];
+    
     self.selectionActionsButton.menu = menu;
     
     [self.selectionActionsButton sizeToFit];

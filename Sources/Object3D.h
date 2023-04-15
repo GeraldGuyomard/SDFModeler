@@ -12,6 +12,8 @@
 #include "Scene.h"
 #include <vector>
 #include <set>
+#include <string>
+
 #include "Command.h"
 
 class Material3D final
@@ -29,6 +31,27 @@ public:
 private:
     MaterialID _id = kNoMaterialID;
     SimpleMaterial _material;
+};
+
+class Object3D;
+
+class Object3DFactory
+{
+public:
+    using Ptr = std::shared_ptr<Object3DFactory>;
+    Object3DFactory(const std::string& name);
+    
+    virtual ~Object3DFactory() = default;
+    
+    const std::string& name() const { return _name; }
+    virtual std::shared_ptr<Object3D> make() const = 0;
+    
+    // Factory
+    static void addFactory(const Ptr&);
+    static const std::vector<Ptr>& factories();
+    
+private:
+    const std::string _name;
 };
 
 class Object3D : public std::enable_shared_from_this<Object3D>
@@ -165,6 +188,36 @@ private:
     
     TPrimitive _primitive;
     bool _selected = false;
+};
+
+template <typename TPrimitive>
+class TObject3DFactory : public Object3DFactory
+{
+public:
+    TObject3DFactory(const std::string& name, const TPrimitive& primitive)
+    : Object3DFactory(name), _object(primitive)
+    {}
+    
+    using Object = SDFObject<TPrimitive, RSTTransformer>;
+    
+    std::shared_ptr<Object3D> make() const override
+    {
+        return std::make_shared<TObject3D<Object>>(_object);
+    }
+    
+private:
+    const SDFObject<TPrimitive, RSTTransformer> _object;
+};
+
+template <typename TPrimitive>
+class TObject3DFactoryRegistration final
+{
+public:
+    TObject3DFactoryRegistration(const std::string& name, const TPrimitive& primitive)
+    {
+        auto factory = std::make_shared<TObject3DFactory<TPrimitive>>(name, primitive);
+        Object3DFactory::addFactory(factory);
+    }
 };
 
 class Object3DCollection final
