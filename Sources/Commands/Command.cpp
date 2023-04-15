@@ -51,6 +51,8 @@ CommandHistory::run(const Command::Ptr& cmd)
         _undoableCommands.erase(_undoableCommands.begin());
     }
     
+    _redoableCommands.clear();
+    
     onStateChange();
 }
 
