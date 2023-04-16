@@ -9,13 +9,12 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
-#include "ObjectType.h"
 
 class SDFBox final
 {
 public:
     
-    static ObjectType objectType() { return ObjectType::box; }
+    static GeometryType type() { return GeometryType::box; }
     
     SDFBox(float3 halfSize)
     : _halfSizeAndPadding { halfSize.x, halfSize.y, halfSize.z }

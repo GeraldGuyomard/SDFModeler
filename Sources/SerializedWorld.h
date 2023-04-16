@@ -8,41 +8,24 @@
 #pragma once
 
 #include "Uniforms.h"
-#include "SDFResult.h"
-#include "PrimitiveEvaluator.h"
-
-#include "Composition.h"
-
-using Composition = SDFComposition<RSTTransformer>;
-
-template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
-{
-    if (header->objectCode == computeObjectCode<Composition, RSTTransformer>())
-    {
-        auto serializedComposition = typedPrimitive<Composition::Serialized>(header);
-        Composition composition(serializedComposition);
-        
-        return evaluator.evaluate(header, composition);
-    }
-    else
-    {
-        return evaluateAtomicPrimitive<TEvaluator, TReturnValue>(evaluator, header);
-    }
-}
+#include "TransformedGeometryEvaluator.h"
+#include "Results.h"
 
 struct SerializedWorld final
 {
-    uint64_t objectCount = 0;
+    uint64_t geometriesCount = 0;
     
-    uint64_t padding;
+    uint32_t simpleObjectsCount = 0;
+    uint32_t compositionCount = 0;
     
     // should be aligned on 16 bytes
     // for SSE float moves
     
     // buffer is an array of serialized objects
     // that starts with ObjectHeaders
-    uint8_t buffer[16536];
+    uint8_t geometries[16536];
+    
+    SimpleObjectHeader simpleObjectHeaders[128];
 };
 
 template <typename TShader>
@@ -58,63 +41,100 @@ public:
     
     RayMarchResult rayMarch(Ray ray) const
     {
-        size_t nbObjects = 0;
-        CONSTANT ObjectHeader* headers[kNbObjectsMax];
-        
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
-        CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
-        
-        for (size_t i=0; i < _serializedWorld.objectCount; ++i)
+        struct GeometryEntry
         {
-            const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
-            if (!culled)
-            {
-                headers[nbObjects++] = header;
-            }
+            bool culled;
+            CONSTANT TransformedGeometryHeader* header;
             
-            header = ObjectHeader::next(header);
+            GeometryEntry() = default;
+            GeometryEntry(bool culled, CONSTANT TransformedGeometryHeader* header)
+            : culled(culled), header(header)
+            {}
+        };
+        GeometryEntry geometryEntries[kNbObjectsMax];
+        
+        CONSTANT uint8_t* buffer = &_serializedWorld.geometries[0];
+        CONSTANT TransformedGeometryHeader* header = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(buffer);
+        
+        for (size_t i=0; i < _serializedWorld.geometriesCount; ++i)
+        {
+            bool culled = evaluateTransformedGeometry<CullEvaluator, bool>(cullEvaluator, header);
+            
+            geometryEntries[i] = { culled, header };
+            
+            header = TransformedGeometryHeader::next(header);
+        }
+        
+        size_t simpleObjectsCount = 0;
+        
+        struct SimpleObjectEntry final
+        {
+            uint32_t                    objectID;
+            uint32_t                    materialID;
+            const THREAD GeometryEntry* geometryEntry;
+            bool                        selected;
+            
+            SimpleObjectEntry() = default;
+            SimpleObjectEntry(CONSTANT SimpleObjectHeader& header, const THREAD GeometryEntry* geomEntry)
+            : objectID(header.objectID),
+            materialID(header.materialID),
+            geometryEntry(geomEntry),
+            selected(header.selected)
+            {}
+        };
+        
+        SimpleObjectEntry simpleObjectEntries[kNbObjectsMax];
+        for (size_t i=0; i < _serializedWorld.simpleObjectsCount; ++i)
+        {
+            CONSTANT SimpleObjectHeader& sourceHeader = _serializedWorld.simpleObjectHeaders[i];
+            const THREAD GeometryEntry* geomEntry = &geometryEntries[sourceHeader.geometryIndex];
+            if (!geomEntry->culled)
+            {
+                simpleObjectEntries[simpleObjectsCount++] = { sourceHeader, geomEntry };
+            }
         }
         
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        CONSTANT ObjectHeader* outlineHeader = nullptr;
+        THREAD const SimpleObjectEntry* outlineObjectEntry = nullptr;
         bool hit = false;
         
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        CONSTANT ObjectHeader* minHeader = nullptr;
+        THREAD const SimpleObjectEntry* minObjectEntry = nullptr;
         
         for (size_t i=0; i < kNbSteps; ++i)
         {
             pt = ray.pt(d);
             
             minDistance = 1e5f;
-            minHeader = nullptr;
+            minObjectEntry = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
-            for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
+            for (size_t objectIndex = 0; objectIndex < simpleObjectsCount; ++objectIndex)
             {
-                CONSTANT ObjectHeader* header = headers[objectIndex];
+                const THREAD auto* simpleObjectEntry = &simpleObjectEntries[objectIndex];
+                CONSTANT TransformedGeometryHeader* header = simpleObjectEntry->geometryEntry->header;
                 
-                const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                const float dist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, header);
                 
-                if ((outlineHeader == nullptr) && header->selected)
+                if ((outlineObjectEntry == nullptr) && simpleObjectEntry->selected)
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineHeader = header;
+                        outlineObjectEntry = simpleObjectEntry;
                     }
                 }
                 
                 if (dist <= minDistance)
                 {
                     minDistance = dist;
-                    minHeader = header;
+                    minObjectEntry = simpleObjectEntry;
                 }
             }
             
@@ -134,21 +154,21 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (outlineHeader != nullptr)
+        if (outlineObjectEntry != nullptr)
         {
-            if (!hit || (outlineHeader != minHeader))
+            if (!hit || (outlineObjectEntry != minObjectEntry))
             {
-                return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+                return RayMarchResult { ray, minObjectEntry->objectID, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
         
         if (hit)
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
-            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
-            const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
+            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader, minObjectEntry->materialID };
+            const float4 color = evaluateTransformedGeometry<MyShaderEvaluator, float4>(shadeEvaluator, minObjectEntry->geometryEntry->header);
             
-            return RayMarchResult { ray, minHeader->objectId, color, d };
+            return RayMarchResult { ray, minObjectEntry->objectID, color, d };
         }
         
         return RayMarchResult { ray };

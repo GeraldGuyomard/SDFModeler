@@ -137,21 +137,18 @@ public:
     {
         RSTTransformer transformer { worldTransform() };
         
-        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialID() };
+        using TransformedGeometryType = TransformedGeometry<TGeometry, RSTTransformer>;
+        TransformedGeometryType transformedGeometry { _geometry, transformer };
         
         const bool selected = this->selected();
         if (selected)
         {
-            object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
+            transformedGeometry.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
         }
         
-        return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
-                                            ptr,
-                                           object,
-                                           id(),
-                                           object.objectType(),
-                                           transformer.transformerType(),
-                                           selected);
+        return serializeTransformedGeometry<TransformedGeometryType>(
+                                    ptr,
+                                    transformedGeometry);
     }
     
 private:

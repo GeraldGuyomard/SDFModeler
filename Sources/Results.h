@@ -9,22 +9,6 @@
 #include "CommonDefinitions.h"
 #include "Ray.h"
 
-enum class ObjectType : int64_t
-{
-    invalid = -1,
-    
-    sphere = 0,
-    box,
-    roundedBox,
-    plane,
-    grid,
-    
-    composition = 10
-};
-
-using ObjectID = uint32_t;
-static CONSTANT constexpr ObjectID kInvalidObjectID = 0;
-
 class RayMarchResult
 {
 public:

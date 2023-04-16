@@ -9,13 +9,12 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
-#include "ObjectType.h"
 
 class SDFRoundedBox final
 {
 public:
     
-    static ObjectType objectType() { return ObjectType::roundedBox; }
+    static GeometryType type() { return GeometryType::roundedBox; }
     
     SDFRoundedBox(float3 halfSize, float radius)
     : _halfSizeAndRadius { halfSize.x, halfSize.y, halfSize.z, radius }

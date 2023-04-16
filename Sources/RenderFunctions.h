@@ -9,19 +9,18 @@
 
 #include "ShaderTypes.h"
 #include "Ray.h"
-#include "SDFResult.h"
-#include "RayMarch.h"
 
-#include "SDFObject.h"
 #include "SerializedWorld.h"
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
 
+#include "Material/GridMaterial.h"
+
 template <typename TShader>
 INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
-    Plane grid({}, { float3(-0.5f) });
+    TransformedGeometry<SDFPlane, TranslationTransformer> grid({}, { float3(-0.5f) });
     
     RayMarchResult res { ray };
     res.distance = grid.raycast(ray);

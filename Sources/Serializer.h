@@ -7,56 +7,36 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "ObjectHeader.h"
+#include "Headers.h"
 #include "Composition.h"
 
 #include <cstring>
 #include <assert.h>
 
-template <typename TObject>
-static void copy(ObjectID id,
-                 ObjectType objectType,
-                 TransformerType transformerType,
-                 ObjectHeader* header,
-                 const TObject& object,
-                 bool selected)
+template <typename TTransformedGeometry>
+static void copy(
+                 TransformedGeometryHeader* header,
+                 const TTransformedGeometry& transformedGeometry)
 {
-    assert(objectType != ObjectType::invalid);
+    const auto geometryType = TTransformedGeometry::geometryType();
+    assert(geometryType != GeometryType::invalid);
     
-    const size_t size = sizeof(TObject);
+    const size_t size = sizeof(TTransformedGeometry);
     
     header->byteSize = uint32_t(alignedSize(size));
-    header->objectId = id;
-    header->objectCode = computeObjectCode(objectType, transformerType);
-    header->selected = selected;
+    header->transformedGeometryCode = computeTransformedGeometryCode(geometryType, TTransformedGeometry::transformerType());
     
     uint8_t* dst = &(header->firstByte);
-    const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
+    const uint8_t* src = reinterpret_cast<const uint8_t*>(&transformedGeometry);
     
     memcpy(dst, src, size);
 }
 
-template <typename TObject>
-static void copy(ObjectHeader* header,
-                 const TObject& object,
-                 ObjectID id, ObjectType objectType,
-                 TransformerType transformerType,
-                 bool selected)
+template <typename TTransformedGeometry>
+INLINE size_t serializeTransformedGeometry(uint8_t* p, const TTransformedGeometry& transformedGeometry)
 {
-    copy<TObject>(id, objectType, transformerType, header, object, selected);
-}
-
-
-template <typename TPrimitive>
-INLINE size_t serializeObject(uint8_t* p,
-                              const TPrimitive& primitive,
-                              ObjectID id,
-                              ObjectType objectType,
-                              TransformerType transformerType,
-                              bool selected)
-{
-    ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive, id, objectType, transformerType, selected);
+    TransformedGeometryHeader* h = (TransformedGeometryHeader*) p;
+    copy(h, transformedGeometry);
     
     return h->byteSize;
 }

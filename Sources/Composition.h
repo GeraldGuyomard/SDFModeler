@@ -7,7 +7,7 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
-#include "PrimitiveEvaluator.h"
+#include "TransformedGeometryEvaluator.h"
 
 template <typename TTransformer>
 struct SDFSerializedComposition final
@@ -34,12 +34,9 @@ struct SDFSerializedComposition final
     materialID(materialID),
     extraCullingMargin(extraCullingMargin)
     {}
-    
-    ObjectType objectType() const
-    {
-        return ObjectType::composition;
-    }
 };
+
+#if ENABLE_COMPOSITION
 
 template <typename TTransformer>
 class SDFComposition final
@@ -48,8 +45,6 @@ public:
 
     using Serialized = SDFSerializedComposition<TTransformer>;
     using Transformer = TTransformer;
-    
-    static ObjectType objectType() { return ObjectType::composition; }
     
     SDFComposition(CONSTANT Serialized* serializedComposition) :
     _transformer(serializedComposition->transformer),
@@ -122,3 +117,4 @@ private:
     float _extraCullingMargin = 0.f;
 };
 
+#endif

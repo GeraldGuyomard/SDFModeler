@@ -18,9 +18,9 @@ public:
     {}
     
     template <typename TPrimitive>
-    float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const
+    float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p, MaterialID materialID) const
     {
-        const auto mat = _materials.materialByID(primitive.materialID());
+        const auto mat = _materials.materialByID(materialID);
         
         const float4 albedo = mat.albedo();
         const float3 normal = computeNormal(primitive, dist, p);

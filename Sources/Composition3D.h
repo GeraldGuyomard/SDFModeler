@@ -27,16 +27,19 @@ public:
     
     void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const override
     {
+#if ENABLE_COMPOSITION
         const size_t size = selfSerialize(p);
         if (size != 0)
         {
             p += size;
             serializedWorld.objectCount++;
         }
+#endif
     }
     
     size_t selfSerialize(uint8_t* ptr) const override
     {
+#if ENABLE_COMPOSITION
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
         const TTransformer transformer { worldTransform() };
@@ -99,10 +102,14 @@ public:
         header->byteSize += subHeadersSize;
         
         return header->byteSize;
+#else
+        return 0;
+#endif
     }
     
 private:
     
+#if ENABLE_COMPOSITION
     template <typename TPrimitive>
     static void _copyPrimitive(uint8_t*& ptr, const TPrimitive& prim)
     {
@@ -110,14 +117,15 @@ private:
         copy(h, prim);
         ptr += h->byteSize;
     }
+#endif
 };
 
-class Composition3D final : public TComposition3D<Composition::Transformer>
+class Composition3D final : public TComposition3D<RSTTransformer>
 {
 public:
-    using _inherited = TComposition3D<Composition::Transformer>;
+    using _inherited = TComposition3D<RSTTransformer>;
     
-    using Transformer = Composition::Transformer;
+    using Transformer = RSTTransformer;
     
     Composition3D(const WorldPtr& world)
     : _inherited(world)

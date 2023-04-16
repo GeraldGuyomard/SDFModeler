@@ -10,13 +10,12 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Culling.h"
-#include "ObjectType.h"
 
 class SDFSphere final
 {
 public:
     
-    static ObjectType objectType() { return ObjectType::sphere; }
+    static GeometryType type() { return GeometryType::sphere; }
     
     SDFSphere(float radius)
     : _radiusAndPadding(radius)

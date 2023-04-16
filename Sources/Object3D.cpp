@@ -211,7 +211,13 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
     if (size != 0)
     {
         p += size;
-        serializedWorld.objectCount++;
+        
+        const auto geomIndex = serializedWorld.geometriesCount;
+        serializedWorld.geometriesCount++;
+        
+        serializedWorld.simpleObjectHeaders[serializedWorld.simpleObjectsCount] = { id(), uint32_t(materialID()), geomIndex, selected() };
+        
+        serializedWorld.simpleObjectsCount++;
     }
     
     for (const auto& child : children())
@@ -223,9 +229,11 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
 void
 Object3D::serialize(SerializedWorld& serializedWorld) const
 {
-    serializedWorld.objectCount = 0;
+    serializedWorld.geometriesCount = 0;
+    serializedWorld.simpleObjectsCount = 0;
+    serializedWorld.compositionCount = 0;
     
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.buffer));
+    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.geometries));
     
     serializeHierarchy(serializedWorld, p);
 }

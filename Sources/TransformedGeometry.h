@@ -9,31 +9,26 @@
 
 #include "SDFGeometry/SDFGeometry.h"
 #include "Transformer/Transformer.h"
-#include "Material/Material.h"
 #include "Culling.h"
 #include "Ray.h"
 
 static constexpr CONSTANT float kOutlineThickness = 2.5e-2f;
 
 template <typename TGeometry, typename TTransformer>
-class SDFObject final
+class TransformedGeometry final
 {
 public:
     
     using Geometry = TGeometry;
     using Transformer = TTransformer;
     
-    SDFObject(TGeometry geometry,
-              TTransformer transformer = {},
-              MaterialID materialID = 0)
-    : _geometry(geometry),
-    _transformer(transformer),
-    _materialID(materialID)
+    TransformedGeometry(TGeometry geometry, TTransformer transformer)
+    : _geometry(geometry), _transformer(transformer)
     {}
     
-    static ObjectType objectType()
+    static GeometryType geometryType()
     {
-        return TGeometry::objectType();
+        return TGeometry::type();
     }
     
     static TransformerType transformerType()
@@ -63,9 +58,6 @@ public:
     TTransformer transformer() const { return _transformer; }
     void setTransformer(TTransformer transformer) { _transformer = transformer; }
     
-    MaterialID materialID() const { return _materialID; }
-    void setMaterialID(MaterialID id) { _materialID = id; }
-    
     float extraCullingMargin() const { return _extraCullingMargin; }
     void setExtraCullingMargin(float m) { _extraCullingMargin = m; }
     
@@ -82,7 +74,7 @@ public:
 private:
     TGeometry _geometry;
     TTransformer _transformer;
-    MaterialID _materialID;
+    
     float _extraCullingMargin = 0;
 };
 

@@ -8,7 +8,6 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
-#include "ObjectType.h"
 
 INLINE float planeIntersection(Ray ray, float3 origin, float3 normal)
 {
@@ -24,7 +23,7 @@ class SDFPlane final
 {
 public:
     
-    static ObjectType objectType() { return ObjectType::plane; }
+    static GeometryType type() { return GeometryType::plane; }
     
     SDFPlane()
     {}

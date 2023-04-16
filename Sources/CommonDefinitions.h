@@ -17,6 +17,7 @@
 
     #define CONSTANT constant
     #define DEVICE device
+    #define THREAD thread
     #define INLINE
 
     using EnumBackingType = metal::int32_t;
@@ -61,6 +62,7 @@
 
     #define CONSTANT const
     #define DEVICE
+    #define THREAD
     #define INLINE inline
 
     using EnumBackingType = int32_t;
@@ -346,3 +348,7 @@ INLINE float2 pixelToNDC(float2 viewportSize, float2 p)
     return p;
 }
 
+using ObjectID = uint32_t;
+static CONSTANT constexpr ObjectID kInvalidObjectID = 0;
+
+static CONSTANT constexpr float kDistanceEpsilon = 1e-3f;
