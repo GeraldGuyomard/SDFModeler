@@ -9,7 +9,7 @@
 #include "CommonDefinitions.h"
 #include <memory>
 #include "Serializer.h"
-#include "Scene.h"
+#include "SerializedWorld.h"
 #include <vector>
 #include <set>
 #include <string>

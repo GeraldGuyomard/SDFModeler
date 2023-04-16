@@ -12,7 +12,7 @@
 
 #import "ShaderTypes.h"
 
-#include "Scene.h"
+#include "SerializedWorld.h"
 #include "FragmentShader/PhongShader.h"
 
 #include "Object3D.h"

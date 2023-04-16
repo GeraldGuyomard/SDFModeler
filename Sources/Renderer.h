@@ -11,7 +11,7 @@
 #import "Uniforms.h"
 #import "ShaderTypes.h"
 
-#include "Scene.h"
+#include "SerializedWorld.h"
 #include "Camera.h"
 
 #include <functional>

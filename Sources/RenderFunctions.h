@@ -13,7 +13,7 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
-#include "Scene.h"
+#include "SerializedWorld.h"
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"

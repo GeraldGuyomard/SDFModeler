@@ -50,8 +50,6 @@ struct SerializedWorld final
     SerializedObjects content;
 };
 
-#define SURF_DIST 0.000001
-
 template <typename TShader>
 class Objects final
 {
