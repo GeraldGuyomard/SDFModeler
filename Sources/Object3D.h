@@ -63,12 +63,13 @@ public:
     using Ptr = std::shared_ptr<Object3D>;
     using WPtr = std::weak_ptr<Object3D>;
     
+    Object3D(const WorldPtr& world);
     virtual ~Object3D() = default;
     
     WorldPtr world() const { return _world.lock(); }
     
     void serialize(SerializedWorld&) const;
-    virtual size_t selfSerialize(uint8_t* ptr) const = 0;
+    virtual size_t selfSerialize(uint8_t* ptr) const;
     
     ObjectID id() const { return _id; }
     void setId(ObjectID);
@@ -105,10 +106,6 @@ public:
     Operation operation() const { return _operation; }
     void setOperation(Operation);
     
-protected:
-    Object3D(const WorldPtr& world);
-    Object3D(const WorldPtr& world, ObjectID id);
-    
 private:
     
     virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
@@ -124,18 +121,6 @@ private:
     
     float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
-};
-
-class Group3D : public Object3D
-{
-public:
-    using _inherited = Object3D;
-    Group3D(const WorldPtr&);
-    
-    size_t selfSerialize(uint8_t* ptr) const override;
-    
-protected:
-    Group3D(const WorldPtr& world, ObjectID id);
 };
 
 template <typename TGeometry>
@@ -224,12 +209,6 @@ private:
     World() = default;
     
     void init();
-    
-    class RootObject3D final : public Group3D
-    {
-    public:
-        RootObject3D(const WorldPtr&, ObjectID id);
-    };
     
     Object3D::Ptr _rootObject;
     

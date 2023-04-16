@@ -20,10 +20,6 @@ Object3D::Object3D(const WorldPtr& world)
 : _world(world)
 {}
 
-Object3D::Object3D(const WorldPtr& world, ObjectID id)
-: _world(world), _id(id)
-{}
-
 void
 Object3D::setId(ObjectID id)
 {
@@ -234,16 +230,8 @@ Object3D::serialize(SerializedWorld& serializedWorld) const
     serializeHierarchy(serializedWorld, p);
 }
 
-Group3D::Group3D(const WorldPtr& world)
-: _inherited(world)
-{}
-
-Group3D::Group3D(const WorldPtr& world, ObjectID id)
-: _inherited(world, id)
-{}
-
 size_t
-Group3D::selfSerialize(uint8_t* ptr) const
+Object3D::selfSerialize(uint8_t* ptr) const
 {
     return 0;
 }
@@ -256,14 +244,11 @@ World::make()
     return world;
 }
 
-World::RootObject3D::RootObject3D(const WorldPtr& world, ObjectID id)
-: Group3D(world, id)
-{}
-
 void
 World::init()
 {
-    _rootObject.reset(new RootObject3D(shared_from_this(), generateNewObjectID()));
+    _rootObject = std::make_shared<Object3D>(shared_from_this());
+    _rootObject->setId(generateNewObjectID());
     
     addMaterial(float4 {1, 0, 0, 1});
 }
