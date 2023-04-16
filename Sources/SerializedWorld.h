@@ -43,98 +43,74 @@ public:
     {
         CullEvaluator cullEvaluator { ray };
         
-        struct GeometryEntry
-        {
-            bool culled;
-            CONSTANT TransformedGeometryHeader* header;
-            
-            GeometryEntry() = default;
-            GeometryEntry(bool culled, CONSTANT TransformedGeometryHeader* header)
-            : culled(culled), header(header)
-            {}
-        };
-        GeometryEntry geometryEntries[kNbObjectsMax];
+        CONSTANT TransformedGeometryHeader* geometryHeaders[kNbObjectsMax];
         
         CONSTANT uint8_t* buffer = &_serializedWorld.geometries[0];
         CONSTANT TransformedGeometryHeader* header = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(buffer);
+        
+        bool geometryCulled[20];
         
         for (size_t i=0; i < _serializedWorld.geometriesCount; ++i)
         {
             bool culled = evaluateTransformedGeometry<CullEvaluator, bool>(cullEvaluator, header);
             
-            geometryEntries[i] = { culled, header };
+            geometryHeaders[i] = header;
+            geometryCulled[i] = culled;
             
             header = TransformedGeometryHeader::next(header);
         }
         
         size_t simpleObjectsCount = 0;
         
-        struct SimpleObjectEntry final
-        {
-            uint32_t                    objectID;
-            uint32_t                    materialID;
-            const THREAD GeometryEntry* geometryEntry;
-            bool                        selected;
-            
-            SimpleObjectEntry() = default;
-            SimpleObjectEntry(CONSTANT SimpleObjectHeader& header, const THREAD GeometryEntry* geomEntry)
-            : objectID(header.objectID),
-            materialID(header.materialID),
-            geometryEntry(geomEntry),
-            selected(header.selected)
-            {}
-        };
-        
-        SimpleObjectEntry simpleObjectEntries[kNbObjectsMax];
+        CONSTANT SimpleObjectHeader* simpleObjectHeaders[kNbObjectsMax];
         for (size_t i=0; i < _serializedWorld.simpleObjectsCount; ++i)
         {
-            CONSTANT SimpleObjectHeader& sourceHeader = _serializedWorld.simpleObjectHeaders[i];
-            const THREAD GeometryEntry* geomEntry = &geometryEntries[sourceHeader.geometryIndex];
-            if (!geomEntry->culled)
+            CONSTANT SimpleObjectHeader* objectHeader = &_serializedWorld.simpleObjectHeaders[i];
+            if (!geometryCulled[objectHeader->geometryIndex])
             {
-                simpleObjectEntries[simpleObjectsCount++] = { sourceHeader, geomEntry };
+                simpleObjectHeaders[simpleObjectsCount++] = objectHeader;
             }
         }
         
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        THREAD const SimpleObjectEntry* outlineObjectEntry = nullptr;
+        CONSTANT SimpleObjectHeader* outlineObjectHeader = nullptr;
         bool hit = false;
         
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        THREAD const SimpleObjectEntry* minObjectEntry = nullptr;
+        CONSTANT SimpleObjectHeader* minObjectHeader = nullptr;
         
         for (size_t i=0; i < kNbSteps; ++i)
         {
             pt = ray.pt(d);
             
             minDistance = 1e5f;
-            minObjectEntry = nullptr;
+            minObjectHeader = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
             for (size_t objectIndex = 0; objectIndex < simpleObjectsCount; ++objectIndex)
             {
-                const THREAD auto* simpleObjectEntry = &simpleObjectEntries[objectIndex];
-                CONSTANT TransformedGeometryHeader* header = simpleObjectEntry->geometryEntry->header;
+                CONSTANT SimpleObjectHeader* simpleObjectHeader = simpleObjectHeaders[objectIndex];
+                header = geometryHeaders[simpleObjectHeader->geometryIndex];
                 
                 const float dist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, header);
                 
-                if ((outlineObjectEntry == nullptr) && simpleObjectEntry->selected)
+                if ((outlineObjectHeader == nullptr) && simpleObjectHeader->selected)
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineObjectEntry = simpleObjectEntry;
+                        outlineObjectHeader = simpleObjectHeader;
                     }
                 }
                 
-                if (dist <= minDistance)
+                if (dist < minDistance)
                 {
                     minDistance = dist;
-                    minObjectEntry = simpleObjectEntry;
+                    minObjectHeader = simpleObjectHeader;
                 }
             }
             
@@ -154,21 +130,22 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (outlineObjectEntry != nullptr)
+        if (outlineObjectHeader != nullptr)
         {
-            if (!hit || (outlineObjectEntry != minObjectEntry))
+            if (!hit || (outlineObjectHeader != minObjectHeader))
             {
-                return RayMarchResult { ray, minObjectEntry->objectID, float4{ 1, 1, 1, 1 }, 0.f };
+                return RayMarchResult { ray, minObjectHeader->objectID, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
         
         if (hit)
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
-            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader, minObjectEntry->materialID };
-            const float4 color = evaluateTransformedGeometry<MyShaderEvaluator, float4>(shadeEvaluator, minObjectEntry->geometryEntry->header);
+            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader, minObjectHeader->materialID };
+            CONSTANT TransformedGeometryHeader* geomHeader = geometryHeaders[minObjectHeader->geometryIndex];
+            const float4 color = evaluateTransformedGeometry<MyShaderEvaluator, float4>(shadeEvaluator, geomHeader);
             
-            return RayMarchResult { ray, minObjectEntry->objectID, color, d };
+            return RayMarchResult { ray, minObjectHeader->objectID, color, d };
         }
         
         return RayMarchResult { ray };
