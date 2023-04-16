@@ -67,7 +67,7 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
-    void serialize(SerializedObjects&) const;
+    void serialize(SerializedWorld&) const;
     virtual size_t selfSerialize(uint8_t* ptr) const = 0;
     
     ObjectID id() const { return _id; }
@@ -111,7 +111,7 @@ protected:
     
 private:
     
-    virtual void serializeHierarchy(SerializedObjects& serializedObjects, uint8_t*& ptr) const;
+    virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
     
     const WorldWPtr _world;
     

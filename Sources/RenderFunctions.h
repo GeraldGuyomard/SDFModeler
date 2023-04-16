@@ -52,7 +52,7 @@ INLINE RayMarchResult rayMarch(float2 viewportNDC,
     
     const TShader shader { uniforms, materials };
     
-    Content<TShader> content { shader, serializedWorld.content };
+    Content<TShader> content { shader, serializedWorld };
     const auto contentRes = content.rayMarch(ray);
     const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
     

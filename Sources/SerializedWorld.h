@@ -31,7 +31,7 @@ INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeade
     }
 }
 
-struct SerializedObjects final
+struct SerializedWorld final
 {
     uint64_t objectCount = 0;
     
@@ -45,11 +45,6 @@ struct SerializedObjects final
     uint8_t buffer[16536];
 };
 
-struct SerializedWorld final
-{
-    SerializedObjects content;
-};
-
 template <typename TShader>
 class Content final
 {
@@ -57,8 +52,8 @@ public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 128;
     
-    Content(TShader shader, CONSTANT SerializedObjects& serializedObjects)
-    : _serializedObjects(serializedObjects), _shader(shader)
+    Content(TShader shader, CONSTANT SerializedWorld& serializedWorld)
+    : _serializedWorld(serializedWorld), _shader(shader)
     {}
     
     RayMarchResult rayMarch(Ray ray) const
@@ -68,10 +63,10 @@ public:
         
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* buffer = &_serializedObjects.buffer[0];
+        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
         CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        for (size_t i=0; i < _serializedObjects.objectCount; ++i)
+        for (size_t i=0; i < _serializedWorld.objectCount; ++i)
         {
             const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
             if (!culled)
@@ -160,6 +155,6 @@ public:
     }
     
 private:
-    CONSTANT SerializedObjects& _serializedObjects;
+    CONSTANT SerializedWorld& _serializedWorld;
     TShader _shader;
 };

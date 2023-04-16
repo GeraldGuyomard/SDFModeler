@@ -209,29 +209,29 @@ Object3D::setOperation(Operation op)
 }
 
 void
-Object3D::serializeHierarchy(SerializedObjects& serializedObjects, uint8_t*& p) const
+Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const
 {
     const size_t size = selfSerialize(p);
     if (size != 0)
     {
         p += size;
-        serializedObjects.objectCount++;
+        serializedWorld.objectCount++;
     }
     
     for (const auto& child : children())
     {
-        child->serializeHierarchy(serializedObjects, p);
+        child->serializeHierarchy(serializedWorld, p);
     }
 }
 
 void
-Object3D::serialize(SerializedObjects& serializedObjects) const
+Object3D::serialize(SerializedWorld& serializedWorld) const
 {
-    serializedObjects.objectCount = 0;
+    serializedWorld.objectCount = 0;
     
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedObjects.buffer));
+    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.buffer));
     
-    serializeHierarchy(serializedObjects, p);
+    serializeHierarchy(serializedWorld, p);
 }
 
 Group3D::Group3D(const WorldPtr& world)
@@ -271,7 +271,7 @@ World::init()
 void
 World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
 {
-    _rootObject->serialize(serializedWorld.content);
+    _rootObject->serialize(serializedWorld);
     
     materials.nbMaterials = _materials.size();
     

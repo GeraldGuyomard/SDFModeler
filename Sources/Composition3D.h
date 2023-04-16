@@ -25,13 +25,13 @@ public:
         child->setId(id());
     }
     
-    void serializeHierarchy(SerializedObjects& serializedObjects, uint8_t*& p) const override
+    void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const override
     {
         const size_t size = selfSerialize(p);
         if (size != 0)
         {
             p += size;
-            serializedObjects.objectCount++;
+            serializedWorld.objectCount++;
         }
     }
     
