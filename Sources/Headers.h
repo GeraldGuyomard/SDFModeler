@@ -97,4 +97,10 @@ struct CompoundObjectHeader final
     // after the list of positive geometry indices (uint32_t)
     // and the list of negative geometry indices (uint32_t)
     uint32_t firstPositiveIndex;
+    
+    static CONSTANT CompoundObjectHeader* next(CONSTANT CompoundObjectHeader* header)
+    {
+        CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);
+        return reinterpret_cast<CONSTANT CompoundObjectHeader*>(ptr + header->byteSize);
+    }
 };

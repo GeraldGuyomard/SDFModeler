@@ -26,6 +26,7 @@ struct SerializedWorld final
     uint8_t geometries[16536];
     
     SimpleObjectHeader simpleObjectHeaders[128];
+    uint8_t compoundObjectHeaders[16536];
 };
 
 template <typename TShader>
@@ -47,8 +48,8 @@ public:
         
         CONSTANT TransformedGeometryHeader* geometryHeaders[kNbGeometriesMax];
         
-        CONSTANT uint8_t* buffer = &_serializedWorld.geometries[0];
-        CONSTANT TransformedGeometryHeader* geometryHeader = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(buffer);
+        CONSTANT uint8_t* geometriesBuffer = &_serializedWorld.geometries[0];
+        CONSTANT TransformedGeometryHeader* geometryHeader = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(geometriesBuffer);
         
         bool geometryCulled[kNbGeometriesMax];
         
@@ -77,13 +78,24 @@ public:
         size_t compoundObjectsCount = 0;
         CONSTANT CompoundObjectHeader* compoundObjectHeaders[kNbCompoundObjectsMax];
         
+        CONSTANT uint8_t* compoundObjectsBuffer = &_serializedWorld.compoundObjectHeaders[0];
+        CONSTANT CompoundObjectHeader* compoundObjectHeader = reinterpret_cast<CONSTANT CompoundObjectHeader*>(compoundObjectsBuffer);
+        
         for (size_t i=0; i < _serializedWorld.compoundObjectsCount; ++i)
         {
-            /*CONSTANT SimpleObjectHeader* objectHeader = &_serializedWorld.simpleObjectHeaders[i];
-            if (!geometryCulled[objectHeader->geometryIndex])
+            CONSTANT uint32_t* indices = &compoundObjectHeader->firstPositiveIndex;
+            
+            for (size_t i=0; i < compoundObjectHeader->nbPositiveGeometries; ++i)
             {
-                simpleObjectHeaders[simpleObjectsCount++] = objectHeader;
-            }*/
+                const bool culled = geometryCulled[indices[i]];
+                if (!culled)
+                {
+                    // at least one positive geom is not culled -> the entire compound should be ray marched
+                    compoundObjectHeaders[compoundObjectsCount++] = compoundObjectHeader;
+                }
+            }
+            
+            compoundObjectHeader = CompoundObjectHeader::next(compoundObjectHeader);
         }
         
         constexpr size_t kNbSteps = 100;
