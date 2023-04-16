@@ -49,17 +49,27 @@ INLINE CONSTANT TTransformedGeometry* transformedGeometry(CONSTANT TransformedGe
     return reinterpret_cast<CONSTANT TTransformedGeometry*>(firstBytePtr);
 }
 
-struct SimpleObjectHeader final
+struct ObjectHeader
 {
     uint32_t    objectID;
     uint32_t    materialID;
-    uint64_t    geometryIndex;
     bool        selected;
+    
+    ObjectHeader() = default;
+    ObjectHeader(uint32_t objectID, uint32_t materialID, bool selected)
+    : objectID(objectID), materialID(materialID), selected(selected)
+    {}
+};
+
+struct SimpleObjectHeader final
+{
+    ObjectHeader objectHeader;
+    uint64_t    geometryIndex;
     
     SimpleObjectHeader() = default;
     
-    SimpleObjectHeader(uint32_t objectID, uint32_t materialID, uint64_t geometryIndex, bool selected)
-    : objectID(objectID), materialID(materialID), geometryIndex(geometryIndex), selected(selected)
+    SimpleObjectHeader(ObjectHeader objectHeader, uint64_t geometryIndex)
+    : objectHeader(objectHeader), geometryIndex(geometryIndex)
     {}
 };
 
@@ -67,24 +77,21 @@ struct CompoundObjectHeader final
 {
     uint64_t  byteSize;
     
-    uint32_t    objectID;
-    uint32_t    materialID;
+    ObjectHeader objectHeader;
+    
     uint32_t    nbPositiveGeometries;
     uint32_t    nbNegativeGeometries;
-    bool        selected;
     
     CompoundObjectHeader() = default;
     
-    CompoundObjectHeader(uint32_t objectID,
-                         uint32_t materialID,
+    CompoundObjectHeader(
+                         ObjectHeader objectHeader,
                          uint32_t nbPositiveGeometries,
                          uint32_t nbNegativeGeometries,
                          bool selected)
-    : objectID(objectID),
-    materialID(materialID),
+    : objectHeader(objectHeader),
     nbPositiveGeometries(nbPositiveGeometries),
-    nbNegativeGeometries(nbNegativeGeometries),
-    selected(selected)
+    nbNegativeGeometries(nbNegativeGeometries)
     {}
     
     // after the list of positive geometry indices (uint32_t)

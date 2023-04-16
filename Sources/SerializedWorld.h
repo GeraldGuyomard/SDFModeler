@@ -89,14 +89,15 @@ public:
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        uint32_t outlineObjectID = 0;
+        CONSTANT ObjectHeader* outlineObjectHeader = nullptr;
         bool hit = false;
         
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        CONSTANT SimpleObjectHeader* minObjectHeader = nullptr;
+        CONSTANT ObjectHeader* minObjectHeader = nullptr;
+        CONSTANT TransformedGeometryHeader* minGeometryHeader = nullptr;
         
         for (size_t i=0; i < kNbSteps; ++i)
         {
@@ -113,18 +114,19 @@ public:
                 
                 const float dist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
                 
-                if ((outlineObjectID == 0) && simpleObjectHeader->selected)
+                if ((outlineObjectHeader == nullptr) && simpleObjectHeader->objectHeader.selected)
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineObjectID = simpleObjectHeader->objectID;
+                        outlineObjectHeader = &simpleObjectHeader->objectHeader;
                     }
                 }
                 
                 if (dist < minDistance)
                 {
                     minDistance = dist;
-                    minObjectHeader = simpleObjectHeader;
+                    minObjectHeader = &simpleObjectHeader->objectHeader;
+                    minGeometryHeader = geometryHeader;
                 }
             }
             
@@ -144,11 +146,11 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (outlineObjectID != 0)
+        if (outlineObjectHeader != 0)
         {
-            if (!hit || (outlineObjectID != minObjectHeader->objectID))
+            if (!hit || (outlineObjectHeader != minObjectHeader))
             {
-                return RayMarchResult { ray, outlineObjectID, float4{ 1, 1, 1, 1 }, 0.f };
+                return RayMarchResult { ray, outlineObjectHeader->objectID, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
         
@@ -156,8 +158,8 @@ public:
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
             MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader, minObjectHeader->materialID };
-            CONSTANT TransformedGeometryHeader* geomHeader = geometryHeaders[minObjectHeader->geometryIndex];
-            const float4 color = evaluateTransformedGeometry<MyShaderEvaluator, float4>(shadeEvaluator, geomHeader);
+
+            const float4 color = evaluateTransformedGeometry<MyShaderEvaluator, float4>(shadeEvaluator, minGeometryHeader);
             
             return RayMarchResult { ray, minObjectHeader->objectID, color, d };
         }

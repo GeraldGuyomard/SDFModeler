@@ -215,7 +215,8 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
         const auto geomIndex = serializedWorld.geometriesCount;
         serializedWorld.geometriesCount++;
         
-        serializedWorld.simpleObjectHeaders[serializedWorld.simpleObjectsCount] = { id(), uint32_t(materialID()), geomIndex, selected() };
+        ObjectHeader objectHeader {id(), uint32_t(materialID()), selected() };
+        serializedWorld.simpleObjectHeaders[serializedWorld.simpleObjectsCount] = { objectHeader, geomIndex  };
         
         serializedWorld.simpleObjectsCount++;
     }
