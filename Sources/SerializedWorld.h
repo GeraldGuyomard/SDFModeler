@@ -51,13 +51,13 @@ struct SerializedWorld final
 };
 
 template <typename TShader>
-class Objects final
+class Content final
 {
 public:
     
     constexpr static CONSTANT size_t kNbObjectsMax = 128;
     
-    Objects(TShader shader, CONSTANT SerializedObjects& serializedObjects)
+    Content(TShader shader, CONSTANT SerializedObjects& serializedObjects)
     : _serializedObjects(serializedObjects), _shader(shader)
     {}
     
