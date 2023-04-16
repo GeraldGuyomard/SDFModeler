@@ -107,6 +107,7 @@ public:
             minObjectHeader = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
+            // simple objects
             for (size_t objectIndex = 0; objectIndex < simpleObjectsCount; ++objectIndex)
             {
                 CONSTANT SimpleObjectHeader* simpleObjectHeader = simpleObjectHeaders[objectIndex];
@@ -126,6 +127,53 @@ public:
                 {
                     minDistance = dist;
                     minObjectHeader = &simpleObjectHeader->objectHeader;
+                    minGeometryHeader = geometryHeader;
+                }
+            }
+            
+            // compound objects
+            for (size_t objectIndex = 0; objectIndex < compoundObjectsCount; ++objectIndex)
+            {
+                CONSTANT CompoundObjectHeader* compoundObjectHeader = compoundObjectHeaders[objectIndex];
+                
+                CONSTANT uint32_t* indices = &compoundObjectHeader->firstPositiveIndex;
+                
+                size_t i=0;
+                
+                float positiveDist = 1e7f;
+                for (; i < compoundObjectHeader->nbPositiveGeometries; ++i)
+                {
+                    const uint32_t geometryIndex = indices[i];
+                    geometryHeader = geometryHeaders[geometryIndex];
+                    
+                    const float geomDist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
+                    positiveDist = min(positiveDist, geomDist);
+                }
+                
+                float negativeDist = 1e7f;
+                for (; i < compoundObjectHeader->nbNegativeGeometries; ++i)
+                {
+                    const uint32_t geometryIndex = indices[i];
+                    geometryHeader = geometryHeaders[geometryIndex];
+                    
+                    const float geomDist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
+                    negativeDist = min(negativeDist, geomDist);
+                }
+                
+                const float dist = max(positiveDist, -negativeDist);
+                
+                if ((outlineObjectHeader == nullptr) && compoundObjectHeader->objectHeader.selected)
+                {
+                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                    {
+                        outlineObjectHeader = &compoundObjectHeader->objectHeader;
+                    }
+                }
+                
+                if (dist < minDistance)
+                {
+                    minDistance = dist;
+                    minObjectHeader = &compoundObjectHeader->objectHeader;
                     minGeometryHeader = geometryHeader;
                 }
             }
