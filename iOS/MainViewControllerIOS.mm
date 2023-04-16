@@ -84,7 +84,7 @@ using HighResClock = std::chrono::high_resolution_clock;
     
     [self updateUndoRedoButtons];
     
-    self.world.commandHistory().setStateUpdateCallback([wSelf](const auto& history)
+    self.world->commandHistory().setStateUpdateCallback([wSelf](const auto& history)
     {
         if (auto self = wSelf)
         {
@@ -127,10 +127,10 @@ using HighResClock = std::chrono::high_resolution_clock;
         
         const auto pickResult = self.renderer->pick(p);
         
-        const auto selectedObject = self.world.selectedObject();
+        const auto selectedObject = self.world->selectedObject();
         
         Interaction::Ptr interaction;
-        auto object = self.world.objectByID(pickResult.objectID);
+        auto object = self.world->rootObject()->objectByID(pickResult.objectID);
         
         if (selectedObject != nullptr)
         {
@@ -188,22 +188,13 @@ using HighResClock = std::chrono::high_resolution_clock;
     const auto pickResult = self.renderer->pick(pt);
     NSLog(@"ObjectID = %d\n", pickResult.objectID);
     
-    return self.world.objectByID(pickResult.objectID);
+    return self.world->rootObject()->objectByID(pickResult.objectID);
 }
 
 - (void)selectObjectAtPosition:(float2)pt
 {
-    self.world.setSelectedObject([self objectFromPosition:pt]);
+    self.world->setSelectedObject([self objectFromPosition:pt]);
     [self updateActionsButton];
-}
-
-- (void)onLongPress:(UILongPressGestureRecognizer*)recognizer
-{
-    if (recognizer.state == UIGestureRecognizerStateEnded)
-    {
-        int a;
-        a = 1;
-    }
 }
 
 - (void)onTap:(UITapGestureRecognizer*)recognizer
@@ -234,7 +225,7 @@ struct ObjectDragInfo
     
     const auto pickResult = self.renderer->pick(p);
     
-    if (auto object = self.world.objectByID(pickResult.objectID))
+    if (auto object = self.world->rootObject()->objectByID(pickResult.objectID))
     {
         if (object->selected())
         {
@@ -343,7 +334,7 @@ namespace
 
 - (void)updateUndoRedoButtons
 {
-    const auto& commandHistory = self.world.commandHistory();
+    const auto& commandHistory = self.world->commandHistory();
     
     enableButton(self.undoButton, commandHistory.canUndo());
     enableButton(self.redoButton, commandHistory.canRedo());
@@ -362,9 +353,9 @@ namespace
                                 handler:^(UIAction * action)
         {
             
-            auto* world = &self.world;
+            auto world = self.world;
             
-            auto command = std::make_shared<AddObjectCommand>(world, factory);
+            auto command = std::make_shared<AddObjectCommand>(world->rootObject(), factory);
             world->commandHistory().run(command);
             
         }];
@@ -386,11 +377,11 @@ namespace
 {
     NSMutableArray<UIMenuElement*>* children = [NSMutableArray new];
     
-    World* world = &self.world;
+    auto world = self.world;
     auto selectedObject = world->selectedObject();
     if (selectedObject != nullptr)
     {
-        auto command = std::make_shared<RemoveObjectCommand>(world, selectedObject);
+        auto command = std::make_shared<RemoveObjectCommand>(selectedObject);
         
         auto deleteAction = [UIAction actionWithTitle:@"Delete"
                                                 image:nil

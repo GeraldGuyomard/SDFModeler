@@ -6,28 +6,32 @@
 
 #include "AddObjectCommand.h"
 
-AddObjectCommand::AddObjectCommand(World* world, const Object3DFactory::Ptr& factory)
-: _world(world), _factory(factory)
+AddObjectCommand::AddObjectCommand(
+                                   const Object3D::Ptr& parent,
+                                   const Object3DFactory::Ptr& factory)
+: _parent(parent), _factory(factory)
 {
 }
 
 void
 AddObjectCommand::run()
 {
-    _object = _factory->make();
+    auto world = _parent->world();
+    
+    _object = _factory->make(world);
     
     if (_material == nullptr)
     {
-        _material = _world->addMaterial(float4 { 1, 0, 0, 1 });
+        _material = world->addMaterial(float4 { 1, 0, 0, 1 });
     }
     
     _object->setMaterial(_material);
     
-    _world->addObject(_object);
+    _parent->addChild(_object);
 }
 
 void
 AddObjectCommand::undo()
 {
-    _world->removeObject(_object);
+    _object->removeFromParent();
 }

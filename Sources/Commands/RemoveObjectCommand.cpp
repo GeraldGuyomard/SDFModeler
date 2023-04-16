@@ -6,33 +6,19 @@
 
 #include "RemoveObjectCommand.h"
 
-RemoveObjectCommand::RemoveObjectCommand(World* world, const Object3D::Ptr& object)
-: _world(world), _object(object), _parent(object->parent())
+RemoveObjectCommand::RemoveObjectCommand(const Object3D::Ptr& object)
+: _object(object), _parent(object->parent())
 {
 }
 
 void
 RemoveObjectCommand::run()
 {
-    if (_parent != nullptr)
-    {
-        _object->removeFromParent();
-    }
-    else
-    {
-        _world->removeObject(_object);
-    }
+    _object->removeFromParent();
 }
 
 void
 RemoveObjectCommand::undo()
 {
-    if (_parent != nullptr)
-    {
-        _parent->addChild(_object);
-    }
-    else
-    {
-        _world->addObject(_object);
-    }
+    _parent->addChild(_object);
 }

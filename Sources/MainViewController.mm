@@ -26,7 +26,7 @@ TObject3DFactoryRegistration s_RoundedBoxRegistration {"Rounded Box", SDFRounded
     MTKView* _view;
     std::unique_ptr<Renderer> _renderer;
     
-    World _world;
+    WorldPtr _world;
     
     Interaction::Ptr _interaction;
 }
@@ -56,7 +56,7 @@ static __weak MainViewController* s_Instance = nil;
     }
 }
 
-- (World&) world
+- (WorldPtr) world
 {
     return _world;
 }
@@ -68,92 +68,77 @@ static __weak MainViewController* s_Instance = nil;
 
 - (void)loadWorld
 {
-    auto white = _world.addMaterial(float4 { 1, 1, 1, 1 });
-    auto whiteSphere = std::make_shared<TObject3D<Sphere>>(Sphere { { 0.6f }, { float3 { 0, 1, -0.1f } } });
+    _world = World::make();
+    auto rootObject = _world->rootObject();
+    
+    auto white = _world->addMaterial(float4 { 1, 1, 1, 1 });
+    auto whiteSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.6f });
+    whiteSphere->setLocalTransform(RSTTransformer { float3 { 0, 1, -0.1f } } );
     whiteSphere->setMaterial(white);
     
-    _world.addObject(whiteSphere);
+    rootObject->addChild(whiteSphere);
     
     constexpr float kZ = 0;
     
-    auto red = _world.addMaterial(float4 { 1, 0, 0, 1 });
-    auto redSphere = std::make_shared<TObject3D<Sphere>>(Sphere { { 0.5f }, { float3 { -1, 0, kZ } } });
+    auto red = _world->addMaterial(float4 { 1, 0, 0, 1 });
+    auto redSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.5f });
+    redSphere->setLocalTransform(RSTTransformer { float3 { -1, 0, kZ } } );
     redSphere->setMaterial(red);
     
-    _world.addObject(redSphere);
+    rootObject->addChild(redSphere);
     
     float3 pos = float3 {0.5, 0, kZ};
     
     constexpr float s = 0.5f;
     
-    auto yellow = _world.addMaterial(float4 { 1, 1, 0, 1 });
-    auto roundedYellowBox = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
-    {
-        { float3 { 0.4f, 0.6f, 0.4f }, 0.1f }, // geometry
-        { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s }
-    });
+    auto yellow = _world->addMaterial(float4 { 1, 1, 0, 1 });
+    auto roundedYellowBox = std::make_shared<TObject3D<SDFRoundedBox>>(_world,
+                                                                       SDFRoundedBox { float3 { 0.4f, 0.6f, 0.4f }, 0.1f });
+    roundedYellowBox->setLocalTransform(RSTTransformer { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s });
     roundedYellowBox->setMaterial(yellow);
-    _world.addObject(roundedYellowBox);
+    rootObject->addChild(roundedYellowBox);
     
-    auto whiteBoxHalf = std::make_shared<TObject3D<Box>>(Box
-    {
-        { float3 { 0.4f * s, 0.6f * s, 0.4f * s } }, // geometry
-        { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) }
-    });
+    auto whiteBoxHalf = std::make_shared<TObject3D<SDFBox>>(_world,
+                                                            SDFBox { float3 { 0.4f * s, 0.6f * s, 0.4f * s } });
+    whiteBoxHalf->setLocalTransform(RSTTransformer { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) });
     whiteBoxHalf->setMaterial(white);
-    _world.addObject(whiteBoxHalf);
+    rootObject->addChild(whiteBoxHalf);
     
-    auto blue = _world.addMaterial(float4 { 0, 0, 1, 1 });
+    auto blue = _world->addMaterial(float4 { 0, 0, 1, 1 });
     
-    auto blueSphere = std::make_shared<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f },
-        { pos }
-    });
-    
+    auto blueSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
+    blueSphere->setLocalTransform(RSTTransformer { pos });
     blueSphere->setMaterial(blue);
-    _world.addObject(blueSphere);
+    rootObject->addChild(blueSphere);
     
-    auto green = _world.addMaterial(float4 { 0, 1, 0, 1 });
+    auto green = _world->addMaterial(float4 { 0, 1, 0, 1 });
     
-    auto greenSphere = std::make_shared<TObject3D<Sphere>>(Sphere
-    {
-        { 0.45f },
-        { float3 { -1, 1, kZ } }
-    });
+    auto greenSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.45f });
+    greenSphere->setLocalTransform(RSTTransformer { float3 { -1, 1, kZ } });
     greenSphere->setMaterial(green);
-    _world.addObject(greenSphere);
+    rootObject->addChild(greenSphere);
     
     const float3 compositionOrigin { -2., 0.f, kZ + 0.5f };
     
-    auto spherePart = std::make_shared<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f }, // geom
-        { float3 { 0, 0.6f, 0 } }
-    });
+    auto spherePart = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
+    spherePart->setLocalTransform(RSTTransformer { float3 { 0, 0.6f, 0 } });
     
-    auto boxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
-    {
-        { float3 { 0.2, 0.4, 0.2 }, 0.1 }, // geometry
-        { float3 { 0, 0, 0 } } // transform
-    });
+    auto boxPart = std::make_shared<TObject3D<SDFRoundedBox>>(_world, SDFRoundedBox
+        { float3 { 0.2, 0.4, 0.2 }, 0.1 }
+    );
+    boxPart->setLocalTransform(RSTTransformer { float3 { 0, 0, 0 } });
     
-    auto negativeSpherePart = std::make_shared<TObject3D<Sphere>>(Sphere
-    {
-        { 0.4f }, // geom
-        { float3 { 0, 0.25, 0.5f } } // transform
-    });
+    auto negativeSpherePart = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
+    negativeSpherePart->setLocalTransform(RSTTransformer { float3 { 0, 0.25, 0.5f } });
     negativeSpherePart->setOperation(Object3D::Operation::substraction);
     
-    auto negativeRoundedBoxPart = std::make_shared<TObject3D<RoundedBox>>(RoundedBox
-    {
-        { float3 { 0.1f, 0.1f, 0.3f }, 0.05f }, // geom
-        { float3 { 0, -0.5f, 0.5f }, float3 {0, 0, 1}, degToRad(45.f) } // transform
-    });
+    auto negativeRoundedBoxPart = std::make_shared<TObject3D<SDFRoundedBox>>(_world, SDFRoundedBox
+    { float3 { 0.1f, 0.1f, 0.3f }, 0.05f });
+    negativeRoundedBoxPart->setLocalTransform(RSTTransformer { float3 { 0, -0.5f, 0.5f }, float3 {0, 0, 1}, degToRad(45.f) });
     negativeRoundedBoxPart->setOperation(Object3D::Operation::substraction);
     
-    auto sdfUnionMaterial = _world.addMaterial(float4 { 0, 1, 1, 1 });
-    auto sdfUnion = std::make_shared<Composition3D>();
+    auto sdfUnionMaterial = _world->addMaterial(float4 { 0, 1, 1, 1 });
+    auto sdfUnion = std::make_shared<Composition3D>(_world);
     sdfUnion->setMaterial(sdfUnionMaterial);
     sdfUnion->setLocalTransform(matrix4x4_translation(compositionOrigin));
     
@@ -162,7 +147,7 @@ static __weak MainViewController* s_Instance = nil;
     sdfUnion->addChild(negativeSpherePart);
     sdfUnion->addChild(negativeRoundedBoxPart);
     
-    _world.addObject(sdfUnion);
+    rootObject->addChild(sdfUnion);
 }
 
 - (void)viewDidLoad
@@ -188,12 +173,12 @@ static __weak MainViewController* s_Instance = nil;
 
 - (IBAction)undo:(id)source
 {
-    self.world.commandHistory().undo();
+    self.world->commandHistory().undo();
 }
 
 - (IBAction)redo:(id)source
 {
-    self.world.commandHistory().redo();
+    self.world->commandHistory().redo();
 }
 
 @end

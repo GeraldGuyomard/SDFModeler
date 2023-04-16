@@ -23,6 +23,7 @@ enum class ObjectType : int64_t
 };
 
 using ObjectID = uint32_t;
+static CONSTANT constexpr ObjectID kInvalidObjectID = 0;
 
 class RayMarchResult
 {

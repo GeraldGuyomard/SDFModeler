@@ -14,13 +14,12 @@ class RemoveObjectCommand : public Command
 public:
     using Ptr = std::shared_ptr<RemoveObjectCommand>;
     
-    RemoveObjectCommand(World* world, const Object3D::Ptr& object);
+    RemoveObjectCommand(const Object3D::Ptr& object);
     
     void run() override;
     void undo() override;
     
 private:
-    World* const _world;
     const Object3D::Ptr _parent;
     const Object3D::Ptr _object;
 };

@@ -8,7 +8,7 @@
 #include "Object3DInteraction.h"
 #include "SDFPlane.h"
 
-DragObject3DInteraction::DragObject3DInteraction(World& world,
+DragObject3DInteraction::DragObject3DInteraction(const WorldPtr& world,
                                                  const Object3D::Ptr& object,
                                                  const float3& hitPos3D,
                                                  const float2& initialPos,
@@ -22,7 +22,7 @@ _initialTransform(object->worldTransform()),
 _command(std::make_shared<TransformObjectCommand>(_object))
 {
     _transform = _initialTransform;
-    _world.commandHistory().enable(false);
+    _world->commandHistory().enable(false);
 }
 
 DragObject3DInteraction::~DragObject3DInteraction() = default;
@@ -49,6 +49,6 @@ void
 DragObject3DInteraction::commit()
 {
     _command->setTransform(_transform);
-    _world.commandHistory().run(_command);
-    _world.commandHistory().enable(true);
+    _world->commandHistory().run(_command);
+    _world->commandHistory().enable(true);
 }

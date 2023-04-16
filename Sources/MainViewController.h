@@ -18,7 +18,7 @@
 +(MainViewController*)instance;
 
 @property(readonly, nonatomic) Renderer* renderer;
-@property(readonly, nonatomic) World& world;
+@property(readonly, nonatomic) WorldPtr world;
 
 -(Interaction::Ptr) interaction;
 -(void)setInteraction:(Interaction::Ptr)interaction;

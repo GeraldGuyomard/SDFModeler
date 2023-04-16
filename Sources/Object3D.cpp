@@ -16,10 +16,51 @@ Material3D::setId(MaterialID id)
     _id = id;
 }
 
+Object3D::Object3D(const WorldPtr& world)
+: _world(world)
+{}
+
+Object3D::Object3D(const WorldPtr& world, ObjectID id)
+: _world(world), _id(id)
+{}
+
 void
 Object3D::setId(ObjectID id)
 {
     _id = id;
+}
+
+Object3D::Ptr
+Object3D::objectByID(ObjectID id) const
+{
+    if (id == _id)
+    {
+        return ((Object3D*) this)->shared_from_this();
+    }
+    
+    for (const auto& object : children())
+    {
+        if (object->id() == id)
+        {
+            return object;
+        }
+    }
+    
+    return nullptr;
+}
+
+void
+Object3D::setSelected(bool selected)
+{
+    if (_selected != selected)
+    {
+        _selected = selected;
+        
+        for (const auto& child : _children)
+        {
+            child->setSelected(selected);
+        }
+    }
 }
 
 Object3DFactory::Object3DFactory(const std::string& name)
@@ -71,7 +112,6 @@ Object3D::setMaterial(const Material3D::Ptr& mat)
     if (_material != mat)
     {
         _material = mat;
-        onMaterialChange();
     }
 }
 
@@ -84,6 +124,11 @@ Object3D::materialID() const
 void
 Object3D::addChild(const Ptr& child)
 {
+    if (child->_id == kInvalidObjectID)
+    {
+        child->_id = world()->generateNewObjectID();
+    }
+    
     auto self = shared_from_this();
     
     if (child->parent() != self)
@@ -109,7 +154,7 @@ Object3D::removeFromParent()
             if (self == child)
             {
                 parent->_children.erase(it);
-                break;
+                return;
             }
         }
         
@@ -146,89 +191,87 @@ Object3D::setWorldTransform(const float4x4& transform)
 }
 
 void
+Object3D::setLocalTransform(const float4x4& transform)
+{
+    _localTransform = transform;
+}
+
+void
+Object3D::setLocalTransform(const RSTTransformer& transformer)
+{
+    _localTransform = transformer.transform();
+}
+
+void
 Object3D::setOperation(Operation op)
 {
     _operation = op;
 }
 
 void
-Object3DCollection::addObject(const Object3D::Ptr& object)
+Object3D::serializeHierarchy(SerializedObjects& serializedObjects, uint8_t*& p) const
 {
-    _objects.push_back(object);
+    const size_t size = selfSerialize(p);
+    if (size != 0)
+    {
+        p += size;
+        serializedObjects.objectCount++;
+    }
+    
+    for (const auto& child : children())
+    {
+        child->serializeHierarchy(serializedObjects, p);
+    }
 }
 
 void
-Object3DCollection::removeObject(const Object3D::Ptr& object)
-{
-    const auto end = _objects.end();
-    for (auto it = _objects.begin(); it != end; ++it)
-    {
-        if (*it == object)
-        {
-            _objects.erase(it);
-            break;
-        }
-    }
-}
-
-
-std::set<ObjectID>
-Object3DCollection::objectIDs() const
-{
-    std::set<ObjectID> ids;
-    
-    for (const auto& object : _objects)
-    {
-        ids.insert(object->id());
-    }
-    
-    return ids;
-}
-
-Object3D::Ptr
-Object3DCollection::anyObject() const
-{
-    return !_objects.empty() ? _objects.front() : nullptr;
-}
-
-bool
-Object3DCollection::contains(const Object3D::Ptr& object) const
-{
-    for (const auto& o : _objects)
-    {
-        if (o == object)
-        {
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-void
-Object3DCollection::serialize(SerializedObjects& serializedObjects) const
+Object3D::serialize(SerializedObjects& serializedObjects) const
 {
     serializedObjects.objectCount = 0;
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedObjects.buffer));
     
-    for (const auto& object : _objects)
-    {
-        const size_t size = object->serialize(p);
-        p += size;
-        serializedObjects.objectCount++;
-    }
+    serializeHierarchy(serializedObjects, p);
 }
 
-World::World()
+Group3D::Group3D(const WorldPtr& world)
+: _inherited(world)
+{}
+
+Group3D::Group3D(const WorldPtr& world, ObjectID id)
+: _inherited(world, id)
+{}
+
+size_t
+Group3D::selfSerialize(uint8_t* ptr) const
 {
+    return 0;
+}
+
+WorldPtr
+World::make()
+{
+    WorldPtr world(new World);
+    world->init();
+    return world;
+}
+
+World::RootObject3D::RootObject3D(const WorldPtr& world, ObjectID id)
+: Group3D(world, id)
+{}
+
+void
+World::init()
+{
+    _rootObject.reset(new RootObject3D(shared_from_this(), generateNewObjectID()));
+    
     addMaterial(float4 {1, 0, 0, 1});
 }
 
 void
 World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
 {
-    _content.serialize(serializedWorld.content);
+    _rootObject->serialize(serializedWorld.content);
     
     materials.nbMaterials = _materials.size();
     
@@ -238,23 +281,10 @@ World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
     }
 }
 
-void
-World::addObject(const Object3D::Ptr& object)
+ObjectID
+World::generateNewObjectID()
 {
-    object->setId(_nextAvailableObjectID++);
-    _content.addObject(object);
-}
-
-void
-World::removeObject(const Object3D::Ptr& object)
-{
-    _content.removeObject(object);
-}
-
-const std::vector<Object3D::Ptr>&
-World::objects() const
-{
-    return _content.objects();
+    return _nextAvailableObjectID++;
 }
 
 void
@@ -272,27 +302,22 @@ World::addMaterial(const float4& color)
     return mat;
 }
 
-Object3D::Ptr
-World::objectByID(ObjectID id) const
-{
-    for (const auto& object : objects())
-    {
-        if (object->id() == id)
-        {
-            return object;
-        }
-    }
-    return nullptr;
-}
-
 void
 World::setSelectedObject(const Object3D::Ptr& object)
 {
-    _selectedObject = object;
-    
-    for (const auto& object : objects())
+    if (_selectedObject != object)
     {
-        const bool selected = (object == _selectedObject);
-        object->setSelected(selected);
+        if (_selectedObject != nullptr)
+        {
+            _selectedObject->setSelected(false);
+        }
+        
+        _selectedObject = object;
+        
+        if (_selectedObject != nullptr)
+        {
+            _selectedObject->setSelected(true);
+        }
+        
     }
 }

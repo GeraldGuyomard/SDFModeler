@@ -48,12 +48,12 @@
     
     Interaction::Ptr interaction;
     
-    auto& world = self.world;
+    auto world = self.world;
     
     const auto result = self.renderer->pick(initialPos);
-    if (auto object = world.objectByID(result.objectID))
+    if (auto object = world->rootObject()->objectByID(result.objectID))
     {
-        world.setSelectedObject(object);
+        world->setSelectedObject(object);
         
         interaction = std::make_shared<DragObject3DInteraction>(world,
                                                                 object,
@@ -71,7 +71,7 @@
         }
         else
         {
-            if (auto selectedObject = world.selectedObject())
+            if (auto selectedObject = world->selectedObject())
             {
                 const float3 origin = translation(selectedObject->worldTransform());
                 interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, initialPos);
@@ -110,7 +110,7 @@
     
     DollyCameraInteraction::Ptr interaction;
     
-    if (auto object = self.world.selectedObject())
+    if (auto object = self.world->selectedObject())
     {
         interaction = std::make_unique<DollyCameraInteraction>(camera, object);
     }
@@ -138,11 +138,11 @@
 {
     if (menuItem.action == @selector(undo:))
     {
-        return self.world.commandHistory().canUndo();
+        return self.world->commandHistory().canUndo();
     }
     else if (menuItem.action == @selector(redo:))
     {
-        return self.world.commandHistory().canRedo();
+        return self.world->commandHistory().canRedo();
     }
     
     return NO;

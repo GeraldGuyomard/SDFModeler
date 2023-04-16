@@ -20,7 +20,7 @@ class DragObject3DInteraction : public PanInteraction
 public:
     using _inherited = PanInteraction;
     
-    DragObject3DInteraction(World& world,
+    DragObject3DInteraction(const WorldPtr& world,
                             const Object3D::Ptr& object,
                             const float3& hitPos3D,
                             const float2& initialPos,
@@ -31,7 +31,7 @@ public:
     void commit() override;
     
 private:
-    World& _world;
+    const WorldPtr _world;
     
     const Object3D::Ptr _object;
     const float3 _hitPos3D;

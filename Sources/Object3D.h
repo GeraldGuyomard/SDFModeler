@@ -34,6 +34,9 @@ private:
 };
 
 class Object3D;
+class World;
+using WorldPtr = std::shared_ptr<World>;
+using WorldWPtr = std::weak_ptr<World>;
 
 class Object3DFactory
 {
@@ -44,7 +47,7 @@ public:
     virtual ~Object3DFactory() = default;
     
     const std::string& name() const { return _name; }
-    virtual std::shared_ptr<Object3D> make() const = 0;
+    virtual std::shared_ptr<Object3D> make(const WorldPtr&) const = 0;
     
     // Factory
     static void addFactory(const Ptr&);
@@ -62,13 +65,15 @@ public:
     
     virtual ~Object3D() = default;
     
-    virtual ObjectType objectType() const = 0;
-    virtual TransformerType transformerType() const = 0;
+    WorldPtr world() const { return _world.lock(); }
     
-    virtual size_t serialize(uint8_t* ptr) const = 0;
+    void serialize(SerializedObjects&) const;
+    virtual size_t selfSerialize(uint8_t* ptr) const = 0;
     
     ObjectID id() const { return _id; }
     void setId(ObjectID);
+    
+    Object3D::Ptr objectByID(ObjectID id) const;
     
     Material3D::Ptr material() const { return _material; }
     void setMaterial(const Material3D::Ptr&);
@@ -80,11 +85,12 @@ public:
     float4x4 worldTransform() const;
     void setWorldTransform(const float4x4&);
     
-    virtual float4x4 localTransform() const = 0;
-    virtual void setLocalTransform(const float4x4&) = 0;
+    float4x4 localTransform() const { return _localTransform; }
+    void setLocalTransform(const float4x4&);
+    void setLocalTransform(const RSTTransformer&);
     
-    virtual bool selected() const = 0;
-    virtual void setSelected(bool selected) = 0;
+    bool selected() const { return _selected; }
+    void setSelected(bool selected);
     
     const std::vector<Ptr>& children() const { return _children; }
     virtual void addChild(const Ptr& child);
@@ -100,173 +106,133 @@ public:
     void setOperation(Operation);
     
 protected:
-    virtual void onMaterialChange() {}
+    Object3D(const WorldPtr& world);
+    Object3D(const WorldPtr& world, ObjectID id);
     
 private:
+    
+    virtual void serializeHierarchy(SerializedObjects& serializedObjects, uint8_t*& ptr) const;
+    
+    const WorldWPtr _world;
+    
     ObjectID _id = 0;
     Material3D::Ptr _material;
     Operation _operation = Operation::addition;
     
     Object3D::WPtr _parent;
     std::vector<Ptr> _children;
-};
-
-template <typename TPrimitive>
-class TObject3D : public Object3D
-{
-public:
-    TObject3D(const TPrimitive& prim)
-    : _primitive(prim)
-    {}
     
-    ObjectType objectType() const override
-    {
-        return TPrimitive::objectType();
-    }
-    
-    TransformerType transformerType() const override
-    {
-        return TPrimitive::Transformer::transformerType();
-    }
-    
-    float4x4 localTransform() const override
-    {
-        return _primitive.transform();
-    }
-    
-    void setLocalTransform(const float4x4& transform) override
-    {
-        _primitive.setTransform(transform);
-    }
-    
-    bool selected() const override
-    {
-        return _selected;
-    }
-    
-    void setSelected(bool selected) override
-    {
-        _selected = selected;
-        _primitive.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
-    }
-    
-    size_t serialize(uint8_t* ptr) const final override
-    {
-        typename TPrimitive::Transformer transformer { worldTransform() };
-        
-        /*const auto geometry = _primitive.geometry();
-        const auto material = _primitive.material();
-        
-        RTTransformer rtTransformer;
-        TranslationTransformer translationTransformer;
-        
-        if (convert<typename TPrimitive::Transformer, TranslationTransformer>(transformer, translationTransformer))
-        {
-            SDFObject object { geometry, translationTransformer, material };
-            return serializeObject(ptr, object, object.objectType(), object.transformerType());
-        }
-        else if (convert<typename TPrimitive::Transformer, RTTransformer>(transformer, rtTransformer))
-        {
-            SDFObject object { geometry, rtTransformer, material };
-            return serializeObject(ptr, object, object.objectType(), object.transformerType());
-        }
-        else*/
-        {
-            auto primitive = _primitive;
-            primitive.setTransformer(transformer);
-            
-            return serializeObject<TPrimitive>(ptr, primitive, id(), objectType(), transformer.transformerType(), _selected);
-        }
-    }
-    
-private:
-    
-    void onMaterialChange() override
-    {
-        _primitive.setMaterialID(materialID());
-    }
-    
-    TPrimitive _primitive;
+    float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
 };
 
-template <typename TPrimitive>
-class TObject3DFactory : public Object3DFactory
+class Group3D : public Object3D
 {
 public:
-    TObject3DFactory(const std::string& name, const TPrimitive& primitive)
-    : Object3DFactory(name), _object(primitive)
+    using _inherited = Object3D;
+    Group3D(const WorldPtr&);
+    
+    size_t selfSerialize(uint8_t* ptr) const override;
+    
+protected:
+    Group3D(const WorldPtr& world, ObjectID id);
+};
+
+template <typename TGeometry>
+class TObject3D : public Object3D
+{
+public:
+    using _inherited = Object3D;
+    
+    TObject3D(const WorldPtr& world, const TGeometry& geometry)
+    : _inherited(world), _geometry(geometry)
     {}
     
-    using Object = SDFObject<TPrimitive, RSTTransformer>;
-    
-    std::shared_ptr<Object3D> make() const override
+    size_t selfSerialize(uint8_t* ptr) const final override
     {
-        return std::make_shared<TObject3D<Object>>(_object);
+        RSTTransformer transformer { worldTransform() };
+        
+        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialID() };
+        
+        const bool selected = this->selected();
+        if (selected)
+        {
+            object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
+        }
+        
+        return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
+                                            ptr,
+                                           object,
+                                           id(),
+                                           object.objectType(),
+                                           transformer.transformerType(),
+                                           selected);
     }
     
 private:
-    const SDFObject<TPrimitive, RSTTransformer> _object;
+    TGeometry _geometry;
 };
 
-template <typename TPrimitive>
+template <typename TGeometry>
+class TObject3DFactory : public Object3DFactory
+{
+public:
+    TObject3DFactory(const std::string& name, const TGeometry& geometry)
+    : Object3DFactory(name), _geometry(geometry)
+    {}
+    
+    std::shared_ptr<Object3D> make(const WorldPtr& world) const override
+    {
+        return std::make_shared<TObject3D<TGeometry>>(world, _geometry);
+    }
+    
+private:
+    const TGeometry _geometry;
+};
+
+template <typename TGeometry>
 class TObject3DFactoryRegistration final
 {
 public:
-    TObject3DFactoryRegistration(const std::string& name, const TPrimitive& primitive)
+    TObject3DFactoryRegistration(const std::string& name, const TGeometry& geometry)
     {
-        auto factory = std::make_shared<TObject3DFactory<TPrimitive>>(name, primitive);
+        auto factory = std::make_shared<TObject3DFactory<TGeometry>>(name, geometry);
         Object3DFactory::addFactory(factory);
     }
 };
 
-class Object3DCollection final
+class World final : public std::enable_shared_from_this<World>
 {
 public:
-    
-    Object3DCollection() = default;
-    
-    void addObject(const Object3D::Ptr&);
-    void removeObject(const Object3D::Ptr&);
-    
-    void serialize(SerializedObjects&) const;
-    
-    bool empty() const { return _objects.empty(); }
-    const std::vector<Object3D::Ptr>& objects() const { return _objects; }
-    Object3D::Ptr anyObject() const;
-    
-    std::set<ObjectID> objectIDs() const;
-    
-    bool contains(const Object3D::Ptr&) const;
-    
-private:
-    std::vector<Object3D::Ptr> _objects;
-};
-
-class World final
-{
-public:
-    World();
+    static WorldPtr make();
     
     void serialize(SerializedWorld&, Materials& materials) const;
     
     void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);
-   
-    void addObject(const Object3D::Ptr&);
-    void removeObject(const Object3D::Ptr&);
-    const std::vector<Object3D::Ptr>& objects() const;
     
-    Object3D::Ptr objectByID(ObjectID id) const;
+    Object3D::Ptr rootObject() const { return _rootObject; }
     
     const Object3D::Ptr& selectedObject() const { return _selectedObject; }
     void setSelectedObject(const Object3D::Ptr&);
     
     CommandHistory& commandHistory() { return _commandHistory; }
     
-private:
+    ObjectID generateNewObjectID();
     
-    Object3DCollection _content;
+private:
+    World() = default;
+    
+    void init();
+    
+    class RootObject3D final : public Group3D
+    {
+    public:
+        RootObject3D(const WorldPtr&, ObjectID id);
+    };
+    
+    Object3D::Ptr _rootObject;
+    
     ObjectID _nextAvailableObjectID = 1;
     std::vector<Material3D::Ptr> _materials;
     

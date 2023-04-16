@@ -13,13 +13,14 @@ class AddObjectCommand : public Command
 {
 public:
     
-    AddObjectCommand(World* world, const Object3DFactory::Ptr& factory);
+    AddObjectCommand(const Object3D::Ptr& parent,
+                     const Object3DFactory::Ptr& factory);
     
     void run() override;
     void undo() override;
     
 private:
-    World* const _world;
+    const Object3D::Ptr _parent;
     const Object3DFactory::Ptr _factory;
     
     Object3D::Ptr _object;

@@ -225,7 +225,7 @@ Renderer::updateUniforms()
     auto& serializedWorld = _serializedWorldBuffer->uniform();
     auto& serializedMaterials = _materialsBuffer->uniform();
     
-    [MainViewController instance].world.serialize(serializedWorld, serializedMaterials);
+    [MainViewController instance].world->serialize(serializedWorld, serializedMaterials);
 }
 
 void
