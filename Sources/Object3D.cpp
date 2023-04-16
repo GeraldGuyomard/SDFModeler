@@ -231,7 +231,7 @@ Object3D::serialize(SerializedWorld& serializedWorld) const
 {
     serializedWorld.geometriesCount = 0;
     serializedWorld.simpleObjectsCount = 0;
-    serializedWorld.compositionCount = 0;
+    serializedWorld.compoundObjectsCount = 0;
     
     uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.geometries));
     

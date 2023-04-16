@@ -62,3 +62,32 @@ struct SimpleObjectHeader final
     : objectID(objectID), materialID(materialID), geometryIndex(geometryIndex), selected(selected)
     {}
 };
+
+struct CompoundObjectHeader final
+{
+    uint64_t  byteSize;
+    
+    uint32_t    objectID;
+    uint32_t    materialID;
+    uint32_t    nbPositiveGeometries;
+    uint32_t    nbNegativeGeometries;
+    bool        selected;
+    
+    CompoundObjectHeader() = default;
+    
+    CompoundObjectHeader(uint32_t objectID,
+                         uint32_t materialID,
+                         uint32_t nbPositiveGeometries,
+                         uint32_t nbNegativeGeometries,
+                         bool selected)
+    : objectID(objectID),
+    materialID(materialID),
+    nbPositiveGeometries(nbPositiveGeometries),
+    nbNegativeGeometries(nbNegativeGeometries),
+    selected(selected)
+    {}
+    
+    // after the list of positive geometry indices (uint32_t)
+    // and the list of negative geometry indices (uint32_t)
+    uint32_t firstPositiveIndex;
+};

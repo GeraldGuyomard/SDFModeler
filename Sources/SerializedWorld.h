@@ -16,7 +16,7 @@ struct SerializedWorld final
     uint64_t geometriesCount = 0;
     
     uint32_t simpleObjectsCount = 0;
-    uint32_t compositionCount = 0;
+    uint32_t compoundObjectsCount = 0;
     
     // should be aligned on 16 bytes
     // for SSE float moves
@@ -33,7 +33,9 @@ class Content final
 {
 public:
     
-    constexpr static CONSTANT size_t kNbObjectsMax = 128;
+    constexpr static CONSTANT size_t kNbGeometriesMax = 128;
+    constexpr static CONSTANT size_t kNbSimpleObjectsMax = 128;
+    constexpr static CONSTANT size_t kNbCompoundObjectsMax = 128;
     
     Content(TShader shader, CONSTANT SerializedWorld& serializedWorld)
     : _serializedWorld(serializedWorld), _shader(shader)
@@ -43,26 +45,26 @@ public:
     {
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT TransformedGeometryHeader* geometryHeaders[kNbObjectsMax];
+        CONSTANT TransformedGeometryHeader* geometryHeaders[kNbGeometriesMax];
         
         CONSTANT uint8_t* buffer = &_serializedWorld.geometries[0];
-        CONSTANT TransformedGeometryHeader* header = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(buffer);
+        CONSTANT TransformedGeometryHeader* geometryHeader = reinterpret_cast<CONSTANT TransformedGeometryHeader*>(buffer);
         
-        bool geometryCulled[20];
+        bool geometryCulled[kNbGeometriesMax];
         
         for (size_t i=0; i < _serializedWorld.geometriesCount; ++i)
         {
-            bool culled = evaluateTransformedGeometry<CullEvaluator, bool>(cullEvaluator, header);
+            bool culled = evaluateTransformedGeometry<CullEvaluator, bool>(cullEvaluator, geometryHeader);
             
-            geometryHeaders[i] = header;
+            geometryHeaders[i] = geometryHeader;
             geometryCulled[i] = culled;
             
-            header = TransformedGeometryHeader::next(header);
+            geometryHeader = TransformedGeometryHeader::next(geometryHeader);
         }
         
         size_t simpleObjectsCount = 0;
         
-        CONSTANT SimpleObjectHeader* simpleObjectHeaders[kNbObjectsMax];
+        CONSTANT SimpleObjectHeader* simpleObjectHeaders[kNbSimpleObjectsMax];
         for (size_t i=0; i < _serializedWorld.simpleObjectsCount; ++i)
         {
             CONSTANT SimpleObjectHeader* objectHeader = &_serializedWorld.simpleObjectHeaders[i];
@@ -72,10 +74,22 @@ public:
             }
         }
         
+        size_t compoundObjectsCount = 0;
+        CONSTANT CompoundObjectHeader* compoundObjectHeaders[kNbCompoundObjectsMax];
+        
+        for (size_t i=0; i < _serializedWorld.compoundObjectsCount; ++i)
+        {
+            /*CONSTANT SimpleObjectHeader* objectHeader = &_serializedWorld.simpleObjectHeaders[i];
+            if (!geometryCulled[objectHeader->geometryIndex])
+            {
+                simpleObjectHeaders[simpleObjectsCount++] = objectHeader;
+            }*/
+        }
+        
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        CONSTANT SimpleObjectHeader* outlineObjectHeader = nullptr;
+        uint32_t outlineObjectID = 0;
         bool hit = false;
         
         float minDistance = 1e5f;
@@ -95,15 +109,15 @@ public:
             for (size_t objectIndex = 0; objectIndex < simpleObjectsCount; ++objectIndex)
             {
                 CONSTANT SimpleObjectHeader* simpleObjectHeader = simpleObjectHeaders[objectIndex];
-                header = geometryHeaders[simpleObjectHeader->geometryIndex];
+                geometryHeader = geometryHeaders[simpleObjectHeader->geometryIndex];
                 
-                const float dist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, header);
+                const float dist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
                 
-                if ((outlineObjectHeader == nullptr) && simpleObjectHeader->selected)
+                if ((outlineObjectID == 0) && simpleObjectHeader->selected)
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineObjectHeader = simpleObjectHeader;
+                        outlineObjectID = simpleObjectHeader->objectID;
                     }
                 }
                 
@@ -130,11 +144,11 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (outlineObjectHeader != nullptr)
+        if (outlineObjectID != 0)
         {
-            if (!hit || (outlineObjectHeader != minObjectHeader))
+            if (!hit || (outlineObjectID != minObjectHeader->objectID))
             {
-                return RayMarchResult { ray, minObjectHeader->objectID, float4{ 1, 1, 1, 1 }, 0.f };
+                return RayMarchResult { ray, outlineObjectID, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
         
