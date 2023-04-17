@@ -17,6 +17,7 @@
 
     #define CONSTANT constant
     #define DEVICE device
+    #define THREAD thread
     #define INLINE
 
     using EnumBackingType = metal::int32_t;
@@ -61,6 +62,7 @@
 
     #define CONSTANT const
     #define DEVICE
+    #define THREAD
     #define INLINE inline
 
     using EnumBackingType = int32_t;

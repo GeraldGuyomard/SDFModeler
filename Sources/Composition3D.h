@@ -9,7 +9,6 @@
 #include "Object3D.h"
 #include "Composition.h"
 
-template <typename TTransformer>
 class TComposition3D : public Object3D
 {
 public:
@@ -39,8 +38,6 @@ public:
     {
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
-        const TTransformer transformer { worldTransform() };
-        
         std::vector<Object3D::Ptr> additiveObjects;
         std::vector<Object3D::Ptr> substractiveObjects;
         
@@ -67,16 +64,15 @@ public:
         const bool selected = this->selected();
         
         float extraCullingMargin = selected ? kOutlineThickness : 0;
-        SDFSerializedComposition<TTransformer> serializedComp
+        SDFSerializedComposition serializedComp
         {
             additiveObjects.size(),
             substractiveObjects.size(),
-            transformer,
             materialID(),
             extraCullingMargin
         };
         
-        copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType(), selected);
+        copy(header, serializedComp, id(), ObjectType::composition, RSTTransformer::transformerType(), selected);
         ptr += header->byteSize;
         
         size_t subHeadersSize = 0;
@@ -112,12 +108,10 @@ private:
     }
 };
 
-class Composition3D final : public TComposition3D<Composition::Transformer>
+class Composition3D final : public TComposition3D
 {
 public:
-    using _inherited = TComposition3D<Composition::Transformer>;
-    
-    using Transformer = Composition::Transformer;
+    using _inherited = TComposition3D;
     
     Composition3D(const WorldPtr& world)
     : _inherited(world)

@@ -13,7 +13,7 @@
 
 #include "Composition.h"
 
-using Composition = SDFComposition<RSTTransformer>;
+using Composition = SDFComposition;
 
 template <typename TEvaluator, typename TReturnValue>
 INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)

@@ -9,13 +9,11 @@
 #include "SDFGeometry/SDFGeometry.h"
 #include "PrimitiveEvaluator.h"
 
-template <typename TTransformer>
 struct SDFSerializedComposition final
 {
     uint64_t nbObjectsToAdd;
     uint64_t nbObjectsToSubstract;
     
-    TTransformer transformer;
     MaterialID materialID;
     
     float extraCullingMargin = 0.f;
@@ -25,12 +23,10 @@ struct SDFSerializedComposition final
     
     SDFSerializedComposition(uint64_t nbObjectsToAdd,
                              uint64_t nbObjectsToSubstract,
-                             TTransformer transformer,
                              MaterialID materialID,
                              float extraCullingMargin)
     : nbObjectsToAdd(nbObjectsToAdd),
     nbObjectsToSubstract(nbObjectsToSubstract),
-    transformer(transformer),
     materialID(materialID),
     extraCullingMargin(extraCullingMargin)
     {}
@@ -41,18 +37,15 @@ struct SDFSerializedComposition final
     }
 };
 
-template <typename TTransformer>
 class SDFComposition final
 {
 public:
 
-    using Serialized = SDFSerializedComposition<TTransformer>;
-    using Transformer = TTransformer;
+    using Serialized = SDFSerializedComposition;
     
     static ObjectType objectType() { return ObjectType::composition; }
     
     SDFComposition(CONSTANT Serialized* serializedComposition) :
-    _transformer(serializedComposition->transformer),
     _materialID(serializedComposition->materialID),
     _nbObjectsToAdd(serializedComposition->nbObjectsToAdd),
     _nbObjectsToSubstract(serializedComposition->nbObjectsToSubstract),
@@ -112,7 +105,6 @@ public:
     MaterialID materialID() const { return _materialID; }
     
 private:
-    const TTransformer _transformer;
     const MaterialID _materialID;
     
     const uint64_t _nbObjectsToAdd;
