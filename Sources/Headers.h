@@ -9,6 +9,7 @@
 #include "CommonDefinitions.h"
 #include "SDFGeometry/SDFGeometry.h"
 #include "Transformer/Transformer.h"
+#include "Material/Material.h"
 
 CONSTANT static constexpr uint64_t kGeometryTypeShift = 2;
 
@@ -40,6 +41,12 @@ struct TransformedGeometryHeader final
         CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);
         return reinterpret_cast<CONSTANT TransformedGeometryHeader*>(ptr + header->byteSize);
     }
+    
+    static THREAD TransformedGeometryHeader* next(THREAD TransformedGeometryHeader* header)
+    {
+        THREAD uint8_t* ptr = reinterpret_cast<THREAD uint8_t*>(header);
+        return reinterpret_cast<THREAD TransformedGeometryHeader*>(ptr + header->byteSize);
+    }
 };
 
 template <typename TTransformedGeometry>
@@ -56,8 +63,8 @@ struct ObjectHeader
     bool        selected;
     
     ObjectHeader() = default;
-    ObjectHeader(uint32_t objectID, uint32_t materialID, bool selected)
-    : objectID(objectID), materialID(materialID), selected(selected)
+    ObjectHeader(ObjectID objectID, MaterialID materialID, bool selected)
+    : objectID(uint32_t(objectID)), materialID(uint32_t(materialID)), selected(selected)
     {}
 };
 
@@ -86,12 +93,11 @@ struct CompoundObjectHeader final
     
     CompoundObjectHeader(
                          ObjectHeader objectHeader,
-                         uint32_t nbPositiveGeometries,
-                         uint32_t nbNegativeGeometries,
-                         bool selected)
+                         size_t nbPositiveGeometries,
+                         size_t nbNegativeGeometries)
     : objectHeader(objectHeader),
-    nbPositiveGeometries(nbPositiveGeometries),
-    nbNegativeGeometries(nbNegativeGeometries)
+    nbPositiveGeometries(uint32_t(nbPositiveGeometries)),
+    nbNegativeGeometries(uint32_t(nbNegativeGeometries))
     {}
     
     // after the list of positive geometry indices (uint32_t)

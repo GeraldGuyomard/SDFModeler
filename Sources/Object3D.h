@@ -69,7 +69,17 @@ public:
     WorldPtr world() const { return _world.lock(); }
     
     void serialize(SerializedWorld&) const;
-    virtual size_t selfSerialize(uint8_t* ptr) const;
+    
+    class SerializationContext final
+    {
+    public:
+        SerializedWorld& serializedWorld;
+        TransformedGeometryHeader* currentGeometryHeader = nullptr;
+        CompoundObjectHeader* currentCompoundObjectHeader = nullptr;
+        
+        SerializationContext(SerializedWorld& serializedWorld);
+    };
+    virtual void selfSerialize(SerializationContext&) const;
     
     ObjectID id() const { return _id; }
     void setId(ObjectID);
@@ -108,7 +118,7 @@ public:
     
 private:
     
-    virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
+    virtual void serializeHierarchy(SerializationContext&) const;
     
     const WorldWPtr _world;
     
@@ -133,7 +143,7 @@ public:
     : _inherited(world), _geometry(geometry)
     {}
     
-    size_t selfSerialize(uint8_t* ptr) const final override
+    void selfSerialize(SerializationContext& context) const final override
     {
         RSTTransformer transformer { worldTransform() };
         
@@ -146,9 +156,14 @@ public:
             transformedGeometry.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
         }
         
-        return serializeTransformedGeometry<TransformedGeometryType>(
-                                    ptr,
-                                    transformedGeometry);
+        serializeTransformedGeometry<TransformedGeometryType>(context.currentGeometryHeader, transformedGeometry);
+        context.currentGeometryHeader = TransformedGeometryHeader::next(context.currentGeometryHeader);
+        
+        const uint32_t geometryIndex = context.serializedWorld.geometriesCount;
+        context.serializedWorld.geometriesCount++;
+        
+        ObjectHeader objectHeader { id(), materialID(), selected };
+        context.serializedWorld.simpleObjectHeaders[context.serializedWorld.simpleObjectsCount++] = { objectHeader, geometryIndex };
     }
     
 private:

@@ -7,7 +7,6 @@
 #pragma once
 
 #include "Object3D.h"
-#include "Composition.h"
 
 template <typename TTransformer>
 class TComposition3D : public Object3D
@@ -25,22 +24,16 @@ public:
         child->setId(id());
     }
     
-    void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const override
+    void serializeHierarchy(SerializationContext& context) const override
     {
-#if ENABLE_COMPOSITION
-        const size_t size = selfSerialize(p);
-        if (size != 0)
-        {
-            p += size;
-            serializedWorld.objectCount++;
-        }
-#endif
+        selfSerialize(context);
     }
     
-    size_t selfSerialize(uint8_t* ptr) const override
+    void selfSerialize(SerializationContext& context) const override
     {
-#if ENABLE_COMPOSITION
-        ObjectHeader* const header = (ObjectHeader*) ptr;
+        return;
+        
+        auto header = context.currentCompoundObjectHeader;
         
         const TTransformer transformer { worldTransform() };
         
@@ -70,54 +63,10 @@ public:
         const bool selected = this->selected();
         
         float extraCullingMargin = selected ? kOutlineThickness : 0;
-        SDFSerializedComposition<TTransformer> serializedComp
-        {
-            additiveObjects.size(),
-            substractiveObjects.size(),
-            transformer,
-            materialID(),
-            extraCullingMargin
-        };
         
-        copy(header, serializedComp, id(), ObjectType::composition, TTransformer::transformerType(), selected);
-        ptr += header->byteSize;
-        
-        size_t subHeadersSize = 0;
-        // then copy the primitives
-        for (const auto& obj : additiveObjects)
-        {
-            const size_t s = obj->selfSerialize(ptr);
-            subHeadersSize += s;
-            ptr += s;
-        }
-        
-        for (const auto& obj : substractiveObjects)
-        {
-            const size_t s = obj->selfSerialize(ptr);
-            subHeadersSize += s;
-            ptr += s;
-        }
-        
-        // update the true header size that includes all the sub headers
-        header->byteSize += subHeadersSize;
-        
-        return header->byteSize;
-#else
-        return 0;
-#endif
+        const ObjectHeader objectHeader { id(), uint32_t(materialID()), selected };
+        *header = { objectHeader, additiveObjects.size(), substractiveObjects.size() };
     }
-    
-private:
-    
-#if ENABLE_COMPOSITION
-    template <typename TPrimitive>
-    static void _copyPrimitive(uint8_t*& ptr, const TPrimitive& prim)
-    {
-        auto h = (ObjectHeader*) ptr;
-        copy(h, prim);
-        ptr += h->byteSize;
-    }
-#endif
 };
 
 class Composition3D final : public TComposition3D<RSTTransformer>

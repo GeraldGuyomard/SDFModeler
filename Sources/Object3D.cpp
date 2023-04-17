@@ -204,46 +204,39 @@ Object3D::setOperation(Operation op)
     _operation = op;
 }
 
-void
-Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const
+Object3D::SerializationContext::SerializationContext(SerializedWorld& serializedWorld)
+: serializedWorld(serializedWorld)
 {
-    const size_t size = selfSerialize(p);
-    if (size != 0)
-    {
-        p += size;
-        
-        const auto geomIndex = serializedWorld.geometriesCount;
-        serializedWorld.geometriesCount++;
-        
-        ObjectHeader objectHeader {id(), uint32_t(materialID()), selected() };
-        serializedWorld.simpleObjectHeaders[serializedWorld.simpleObjectsCount] = { objectHeader, geomIndex  };
-        
-        serializedWorld.simpleObjectsCount++;
-    }
+    serializedWorld.geometriesCount = 0;
+    serializedWorld.simpleObjectsCount = 0;
+    serializedWorld.compoundObjectsCount = 0;
+    
+    currentGeometryHeader = reinterpret_cast<TransformedGeometryHeader*>(serializedWorld.geometries);
+    currentCompoundObjectHeader = reinterpret_cast<CompoundObjectHeader*>(serializedWorld.compoundObjectHeaders);
+}
+
+void
+Object3D::serializeHierarchy(SerializationContext& context) const
+{
+    selfSerialize(context);
     
     for (const auto& child : children())
     {
-        child->serializeHierarchy(serializedWorld, p);
+        child->serializeHierarchy(context);
     }
 }
 
 void
 Object3D::serialize(SerializedWorld& serializedWorld) const
 {
-    serializedWorld.geometriesCount = 0;
-    serializedWorld.simpleObjectsCount = 0;
-    serializedWorld.compoundObjectsCount = 0;
+    SerializationContext context { serializedWorld };
     
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.geometries));
-    
-    serializeHierarchy(serializedWorld, p);
+    serializeHierarchy(context);
 }
 
-size_t
-Object3D::selfSerialize(uint8_t* ptr) const
-{
-    return 0;
-}
+void
+Object3D::selfSerialize(SerializationContext&) const
+{}
 
 WorldPtr
 World::make()

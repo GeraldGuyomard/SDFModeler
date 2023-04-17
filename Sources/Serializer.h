@@ -8,7 +8,6 @@
 
 #include "CommonDefinitions.h"
 #include "Headers.h"
-#include "Composition.h"
 
 #include <cstring>
 #include <assert.h>
@@ -33,10 +32,7 @@ static void copy(
 }
 
 template <typename TTransformedGeometry>
-INLINE size_t serializeTransformedGeometry(uint8_t* p, const TTransformedGeometry& transformedGeometry)
+INLINE void serializeTransformedGeometry(TransformedGeometryHeader* header, const TTransformedGeometry& transformedGeometry)
 {
-    TransformedGeometryHeader* h = (TransformedGeometryHeader*) p;
-    copy(h, transformedGeometry);
-    
-    return h->byteSize;
+    copy(header, transformedGeometry);
 }
