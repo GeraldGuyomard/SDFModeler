@@ -199,7 +199,7 @@ Object3D::setLocalTransform(const RSTTransformer& transformer)
 }
 
 void
-Object3D::setOperation(Operation op)
+SimpleGeometryObject3D::setOperation(Operation op)
 {
     _operation = op;
 }

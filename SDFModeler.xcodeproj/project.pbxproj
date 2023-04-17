@@ -57,7 +57,6 @@
 		74AAF28A29D7BCB800D322DB /* Composition3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647429CF9B0F00CD5259 /* Composition3D.cpp */; };
 		74AAF28B29D7BCC700D322DB /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* Results.cpp */; };
 		74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
-		74AAF28E29D7BCD300D322DB /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
 		74AAF28F29D7BCD300D322DB /* TransformedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* TransformedGeometry.cpp */; };
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74AAF29229D7BCD300D322DB /* Headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* Headers.cpp */; };
@@ -87,7 +86,6 @@
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 		74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		74F7646329CE87CF00CD5259 /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* Results.cpp */; };
-		74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646429CE8A0300CD5259 /* Composition.cpp */; };
 		74F7646929CE8BFC00CD5259 /* Headers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* Headers.cpp */; };
 		74F7646C29CF8FC500CD5259 /* TransformedGeometryEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* TransformedGeometryEvaluator.cpp */; };
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
@@ -185,8 +183,6 @@
 		74DAA70F29AEEE7200171C03 /* RenderFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderFunctions.h; sourceTree = "<group>"; };
 		74F7646129CE87CF00CD5259 /* Results.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Results.cpp; sourceTree = "<group>"; };
 		74F7646229CE87CF00CD5259 /* Results.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Results.h; sourceTree = "<group>"; };
-		74F7646429CE8A0300CD5259 /* Composition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Composition.cpp; sourceTree = "<group>"; };
-		74F7646529CE8A0300CD5259 /* Composition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Composition.h; sourceTree = "<group>"; };
 		74F7646729CE8BFC00CD5259 /* Headers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Headers.cpp; sourceTree = "<group>"; };
 		74F7646829CE8BFC00CD5259 /* Headers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Headers.h; sourceTree = "<group>"; };
 		74F7646A29CF8FC500CD5259 /* TransformedGeometryEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformedGeometryEvaluator.h; sourceTree = "<group>"; };
@@ -278,8 +274,6 @@
 				74F7646829CE8BFC00CD5259 /* Headers.h */,
 				74F7646B29CF8FC500CD5259 /* TransformedGeometryEvaluator.cpp */,
 				74F7646A29CF8FC500CD5259 /* TransformedGeometryEvaluator.h */,
-				74F7646429CE8A0300CD5259 /* Composition.cpp */,
-				74F7646529CE8A0300CD5259 /* Composition.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
 				74AF134429B53D5300F9BBA8 /* Culling.cpp */,
 				74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */,
@@ -546,7 +540,6 @@
 				74F7647529CF9B0F00CD5259 /* Composition3D.cpp in Sources */,
 				7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
-				74F7646629CE8A0300CD5259 /* Composition.cpp in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -574,7 +567,6 @@
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
-				74AAF28E29D7BCD300D322DB /* Composition.cpp in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* TransformedGeometryEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* Headers.cpp in Sources */,

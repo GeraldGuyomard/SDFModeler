@@ -107,6 +107,35 @@ public:
     virtual void addChild(const Ptr& child);
     void removeFromParent();
     
+private:
+    
+    virtual void serializeHierarchy(SerializationContext&) const;
+    
+    const WorldWPtr _world;
+    
+    ObjectID _id = 0;
+    Material3D::Ptr _material;
+    
+    Object3D::WPtr _parent;
+    std::vector<Ptr> _children;
+    
+    float4x4 _localTransform = float4x4_identity();
+    bool _selected = false;
+};
+
+class SimpleGeometryObject3D : public Object3D
+{
+public:
+    using _inherited = Object3D;
+    using Ptr = std::shared_ptr<SimpleGeometryObject3D>;
+    
+    SimpleGeometryObject3D(const WorldPtr& world)
+    : _inherited(world)
+    {}
+    
+    // returns the geometry index
+    virtual uint32_t serializeGeometry(SerializationContext& context) const = 0;
+    
     enum class Operation
     {
         addition,
@@ -117,33 +146,30 @@ public:
     void setOperation(Operation);
     
 private:
-    
-    virtual void serializeHierarchy(SerializationContext&) const;
-    
-    const WorldWPtr _world;
-    
-    ObjectID _id = 0;
-    Material3D::Ptr _material;
     Operation _operation = Operation::addition;
-    
-    Object3D::WPtr _parent;
-    std::vector<Ptr> _children;
-    
-    float4x4 _localTransform = float4x4_identity();
-    bool _selected = false;
 };
 
 template <typename TGeometry>
-class TObject3D : public Object3D
+class TObject3D : public SimpleGeometryObject3D
 {
 public:
-    using _inherited = Object3D;
+    using _inherited = SimpleGeometryObject3D;
     
     TObject3D(const WorldPtr& world, const TGeometry& geometry)
     : _inherited(world), _geometry(geometry)
     {}
     
     void selfSerialize(SerializationContext& context) const final override
+    {
+        const auto geometryIndex = serializeGeometry(context);
+        
+        ObjectHeader objectHeader { id(), materialID(), selected() };
+        context.serializedWorld.simpleObjectHeaders[context.serializedWorld.simpleObjectsCount] = { objectHeader, geometryIndex };
+        
+        context.serializedWorld.simpleObjectsCount++;
+    }
+    
+    uint32_t serializeGeometry(SerializationContext& context) const override
     {
         RSTTransformer transformer { worldTransform() };
         
@@ -162,8 +188,7 @@ public:
         const uint32_t geometryIndex = context.serializedWorld.geometriesCount;
         context.serializedWorld.geometriesCount++;
         
-        ObjectHeader objectHeader { id(), materialID(), selected };
-        context.serializedWorld.simpleObjectHeaders[context.serializedWorld.simpleObjectsCount++] = { objectHeader, geometryIndex };
+        return geometryIndex;
     }
     
 private:

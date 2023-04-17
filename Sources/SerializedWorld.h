@@ -156,6 +156,11 @@ public:
                 for (; i < compoundObjectHeader->nbPositiveGeometries; ++i)
                 {
                     const uint32_t geometryIndex = indices[i];
+                    if (geometryCulled[geometryIndex])
+                    {
+                        continue;
+                    }
+                    
                     geometryHeader = geometryHeaders[geometryIndex];
                     
                     const float geomDist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
@@ -163,12 +168,18 @@ public:
                 }
                 
                 float negativeDist = 1e7f;
-                for (; i < compoundObjectHeader->nbNegativeGeometries; ++i)
+                const uint32_t end = compoundObjectHeader->nbPositiveGeometries + compoundObjectHeader->nbNegativeGeometries;
+                for (; i < end; ++i)
                 {
                     const uint32_t geometryIndex = indices[i];
-                    geometryHeader = geometryHeaders[geometryIndex];
+                    if (geometryCulled[geometryIndex])
+                    {
+                        continue;
+                    }
                     
-                    const float geomDist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, geometryHeader);
+                    auto negativeGeometryHeader = geometryHeaders[geometryIndex];
+                    
+                    const float geomDist = evaluateTransformedGeometry<DistanceEvaluator, float>(distanceEvaluator, negativeGeometryHeader);
                     negativeDist = min(negativeDist, geomDist);
                 }
                 

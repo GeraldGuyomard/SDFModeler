@@ -31,28 +31,32 @@ public:
     
     void selfSerialize(SerializationContext& context) const override
     {
-        return;
-        
         auto header = context.currentCompoundObjectHeader;
         
         const TTransformer transformer { worldTransform() };
         
-        std::vector<Object3D::Ptr> additiveObjects;
-        std::vector<Object3D::Ptr> substractiveObjects;
+        std::vector<SimpleGeometryObject3D::Ptr> additiveObjects;
+        std::vector<SimpleGeometryObject3D::Ptr> substractiveObjects;
         
         for (const auto& child : children())
         {
-            switch (child->operation())
+            auto object = std::dynamic_pointer_cast<SimpleGeometryObject3D>(child);
+            if (object == nullptr)
             {
-                case Operation::addition:
+                continue;
+            }
+            
+            switch (object->operation())
+            {
+                case SimpleGeometryObject3D::Operation::addition:
                 {
-                    additiveObjects.push_back(child);
+                    additiveObjects.push_back(object);
                     break;
                 }
                     
-                case Operation::substraction:
+                case SimpleGeometryObject3D::Operation::substraction:
                 {
-                    substractiveObjects.push_back(child);
+                    substractiveObjects.push_back(object);
                     break;
                 }
                     
@@ -62,10 +66,33 @@ public:
         
         const bool selected = this->selected();
         
-        float extraCullingMargin = selected ? kOutlineThickness : 0;
-        
         const ObjectHeader objectHeader { id(), uint32_t(materialID()), selected };
         *header = { objectHeader, additiveObjects.size(), substractiveObjects.size() };
+        
+        // now add the geometries
+        const float extraCullingMargin = selected ? kOutlineThickness : 0;
+        
+        uint32_t* indices = &header->firstPositiveIndex;
+        
+        for (const auto& additiveObject : additiveObjects)
+        {
+            const auto geomIndex = additiveObject->serializeGeometry(context);
+            *(indices++) = geomIndex;
+        }
+        
+        for (const auto& subtractiveObject : substractiveObjects)
+        {
+            const auto geomIndex = subtractiveObject->serializeGeometry(context);
+            *(indices++) = geomIndex;
+        }
+        
+        const uint8_t* start = reinterpret_cast<const uint8_t*>(header);
+        const uint8_t* end = reinterpret_cast<const uint8_t*>(indices);
+        const size_t size = end - start;
+        
+        header->byteSize = alignedSize(size);
+        
+        context.serializedWorld.compoundObjectsCount++;
     }
 };
 
