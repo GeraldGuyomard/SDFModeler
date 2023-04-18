@@ -18,8 +18,6 @@ enum class ObjectType : int64_t
     roundedBox,
     plane,
     grid,
-    
-    composition = 10
 };
 
 using ObjectID = uint32_t;

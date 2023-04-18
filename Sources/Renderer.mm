@@ -16,7 +16,6 @@
 #include "FragmentShader/PhongShader.h"
 
 #include "Object3D.h"
-#include "Composition3D.h"
 #include "RenderFunctions.h"
 
 #include "MainViewController.h"

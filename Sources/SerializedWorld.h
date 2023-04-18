@@ -11,11 +11,8 @@
 #include "SDFResult.h"
 #include "PrimitiveEvaluator.h"
 
-#include "Composition.h"
 #include "ComputeDistance.h"
 #include "ComputeShade.h"
-
-using Composition = SDFComposition;
 
 struct SerializedWorld final
 {

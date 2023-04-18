@@ -100,6 +100,8 @@ public:
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
+    void setShouldChildrenShareId(bool should);
+    
 protected:
     
     virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
@@ -117,6 +119,8 @@ private:
     
     float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
+    
+    bool _shouldChildrenShareId = false;
 };
 
 template <typename TGeometry>

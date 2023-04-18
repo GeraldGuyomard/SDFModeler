@@ -8,7 +8,7 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectHeader.h"
-#include "Composition.h"
+#include "Material/Material.h"
 
 #include <cstring>
 #include <assert.h>

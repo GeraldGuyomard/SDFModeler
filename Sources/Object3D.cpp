@@ -149,7 +149,11 @@ Object3D::materialID() const
 void
 Object3D::addChild(const Ptr& child)
 {
-    if (child->_id == kInvalidObjectID)
+    if (_shouldChildrenShareId)
+    {
+        child->_id = kInvalidObjectID;
+    }
+    else if (child->_id == kInvalidObjectID)
     {
         child->_id = world()->generateNewObjectID();
     }
@@ -296,6 +300,12 @@ Object3D::selfSerialize(uint8_t* ptr) const
     return 0;
 }
 
+void
+Object3D::setShouldChildrenShareId(bool should)
+{
+    _shouldChildrenShareId = should;
+}
+
 WorldPtr
 World::make()
 {
@@ -366,3 +376,4 @@ World::setSelectedObject(const Object3D::Ptr& object)
         
     }
 }
+

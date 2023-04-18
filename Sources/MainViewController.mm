@@ -11,7 +11,6 @@
 #import <MetalKit/MetalKit.h>
 
 #include "RenderFunctions.h"
-#include "Composition3D.h"
 
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
@@ -138,9 +137,10 @@ static __weak MainViewController* s_Instance = nil;
     negativeRoundedBoxPart->setOperation(SDFOperation::substraction);
     
     auto sdfUnionMaterial = _world->addMaterial(float4 { 0, 1, 1, 1 });
-    auto sdfUnion = std::make_shared<Composition3D>(_world);
+    auto sdfUnion = std::make_shared<Object3D>(_world);
     sdfUnion->setMaterial(sdfUnionMaterial);
     sdfUnion->setLocalTransform(matrix4x4_translation(compositionOrigin));
+    sdfUnion->setShouldChildrenShareId(true);
     
     sdfUnion->addChild(spherePart);
     sdfUnion->addChild(boxPart);
