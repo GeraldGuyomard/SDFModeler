@@ -52,19 +52,19 @@ INLINE RayMarchResult rayMarch(float2 viewportNDC,
     
     const TShader shader { uniforms, materials };
     
-    Content<TShader> content { shader, serializedWorld };
-    const auto contentRes = content.rayMarch(ray);
+    WorldObject<TShader> worldObject { shader, serializedWorld };
+    const auto worldRes = worldObject.rayMarch(ray);
     const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
     
-    if (contentRes.isValid())
+    if (worldRes.isValid())
     {
         if (envRes.isValid())
         {
-            return (contentRes.distance <= envRes.distance) ? contentRes : envRes;
+            return (worldRes.distance <= envRes.distance) ? worldRes : envRes;
         }
         else
         {
-            return contentRes;
+            return worldRes;
         }
     }
     else if (envRes.isValid())

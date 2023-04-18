@@ -29,11 +29,11 @@ struct SerializedWorld final
 };
 
 template <typename TShader>
-class Content final
+class WorldObject final
 {
 public:
     
-    Content(TShader shader, CONSTANT SerializedWorld& serializedWorld)
+    WorldObject(TShader shader, CONSTANT SerializedWorld& serializedWorld)
     : _serializedWorld(serializedWorld), _shader(shader)
     {}
     
