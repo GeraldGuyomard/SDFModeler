@@ -65,25 +65,6 @@ private:
     Ray _ray;
 };
 
-class CullEvaluatorWithExtraCullingMarginOverride
-{
-public:
-    CullEvaluatorWithExtraCullingMarginOverride(Ray ray, float extraCullingMargin)
-    : _ray(ray), _extraCullingMargin(extraCullingMargin)
-    {}
-    
-    template <typename TPrimitive>
-    bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim) const
-    {
-        prim.setExtraCullingMargin(_extraCullingMargin);
-        return prim.evaluateCulling(_ray);
-    }
-    
-private:
-    Ray _ray;
-    float _extraCullingMargin;
-};
-
 template <typename TShader>
 class ShadeEvaluator
 {
@@ -105,12 +86,6 @@ private:
     const float3 _pt;
     const TShader _shader;
 };
-
-using Sphere = SDFObject<SDFSphere, RSTTransformer>;
-using Plane = SDFObject<SDFPlane, RSTTransformer>;
-using Grid = SDFObject<SDFPlane, RSTTransformer>;
-using Box = SDFObject<SDFBox, RSTTransformer>;
-using RoundedBox = SDFObject<SDFRoundedBox, RSTTransformer>;
 
 template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
 INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)

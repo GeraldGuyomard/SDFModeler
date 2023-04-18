@@ -21,7 +21,7 @@
 template <typename TShader>
 INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
 {
-    Plane grid({}, { float3(-0.5f) });
+    SDFObject<SDFPlane> grid({}, { float3(-0.5f) });
     
     RayMarchResult res { ray };
     res.distance = grid.raycast(ray);

@@ -8,13 +8,13 @@
 #pragma once
 
 #include "SDFGeometry/SDFGeometry.h"
-#include "Transformer/Transformer.h"
+#include "Transformer/StandardTransformers.h"
 #include "Culling.h"
 #include "Ray.h"
 
 static constexpr CONSTANT float kOutlineThickness = 2.5e-2f;
 
-template <typename TGeometry, typename TTransformer>
+template <typename TGeometry, typename TTransformer = RSTTransformer>
 class SDFObject final
 {
 public:

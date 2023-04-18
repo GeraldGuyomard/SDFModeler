@@ -11,12 +11,6 @@
 
 constexpr static CONSTANT size_t kNbObjectsMax = 128;
 
-struct CompressedRay final
-{
-    float3 origin;
-    float3 direction;
-};
-
 class ObjectHeadersArray final
 {
 public:
@@ -46,8 +40,5 @@ private:
     
     using TOffset = uint16_t;
     TOffset _headerOffset[kNbObjectsMax];
-    
-    //CompressedRay localRays[kNbObjectsMax];
-    
 };
 
