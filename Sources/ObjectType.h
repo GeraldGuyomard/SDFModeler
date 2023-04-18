@@ -25,6 +25,12 @@ enum class ObjectType : int64_t
 using ObjectID = uint32_t;
 static CONSTANT constexpr ObjectID kInvalidObjectID = 0;
 
+enum class SDFOperation : uint32_t
+{
+    addition = 0,
+    substraction = 1
+};
+
 class RayMarchResult
 {
 public:

@@ -97,14 +97,8 @@ public:
     virtual void addChild(const Ptr& child);
     void removeFromParent();
     
-    enum class Operation
-    {
-        addition,
-        substraction
-    };
-    
-    Operation operation() const { return _operation; }
-    void setOperation(Operation);
+    SDFOperation operation() const { return _operation; }
+    void setOperation(SDFOperation);
     
 private:
     
@@ -114,7 +108,7 @@ private:
     
     ObjectID _id = 0;
     Material3D::Ptr _material;
-    Operation _operation = Operation::addition;
+    SDFOperation _operation = SDFOperation::addition;
     
     Object3D::WPtr _parent;
     std::vector<Ptr> _children;
@@ -151,6 +145,7 @@ public:
                                            id(),
                                            object.objectType(),
                                            transformer.transformerType(),
+                                            operation(),
                                            selected);
     }
     

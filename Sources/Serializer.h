@@ -19,6 +19,7 @@ static void copy(ObjectID id,
                  TransformerType transformerType,
                  ObjectHeader* header,
                  const TObject& object,
+                 SDFOperation operation,
                  bool selected)
 {
     assert(objectType != ObjectType::invalid);
@@ -28,6 +29,7 @@ static void copy(ObjectID id,
     header->byteSize = uint32_t(alignedSize(size));
     header->objectId = id;
     header->objectCode = computeObjectCode(objectType, transformerType);
+    header->operation = uint16_t(operation);
     header->selected = selected;
     
     uint8_t* dst = &(header->firstByte);
@@ -41,9 +43,10 @@ static void copy(ObjectHeader* header,
                  const TObject& object,
                  ObjectID id, ObjectType objectType,
                  TransformerType transformerType,
+                 SDFOperation operation,
                  bool selected)
 {
-    copy<TObject>(id, objectType, transformerType, header, object, selected);
+    copy<TObject>(id, objectType, transformerType, header, object, operation, selected);
 }
 
 
@@ -53,10 +56,11 @@ INLINE size_t serializeObject(uint8_t* p,
                               ObjectID id,
                               ObjectType objectType,
                               TransformerType transformerType,
+                              SDFOperation operation,
                               bool selected)
 {
     ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive, id, objectType, transformerType, selected);
+    copy(h, primitive, id, objectType, transformerType, operation, selected);
     
     return h->byteSize;
 }

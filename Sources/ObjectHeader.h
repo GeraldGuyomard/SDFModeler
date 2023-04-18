@@ -26,15 +26,12 @@ INLINE constexpr uint64_t computeObjectCode()
 struct ObjectHeader final
 {
     uint32_t  byteSize;
-    uint32_t  selected = false;
+    uint16_t  selected = false;
+    uint16_t  operation = uint16_t(SDFOperation::addition);
     uint32_t  objectId;
     uint32_t  objectCode;
     
     uint8_t   firstByte;
-    
-    ObjectHeader(size_t byteSize, ObjectID id, ObjectType objectType, TransformerType transformerType)
-    : byteSize(uint32_t(byteSize)), objectId(id), objectCode(computeObjectCode(objectType, transformerType))
-    {}
     
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
     {

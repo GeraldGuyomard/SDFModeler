@@ -45,13 +45,13 @@ public:
         {
             switch (child->operation())
             {
-                case Operation::addition:
+                case SDFOperation::addition:
                 {
                     additiveObjects.push_back(child);
                     break;
                 }
                     
-                case Operation::substraction:
+                case SDFOperation::substraction:
                 {
                     substractiveObjects.push_back(child);
                     break;
@@ -72,7 +72,13 @@ public:
             extraCullingMargin
         };
         
-        copy(header, serializedComp, id(), ObjectType::composition, RSTTransformer::transformerType(), selected);
+        copy(header,
+             serializedComp,
+             id(),
+             ObjectType::composition,
+             RSTTransformer::transformerType(),
+             SDFOperation::addition,
+             selected);
         ptr += header->byteSize;
         
         size_t subHeadersSize = 0;
