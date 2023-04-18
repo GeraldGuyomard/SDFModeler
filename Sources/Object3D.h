@@ -137,14 +137,16 @@ public:
     {
         RSTTransformer transformer { worldTransform() };
         
-        const auto materialId = materialID();
-        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialId };
+        
+        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
         
         const bool selected = this->selected();
         if (selected)
         {
             object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
         }
+        
+        const auto materialId = materialID();
         
         return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
                                             ptr,
