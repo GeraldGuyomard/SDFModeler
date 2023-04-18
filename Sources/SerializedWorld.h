@@ -54,7 +54,7 @@ public:
             const auto objectID = headerToCull->objectId;
             
             // cull first positive object
-            size_t nbPositiveObjects = 0;
+            bool hasPositiveObjects = false;
             while ((nbObjectsLeftToCull > 0) &&
                    (headerToCull->objectId == objectID) &&
                    (headerToCull->sdfOperation() == SDFOperation::addition))
@@ -62,7 +62,7 @@ public:
                 const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                 if (!culled)
                 {
-                    ++nbPositiveObjects;
+                    hasPositiveObjects = true;
                     headersArray.headers[headersArray.nbObjects++] = headerToCull;
                 }
                 
@@ -70,7 +70,7 @@ public:
                 headerToCull = ObjectHeader::next(headerToCull);
             }
             
-            if (nbPositiveObjects == 0)
+            if (!hasPositiveObjects)
             {
                 // remove any negative objects
                 while ((nbObjectsLeftToCull > 0) &&
@@ -128,9 +128,7 @@ public:
                 {
                     const auto startIndex = objectIndex;
                     
-                    const auto res = computeDistance(pt, headersArray, objectIndex);
-                    const float dist = res.distance;
-                    objectIndex = res.objectIndex;
+                    const float dist = computeDistance(pt, headersArray, objectIndex);
                     
                     CONSTANT ObjectHeader* startHeader = headersArray.headers[startIndex];
                     

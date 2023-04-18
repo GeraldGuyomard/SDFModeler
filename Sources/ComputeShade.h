@@ -26,8 +26,8 @@ public:
     
     float computeDistance(float3 pt) const
     {
-        const auto res = ::computeDistance(pt, _headersArray, _objectIndex);
-        return res.distance;
+        auto index = _objectIndex;
+        return ::computeDistance(pt, _headersArray, index);
     }
     
 private:

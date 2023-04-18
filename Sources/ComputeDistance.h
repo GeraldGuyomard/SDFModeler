@@ -10,34 +10,24 @@
 #include "ObjectHeader.h"
 #include "PrimitiveEvaluator.h"
 
-struct ComputeDistanceResult
-{
-    const float distance;
-    const size_t objectIndex;
-    
-    ComputeDistanceResult(float distance, size_t objectIndex)
-    : distance(distance), objectIndex(objectIndex)
-    {}
-};
 
-static inline ComputeDistanceResult computeDistance(float3 pt, const THREAD ObjectHeadersArray& headersArray, size_t objectIndex)
+static float computeDistance(float3 pt,
+                             const THREAD ObjectHeadersArray& headersArray,
+                                   THREAD size_t& objectIndex)
 {
     DistanceEvaluator distanceEvaluator { pt };
     
-    CONSTANT ObjectHeader* startHeader = headersArray.headers[objectIndex];
-    const auto objectID = startHeader->objectId;
+    CONSTANT ObjectHeader* header = headersArray.headers[objectIndex];
+    const auto objectID = header->objectId;
     float2 distances { 1e7f, 1e7f };
     
-    CONSTANT ObjectHeader* h = startHeader;
-    
-    while ((objectIndex < headersArray.nbObjects) && (h->objectId == objectID))
+    while ((objectIndex < headersArray.nbObjects) && (header->objectId == objectID))
     {
-        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
-        distances[h->operation] = min(distances[h->operation], dist);
+        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+        distances[header->operation] = min(distances[header->operation], dist);
         
-        h = headersArray.headers[++objectIndex];
+        header = headersArray.headers[++objectIndex];
     }
     
-    const float dist = max(distances.x, -distances.y);
-    return { dist, objectIndex };
+    return max(distances.x, -distances.y);
 }
