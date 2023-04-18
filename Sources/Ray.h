@@ -16,6 +16,8 @@ struct Ray final
     float3 direction;
     float maxLength;
     
+    Ray() = default;
+    
     Ray(float3 origin, float3 direction, float maxLength)
     : origin(origin), direction(direction), maxLength(maxLength)
     {}

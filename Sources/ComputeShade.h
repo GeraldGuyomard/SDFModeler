@@ -20,7 +20,7 @@ public:
     
     MaterialID materialID() const
     {
-        auto header = _headersArray.headers[_objectIndex];
+        auto header = _headersArray.header(_objectIndex);
         return header->materialId;
     }
     

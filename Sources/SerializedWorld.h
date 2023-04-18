@@ -39,11 +39,12 @@ public:
     
     RayMarchResult rayMarch(Ray ray) const
     {
-        ObjectHeadersArray headersArray;
+        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
+        
+        ObjectHeadersArray headersArray { buffer };
         
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
         CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
         int64_t nbObjectsLeftToCull = _serializedWorld.objectCount;
@@ -63,7 +64,7 @@ public:
                 if (!culled)
                 {
                     hasPositiveObjects = true;
-                    headersArray.headers[headersArray.nbObjects++] = headerToCull;
+                    headersArray.add(headerToCull);
                 }
                 
                 --nbObjectsLeftToCull;
@@ -91,7 +92,7 @@ public:
                     const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                     if (!culled)
                     {
-                        headersArray.headers[headersArray.nbObjects++] = headerToCull;
+                        headersArray.add(headerToCull);
                         hasNegativeObjects = true;
                     }
                     
@@ -113,6 +114,8 @@ public:
         float3 pt = ray.origin;
         int64_t minObjectHeaderIndex = -1;
         
+        const size_t nbObjects = headersArray.nbObjects();
+        
         if (hasNegativeObjects)
         {
             for (size_t i=0; i < kNbSteps; ++i)
@@ -124,13 +127,13 @@ public:
                 
                 size_t objectIndex = 0;
                 
-                while (objectIndex < headersArray.nbObjects)
+                while (objectIndex < nbObjects)
                 {
                     const auto startIndex = objectIndex;
                     
                     const float dist = computeDistance(pt, headersArray, objectIndex);
                     
-                    CONSTANT ObjectHeader* startHeader = headersArray.headers[startIndex];
+                    CONSTANT ObjectHeader* startHeader = headersArray.header(startIndex);
                     
                     if (startHeader->selected && (outlineHeaderIndex < 0))
                     {
@@ -174,9 +177,9 @@ public:
                 minObjectHeaderIndex = -1;
                 DistanceEvaluator distanceEvaluator { pt };
                 
-                for (size_t objectIndex = 0; objectIndex < headersArray.nbObjects; ++objectIndex)
+                for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
                 {
-                    CONSTANT ObjectHeader* header = headersArray.headers[objectIndex];
+                    CONSTANT ObjectHeader* header = headersArray.header(objectIndex);
                     
                     const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                     
@@ -216,7 +219,7 @@ public:
         {
             if (!hit || (outlineHeaderIndex != minObjectHeaderIndex))
             {
-                CONSTANT ObjectHeader* minHeader = headersArray.headers[minObjectHeaderIndex];
+                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
             }
         }
@@ -225,7 +228,7 @@ public:
         {
             const float4 color = computeShade(_shader, ray, minDistance, pt, headersArray, minObjectHeaderIndex);
             
-            CONSTANT ObjectHeader* minHeader = headersArray.headers[minObjectHeaderIndex];
+            CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
             
             return RayMarchResult { ray, minHeader->objectId, color, d };
         }

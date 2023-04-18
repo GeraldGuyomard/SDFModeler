@@ -12,22 +12,24 @@
 #include "PrimitiveEvaluator.h"
 
 
-static float computeDistance(float3 pt,
-                             const THREAD ObjectHeadersArray& headersArray,
-                                   THREAD size_t& objectIndex)
+INLINE float computeDistance(float3 pt,
+                    const THREAD ObjectHeadersArray& headersArray,
+                    THREAD size_t& objectIndex)
 {
     DistanceEvaluator distanceEvaluator { pt };
     
-    CONSTANT ObjectHeader* header = headersArray.headers[objectIndex];
+    CONSTANT ObjectHeader* header = headersArray.header(objectIndex);
     const auto objectID = header->objectId;
     float2 distances { 1e7f, 1e7f };
     
-    while ((objectIndex < headersArray.nbObjects) && (header->objectId == objectID))
+    const size_t nbObjects = headersArray.nbObjects();
+    
+    while ((objectIndex < nbObjects) && (header->objectId == objectID))
     {
         const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
         distances[header->operation] = min(distances[header->operation], dist);
         
-        header = headersArray.headers[++objectIndex];
+        header = headersArray.header(++objectIndex);
     }
     
     return max(distances.x, -distances.y);
