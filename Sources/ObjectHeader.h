@@ -33,6 +33,11 @@ struct ObjectHeader final
     
     uint8_t   firstByte;
     
+    SDFOperation sdfOperation() CONSTANT
+    {
+        return (SDFOperation) operation;
+    }
+    
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
     {
         CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);

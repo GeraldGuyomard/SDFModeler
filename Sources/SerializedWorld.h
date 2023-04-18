@@ -64,17 +64,59 @@ public:
         CullEvaluator cullEvaluator { ray };
         
         CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
-        CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
+        CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        for (size_t i=0; i < _serializedWorld.objectCount; ++i)
+        int64_t nbObjectsLeftToCull = _serializedWorld.objectCount;
+        
+        while (nbObjectsLeftToCull > 0)
         {
-            const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
-            if (!culled)
+            const auto objectID = headerToCull->objectId;
+            
+            // cull first positive object
+            size_t nbPositiveObjects = 0;
+            while ((nbObjectsLeftToCull > 0) &&
+                   (headerToCull->objectId == objectID) &&
+                   (headerToCull->sdfOperation() == SDFOperation::addition))
             {
-                headers[nbObjects++] = header;
+                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                if (!culled)
+                {
+                    ++nbPositiveObjects;
+                    headers[nbObjects++] = headerToCull;
+                }
+                
+                --nbObjectsLeftToCull;
+                headerToCull = ObjectHeader::next(headerToCull);
             }
             
-            header = ObjectHeader::next(header);
+            if (nbPositiveObjects == 0)
+            {
+                // remove any negative objects
+                while ((nbObjectsLeftToCull > 0) &&
+                       (headerToCull->objectId == objectID) &&
+                       (headerToCull->sdfOperation() == SDFOperation::substraction))
+                {
+                    --nbObjectsLeftToCull;
+                    headerToCull = ObjectHeader::next(headerToCull);
+                }
+            }
+            else
+            {
+                // cull all the negative parts
+                while ((nbObjectsLeftToCull > 0) &&
+                       (headerToCull->objectId == objectID) &&
+                       (headerToCull->sdfOperation() == SDFOperation::substraction))
+                {
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                    if (!culled)
+                    {
+                        headers[nbObjects++] = headerToCull;
+                    }
+                    
+                    --nbObjectsLeftToCull;
+                    headerToCull = ObjectHeader::next(headerToCull);
+                }
+            }
         }
         
         constexpr size_t kNbSteps = 100;
@@ -97,25 +139,41 @@ public:
             minHeader = nullptr;
             DistanceEvaluator distanceEvaluator { pt };
             
-            for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
+            size_t objectIndex = 0;
+            
+            while (objectIndex < nbObjects)
             {
-                CONSTANT ObjectHeader* header = headers[objectIndex];
+                CONSTANT ObjectHeader* startHeader = headers[objectIndex];
+                const auto objectID = startHeader->objectId;
+                float2 distances { 1e7f, 1e7f };
                 
-                const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                CONSTANT ObjectHeader* h = startHeader;
                 
-                if ((outlineHeader == nullptr) && header->selected)
+                while ((objectIndex < nbObjects) && (h->objectId == objectID))
+                {
+                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
+                    distances[h->operation] = min(distances[h->operation], dist);
+                    
+                    h = headers[++objectIndex];
+                }
+                
+                const float dist = max(distances.x, -distances.y);
+                
+                if (startHeader->selected && (outlineHeader == nullptr))
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineHeader = header;
+                        outlineHeader = startHeader;
                     }
                 }
                 
                 if (dist <= minDistance)
                 {
                     minDistance = dist;
-                    minHeader = header;
+                    minHeader = startHeader;
                 }
+                
+                //++objectIndex;
             }
             
             if (minDistance <= kDistanceEpsilon)

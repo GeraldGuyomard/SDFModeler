@@ -214,9 +214,40 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
         serializedWorld.objectCount++;
     }
     
+    std::vector<Ptr> positiveChildren;
+    std::vector<Ptr> negativeChildren;
+
     for (const auto& child : children())
     {
-        child->serializeHierarchy(serializedWorld, p);
+        switch (child->operation())
+        {
+            case SDFOperation::addition:
+            {
+                positiveChildren.push_back(child);
+                break;
+            }
+
+            case SDFOperation::substraction:
+            {
+                negativeChildren.push_back(child);
+                break;
+            }
+                
+            default: break;
+        }
+    }
+    
+    if (!positiveChildren.empty())
+    {
+        for (const auto& child : positiveChildren)
+        {
+            child->serializeHierarchy(serializedWorld, p);
+        }
+        
+        for (const auto& child : negativeChildren)
+        {
+            child->serializeHierarchy(serializedWorld, p);
+        }
     }
 }
 

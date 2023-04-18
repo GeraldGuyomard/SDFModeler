@@ -100,9 +100,11 @@ public:
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
-private:
+protected:
     
     virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
+
+private:
     
     const WorldWPtr _world;
     

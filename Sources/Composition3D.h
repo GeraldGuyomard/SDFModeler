@@ -26,16 +26,14 @@ public:
     
     void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const override
     {
-        const size_t size = selfSerialize(p);
-        if (size != 0)
-        {
-            p += size;
-            serializedWorld.objectCount++;
-        }
+        _inherited::serializeHierarchy(serializedWorld, p);
     }
     
     size_t selfSerialize(uint8_t* ptr) const override
     {
+#if 1
+        return 0;
+#else
         ObjectHeader* const header = (ObjectHeader*) ptr;
         
         std::vector<Object3D::Ptr> additiveObjects;
@@ -101,6 +99,7 @@ public:
         header->byteSize += subHeadersSize;
         
         return header->byteSize;
+#endif
     }
     
 private:
