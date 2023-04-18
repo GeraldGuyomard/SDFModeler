@@ -13,6 +13,7 @@
 
 #include "AddObjectCommand.h"
 #include "RemoveObjectCommand.h"
+#include "ToggleObjectOperationCommand.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
@@ -386,17 +387,29 @@ namespace
     auto selectedObject = world->selectedObject();
     if (selectedObject != nullptr)
     {
-        auto command = std::make_shared<RemoveObjectCommand>(selectedObject);
+        auto removeObjectCommand = std::make_shared<RemoveObjectCommand>(selectedObject);
         
         auto deleteAction = [UIAction actionWithTitle:@"Delete"
                                                 image:nil
                                            identifier:@"Delete"
                                               handler:^(UIAction * action)
                              {
-            world->commandHistory().run(command);
+            world->commandHistory().run(removeObjectCommand);
         }];
         
         [children addObject:deleteAction];
+        
+        auto toggleObjectOperationCommand = std::make_shared<ToggleObjectOperationCommand>(selectedObject);
+        
+        auto toggleAction = [UIAction actionWithTitle:@"Toggle Operation"
+                                                image:nil
+                                           identifier:@"Toggle"
+                                              handler:^(UIAction * action)
+                             {
+            world->commandHistory().run(toggleObjectOperationCommand);
+        }];
+        
+        [children addObject:toggleAction];
     }
         
     [children addObject:[self makeAddObjectMenu]];

@@ -15,6 +15,8 @@
 		743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
 		743252C129EE41A7009A44EF /* ComputeShade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ComputeShade.cpp */; };
 		743252C229EE41A7009A44EF /* ComputeShade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ComputeShade.cpp */; };
+		743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */; };
+		743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */; };
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
@@ -109,6 +111,8 @@
 		743252BC29EE406F009A44EF /* ComputeDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeDistance.cpp; sourceTree = "<group>"; };
 		743252BF29EE41A7009A44EF /* ComputeShade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeShade.h; sourceTree = "<group>"; };
 		743252C029EE41A7009A44EF /* ComputeShade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeShade.cpp; sourceTree = "<group>"; };
+		743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToggleObjectOperationCommand.cpp; sourceTree = "<group>"; };
+		743252C429EE5C70009A44EF /* ToggleObjectOperationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToggleObjectOperationCommand.h; sourceTree = "<group>"; };
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
@@ -319,6 +323,8 @@
 				7456FCA729EA284C00398E86 /* AddObjectCommand.h */,
 				7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */,
 				7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */,
+				743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */,
+				743252C429EE5C70009A44EF /* ToggleObjectOperationCommand.h */,
 				7492228C29E2685F00ACCFBC /* Command.cpp */,
 				7492228D29E2685F00ACCFBC /* Command.h */,
 			);
@@ -527,6 +533,7 @@
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
+				743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */,
@@ -587,6 +594,7 @@
 				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,
 				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
+				743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
