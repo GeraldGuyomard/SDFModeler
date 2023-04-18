@@ -13,8 +13,6 @@
 #include "SDFGeometry/SDFPlane.h"
 #include "SDFGeometry/SDFBox.h"
 #include "SDFGeometry/SDFRoundedBox.h"
-#include "SDFGeometry/SDFUnion.h"
-#include "SDFGeometry/SDFSubstraction.h"
 
 #include "SDFObject.h"
 
