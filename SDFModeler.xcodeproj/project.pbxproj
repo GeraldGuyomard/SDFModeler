@@ -11,6 +11,8 @@
 		7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
 		7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
+		743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
+		743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
 		7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
@@ -109,6 +111,8 @@
 		7431C49729DD116300DD4A74 /* Interaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interaction.cpp; sourceTree = "<group>"; };
 		7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Object3DInteraction.mm; sourceTree = "<group>"; };
 		7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3DInteraction.h; sourceTree = "<group>"; };
+		743252BB29EE406F009A44EF /* ComputeDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeDistance.h; sourceTree = "<group>"; };
+		743252BC29EE406F009A44EF /* ComputeDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeDistance.cpp; sourceTree = "<group>"; };
 		7444A4CE29A1CB63009632C3 /* SDFModeler.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SDFModeler.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7444A4D429A1CB63009632C3 /* Renderer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Renderer.h; sourceTree = "<group>"; };
 		7444A4D529A1CB63009632C3 /* Renderer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = Renderer.mm; sourceTree = "<group>"; };
@@ -272,6 +276,8 @@
 				74F7647029CF95D400CD5259 /* Object3D.h */,
 				74F7647429CF9B0F00CD5259 /* Composition3D.cpp */,
 				74F7647329CF9B0F00CD5259 /* Composition3D.h */,
+				743252BC29EE406F009A44EF /* ComputeDistance.cpp */,
+				743252BB29EE406F009A44EF /* ComputeDistance.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
 				7444A4D729A1CB63009632C3 /* MainViewController.h */,
@@ -555,6 +561,7 @@
 				7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AF134929B5BAC300F9BBA8 /* SDFSubstraction.cpp in Sources */,
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */,
+				743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
@@ -615,6 +622,7 @@
 				74AAF28A29D7BCB800D322DB /* Composition3D.cpp in Sources */,
 				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
+				743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				74AAF29429D7BCD300D322DB /* SerializedWorld.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
 				7492229329E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
