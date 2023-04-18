@@ -214,12 +214,6 @@ Renderer::updateUniforms()
     uniforms.cameraMatrix = _camera->worldTransform();
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
     
-    const auto renderSize = this->renderSize();
-    
-    // [0, renderSize.width] -> [-1, +1]
-    uniforms.rayDiff.x = 2.f / renderSize.x;
-    uniforms.rayDiff.y = 2.f / renderSize.y;
-    
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
     auto& serializedWorld = _serializedWorldBuffer->uniform();
