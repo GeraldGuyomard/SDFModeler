@@ -5,4 +5,4 @@
 //  Created by Gérald Guyomard on 2/26/23.
 //
 
-#include "ComputeShade.h"
+#include "ShadedPrimitive.h"

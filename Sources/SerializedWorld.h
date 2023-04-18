@@ -12,7 +12,7 @@
 #include "PrimitiveEvaluator.h"
 
 #include "ComputeDistance.h"
-#include "ComputeShade.h"
+#include "ShadedPrimitive.h"
 
 struct SerializedWorld final
 {
@@ -226,7 +226,8 @@ public:
         
         if (hit)
         {
-            const float4 color = computeShade(_shader, ray, minDistance, pt, headersArray, minObjectHeaderIndex);
+            ShadedPrimitive primitive { headersArray, size_t(minObjectHeaderIndex) };
+            const float4 color = _shader.computeShade(primitive, ray, minDistance, pt);
             
             CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
             

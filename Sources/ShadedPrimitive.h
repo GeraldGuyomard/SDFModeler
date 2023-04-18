@@ -35,14 +35,3 @@ private:
     const size_t _objectIndex;
 };
 
-template <typename TShader>
-inline float4 computeShade(TShader shader,
-                           Ray ray,
-                           float dist,
-                           float3 pt,
-                           const THREAD ObjectHeadersArray& headersArray,
-                           size_t objectIndex)
-{
-    ShadedPrimitive primitive { headersArray, objectIndex };
-    return shader.computeShade(primitive, ray, dist, pt);
-}
