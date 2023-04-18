@@ -96,7 +96,8 @@ Renderer::~Renderer()
 float2
 Renderer::renderSize() const
 {
-    const CGSize size = _mtkView.drawableSize;
+    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
+    const CGSize size = layer.drawableSize;
     return float2 { float(size.width), float(size.height) };
 }
 

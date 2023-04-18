@@ -121,7 +121,6 @@ public:
                 
                 minDistance = 1e5f;
                 minObjectHeaderIndex = -1;
-                DistanceEvaluator distanceEvaluator { pt };
                 
                 size_t objectIndex = 0;
                 

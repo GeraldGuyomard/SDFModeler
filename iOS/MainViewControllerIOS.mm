@@ -294,6 +294,11 @@ struct ObjectDragInfo
 
 - (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
 {
+    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
+    {
+        return;
+    }
+    
     UIView* view = self.view;
     CAMetalLayer* metalLayer = (CAMetalLayer *)view.layer;
     
@@ -313,14 +318,14 @@ static constexpr CGFloat kContentScaleFactor = 1.f;
     [super viewDidAppear:animated];
     
     const CGSize size = self.view.bounds.size;
-    //[self setContentScaleFactor:kContentScaleFactor size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    //[self setContentScaleFactor:kContentScaleFactor size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 namespace
