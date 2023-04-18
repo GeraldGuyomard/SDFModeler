@@ -32,7 +32,7 @@ static inline ComputeDistanceResult computeDistance(float3 pt, const THREAD Obje
     
     while ((objectIndex < headersArray.nbObjects) && (h->objectId == objectID))
     {
-        const float dist = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
+        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
         distances[h->operation] = min(distances[h->operation], dist);
         
         h = headersArray.headers[++objectIndex];

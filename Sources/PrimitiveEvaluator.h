@@ -168,7 +168,7 @@ computeEvaluationReturn(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 }
 
 template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluateAtomicPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     if (auto ret = computeEvaluationReturn<TEvaluator, SDFSphere, TReturnValue>(evaluator, header))
     {

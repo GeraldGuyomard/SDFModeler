@@ -26,7 +26,6 @@ public:
     
     float computeDistance(float3 pt) const
     {
-        // inline ComputeDistanceResult computeDistance(float3 pt, CONSTANT ObjectHeader* headers[], size_t objectIndex, size_t nbObjects)
         const auto res = ::computeDistance(pt, _headersArray, _objectIndex);
         return res.distance;
     }

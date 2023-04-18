@@ -59,7 +59,7 @@ public:
                    (headerToCull->objectId == objectID) &&
                    (headerToCull->sdfOperation() == SDFOperation::addition))
             {
-                const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                 if (!culled)
                 {
                     ++nbPositiveObjects;
@@ -88,7 +88,7 @@ public:
                        (headerToCull->objectId == objectID) &&
                        (headerToCull->sdfOperation() == SDFOperation::substraction))
                 {
-                    const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                     if (!culled)
                     {
                         headersArray.headers[headersArray.nbObjects++] = headerToCull;
@@ -180,7 +180,7 @@ public:
                 {
                     CONSTANT ObjectHeader* header = headersArray.headers[objectIndex];
                     
-                    const float dist = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                     
                     if (header->selected && (outlineHeaderIndex < 0))
                     {
