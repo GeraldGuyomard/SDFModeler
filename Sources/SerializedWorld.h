@@ -67,6 +67,7 @@ public:
         CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
         int64_t nbObjectsLeftToCull = _serializedWorld.objectCount;
+        bool hasNegativeObjects = false;
         
         while (nbObjectsLeftToCull > 0)
         {
@@ -111,6 +112,7 @@ public:
                     if (!culled)
                     {
                         headers[nbObjects++] = headerToCull;
+                        hasNegativeObjects = true;
                     }
                     
                     --nbObjectsLeftToCull;
@@ -131,65 +133,114 @@ public:
         float3 pt = ray.origin;
         CONSTANT ObjectHeader* minHeader = nullptr;
         
-        for (size_t i=0; i < kNbSteps; ++i)
+        if (hasNegativeObjects)
         {
-            pt = ray.pt(d);
-            
-            minDistance = 1e5f;
-            minHeader = nullptr;
-            DistanceEvaluator distanceEvaluator { pt };
-            
-            size_t objectIndex = 0;
-            
-            while (objectIndex < nbObjects)
+            for (size_t i=0; i < kNbSteps; ++i)
             {
-                CONSTANT ObjectHeader* startHeader = headers[objectIndex];
-                const auto objectID = startHeader->objectId;
-                float2 distances { 1e7f, 1e7f };
+                pt = ray.pt(d);
                 
-                CONSTANT ObjectHeader* h = startHeader;
+                minDistance = 1e5f;
+                minHeader = nullptr;
+                DistanceEvaluator distanceEvaluator { pt };
                 
-                while ((objectIndex < nbObjects) && (h->objectId == objectID))
+                size_t objectIndex = 0;
+                
+                while (objectIndex < nbObjects)
                 {
-                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
-                    distances[h->operation] = min(distances[h->operation], dist);
+                    CONSTANT ObjectHeader* startHeader = headers[objectIndex];
+                    const auto objectID = startHeader->objectId;
+                    float2 distances { 1e7f, 1e7f };
                     
-                    h = headers[++objectIndex];
-                }
-                
-                const float dist = max(distances.x, -distances.y);
-                
-                if (startHeader->selected && (outlineHeader == nullptr))
-                {
-                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                    CONSTANT ObjectHeader* h = startHeader;
+                    
+                    while ((objectIndex < nbObjects) && (h->objectId == objectID))
                     {
-                        outlineHeader = startHeader;
+                        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
+                        distances[h->operation] = min(distances[h->operation], dist);
+                        
+                        h = headers[++objectIndex];
+                    }
+                    
+                    const float dist = max(distances.x, -distances.y);
+                    
+                    if (startHeader->selected && (outlineHeader == nullptr))
+                    {
+                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                        {
+                            outlineHeader = startHeader;
+                        }
+                    }
+                    
+                    if (dist <= minDistance)
+                    {
+                        minDistance = dist;
+                        minHeader = startHeader;
                     }
                 }
                 
-                if (dist <= minDistance)
+                if (minDistance <= kDistanceEpsilon)
                 {
-                    minDistance = dist;
-                    minHeader = startHeader;
+                    hit = true;
+                    break;
                 }
                 
-                //++objectIndex;
+                d += minDistance;
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
+                
+                prevMinDistance = minDistance;
             }
-            
-            if (minDistance <= kDistanceEpsilon)
+        }
+        else
+        {
+            // only positive parts
+            for (size_t i=0; i < kNbSteps; ++i)
             {
-                hit = true;
-                break;
+                pt = ray.pt(d);
+                
+                minDistance = 1e5f;
+                minHeader = nullptr;
+                DistanceEvaluator distanceEvaluator { pt };
+                
+                for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
+                {
+                    CONSTANT ObjectHeader* header = headers[objectIndex];
+                    
+                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                    
+                    if (header->selected && (outlineHeader == nullptr))
+                    {
+                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                        {
+                            outlineHeader = header;
+                        }
+                    }
+                    
+                    if (dist <= minDistance)
+                    {
+                        minDistance = dist;
+                        minHeader = header;
+                    }
+                }
+                
+                if (minDistance <= kDistanceEpsilon)
+                {
+                    hit = true;
+                    break;
+                }
+                
+                d += minDistance;
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
+                
+                prevMinDistance = minDistance;
             }
-            
-            d += minDistance;
-            
-            if (d > ray.maxLength)
-            {
-                break;
-            }
-            
-            prevMinDistance = minDistance;
         }
         
         if (outlineHeader != nullptr)
