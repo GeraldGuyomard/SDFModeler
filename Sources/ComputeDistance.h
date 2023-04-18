@@ -20,22 +20,22 @@ struct ComputeDistanceResult
     {}
 };
 
-static inline ComputeDistanceResult computeDistance(float3 pt, CONSTANT ObjectHeader* headers[], size_t objectIndex, size_t nbObjects)
+static inline ComputeDistanceResult computeDistance(float3 pt, const THREAD ObjectHeadersArray& headersArray, size_t objectIndex)
 {
     DistanceEvaluator distanceEvaluator { pt };
     
-    CONSTANT ObjectHeader* startHeader = headers[objectIndex];
+    CONSTANT ObjectHeader* startHeader = headersArray.headers[objectIndex];
     const auto objectID = startHeader->objectId;
     float2 distances { 1e7f, 1e7f };
     
     CONSTANT ObjectHeader* h = startHeader;
     
-    while ((objectIndex < nbObjects) && (h->objectId == objectID))
+    while ((objectIndex < headersArray.nbObjects) && (h->objectId == objectID))
     {
         const float dist = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
         distances[h->operation] = min(distances[h->operation], dist);
         
-        h = headers[++objectIndex];
+        h = headersArray.headers[++objectIndex];
     }
     
     const float dist = max(distances.x, -distances.y);

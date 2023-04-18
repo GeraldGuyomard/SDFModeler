@@ -133,7 +133,8 @@ public:
     {
         RSTTransformer transformer { worldTransform() };
         
-        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialID() };
+        const auto materialId = materialID();
+        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialId };
         
         const bool selected = this->selected();
         if (selected)
@@ -145,6 +146,7 @@ public:
                                             ptr,
                                            object,
                                            id(),
+                                            materialId,
                                            object.objectType(),
                                            transformer.transformerType(),
                                             operation(),
