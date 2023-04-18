@@ -71,7 +71,7 @@ public:
     void serialize(SerializedWorld&) const;
     virtual size_t selfSerialize(uint8_t* ptr) const;
     
-    ObjectID id() const { return _id; }
+    ObjectID id() const;
     void setId(ObjectID);
     
     Object3D::Ptr objectByID(ObjectID id) const;

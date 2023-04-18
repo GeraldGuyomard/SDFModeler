@@ -111,10 +111,39 @@ Object3D::setMaterial(const Material3D::Ptr& mat)
     }
 }
 
+ObjectID
+Object3D::id() const
+{
+    const Object3D* object = this;
+    while (object != nullptr)
+    {
+        if (object->_id != kInvalidObjectID)
+        {
+            return object->_id;
+        }
+        
+        object = parent().get();
+    }
+    
+    return kInvalidObjectID;
+}
+
 MaterialID
 Object3D::materialID() const
 {
-    return (_material != nullptr) ? _material->id() : kNoMaterialID;
+    const Object3D* object = this;
+    while (object != nullptr)
+    {
+        auto mat = object->_material;
+        if (mat != nullptr)
+        {
+            return mat->id();
+        }
+        
+        object = parent().get();
+    }
+    
+    return kNoMaterialID;
 }
 
 void
