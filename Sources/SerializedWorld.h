@@ -15,22 +15,6 @@
 
 using Composition = SDFComposition;
 
-template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
-{
-    if (header->objectCode == computeObjectCode<Composition, RSTTransformer>())
-    {
-        auto serializedComposition = typedPrimitive<Composition::Serialized>(header);
-        Composition composition(serializedComposition);
-        
-        return evaluator.evaluate(header, composition);
-    }
-    else
-    {
-        return evaluateAtomicPrimitive<TEvaluator, TReturnValue>(evaluator, header);
-    }
-}
-
 struct SerializedWorld final
 {
     uint64_t objectCount = 0;
@@ -56,6 +40,38 @@ public:
     : _serializedWorld(serializedWorld), _shader(shader)
     {}
     
+    struct ComputeDistanceResult
+    {
+        const float distance;
+        const size_t objectIndex;
+        
+        ComputeDistanceResult(float distance, size_t objectIndex)
+        : distance(distance), objectIndex(objectIndex)
+        {}
+    };
+    
+    static ComputeDistanceResult computeDistance(float3 pt, CONSTANT ObjectHeader* headers[], size_t objectIndex, size_t nbObjects)
+    {
+        DistanceEvaluator distanceEvaluator { pt };
+        
+        CONSTANT ObjectHeader* startHeader = headers[objectIndex];
+        const auto objectID = startHeader->objectId;
+        float2 distances { 1e7f, 1e7f };
+        
+        CONSTANT ObjectHeader* h = startHeader;
+        
+        while ((objectIndex < nbObjects) && (h->objectId == objectID))
+        {
+            const float dist = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
+            distances[h->operation] = min(distances[h->operation], dist);
+            
+            h = headers[++objectIndex];
+        }
+        
+        const float dist = max(distances.x, -distances.y);
+        return { dist, objectIndex };
+    }
+    
     RayMarchResult rayMarch(Ray ray) const
     {
         size_t nbObjects = 0;
@@ -79,7 +95,7 @@ public:
                    (headerToCull->objectId == objectID) &&
                    (headerToCull->sdfOperation() == SDFOperation::addition))
             {
-                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                 if (!culled)
                 {
                     ++nbPositiveObjects;
@@ -108,7 +124,7 @@ public:
                        (headerToCull->objectId == objectID) &&
                        (headerToCull->sdfOperation() == SDFOperation::substraction))
                 {
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                    const bool culled = evaluateAtomicPrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
                     if (!culled)
                     {
                         headers[nbObjects++] = headerToCull;
@@ -148,20 +164,10 @@ public:
                 while (objectIndex < nbObjects)
                 {
                     CONSTANT ObjectHeader* startHeader = headers[objectIndex];
-                    const auto objectID = startHeader->objectId;
-                    float2 distances { 1e7f, 1e7f };
                     
-                    CONSTANT ObjectHeader* h = startHeader;
-                    
-                    while ((objectIndex < nbObjects) && (h->objectId == objectID))
-                    {
-                        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, h);
-                        distances[h->operation] = min(distances[h->operation], dist);
-                        
-                        h = headers[++objectIndex];
-                    }
-                    
-                    const float dist = max(distances.x, -distances.y);
+                    const auto res = computeDistance(pt, headers, objectIndex, nbObjects);
+                    const float dist = res.distance;
+                    objectIndex = res.objectIndex;
                     
                     if (startHeader->selected && (outlineHeader == nullptr))
                     {
@@ -209,7 +215,7 @@ public:
                 {
                     CONSTANT ObjectHeader* header = headers[objectIndex];
                     
-                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                    const float dist = evaluateAtomicPrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
                     
                     if (header->selected && (outlineHeader == nullptr))
                     {
@@ -255,7 +261,7 @@ public:
         {
             using MyShaderEvaluator = ShadeEvaluator<TShader>;
             MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
-            const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
+            const float4 color = evaluateAtomicPrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
             
             return RayMarchResult { ray, minHeader->objectId, color, d };
         }
