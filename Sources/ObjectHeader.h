@@ -57,11 +57,4 @@ INLINE CONSTANT TPrimitive* typedPrimitive(CONSTANT ObjectHeader* header)
     return reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
 }
 
-constexpr static CONSTANT size_t kNbObjectsMax = 128;
-
-struct ObjectHeadersArray final
-{
-    CONSTANT ObjectHeader* headers[kNbObjectsMax];
-    size_t nbObjects = 0;
-};
 

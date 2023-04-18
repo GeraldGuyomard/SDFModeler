@@ -8,6 +8,7 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectHeader.h"
+#include "ObjectHeadersArray.h"
 #include "PrimitiveEvaluator.h"
 
 

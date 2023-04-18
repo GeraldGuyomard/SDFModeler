@@ -26,6 +26,8 @@
 		7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
 		7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
+		74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
+		74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
 		7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */; };
 		7492228E29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
 		7492228F29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
@@ -128,6 +130,8 @@
 		7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveObjectCommand.h; sourceTree = "<group>"; };
 		7456FCA729EA284C00398E86 /* AddObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddObjectCommand.h; sourceTree = "<group>"; };
 		7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddObjectCommand.cpp; sourceTree = "<group>"; };
+		74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeadersArray.cpp; sourceTree = "<group>"; };
+		74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeadersArray.h; sourceTree = "<group>"; };
 		7492228429E0988A00ACCFBC /* MultiTouchCameraInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiTouchCameraInteraction.h; sourceTree = "<group>"; };
 		7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiTouchCameraInteraction.mm; sourceTree = "<group>"; };
 		7492228C29E2685F00ACCFBC /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
@@ -294,6 +298,8 @@
 				7451041629C1538100F69BC4 /* SerializedWorld.h */,
 				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
 				74F7646829CE8BFC00CD5259 /* ObjectHeader.h */,
+				74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */,
+				74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */,
 				74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */,
 				74F7646A29CF8FC500CD5259 /* PrimitiveEvaluator.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
@@ -559,6 +565,7 @@
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */,
+				74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
@@ -595,6 +602,7 @@
 				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
 				743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
+				74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
