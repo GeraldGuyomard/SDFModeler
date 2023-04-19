@@ -10,10 +10,10 @@
 #include "CommonDefinitions.h"
 #include "Ray.h"
 #include "SDFGeometry/SDFGeometry.h"
-#include "SDFResult.h"
+#include "Results.h"
 
 template <typename TShader, typename TPrimitive>
-SDFResult rayMarch(Ray ray, TShader shader, TPrimitive primitive)
+RayMarchResult rayMarch(Ray ray, TShader shader, TPrimitive primitive)
 {
     constexpr int kNbSteps = 100;
     
@@ -37,12 +37,12 @@ SDFResult rayMarch(Ray ray, TShader shader, TPrimitive primitive)
         }
     }
     
-    return {};
+    return { ray };
 }
 
 
 template <typename TShader, typename... TPrimitives>
-SDFResult rayMarch(Ray ray, TShader shader, TPrimitives... primitives)
+RayMarchResult rayMarch(Ray ray, TShader shader, TPrimitives... primitives)
 {
     constexpr int kNbSteps = 100;
     
@@ -66,5 +66,5 @@ SDFResult rayMarch(Ray ray, TShader shader, TPrimitives... primitives)
         }
     }
     
-    return {};
+    return { ray };
 }

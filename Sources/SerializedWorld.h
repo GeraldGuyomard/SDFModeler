@@ -8,7 +8,7 @@
 #pragma once
 
 #include "Uniforms.h"
-#include "SDFResult.h"
+#include "Results.h"
 #include "PrimitiveEvaluator.h"
 
 #include "ComputeDistance.h"

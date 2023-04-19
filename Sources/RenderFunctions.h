@@ -9,7 +9,7 @@
 
 #include "ShaderTypes.h"
 #include "Ray.h"
-#include "SDFResult.h"
+#include "Results.h"
 #include "RayMarch.h"
 
 #include "SDFObject.h"

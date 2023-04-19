@@ -70,7 +70,7 @@
 		74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74AAF28D29D7BCD300D322DB /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
 		74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
-		74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
+		74AAF29029D7BCD300D322DB /* Results..cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results..cpp */; };
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
 		74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
@@ -87,7 +87,7 @@
 		74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
-		74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* SDFResult.cpp */; };
+		74DAA6D629AC439E00171C03 /* Results..cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results..cpp */; };
 		74DAA6DC29AC469200171C03 /* RayMarch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6DA29AC469200171C03 /* RayMarch.cpp */; };
 		74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
 		74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
@@ -185,8 +185,8 @@
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
 		74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommonDefinitions.cpp; sourceTree = "<group>"; };
 		74DAA6D329AC420C00171C03 /* Uniforms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uniforms.h; sourceTree = "<group>"; };
-		74DAA6D429AC432C00171C03 /* SDFResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFResult.h; sourceTree = "<group>"; };
-		74DAA6D529AC439E00171C03 /* SDFResult.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFResult.cpp; sourceTree = "<group>"; };
+		74DAA6D429AC432C00171C03 /* Results.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Results.h; sourceTree = "<group>"; };
+		74DAA6D529AC439E00171C03 /* Results..cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Results..cpp; sourceTree = "<group>"; };
 		74DAA6DA29AC469200171C03 /* RayMarch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RayMarch.cpp; sourceTree = "<group>"; };
 		74DAA6DB29AC469200171C03 /* RayMarch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RayMarch.h; sourceTree = "<group>"; };
 		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
@@ -296,10 +296,10 @@
 				74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */,
 				74DAA6CE29AC2F3300171C03 /* Ray.h */,
 				74DAA6CF29AC2F8B00171C03 /* Ray.cpp */,
-				74DAA6D429AC432C00171C03 /* SDFResult.h */,
+				74DAA6D429AC432C00171C03 /* Results.h */,
+				74DAA6D529AC439E00171C03 /* Results..cpp */,
 				74DAA6DA29AC469200171C03 /* RayMarch.cpp */,
 				74DAA6DB29AC469200171C03 /* RayMarch.h */,
-				74DAA6D529AC439E00171C03 /* SDFResult.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 				7451041529C1538100F69BC4 /* SerializedWorld.cpp */,
@@ -549,7 +549,7 @@
 				74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */,
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
-				74DAA6D629AC439E00171C03 /* SDFResult.cpp in Sources */,
+				74DAA6D629AC439E00171C03 /* Results..cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
 				743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
@@ -609,7 +609,7 @@
 				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
 				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,
 				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
-				74AAF29029D7BCD300D322DB /* SDFResult.cpp in Sources */,
+				74AAF29029D7BCD300D322DB /* Results..cpp in Sources */,
 				7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */,
 				7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,

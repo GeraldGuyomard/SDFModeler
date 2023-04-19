@@ -9,7 +9,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "SDFResult.h"
+#include "Results.h"
 #include "Material/SimpleMaterial.h"
 
 class FragmentShader final
