@@ -9,7 +9,7 @@
 #include "CommonDefinitions.h"
 #include <memory>
 #include "Serializer.h"
-#include "SerializedWorld.h"
+#include "SerializedWorldObject.h"
 #include <vector>
 #include <set>
 #include <string>
@@ -68,7 +68,7 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
-    void serialize(SerializedWorld&) const;
+    void serialize(SerializedWorldObject&) const;
     virtual size_t selfSerialize(uint8_t* ptr) const;
     
     ObjectID id() const;
@@ -104,7 +104,7 @@ public:
     
 protected:
     
-    virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
+    virtual void serializeHierarchy(SerializedWorldObject& serializedWorld, uint8_t*& ptr) const;
 
 private:
     
@@ -196,7 +196,7 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void serialize(SerializedWorld&, Materials& materials) const;
+    void serialize(SerializedWorldObject&, Materials& materials) const;
     
     void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);

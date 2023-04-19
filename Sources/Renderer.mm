@@ -12,7 +12,7 @@
 
 #import "ShaderTypes.h"
 
-#include "SerializedWorld.h"
+#include "SerializedWorldObject.h"
 #include "FragmentShader/PhongShader.h"
 
 #include "Object3D.h"
@@ -192,7 +192,7 @@ Renderer::uniforms() const
     return _uniformsBuffer->uniform();
 }
 
-const SerializedWorld&
+const SerializedWorldObject&
 Renderer::serializedWorld() const
 {
     return _serializedWorldBuffer->uniform();

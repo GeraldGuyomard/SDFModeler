@@ -11,7 +11,7 @@
 #import "Uniforms.h"
 #import "ShaderTypes.h"
 
-#include "SerializedWorld.h"
+#include "SerializedWorldObject.h"
 #include "Camera.h"
 
 #include <functional>
@@ -72,7 +72,7 @@ public:
     void setCamera(const Camera::Ptr&);
     
     const Uniforms& uniforms() const;
-    const SerializedWorld& serializedWorld() const;
+    const SerializedWorldObject& serializedWorld() const;
     const Materials& materials() const;
     
     using RenderCallback = std::function<void(Renderer&)>;
@@ -113,7 +113,7 @@ private:
     using UniformsBuffer = TUniformBuffer<Uniforms, BufferIndex::BufferIndexUniforms, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
-    using SerializedWorldBuffer = TUniformBuffer<SerializedWorld, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
+    using SerializedWorldBuffer = TUniformBuffer<SerializedWorldObject, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
     std::unique_ptr<SerializedWorldBuffer> _serializedWorldBuffer;
 
     using SerializedMaterials = TUniformBuffer<Materials, BufferIndex::BufferIndexMaterials, kMaxBuffersInFlight>;

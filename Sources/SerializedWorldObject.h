@@ -14,7 +14,7 @@
 #include "ComputeDistance.h"
 #include "ShadedPrimitive.h"
 
-struct SerializedWorld final
+struct SerializedWorldObject final
 {
     uint64_t objectCount = 0;
     
@@ -33,13 +33,13 @@ class WorldObject final
 {
 public:
     
-    WorldObject(TShader shader, CONSTANT SerializedWorld& serializedWorld)
-    : _serializedWorld(serializedWorld), _shader(shader)
+    WorldObject(TShader shader, CONSTANT SerializedWorldObject& serializedWorld)
+    : _serialized(serializedWorld), _shader(shader)
     {}
     
     RayMarchResult rayMarch(Ray ray) const
     {
-        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
+        CONSTANT uint8_t* buffer = &_serialized.buffer[0];
         
         ObjectHeadersArray headersArray { buffer };
         
@@ -47,7 +47,7 @@ public:
         
         CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        int64_t nbObjectsLeftToCull = _serializedWorld.objectCount;
+        int64_t nbObjectsLeftToCull = _serialized.objectCount;
         bool hasNegativeObjects = false;
         
         while (nbObjectsLeftToCull > 0)
@@ -248,6 +248,6 @@ public:
     }
     
 private:
-    CONSTANT SerializedWorld& _serializedWorld;
+    CONSTANT SerializedWorldObject& _serialized;
     TShader _shader;
 };

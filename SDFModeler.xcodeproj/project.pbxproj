@@ -21,7 +21,7 @@
 		7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D829A1CB63009632C3 /* MainViewController.mm */; };
 		7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		7444A4E329A1CB64009632C3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4E229A1CB64009632C3 /* main.m */; };
-		7451041729C1538200F69BC4 /* SerializedWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorld.cpp */; };
+		7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */; };
 		7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
@@ -74,7 +74,7 @@
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
 		74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
-		74AAF29429D7BCD300D322DB /* SerializedWorld.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorld.cpp */; };
+		74AAF29429D7BCD300D322DB /* SerializedWorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */; };
 		74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
 		74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
@@ -128,8 +128,8 @@
 		7444A4DC29A1CB63009632C3 /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
 		7444A4E029A1CB64009632C3 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7444A4E229A1CB64009632C3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		7451041529C1538100F69BC4 /* SerializedWorld.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedWorld.cpp; sourceTree = "<group>"; };
-		7451041629C1538100F69BC4 /* SerializedWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedWorld.h; sourceTree = "<group>"; };
+		7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializedWorldObject.cpp; sourceTree = "<group>"; };
+		7451041629C1538100F69BC4 /* SerializedWorldObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializedWorldObject.h; sourceTree = "<group>"; };
 		7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RemoveObjectCommand.cpp; sourceTree = "<group>"; };
 		7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveObjectCommand.h; sourceTree = "<group>"; };
 		7456FCA729EA284C00398E86 /* AddObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddObjectCommand.h; sourceTree = "<group>"; };
@@ -302,8 +302,8 @@
 				74DAA6DB29AC469200171C03 /* RayMarch.h */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
-				7451041529C1538100F69BC4 /* SerializedWorld.cpp */,
-				7451041629C1538100F69BC4 /* SerializedWorld.h */,
+				7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */,
+				7451041629C1538100F69BC4 /* SerializedWorldObject.h */,
 				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
 				74F7646829CE8BFC00CD5259 /* ObjectHeader.h */,
 				74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */,
@@ -560,7 +560,7 @@
 				74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */,
 				74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
-				7451041729C1538200F69BC4 /* SerializedWorld.cpp in Sources */,
+				7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
@@ -631,7 +631,7 @@
 				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
 				743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
-				74AAF29429D7BCD300D322DB /* SerializedWorld.cpp in Sources */,
+				74AAF29429D7BCD300D322DB /* SerializedWorldObject.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
 				7492229329E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,

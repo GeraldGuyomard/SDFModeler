@@ -13,13 +13,13 @@
 #include "RayMarch.h"
 
 #include "SDFObject.h"
-#include "SerializedWorld.h"
+#include "SerializedWorldObject.h"
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
 
 template <typename TShader>
-INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorld& serializedWorld)
+INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorldObject& serializedWorld)
 {
     SDFObject<SDFPlane> grid({}, { float3(-0.5f) });
     
@@ -45,7 +45,7 @@ INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT Seri
 template <typename TShader>
 INLINE RayMarchResult rayMarch(float2 viewportNDC,
                             CONSTANT Uniforms& uniforms,
-                            CONSTANT SerializedWorld& serializedWorld,
+                            CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
     const auto ray = Ray::make(viewportNDC, uniforms);
@@ -78,7 +78,7 @@ INLINE RayMarchResult rayMarch(float2 viewportNDC,
 template <typename TShader>
 INLINE float4 render(float2 viewportNDC,
                      CONSTANT Uniforms& uniforms,
-                     CONSTANT SerializedWorld& serializedWorld,
+                     CONSTANT SerializedWorldObject& serializedWorld,
                      CONSTANT Materials& materials)
 {
     const auto res = rayMarch<TShader>(viewportNDC, uniforms, serializedWorld, materials);
@@ -96,7 +96,7 @@ INLINE float4 render(float2 viewportNDC,
 
 INLINE float4 renderPhong(float2 viewportNDC,
                           CONSTANT Uniforms& uniforms,
-                          CONSTANT SerializedWorld& serializedWorld,
+                          CONSTANT SerializedWorldObject& serializedWorld,
                           CONSTANT Materials& materials)
 {
     return render<PhongShader>(viewportNDC, uniforms, serializedWorld, materials);
@@ -104,7 +104,7 @@ INLINE float4 renderPhong(float2 viewportNDC,
 
 INLINE float4 renderCellShaded(float2 viewportNDC,
                                CONSTANT Uniforms& uniforms,
-                               CONSTANT SerializedWorld& serializedWorld,
+                               CONSTANT SerializedWorldObject& serializedWorld,
                                CONSTANT Materials& materials)
 {
     return render<CellShader>(viewportNDC, uniforms, serializedWorld, materials);
@@ -112,7 +112,7 @@ INLINE float4 renderCellShaded(float2 viewportNDC,
 
 INLINE float4 renderDefault(float2 viewportNDC,
                             CONSTANT Uniforms& uniforms,
-                            CONSTANT SerializedWorld& serializedWorld,
+                            CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
     return renderPhong(viewportNDC, uniforms, serializedWorld, materials);
@@ -120,7 +120,7 @@ INLINE float4 renderDefault(float2 viewportNDC,
 
 INLINE PickResult pickObject(float2 viewportNDC,
                            CONSTANT Uniforms& uniforms,
-                           CONSTANT SerializedWorld& serializedWorld,
+                           CONSTANT SerializedWorldObject& serializedWorld,
                            CONSTANT Materials& materials)
 {
     const auto res = rayMarch<NoShader>(viewportNDC, uniforms, serializedWorld, materials);

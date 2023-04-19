@@ -238,7 +238,7 @@ Object3D::setOperation(SDFOperation op)
 }
 
 void
-Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) const
+Object3D::serializeHierarchy(SerializedWorldObject& serializedWorld, uint8_t*& p) const
 {
     const size_t size = selfSerialize(p);
     if (size != 0)
@@ -285,7 +285,7 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
 }
 
 void
-Object3D::serialize(SerializedWorld& serializedWorld) const
+Object3D::serialize(SerializedWorldObject& serializedWorld) const
 {
     serializedWorld.objectCount = 0;
     
@@ -324,7 +324,7 @@ World::init()
 }
 
 void
-World::serialize(SerializedWorld& serializedWorld, Materials& materials) const
+World::serialize(SerializedWorldObject& serializedWorld, Materials& materials) const
 {
     _rootObject->serialize(serializedWorld);
     
