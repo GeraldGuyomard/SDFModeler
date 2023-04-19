@@ -217,10 +217,20 @@ public:
         
         if (outlineHeaderIndex >= 0)
         {
-            if (!hit || (outlineHeaderIndex != minObjectHeaderIndex))
+            if (!hit)
             {
                 CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+            }
+            else if (outlineHeaderIndex != minObjectHeaderIndex)
+            {
+                CONSTANT ObjectHeader* outlineHeader = headersArray.header(outlineHeaderIndex);
+                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
+                
+                if (outlineHeader->objectId != minHeader->objectId)
+                {
+                    return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+                }
             }
         }
         
