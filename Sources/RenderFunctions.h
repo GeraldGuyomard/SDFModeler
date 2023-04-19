@@ -10,8 +10,6 @@
 #include "ShaderTypes.h"
 #include "Ray.h"
 #include "Results.h"
-#include "RayMarch.h"
-
 #include "SDFObject.h"
 #include "SerializedWorldObject.h"
 
