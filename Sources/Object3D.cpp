@@ -162,14 +162,16 @@ Object3D::addChild(const Ptr& child)
     
     if (child->parent() != self)
     {
-        child->removeFromParent();
+        child->_removeFromParent(false);
         _children.push_back(child);
         child->_parent = self;
+        
+        child->invalidateCachedWorldTransform();
     }
 }
 
 void
-Object3D::removeFromParent()
+Object3D::_removeFromParent(bool invalidateWorldTransform)
 {
     if (auto parent = this->parent())
     {
@@ -183,6 +185,12 @@ Object3D::removeFromParent()
             if (self == child)
             {
                 parent->_children.erase(it);
+                
+                if (invalidateWorldTransform)
+                {
+                    invalidateCachedWorldTransform();
+                }
+                
                 return;
             }
         }
@@ -191,18 +199,41 @@ Object3D::removeFromParent()
     }
 }
 
+void
+Object3D::removeFromParent()
+{
+    _removeFromParent(true);
+}
+
+void
+Object3D::invalidateCachedWorldTransform()
+{
+    _cachedWorldTransformValid = false;
+    
+    for (const auto& child : children())
+    {
+        child->invalidateCachedWorldTransform();
+    }
+}
 
 float4x4
 Object3D::worldTransform() const
 {
-    if (auto parent = this->parent())
+    if (!_cachedWorldTransformValid)
     {
-        return parent->worldTransform() * localTransform();
+        if (auto parent = this->parent())
+        {
+            _cachedWorldTransform = parent->worldTransform() * localTransform();
+        }
+        else
+        {
+            _cachedWorldTransform = localTransform();
+        }
+        
+        _cachedWorldTransformValid = true;
     }
-    else
-    {
-        return localTransform();
-    }
+    
+    return _cachedWorldTransform;
 }
 
 void
@@ -223,6 +254,7 @@ void
 Object3D::setLocalTransform(const float4x4& transform)
 {
     _localTransform = transform;
+    invalidateCachedWorldTransform();
 }
 
 void

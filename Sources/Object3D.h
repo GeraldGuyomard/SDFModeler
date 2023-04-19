@@ -108,6 +108,9 @@ protected:
 
 private:
     
+    void invalidateCachedWorldTransform();
+    void _removeFromParent(bool invalidateWorldTransform);
+    
     const WorldWPtr _world;
     
     ObjectID _id = 0;
@@ -119,8 +122,10 @@ private:
     
     float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
-    
     bool _shouldChildrenShareId = false;
+    
+    mutable float4x4 _cachedWorldTransform;
+    mutable bool _cachedWorldTransformValid = false;
 };
 
 template <typename TGeometry>
