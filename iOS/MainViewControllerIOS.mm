@@ -130,7 +130,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         
         const auto selectedObject = self.world->selectedObject();
         
-        Interaction::Ptr interaction;
+        MultiTouchCameraInteraction::Ptr interaction;
         auto object = self.world->rootObject()->objectByID(pickResult.objectID);
         
         if (selectedObject != nullptr)
@@ -143,6 +143,7 @@ using HighResClock = std::chrono::high_resolution_clock;
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
         }
 
+        interaction->setOrbitSpeed(MultiTouchCameraInteraction::kDefaultOrbitSpeed * self.contentScale);
         [self setInteraction:interaction];
     }
     
@@ -291,6 +292,11 @@ struct ObjectDragInfo
     {
         [self redo:nil];
     }
+}
+
+- (float) contentScale
+{
+    return self.view.layer.contentsScale;
 }
 
 - (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size

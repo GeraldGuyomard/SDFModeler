@@ -24,6 +24,8 @@ public:
     MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer);
     ~MultiTouchCameraInteraction() override = default;
     
+    void setOrbitSpeed(float);
+    
     enum class State
     {
         idle,
@@ -71,6 +73,7 @@ private:
     std::vector<std::unique_ptr<TrackedTouch>> _trackedTouches;
     
     State _state = State::idle;
+    float _orbitSpeed = kDefaultOrbitSpeed;
     
     float2 _orbitAngles = { 0 };
     float _dollyFactor = 0.f;
