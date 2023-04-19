@@ -28,6 +28,8 @@
 		7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
 		74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
 		74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
+		74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
+		74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
 		7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */; };
 		7492228E29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
 		7492228F29E2685F00ACCFBC /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
@@ -132,6 +134,8 @@
 		7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddObjectCommand.cpp; sourceTree = "<group>"; };
 		74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeadersArray.cpp; sourceTree = "<group>"; };
 		74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeadersArray.h; sourceTree = "<group>"; };
+		74897E9D29EF8D5A007A5CFE /* SDFTorus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFTorus.h; sourceTree = "<group>"; };
+		74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFTorus.cpp; sourceTree = "<group>"; };
 		7492228429E0988A00ACCFBC /* MultiTouchCameraInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiTouchCameraInteraction.h; sourceTree = "<group>"; };
 		7492228529E0988A00ACCFBC /* MultiTouchCameraInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MultiTouchCameraInteraction.mm; sourceTree = "<group>"; };
 		7492228C29E2685F00ACCFBC /* Command.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Command.cpp; sourceTree = "<group>"; };
@@ -403,6 +407,8 @@
 				74FB546529B433CD00A20E26 /* SDFBox.cpp */,
 				74DAA70929ADB85D00171C03 /* SDFRoundedBox.h */,
 				74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */,
+				74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */,
+				74897E9D29EF8D5A007A5CFE /* SDFTorus.h */,
 			);
 			path = SDFGeometry;
 			sourceTree = "<group>";
@@ -568,6 +574,7 @@
 				74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
+				74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
 				7492229229E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
@@ -606,6 +613,7 @@
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
+				74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */,

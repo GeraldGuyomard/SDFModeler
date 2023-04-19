@@ -17,7 +17,7 @@ enum class ObjectType : int64_t
     box,
     roundedBox,
     plane,
-    grid,
+    torus
 };
 
 using ObjectID = uint32_t;
