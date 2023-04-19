@@ -17,6 +17,7 @@
 
 +(MainViewController*)instance;
 
+@property(readonly, nonatomic) CGFloat nativeContentScale;
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) WorldPtr world;
 

@@ -23,6 +23,7 @@ TObject3DFactoryRegistration s_RoundedBoxRegistration {"Rounded Box", SDFRounded
 @implementation MainViewController
 {
     MTKView* _view;
+    CGFloat _nativeContentScale;
     std::unique_ptr<Renderer> _renderer;
     
     WorldPtr _world;
@@ -63,6 +64,11 @@ static __weak MainViewController* s_Instance = nil;
 - (Renderer*)renderer
 {
     return _renderer.get();
+}
+
+- (CGFloat)nativeContentScale
+{
+    return _nativeContentScale;
 }
 
 - (void)loadWorld
@@ -160,7 +166,8 @@ static __weak MainViewController* s_Instance = nil;
     
     _view = (MTKView *)self.view;
     _view.device = MTLCreateSystemDefaultDevice();
-
+    _nativeContentScale =  self.view.layer.contentsScale;
+    
     if(!_view.device)
     {
         NSLog(@"Metal is not supported on this device");

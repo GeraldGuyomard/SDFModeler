@@ -91,8 +91,7 @@ template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
 INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 {
     CONSTANT TPrimitive* prim = typedPrimitive<TPrimitive>(header);
-    const TPrimitive p = *prim;
-    return evaluator.evaluate(header, p);
+    return evaluator.evaluate(header, *prim);
 }
 
 template <typename TReturnValue>

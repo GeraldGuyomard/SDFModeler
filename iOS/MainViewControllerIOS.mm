@@ -299,40 +299,38 @@ struct ObjectDragInfo
     return self.view.layer.contentsScale;
 }
 
-- (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
+- (void) adjustContentScale
 {
-    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
-    {
-        return;
-    }
-    
+    //const CGFloat ratio = (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad) ? 1.f : 1.5f;
+  
     UIView* view = self.view;
     CAMetalLayer* metalLayer = (CAMetalLayer *)view.layer;
     
-    metalLayer.contentsScale = sf;
+    const CGSize size = self.view.bounds.size;
+    
+    const CGFloat contentScaleFactor = self.nativeContentScale * 0.75f;
+  
+    metalLayer.contentsScale = contentScaleFactor;
     
     CGSize drawableSize;
-    drawableSize.width = size.width * sf;
-    drawableSize.height = size.height * sf;
+    drawableSize.width = size.width * contentScaleFactor;
+    drawableSize.height = size.height * contentScaleFactor;
     
     metalLayer.drawableSize = drawableSize;
 }
-
-static constexpr CGFloat kContentScaleFactor = 1.f;
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     
-    const CGSize size = self.view.bounds.size;
-    [self setContentScaleFactor:kContentScaleFactor size:size];
+    [self adjustContentScale];
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+- (void) viewDidLayoutSubviews
 {
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    [super viewDidLayoutSubviews];
     
-    [self setContentScaleFactor:kContentScaleFactor size:size];
+    [self adjustContentScale];
 }
 
 namespace
