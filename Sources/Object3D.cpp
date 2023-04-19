@@ -111,16 +111,49 @@ Object3D::setMaterial(const Material3D::Ptr& mat)
     }
 }
 
+ObjectID
+Object3D::id() const
+{
+    const Object3D* object = this;
+    while (object != nullptr)
+    {
+        if (object->_id != kInvalidObjectID)
+        {
+            return object->_id;
+        }
+        
+        object = parent().get();
+    }
+    
+    return kInvalidObjectID;
+}
+
 MaterialID
 Object3D::materialID() const
 {
-    return (_material != nullptr) ? _material->id() : kNoMaterialID;
+    const Object3D* object = this;
+    while (object != nullptr)
+    {
+        auto mat = object->_material;
+        if (mat != nullptr)
+        {
+            return mat->id();
+        }
+        
+        object = parent().get();
+    }
+    
+    return kNoMaterialID;
 }
 
 void
 Object3D::addChild(const Ptr& child)
 {
-    if (child->_id == kInvalidObjectID)
+    if (_shouldChildrenShareId)
+    {
+        child->_id = kInvalidObjectID;
+    }
+    else if (child->_id == kInvalidObjectID)
     {
         child->_id = world()->generateNewObjectID();
     }
@@ -199,7 +232,7 @@ Object3D::setLocalTransform(const RSTTransformer& transformer)
 }
 
 void
-Object3D::setOperation(Operation op)
+Object3D::setOperation(SDFOperation op)
 {
     _operation = op;
 }
@@ -214,9 +247,40 @@ Object3D::serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& p) cons
         serializedWorld.objectCount++;
     }
     
+    std::vector<Ptr> positiveChildren;
+    std::vector<Ptr> negativeChildren;
+
     for (const auto& child : children())
     {
-        child->serializeHierarchy(serializedWorld, p);
+        switch (child->operation())
+        {
+            case SDFOperation::addition:
+            {
+                positiveChildren.push_back(child);
+                break;
+            }
+
+            case SDFOperation::substraction:
+            {
+                negativeChildren.push_back(child);
+                break;
+            }
+                
+            default: break;
+        }
+    }
+    
+    if (!positiveChildren.empty())
+    {
+        for (const auto& child : positiveChildren)
+        {
+            child->serializeHierarchy(serializedWorld, p);
+        }
+        
+        for (const auto& child : negativeChildren)
+        {
+            child->serializeHierarchy(serializedWorld, p);
+        }
     }
 }
 
@@ -234,6 +298,12 @@ size_t
 Object3D::selfSerialize(uint8_t* ptr) const
 {
     return 0;
+}
+
+void
+Object3D::setShouldChildrenShareId(bool should)
+{
+    _shouldChildrenShareId = should;
 }
 
 WorldPtr
@@ -306,3 +376,4 @@ World::setSelectedObject(const Object3D::Ptr& object)
         
     }
 }
+

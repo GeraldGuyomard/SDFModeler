@@ -16,7 +16,6 @@
 #include "FragmentShader/PhongShader.h"
 
 #include "Object3D.h"
-#include "Composition3D.h"
 #include "RenderFunctions.h"
 
 #include "MainViewController.h"
@@ -97,7 +96,8 @@ Renderer::~Renderer()
 float2
 Renderer::renderSize() const
 {
-    const CGSize size = _mtkView.drawableSize;
+    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
+    const CGSize size = layer.drawableSize;
     return float2 { float(size.width), float(size.height) };
 }
 
@@ -213,12 +213,6 @@ Renderer::updateUniforms()
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.cameraMatrix = _camera->worldTransform();
     uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
-    
-    const auto renderSize = this->renderSize();
-    
-    // [0, renderSize.width] -> [-1, +1]
-    uniforms.rayDiff.x = 2.f / renderSize.x;
-    uniforms.rayDiff.y = 2.f / renderSize.y;
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     

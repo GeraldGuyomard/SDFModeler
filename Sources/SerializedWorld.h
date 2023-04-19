@@ -11,25 +11,8 @@
 #include "SDFResult.h"
 #include "PrimitiveEvaluator.h"
 
-#include "Composition.h"
-
-using Composition = SDFComposition;
-
-template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
-{
-    if (header->objectCode == computeObjectCode<Composition, RSTTransformer>())
-    {
-        auto serializedComposition = typedPrimitive<Composition::Serialized>(header);
-        Composition composition(serializedComposition);
-        
-        return evaluator.evaluate(header, composition);
-    }
-    else
-    {
-        return evaluateAtomicPrimitive<TEvaluator, TReturnValue>(evaluator, header);
-    }
-}
+#include "ComputeDistance.h"
+#include "ShadedPrimitive.h"
 
 struct SerializedWorld final
 {
@@ -46,107 +29,217 @@ struct SerializedWorld final
 };
 
 template <typename TShader>
-class Content final
+class WorldObject final
 {
 public:
     
-    constexpr static CONSTANT size_t kNbObjectsMax = 128;
-    
-    Content(TShader shader, CONSTANT SerializedWorld& serializedWorld)
+    WorldObject(TShader shader, CONSTANT SerializedWorld& serializedWorld)
     : _serializedWorld(serializedWorld), _shader(shader)
     {}
     
     RayMarchResult rayMarch(Ray ray) const
     {
-        size_t nbObjects = 0;
-        CONSTANT ObjectHeader* headers[kNbObjectsMax];
+        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
+        
+        ObjectHeadersArray headersArray { buffer };
         
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT uint8_t* buffer = &_serializedWorld.buffer[0];
-        CONSTANT ObjectHeader* header = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
+        CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        for (size_t i=0; i < _serializedWorld.objectCount; ++i)
+        int64_t nbObjectsLeftToCull = _serializedWorld.objectCount;
+        bool hasNegativeObjects = false;
+        
+        while (nbObjectsLeftToCull > 0)
         {
-            const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, header);
-            if (!culled)
+            const auto objectID = headerToCull->objectId;
+            
+            // cull first positive object
+            bool hasPositiveObjects = false;
+            while ((nbObjectsLeftToCull > 0) &&
+                   (headerToCull->objectId == objectID) &&
+                   (headerToCull->sdfOperation() == SDFOperation::addition))
             {
-                headers[nbObjects++] = header;
+                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                if (!culled)
+                {
+                    hasPositiveObjects = true;
+                    headersArray.add(headerToCull);
+                }
+                
+                --nbObjectsLeftToCull;
+                headerToCull = ObjectHeader::next(headerToCull);
             }
             
-            header = ObjectHeader::next(header);
+            if (!hasPositiveObjects)
+            {
+                // remove any negative objects
+                while ((nbObjectsLeftToCull > 0) &&
+                       (headerToCull->objectId == objectID) &&
+                       (headerToCull->sdfOperation() == SDFOperation::substraction))
+                {
+                    --nbObjectsLeftToCull;
+                    headerToCull = ObjectHeader::next(headerToCull);
+                }
+            }
+            else
+            {
+                // cull all the negative parts
+                while ((nbObjectsLeftToCull > 0) &&
+                       (headerToCull->objectId == objectID) &&
+                       (headerToCull->sdfOperation() == SDFOperation::substraction))
+                {
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                    if (!culled)
+                    {
+                        headersArray.add(headerToCull);
+                        hasNegativeObjects = true;
+                    }
+                    
+                    --nbObjectsLeftToCull;
+                    headerToCull = ObjectHeader::next(headerToCull);
+                }
+            }
         }
         
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        CONSTANT ObjectHeader* outlineHeader = nullptr;
+        int64_t outlineHeaderIndex = -1;
         bool hit = false;
         
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        CONSTANT ObjectHeader* minHeader = nullptr;
+        int64_t minObjectHeaderIndex = -1;
         
-        for (size_t i=0; i < kNbSteps; ++i)
+        const size_t nbObjects = headersArray.nbObjects();
+        
+        if (hasNegativeObjects)
         {
-            pt = ray.pt(d);
-            
-            minDistance = 1e5f;
-            minHeader = nullptr;
-            DistanceEvaluator distanceEvaluator { pt };
-            
-            for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
+            for (size_t i=0; i < kNbSteps; ++i)
             {
-                CONSTANT ObjectHeader* header = headers[objectIndex];
+                pt = ray.pt(d);
                 
-                const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                minDistance = 1e5f;
+                minObjectHeaderIndex = -1;
                 
-                if ((outlineHeader == nullptr) && header->selected)
+                size_t objectIndex = 0;
+                
+                while (objectIndex < nbObjects)
                 {
-                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                    const auto startIndex = objectIndex;
+                    
+                    const float dist = computeDistance(pt, headersArray, objectIndex);
+                    
+                    CONSTANT ObjectHeader* startHeader = headersArray.header(startIndex);
+                    
+                    if (startHeader->selected && (outlineHeaderIndex < 0))
                     {
-                        outlineHeader = header;
+                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                        {
+                            outlineHeaderIndex = startIndex;
+                        }
+                    }
+                    
+                    if (dist <= minDistance)
+                    {
+                        minDistance = dist;
+                        minObjectHeaderIndex = startIndex;
                     }
                 }
                 
-                if (dist <= minDistance)
+                if (minDistance <= kDistanceEpsilon)
                 {
-                    minDistance = dist;
-                    minHeader = header;
+                    hit = true;
+                    break;
                 }
+                
+                d += minDistance;
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
+                
+                prevMinDistance = minDistance;
             }
-            
-            if (minDistance <= kDistanceEpsilon)
+        }
+        else
+        {
+            // only positive parts
+            for (size_t i=0; i < kNbSteps; ++i)
             {
-                hit = true;
-                break;
+                pt = ray.pt(d);
+                
+                minDistance = 1e5f;
+                minObjectHeaderIndex = -1;
+                DistanceEvaluator distanceEvaluator { pt };
+                
+                for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
+                {
+                    CONSTANT ObjectHeader* header = headersArray.header(objectIndex);
+                    
+                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
+                    
+                    if (header->selected && (outlineHeaderIndex < 0))
+                    {
+                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
+                        {
+                            outlineHeaderIndex = objectIndex;
+                        }
+                    }
+                    
+                    if (dist <= minDistance)
+                    {
+                        minDistance = dist;
+                        minObjectHeaderIndex = objectIndex;
+                    }
+                }
+                
+                if (minDistance <= kDistanceEpsilon)
+                {
+                    hit = true;
+                    break;
+                }
+                
+                d += minDistance;
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
+                
+                prevMinDistance = minDistance;
             }
-            
-            d += minDistance;
-            
-            if (d > ray.maxLength)
-            {
-                break;
-            }
-            
-            prevMinDistance = minDistance;
         }
         
-        if (outlineHeader != nullptr)
+        if (outlineHeaderIndex >= 0)
         {
-            if (!hit || (outlineHeader != minHeader))
+            if (!hit)
             {
+                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+            }
+            else if (outlineHeaderIndex != minObjectHeaderIndex)
+            {
+                CONSTANT ObjectHeader* outlineHeader = headersArray.header(outlineHeaderIndex);
+                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
+                
+                if (outlineHeader->objectId != minHeader->objectId)
+                {
+                    return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+                }
             }
         }
         
         if (hit)
         {
-            using MyShaderEvaluator = ShadeEvaluator<TShader>;
-            MyShaderEvaluator shadeEvaluator { ray, minDistance, pt, _shader };
-            const float4 color = evaluatePrimitive<MyShaderEvaluator, float4>(shadeEvaluator, minHeader);
+            ShadedPrimitive primitive { headersArray, size_t(minObjectHeaderIndex) };
+            const float4 color = _shader.computeShade(primitive, ray, minDistance, pt);
+            
+            CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
             
             return RayMarchResult { ray, minHeader->objectId, color, d };
         }

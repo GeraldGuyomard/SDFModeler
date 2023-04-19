@@ -13,6 +13,7 @@
 
 #include "AddObjectCommand.h"
 #include "RemoveObjectCommand.h"
+#include "ToggleObjectOperationCommand.h"
 
 using HighResClock = std::chrono::high_resolution_clock;
 
@@ -129,7 +130,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         
         const auto selectedObject = self.world->selectedObject();
         
-        Interaction::Ptr interaction;
+        MultiTouchCameraInteraction::Ptr interaction;
         auto object = self.world->rootObject()->objectByID(pickResult.objectID);
         
         if (selectedObject != nullptr)
@@ -142,6 +143,7 @@ using HighResClock = std::chrono::high_resolution_clock;
             interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
         }
 
+        interaction->setOrbitSpeed(MultiTouchCameraInteraction::kDefaultOrbitSpeed * self.contentScale);
         [self setInteraction:interaction];
     }
     
@@ -292,8 +294,18 @@ struct ObjectDragInfo
     }
 }
 
+- (float) contentScale
+{
+    return self.view.layer.contentsScale;
+}
+
 - (void) setContentScaleFactor:(CGFloat)sf size:(CGSize)size
 {
+    if (UI_USER_INTERFACE_IDIOM() != UIUserInterfaceIdiomPad)
+    {
+        return;
+    }
+    
     UIView* view = self.view;
     CAMetalLayer* metalLayer = (CAMetalLayer *)view.layer;
     
@@ -313,14 +325,14 @@ static constexpr CGFloat kContentScaleFactor = 1.f;
     [super viewDidAppear:animated];
     
     const CGSize size = self.view.bounds.size;
-    //[self setContentScaleFactor:kContentScaleFactor size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 - (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
 {
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
     
-    //[self setContentScaleFactor:kContentScaleFactor size:size];
+    [self setContentScaleFactor:kContentScaleFactor size:size];
 }
 
 namespace
@@ -381,17 +393,29 @@ namespace
     auto selectedObject = world->selectedObject();
     if (selectedObject != nullptr)
     {
-        auto command = std::make_shared<RemoveObjectCommand>(selectedObject);
+        auto removeObjectCommand = std::make_shared<RemoveObjectCommand>(selectedObject);
         
         auto deleteAction = [UIAction actionWithTitle:@"Delete"
                                                 image:nil
                                            identifier:@"Delete"
                                               handler:^(UIAction * action)
                              {
-            world->commandHistory().run(command);
+            world->commandHistory().run(removeObjectCommand);
         }];
         
         [children addObject:deleteAction];
+        
+        auto toggleObjectOperationCommand = std::make_shared<ToggleObjectOperationCommand>(selectedObject);
+        
+        auto toggleAction = [UIAction actionWithTitle:@"Toggle Operation"
+                                                image:nil
+                                           identifier:@"Toggle"
+                                              handler:^(UIAction * action)
+                             {
+            world->commandHistory().run(toggleObjectOperationCommand);
+        }];
+        
+        [children addObject:toggleAction];
     }
         
     [children addObject:[self makeAddObjectMenu]];

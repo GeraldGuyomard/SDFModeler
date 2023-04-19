@@ -15,7 +15,8 @@ struct Ray final
     float3 origin;
     float3 direction;
     float maxLength;
-    float2 rayDiff = { 0.f };
+    
+    Ray() = default;
     
     Ray(float3 origin, float3 direction, float maxLength)
     : origin(origin), direction(direction), maxLength(maxLength)
@@ -41,19 +42,8 @@ struct Ray final
         direction /= maxDist;
         
         Ray ray { origin, direction, maxDist };
-        ray.rayDiff = uniforms.rayDiff;
         
         return ray;
-    }
-    
-    Ray computeNeighbourRay(float2 delta) const
-    {
-        Ray r = *this;
-        const float2 d = rayDiff * delta;
-        r.direction += float3 { d.x, d.y, 0 };
-        r.direction = normalize(r.direction);
-        
-        return r;
     }
 };
 

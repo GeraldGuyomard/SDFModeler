@@ -8,17 +8,19 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectHeader.h"
-#include "Composition.h"
+#include "Material/Material.h"
 
 #include <cstring>
 #include <assert.h>
 
 template <typename TObject>
 static void copy(ObjectID id,
+                 MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
                  ObjectHeader* header,
                  const TObject& object,
+                 SDFOperation operation,
                  bool selected)
 {
     assert(objectType != ObjectType::invalid);
@@ -27,7 +29,9 @@ static void copy(ObjectID id,
     
     header->byteSize = uint32_t(alignedSize(size));
     header->objectId = id;
+    header->materialId = materialId;
     header->objectCode = computeObjectCode(objectType, transformerType);
+    header->operation = uint16_t(operation);
     header->selected = selected;
     
     uint8_t* dst = &(header->firstByte);
@@ -39,11 +43,14 @@ static void copy(ObjectID id,
 template <typename TObject>
 static void copy(ObjectHeader* header,
                  const TObject& object,
-                 ObjectID id, ObjectType objectType,
+                 ObjectID id,
+                 MaterialID materialId,
+                 ObjectType objectType,
                  TransformerType transformerType,
+                 SDFOperation operation,
                  bool selected)
 {
-    copy<TObject>(id, objectType, transformerType, header, object, selected);
+    copy<TObject>(id, materialId, objectType, transformerType, header, object, operation, selected);
 }
 
 
@@ -51,12 +58,14 @@ template <typename TPrimitive>
 INLINE size_t serializeObject(uint8_t* p,
                               const TPrimitive& primitive,
                               ObjectID id,
+                              MaterialID materialId,
                               ObjectType objectType,
                               TransformerType transformerType,
+                              SDFOperation operation,
                               bool selected)
 {
     ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive, id, objectType, transformerType, selected);
+    copy(h, primitive, id, materialId, objectType, transformerType, operation, selected);
     
     return h->byteSize;
 }

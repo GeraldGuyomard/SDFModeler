@@ -23,6 +23,12 @@ _initialCameraTransform(camera->worldTransform()),
 _orbitOrigin(orbitOrigin)
 {}
 
+void
+MultiTouchCameraInteraction::setOrbitSpeed(float orbitSpeed)
+{
+    _orbitSpeed = orbitSpeed;
+}
+
 float2 touchLocation(UITouch* touch)
 {
     const CGPoint loc = [touch locationInView:nil];
@@ -192,7 +198,7 @@ MultiTouchCameraInteraction::updateCameraTransform()
     else
     {
         _orbitAngles = touch0.dragVector();
-        _orbitAngles *= kDefaultOrbitSpeed;
+        _orbitAngles *= _orbitSpeed;
     }
     
     // orbit

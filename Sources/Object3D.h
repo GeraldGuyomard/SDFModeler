@@ -71,7 +71,7 @@ public:
     void serialize(SerializedWorld&) const;
     virtual size_t selfSerialize(uint8_t* ptr) const;
     
-    ObjectID id() const { return _id; }
+    ObjectID id() const;
     void setId(ObjectID);
     
     Object3D::Ptr objectByID(ObjectID id) const;
@@ -97,30 +97,30 @@ public:
     virtual void addChild(const Ptr& child);
     void removeFromParent();
     
-    enum class Operation
-    {
-        addition,
-        substraction
-    };
+    SDFOperation operation() const { return _operation; }
+    void setOperation(SDFOperation);
     
-    Operation operation() const { return _operation; }
-    void setOperation(Operation);
+    void setShouldChildrenShareId(bool should);
     
-private:
+protected:
     
     virtual void serializeHierarchy(SerializedWorld& serializedWorld, uint8_t*& ptr) const;
+
+private:
     
     const WorldWPtr _world;
     
     ObjectID _id = 0;
     Material3D::Ptr _material;
-    Operation _operation = Operation::addition;
+    SDFOperation _operation = SDFOperation::addition;
     
     Object3D::WPtr _parent;
     std::vector<Ptr> _children;
     
     float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
+    
+    bool _shouldChildrenShareId = false;
 };
 
 template <typename TGeometry>
@@ -137,7 +137,8 @@ public:
     {
         RSTTransformer transformer { worldTransform() };
         
-        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer, materialID() };
+        
+        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
         
         const bool selected = this->selected();
         if (selected)
@@ -145,12 +146,16 @@ public:
             object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
         }
         
+        const auto materialId = materialID();
+        
         return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
                                             ptr,
                                            object,
                                            id(),
+                                            materialId,
                                            object.objectType(),
                                            transformer.transformerType(),
+                                            operation(),
                                            selected);
     }
     

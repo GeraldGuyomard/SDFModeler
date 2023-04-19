@@ -23,18 +23,25 @@ INLINE constexpr uint64_t computeObjectCode()
     return computeObjectCode(TObject::objectType(), TTransformer::transformerType());
 }
 
+struct ObjectHeader;
+using ConstantObjectHeader = CONSTANT ObjectHeader;
+
 struct ObjectHeader final
 {
-    uint32_t  byteSize;
-    uint32_t  selected = false;
-    uint32_t  objectId;
-    uint32_t  objectCode;
+    uint32_t    byteSize;
+    uint16_t    materialId;
+    uint8_t     selected = false;
+    uint8_t     operation = uint16_t(SDFOperation::addition);
     
-    uint8_t   firstByte;
+    uint32_t    objectId;
+    uint32_t    objectCode;
     
-    ObjectHeader(size_t byteSize, ObjectID id, ObjectType objectType, TransformerType transformerType)
-    : byteSize(uint32_t(byteSize)), objectId(id), objectCode(computeObjectCode(objectType, transformerType))
-    {}
+    uint8_t     firstByte;
+    
+    SDFOperation sdfOperation() CONSTANT
+    {
+        return (SDFOperation) operation;
+    }
     
     static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
     {
@@ -49,4 +56,5 @@ INLINE CONSTANT TPrimitive* typedPrimitive(CONSTANT ObjectHeader* header)
     CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
     return reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
 }
+
 

@@ -11,7 +11,6 @@
 #import <MetalKit/MetalKit.h>
 
 #include "RenderFunctions.h"
-#include "Composition3D.h"
 
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
@@ -130,17 +129,18 @@ static __weak MainViewController* s_Instance = nil;
     
     auto negativeSpherePart = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
     negativeSpherePart->setLocalTransform(RSTTransformer { float3 { 0, 0.25, 0.5f } });
-    negativeSpherePart->setOperation(Object3D::Operation::substraction);
+    negativeSpherePart->setOperation(SDFOperation::substraction);
     
     auto negativeRoundedBoxPart = std::make_shared<TObject3D<SDFRoundedBox>>(_world, SDFRoundedBox
     { float3 { 0.1f, 0.1f, 0.3f }, 0.05f });
     negativeRoundedBoxPart->setLocalTransform(RSTTransformer { float3 { 0, -0.5f, 0.5f }, float3 {0, 0, 1}, degToRad(45.f) });
-    negativeRoundedBoxPart->setOperation(Object3D::Operation::substraction);
+    negativeRoundedBoxPart->setOperation(SDFOperation::substraction);
     
     auto sdfUnionMaterial = _world->addMaterial(float4 { 0, 1, 1, 1 });
-    auto sdfUnion = std::make_shared<Composition3D>(_world);
+    auto sdfUnion = std::make_shared<Object3D>(_world);
     sdfUnion->setMaterial(sdfUnionMaterial);
     sdfUnion->setLocalTransform(matrix4x4_translation(compositionOrigin));
+    sdfUnion->setShouldChildrenShareId(true);
     
     sdfUnion->addChild(spherePart);
     sdfUnion->addChild(boxPart);
