@@ -33,11 +33,22 @@ public:
     
     bool evaluateCulling(Ray ray, float outlineThickness) const
     {
+        const auto halfSize = this->halfSize();
+        return evaluateBoxCulling(halfSize, ray, outlineThickness);
+    }
+    
+    BoundingBox boundingBox() const
+    {
+        const float3 halfSize = this->halfSize();
+        
+        return { -halfSize, halfSize };
+    }
+    
+    float3 halfSize() const
+    {
         const float t = thickness();
         const float amplitude = radius() + t;
-        const float3 halfSize { amplitude, t, amplitude };
-        
-        return evaluateBoxCulling(halfSize, ray, outlineThickness);
+        return { amplitude, t, amplitude };
     }
     
 private:

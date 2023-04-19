@@ -32,6 +32,14 @@ public:
         return evaluateSphereCulling(radius() + outlineThickness, ray);
     }
     
+    BoundingBox boundingBox() const
+    {
+        const float r = radius();
+        const float3 halfSize { r, r, r };
+        
+        return { -halfSize, halfSize };
+    }
+    
     float radius() const { return _radiusAndPadding.x; }
     
 private:

@@ -41,6 +41,12 @@ public:
         return (d < 0) || (d > ray.maxLength);
     }
     
+    BoundingBox boundingBox() const
+    {
+        constexpr float inf = 1e7f;
+        return { float3 { -inf, 0.f, -inf }, float3 { +inf, 0.f, +inf } };
+    }
+    
     float raycast(Ray ray) const
     {
         return planeIntersection(ray, float3{0}, float3{ 0, 1, 0} );

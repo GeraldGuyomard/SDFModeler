@@ -33,9 +33,12 @@ public:
     
     bool evaluateCulling(Ray ray, float outlineThickness) const
     {
-        const float3 halfSize { radius(), height(), radius() };
-        
-        return evaluateBoxCulling(halfSize, ray, outlineThickness);
+        return evaluateBoxCulling(halfSize(), ray, outlineThickness);
+    }
+    
+    float3 halfSize() const
+    {
+        return { radius(), height(), radius() };
     }
     
 private:

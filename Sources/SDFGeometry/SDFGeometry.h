@@ -11,6 +11,7 @@
 #include "CommonDefinitions.h"
 #include "Ray.h"
 #include "ObjectType.h"
+#include "BoundingBox.h"
 
 class SDFGeometry final
 {
@@ -18,6 +19,7 @@ public:
     
     float computeDistance(float3 p) const;
     bool evaluateCulling(Ray ray, float outlineThickness) const;
+    BoundingBox boundingBox() const;
     
 private:
     SDFGeometry() = delete;
