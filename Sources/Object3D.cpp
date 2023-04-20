@@ -270,10 +270,14 @@ Object3D::setOperation(SDFOperation op)
     _operation = op;
 }
 
-void
+bool
 Object3D::serializeHierarchy(SerializationContext& context) const
 {
-    selfSerialize(context);
+    const bool thisVisible = !isCulled(context.viewProjectionMatrix());
+    if (thisVisible)
+    {
+        selfSerialize(context);
+    }
     
     std::vector<Ptr> positiveChildren;
     std::vector<Ptr> negativeChildren;
@@ -298,18 +302,16 @@ Object3D::serializeHierarchy(SerializationContext& context) const
         }
     }
     
-    bool visible = false;
+    bool positiveChildVisible = false;
     for (const auto& child : positiveChildren)
     {
-        if (!child->isCulled(context.viewProjectionMatrix()))
+        if (child->serializeHierarchy(context))
         {
-            visible = true;
+            positiveChildVisible = true;
         }
-        
-        child->serializeHierarchy(context);
     }
     
-    if (visible)
+    if (positiveChildVisible)
     {
         for (const auto& child : negativeChildren)
         {
@@ -319,6 +321,8 @@ Object3D::serializeHierarchy(SerializationContext& context) const
             }
         }
     }
+    
+    return thisVisible;
 }
 
 void

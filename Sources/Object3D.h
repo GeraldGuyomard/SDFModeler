@@ -70,7 +70,9 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
-    void serializeHierarchy(SerializationContext&) const;
+    // return true if self has been serialized
+    bool serializeHierarchy(SerializationContext&) const;
+    
     virtual void selfSerialize(SerializationContext&) const;
     
     virtual bool isCulled(const float4x4& viewProjectionMatrix) const { return true; }
@@ -140,7 +142,10 @@ public:
     
     bool isCulled(const float4x4& viewProjectionMatrix) const override
     {
-        return false;
+        const auto worldViewProjMatrix = viewProjectionMatrix * worldTransform();
+        const auto box = _geometry.boundingBox();
+        
+        return box.isCulled(worldViewProjMatrix);
     }
     
     void selfSerialize(SerializationContext& context) const final override

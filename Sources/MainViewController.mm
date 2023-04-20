@@ -78,14 +78,14 @@ static __weak MainViewController* s_Instance = nil;
     _world = World::make();
     auto rootObject = _world->rootObject();
     
+    constexpr float kZ = 0;
+    
     auto white = _world->addMaterial(float4 { 1, 1, 1, 1 });
     auto whiteSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.6f });
     whiteSphere->setLocalTransform(RSTTransformer { float3 { 0, 1, -0.1f } } );
     whiteSphere->setMaterial(white);
     
     rootObject->addChild(whiteSphere);
-    
-    constexpr float kZ = 0;
     
     auto red = _world->addMaterial(float4 { 1, 0, 0, 1 });
     auto redSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.5f });

@@ -348,3 +348,10 @@ INLINE float2 pixelToNDC(float2 viewportSize, float2 p)
     return p;
 }
 
+INLINE bool isPointInFrustrum(float3 pt, float4x4 worldViewProjectionMatrix)
+{
+    // NDC in metal is x, y between [0, 1]
+    // and z between [0, 1]
+    const float4 p = worldViewProjectionMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
+    return (p.x >= -p.w) && (p.x <= p.w) && (p.y >= -p.w) && (p.y <= p.w) && (p.z >= 0) && (p.z <= p.w);
+}

@@ -36,6 +36,13 @@ public:
         return evaluateBoxCulling(halfSize(), ray, outlineThickness);
     }
     
+    BoundingBox boundingBox() const
+    {
+        const float3 halfSize = this->halfSize();
+        
+        return { -halfSize, halfSize };
+    }
+    
     float3 halfSize() const
     {
         return { radius(), height(), radius() };
