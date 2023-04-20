@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		74087D9029F0B1C000958CD7 /* BoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D8E29F0B1C000958CD7 /* BoundingBox.cpp */; };
 		74087D9129F0B1C000958CD7 /* BoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D8E29F0B1C000958CD7 /* BoundingBox.cpp */; };
+		74087D9429F0B85E00958CD7 /* SerializationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D9229F0B85E00958CD7 /* SerializationContext.cpp */; };
+		74087D9529F0B85E00958CD7 /* SerializationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D9229F0B85E00958CD7 /* SerializationContext.cpp */; };
 		7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
@@ -111,6 +113,8 @@
 /* Begin PBXFileReference section */
 		74087D8E29F0B1C000958CD7 /* BoundingBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BoundingBox.cpp; sourceTree = "<group>"; };
 		74087D8F29F0B1C000958CD7 /* BoundingBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BoundingBox.h; sourceTree = "<group>"; };
+		74087D9229F0B85E00958CD7 /* SerializationContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializationContext.cpp; sourceTree = "<group>"; };
+		74087D9329F0B85E00958CD7 /* SerializationContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SerializationContext.h; sourceTree = "<group>"; };
 		7431C49629DD116300DD4A74 /* Interaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interaction.h; sourceTree = "<group>"; };
 		7431C49729DD116300DD4A74 /* Interaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interaction.cpp; sourceTree = "<group>"; };
 		7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Object3DInteraction.mm; sourceTree = "<group>"; };
@@ -302,6 +306,8 @@
 				74DAA6D529AC439E00171C03 /* Results..cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
+				74087D9229F0B85E00958CD7 /* SerializationContext.cpp */,
+				74087D9329F0B85E00958CD7 /* SerializationContext.h */,
 				7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */,
 				7451041629C1538100F69BC4 /* SerializedWorldObject.h */,
 				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
@@ -571,6 +577,7 @@
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
+				74087D9429F0B85E00958CD7 /* SerializationContext.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
 				743252C129EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
 				74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */,
@@ -629,6 +636,7 @@
 				743252C229EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
 				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
+				74087D9529F0B85E00958CD7 /* SerializationContext.cpp in Sources */,
 				743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				74AAF29429D7BCD300D322DB /* SerializedWorldObject.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,

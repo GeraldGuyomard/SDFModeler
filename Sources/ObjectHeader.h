@@ -48,6 +48,12 @@ struct ObjectHeader final
         CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);
         return reinterpret_cast<CONSTANT ObjectHeader*>(ptr + header->byteSize);
     }
+    
+    static DEVICE ObjectHeader* next(DEVICE ObjectHeader* header)
+    {
+        DEVICE uint8_t* ptr = reinterpret_cast<DEVICE uint8_t*>(header);
+        return reinterpret_cast<DEVICE ObjectHeader*>(ptr + header->byteSize);
+    }
 };
 
 template <typename TPrimitive>

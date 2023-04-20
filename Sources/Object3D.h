@@ -16,6 +16,8 @@
 
 #include "Command.h"
 
+#include "SerializationContext.h"
+
 class Material3D final
 {
 public:
@@ -68,8 +70,8 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
-    void serialize(SerializedWorldObject&) const;
-    virtual size_t selfSerialize(uint8_t* ptr) const;
+    void serializeHierarchy(SerializationContext&) const;
+    virtual void selfSerialize(SerializationContext&) const;
     
     ObjectID id() const;
     void setId(ObjectID);
@@ -102,15 +104,11 @@ public:
     
     void setShouldChildrenShareId(bool should);
     
-protected:
-    
-    virtual void serializeHierarchy(SerializedWorldObject& serializedWorld, uint8_t*& ptr) const;
-
 private:
     
     void invalidateCachedWorldTransform();
     void _removeFromParent(bool invalidateWorldTransform);
-    
+
     const WorldWPtr _world;
     
     ObjectID _id = 0;
@@ -138,30 +136,32 @@ public:
     : _inherited(world), _geometry(geometry)
     {}
     
-    size_t selfSerialize(uint8_t* ptr) const final override
+    void selfSerialize(SerializationContext& context) const final override
     {
-        RSTTransformer transformer { worldTransform() };
-        
-        
-        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
-        
-        const bool selected = this->selected();
-        if (selected)
+        context.serializeObjectHeader([this](ObjectHeader* header)
         {
-            object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
-        }
-        
-        const auto materialId = materialID();
-        
-        return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
-                                            ptr,
-                                           object,
-                                           id(),
-                                            materialId,
-                                           object.objectType(),
-                                           transformer.transformerType(),
-                                            operation(),
-                                           selected);
+            RSTTransformer transformer { worldTransform() };
+            
+            SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
+            
+            const bool selected = this->selected();
+            if (selected)
+            {
+                object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
+            }
+            
+            const auto materialId = materialID();
+         
+            return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
+                                                header,
+                                               object,
+                                               id(),
+                                                materialId,
+                                               object.objectType(),
+                                               transformer.transformerType(),
+                                                operation(),
+                                               selected);
+        });
     }
     
 private:

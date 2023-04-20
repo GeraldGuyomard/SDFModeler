@@ -55,7 +55,7 @@ static void copy(ObjectHeader* header,
 
 
 template <typename TPrimitive>
-INLINE size_t serializeObject(uint8_t* p,
+INLINE size_t serializeObject(ObjectHeader* header,
                               const TPrimitive& primitive,
                               ObjectID id,
                               MaterialID materialId,
@@ -64,8 +64,7 @@ INLINE size_t serializeObject(uint8_t* p,
                               SDFOperation operation,
                               bool selected)
 {
-    ObjectHeader* h = (ObjectHeader*) p;
-    copy(h, primitive, id, materialId, objectType, transformerType, operation, selected);
+    copy(header, primitive, id, materialId, objectType, transformerType, operation, selected);
     
-    return h->byteSize;
+    return header->byteSize;
 }

@@ -5,6 +5,7 @@
 //
 
 #include "Object3D.h"
+#include "SerializationContext.h"
 
 Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
@@ -270,14 +271,9 @@ Object3D::setOperation(SDFOperation op)
 }
 
 void
-Object3D::serializeHierarchy(SerializedWorldObject& serializedWorld, uint8_t*& p) const
+Object3D::serializeHierarchy(SerializationContext& context) const
 {
-    const size_t size = selfSerialize(p);
-    if (size != 0)
-    {
-        p += size;
-        serializedWorld.objectCount++;
-    }
+    selfSerialize(context);
     
     std::vector<Ptr> positiveChildren;
     std::vector<Ptr> negativeChildren;
@@ -306,30 +302,19 @@ Object3D::serializeHierarchy(SerializedWorldObject& serializedWorld, uint8_t*& p
     {
         for (const auto& child : positiveChildren)
         {
-            child->serializeHierarchy(serializedWorld, p);
+            child->serializeHierarchy(context);
         }
         
         for (const auto& child : negativeChildren)
         {
-            child->serializeHierarchy(serializedWorld, p);
+            child->serializeHierarchy(context);
         }
     }
 }
 
 void
-Object3D::serialize(SerializedWorldObject& serializedWorld) const
+Object3D::selfSerialize(SerializationContext&) const
 {
-    serializedWorld.objectCount = 0;
-    
-    uint8_t* p = reinterpret_cast<uint8_t*>(&(serializedWorld.buffer));
-    
-    serializeHierarchy(serializedWorld, p);
-}
-
-size_t
-Object3D::selfSerialize(uint8_t* ptr) const
-{
-    return 0;
 }
 
 void
@@ -358,7 +343,8 @@ World::init()
 void
 World::serialize(SerializedWorldObject& serializedWorld, Materials& materials) const
 {
-    _rootObject->serialize(serializedWorld);
+    SerializationContext context { serializedWorld };
+    _rootObject->serializeHierarchy(context);
     
     materials.nbMaterials = _materials.size();
     
