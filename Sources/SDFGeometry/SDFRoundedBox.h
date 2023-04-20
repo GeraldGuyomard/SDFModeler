@@ -37,9 +37,10 @@ public:
     
     BoundingBox boundingBox() const
     {
-        const float3 halfSize = this->halfSize();
+        float3 h = halfSize();
+        h += _halfSizeAndRadius.www;
         
-        return { -halfSize, halfSize };
+        return { -h, h };
     }
     
     float3 halfSize() const { return _halfSizeAndRadius.xyz; }
