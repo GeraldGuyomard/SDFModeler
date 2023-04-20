@@ -298,16 +298,25 @@ Object3D::serializeHierarchy(SerializationContext& context) const
         }
     }
     
-    if (!positiveChildren.empty())
+    bool visible = false;
+    for (const auto& child : positiveChildren)
     {
-        for (const auto& child : positiveChildren)
+        if (!child->isCulled(context.viewProjectionMatrix()))
         {
-            child->serializeHierarchy(context);
+            visible = true;
         }
         
+        child->serializeHierarchy(context);
+    }
+    
+    if (visible)
+    {
         for (const auto& child : negativeChildren)
         {
-            child->serializeHierarchy(context);
+            if (!child->isCulled(context.viewProjectionMatrix()))
+            {
+                child->serializeHierarchy(context);
+            }
         }
     }
 }
@@ -341,9 +350,9 @@ World::init()
 }
 
 void
-World::serialize(SerializedWorldObject& serializedWorld, Materials& materials) const
+World::serialize(const float4x4& viewProjectionMatrix, SerializedWorldObject& serializedWorld, Materials& materials) const
 {
-    SerializationContext context { serializedWorld };
+    SerializationContext context { serializedWorld, viewProjectionMatrix };
     _rootObject->serializeHierarchy(context);
     
     materials.nbMaterials = _materials.size();

@@ -6,8 +6,8 @@
 
 #include "SerializationContext.h"
 
-SerializationContext::SerializationContext(SerializedWorldObject& serializedWorld)
-: _serializedWorld(serializedWorld)
+SerializationContext::SerializationContext(SerializedWorldObject& serializedWorld, const float4x4& viewProjectionMatrix)
+: _serializedWorld(serializedWorld), _viewProjectionMatrix(viewProjectionMatrix)
 {
     _serializedWorld.objectCount = 0;
     _availableObjectHeader = reinterpret_cast<ObjectHeader*>(&_serializedWorld.buffer[0]);

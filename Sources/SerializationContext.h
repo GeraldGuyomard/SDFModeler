@@ -13,12 +13,16 @@
 class SerializationContext final
 {
 public:
-    SerializationContext(SerializedWorldObject& serializedWorld);
+    SerializationContext(SerializedWorldObject& serializedWorld, const float4x4& viewProjectionMatrix);
+    
+    const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
     
     using SerializationHeaderCallback = std::function<size_t (ObjectHeader*)>;
     void serializeObjectHeader(const SerializationHeaderCallback&);
     
 private:
     SerializedWorldObject& _serializedWorld;
+    const float4x4 _viewProjectionMatrix;
+    
     ObjectHeader* _availableObjectHeader;
 };

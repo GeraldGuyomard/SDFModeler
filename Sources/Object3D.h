@@ -73,6 +73,8 @@ public:
     void serializeHierarchy(SerializationContext&) const;
     virtual void selfSerialize(SerializationContext&) const;
     
+    virtual bool isCulled(const float4x4& viewProjectionMatrix) const { return true; }
+    
     ObjectID id() const;
     void setId(ObjectID);
     
@@ -135,6 +137,11 @@ public:
     TObject3D(const WorldPtr& world, const TGeometry& geometry)
     : _inherited(world), _geometry(geometry)
     {}
+    
+    bool isCulled(const float4x4& viewProjectionMatrix) const override
+    {
+        return false;
+    }
     
     void selfSerialize(SerializationContext& context) const final override
     {
@@ -201,7 +208,7 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void serialize(SerializedWorldObject&, Materials& materials) const;
+    void serialize(const float4x4& viewProjectionMatrix, SerializedWorldObject&, Materials& materials) const;
     
     void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);

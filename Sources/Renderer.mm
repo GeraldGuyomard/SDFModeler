@@ -210,16 +210,21 @@ Renderer::updateUniforms()
     /// Update any game state before encoding renderint commands to our drawable
     auto& uniforms = _uniformsBuffer->uniform();
 
+    const auto cameraMatrix = _camera->worldTransform();
+    
     uniforms.invProjectionMatrix = _invProjectionMatrix;
-    uniforms.cameraMatrix = _camera->worldTransform();
-    uniforms.ndcToWorldTransform = uniforms.cameraMatrix * uniforms.invProjectionMatrix;
+    uniforms.ndcToWorldTransform = cameraMatrix * uniforms.invProjectionMatrix;
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
     auto& serializedWorld = _serializedWorldBuffer->uniform();
     auto& serializedMaterials = _materialsBuffer->uniform();
     
-    [MainViewController instance].world->serialize(serializedWorld, serializedMaterials);
+    
+    const auto viewMatrix = inverse(cameraMatrix);
+    const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
+    
+    [MainViewController instance].world->serialize(viewProjectionMatrix, serializedWorld, serializedMaterials);
 }
 
 void
