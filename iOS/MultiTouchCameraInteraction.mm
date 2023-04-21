@@ -13,14 +13,7 @@ MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& came
 : CameraInteraction(camera),
 _renderer(renderer),
 _initialCameraTransform(camera->worldTransform()),
-_orbitOrigin(OrbitCameraInteraction::computeOrbitOrigin(camera->worldTransform()))
-{}
-
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer, const float3& orbitOrigin)
-: CameraInteraction(camera),
-_renderer(renderer),
-_initialCameraTransform(camera->worldTransform()),
-_orbitOrigin(orbitOrigin)
+_orbitOrigin(camera->computeOrbitOrigin())
 {}
 
 void

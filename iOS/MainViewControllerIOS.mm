@@ -130,18 +130,7 @@ using HighResClock = std::chrono::high_resolution_clock;
         
         const auto selectedObject = self.world->selectedObject();
         
-        MultiTouchCameraInteraction::Ptr interaction;
-        auto object = self.world->rootObject()->objectByID(pickResult.objectID);
-        
-        if (selectedObject != nullptr)
-        {
-            const float3 origin = translation(selectedObject->worldTransform());
-            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer, origin);
-        }
-        else
-        {
-            interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
-        }
+        MultiTouchCameraInteraction::Ptr interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
 
         interaction->setOrbitSpeed(MultiTouchCameraInteraction::kDefaultOrbitSpeed * self.contentScale);
         [self setInteraction:interaction];
@@ -195,7 +184,15 @@ using HighResClock = std::chrono::high_resolution_clock;
 
 - (void)selectObjectAtPosition:(float2)pt
 {
-    self.world->setSelectedObject([self objectFromPosition:pt]);
+    auto object = [self objectFromPosition:pt];
+    self.world->setSelectedObject(object);
+    
+    if (object != nullptr)
+    {
+        const auto pos = translation(object->worldTransform());
+        self.renderer->camera()->setLookAtPosition(pos);
+    }
+    
     [self updateActionsButton];
 }
 

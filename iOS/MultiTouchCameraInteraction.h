@@ -20,7 +20,6 @@ public:
     
     static constexpr float kDefaultOrbitSpeed = 2e-3f;
     
-    MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer, const float3& orbitOrigin);
     MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer);
     ~MultiTouchCameraInteraction() override = default;
     
