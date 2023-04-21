@@ -187,10 +187,14 @@ using HighResClock = std::chrono::high_resolution_clock;
     auto object = [self objectFromPosition:pt];
     self.world->setSelectedObject(object);
     
+    auto camera = self.renderer->camera();
     if (object != nullptr)
     {
-        const auto pos = translation(object->worldTransform());
-        self.renderer->camera()->setLookAtPosition(pos);
+        camera->setLookAtPositionProvider(std::make_unique<LookAtObject3DProvider>(object));
+    }
+    else
+    {
+        camera->setLookAtPositionProvider(nullptr);
     }
     
     [self updateActionsButton];

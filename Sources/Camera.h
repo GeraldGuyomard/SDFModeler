@@ -9,6 +9,28 @@
 
 #include <memory>
 #include "CommonDefinitions.h"
+#include "Object3D.h"
+#include <optional>
+
+class LookAtPositionProvider
+{
+public:
+    using Ptr = std::unique_ptr<LookAtPositionProvider>;
+    virtual ~LookAtPositionProvider() = default;
+    
+    virtual std::optional<float3> position() const = 0;
+};
+
+class LookAtObject3DProvider : public LookAtPositionProvider
+{
+public:
+    LookAtObject3DProvider(const Object3D::Ptr& object);
+    
+    std::optional<float3> position() const override;
+    
+private:
+    Object3D::WPtr _object;
+};
 
 class Camera final
 {
@@ -20,12 +42,13 @@ public:
     const float4x4& worldTransform() const { return _worldTransform; }
     void setWorldTransform(const float4x4&);
     
-    float3 lookAtPosition() const { return _lookAtPosition; }
-    void setLookAtPosition(float3);
+    float3 lookAtPosition();
+    void setLookAtPositionProvider(LookAtPositionProvider::Ptr);
     
-    float3 computeOrbitOrigin() const;
+    float3 computeOrbitOrigin();
     
 private:
     float4x4 _worldTransform = float4x4_identity();
-    float3 _lookAtPosition = { 0 };
+    LookAtPositionProvider::Ptr _lookAtPositionProvider;
+    float3 _defaultLookAtPosition = float3 { 0.f };
 };

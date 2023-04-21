@@ -54,7 +54,7 @@
     if (auto object = world->rootObject()->objectByID(result.objectID))
     {
         world->setSelectedObject(object);
-        camera->setLookAtPosition(translation(object->worldTransform()));
+        camera->setLookAtPositionProvider(std::make_unique<LookAtObject3DProvider>(object));
         
         interaction = std::make_shared<DragObject3DInteraction>(world,
                                                                 object,

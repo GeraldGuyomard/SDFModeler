@@ -7,20 +7,54 @@
 
 #include "Camera.h"
 
+LookAtObject3DProvider::LookAtObject3DProvider(const Object3D::Ptr& object)
+: _object(object)
+{}
+
+std::optional<float3>
+LookAtObject3DProvider::position() const
+{
+    if (auto object = _object.lock())
+    {
+        return translation(object->worldTransform());
+    }
+    else
+    {
+        return {};
+    }
+}
+
 void
 Camera::setWorldTransform(const float4x4& t)
 {
     _worldTransform = t;
 }
 
-void
-Camera::setLookAtPosition(float3 lookAtPos)
+float3
+Camera::lookAtPosition()
 {
-    _lookAtPosition = lookAtPos;
+    std::optional<float3> pos;
+    if (_lookAtPositionProvider != nullptr)
+    {
+        pos = _lookAtPositionProvider->position();
+    }
+    
+    if (pos.has_value())
+    {
+        _defaultLookAtPosition = pos.value();
+    }
+    
+    return _defaultLookAtPosition;
+}
+
+void
+Camera::setLookAtPositionProvider(LookAtPositionProvider::Ptr provider)
+{
+    _lookAtPositionProvider = std::move(provider);
 }
 
 float3
-Camera::computeOrbitOrigin() const
+Camera::computeOrbitOrigin()
 {
     const auto cameraTransform = worldTransform();
     
