@@ -29,15 +29,14 @@ class OrbitCameraInteraction : public PanInteraction, public CameraInteraction
 public:
     static constexpr float kDefaultSpeed = 1e-3f;
     OrbitCameraInteraction(const Camera::Ptr&, const float2& initialPos, float speed = kDefaultSpeed);
-    OrbitCameraInteraction(const Camera::Ptr&, const float3& origin, const float2& initialPos, float speed = kDefaultSpeed);
     
     void pan(const float2& pos) override;
     
-    static float3 computeOrbitOrigin(const float4x4& cameraTransform);
+    static float3 computeOrbitOrigin(const Camera::Ptr& camera);
     
 private:
     const float4x4 _initialCameraTransform;
-    const float3 _orbitOrigin;
+    float3 _orbitOrigin;
     const float _speed;
 };
 
@@ -47,7 +46,6 @@ public:
     using Ptr = std::shared_ptr<DollyCameraInteraction>;
     
     DollyCameraInteraction(const Camera::Ptr& camera);
-    DollyCameraInteraction(const Camera::Ptr& camera, const Object3D::Ptr& target);
     
     void pinch(float delta) override;
     

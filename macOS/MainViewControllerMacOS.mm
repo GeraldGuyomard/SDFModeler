@@ -54,6 +54,7 @@
     if (auto object = world->rootObject()->objectByID(result.objectID))
     {
         world->setSelectedObject(object);
+        camera->setLookAtPosition(translation(object->worldTransform()));
         
         interaction = std::make_shared<DragObject3DInteraction>(world,
                                                                 object,
@@ -71,15 +72,7 @@
         }
         else
         {
-            if (auto selectedObject = world->selectedObject())
-            {
-                const float3 origin = translation(selectedObject->worldTransform());
-                interaction = std::make_shared<OrbitCameraInteraction>(camera, origin, initialPos);
-            }
-            else
-            {
-                interaction = std::make_shared<OrbitCameraInteraction>(camera, initialPos);
-            }
+            interaction = std::make_shared<OrbitCameraInteraction>(camera, initialPos);
         }
     }
     
@@ -108,17 +101,7 @@
     
     auto camera = self.renderer->camera();
     
-    DollyCameraInteraction::Ptr interaction;
-    
-    if (auto object = self.world->selectedObject())
-    {
-        interaction = std::make_unique<DollyCameraInteraction>(camera, object);
-    }
-    else
-    {
-        interaction = std::make_unique<DollyCameraInteraction>(camera);
-    }
-    
+    auto interaction = std::make_unique<DollyCameraInteraction>(camera);
     interaction->pinch(d);
     
     [self setInteraction:std::move(interaction)];

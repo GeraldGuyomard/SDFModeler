@@ -12,25 +12,14 @@ CameraInteraction::CameraInteraction(const Camera::Ptr& camera)
 {}
 
 
-float3
-OrbitCameraInteraction::computeOrbitOrigin(const float4x4& cameraTransform)
-{
-    const auto position = cameraTransform.columns[3].xyz;
-    const auto direction = simd_normalize(cameraTransform.columns[2].xyz);
-    
-    return position - (direction * 5.f);
-}
 
-
-OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float3& origin, const float2& initialPos, float speed)
-: PanInteraction(initialPos), CameraInteraction(camera),
-_initialCameraTransform(camera->worldTransform()),
-_orbitOrigin(origin),
-_speed(speed)
-{}
 
 OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
-: OrbitCameraInteraction(camera, computeOrbitOrigin(camera->worldTransform()), initialPos, speed)
+: PanInteraction(initialPos),
+CameraInteraction(camera),
+_initialCameraTransform(camera->worldTransform()),
+_orbitOrigin(camera->computeOrbitOrigin()),
+_speed(speed)
 {
 }
 
@@ -51,21 +40,6 @@ OrbitCameraInteraction::pan(const float2& pt)
     
     camera()->setWorldTransform(newTransform);
 }
-
-namespace
-{
-    float3 computeDirection(const Camera::Ptr& camera, const Object3D::Ptr& target)
-    {
-        const float3 cameraPos = translation(camera->worldTransform());
-        const float3 targetPos = translation(target->worldTransform());
-        
-        return normalize(cameraPos - targetPos);
-    }
-}
-
-DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera, const Object3D::Ptr& target)
-: CameraInteraction(camera), _direction(computeDirection(camera, target))
-{}
 
 DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera)
 : CameraInteraction(camera), _direction(forward(camera->worldTransform()))
