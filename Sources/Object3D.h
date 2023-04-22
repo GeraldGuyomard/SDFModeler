@@ -15,6 +15,7 @@
 #include <string>
 
 #include "Command.h"
+#include "BoundingBox.h"
 
 #include "SerializationContext.h"
 
@@ -103,6 +104,10 @@ public:
     virtual void addChild(const Ptr& child);
     void removeFromParent();
     
+    virtual BoundingBox localBoundingBox() const { return {}; }
+    BoundingBox worldBoundingBox() const;
+    BoundingBox worldBoundingBoxOfHierarchy() const;
+    
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
@@ -146,6 +151,11 @@ public:
         const auto box = _geometry.boundingBox();
         
         return box.isCulled(worldViewProjMatrix);
+    }
+    
+    BoundingBox localBoundingBox() const override
+    {
+        return _geometry.boundingBox();
     }
     
     void selfSerialize(SerializationContext& context) const final override

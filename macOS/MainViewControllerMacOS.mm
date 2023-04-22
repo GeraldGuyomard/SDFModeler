@@ -93,6 +93,27 @@
 - (void)mouseUp:(NSEvent *)event
 {
     [self setInteraction:nullptr];
+    
+    if (event.clickCount == 2)
+    {
+        // zoom in/out
+        const auto pos = [self position:event.locationInWindow];
+        const auto result = self.renderer->pick(pos);
+        
+        auto object = self.world->rootObject()->objectByID(result.objectID);
+        
+        if (object != nullptr)
+        {
+            // zoom in
+        }
+        else
+        {
+            // zoom out
+            const auto sceneBox = self.world->rootObject()->worldBoundingBoxOfHierarchy();
+            int a;
+            a = 1;
+        }
+    }
 }
 
 - (void)scrollWheel:(NSEvent*)event

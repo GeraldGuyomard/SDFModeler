@@ -251,6 +251,32 @@ Object3D::setWorldTransform(const float4x4& transform)
     }
 }
 
+BoundingBox
+Object3D::worldBoundingBox() const
+{
+    const auto localBox = localBoundingBox();
+    if (localBox.empty())
+    {
+        return {};
+    }
+    
+    return worldTransform() * localBox;
+}
+
+BoundingBox
+Object3D::worldBoundingBoxOfHierarchy() const
+{
+    auto box = worldBoundingBox();
+    
+    for (const auto& child : children())
+    {
+        const auto b = child->worldBoundingBoxOfHierarchy();
+        box.add(b);
+    }
+    
+    return box;
+}
+
 void
 Object3D::setLocalTransform(const float4x4& transform)
 {
