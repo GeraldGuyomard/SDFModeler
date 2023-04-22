@@ -105,6 +105,10 @@ public:
     void removeFromParent();
     
     virtual BoundingBox localBoundingBox() const { return {}; }
+    
+    BoundingBox boundingBoxInCoordinateFrame(const float4x4& coordinateFrame) const;
+    BoundingBox boundingBoxOfHierarchyInCoordinateFrame(const float4x4& coordinateFrame) const;
+    
     BoundingBox worldBoundingBox() const;
     BoundingBox worldBoundingBoxOfHierarchy() const;
     

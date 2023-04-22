@@ -252,7 +252,7 @@ Object3D::setWorldTransform(const float4x4& transform)
 }
 
 BoundingBox
-Object3D::worldBoundingBox() const
+Object3D::boundingBoxInCoordinateFrame(const float4x4& coordinateFrame) const
 {
     const auto localBox = localBoundingBox();
     if (localBox.empty())
@@ -260,21 +260,33 @@ Object3D::worldBoundingBox() const
         return {};
     }
     
-    return worldTransform() * localBox;
+    return coordinateFrame * localBox;
+}
+
+BoundingBox
+Object3D::boundingBoxOfHierarchyInCoordinateFrame(const float4x4& coordinateFrame) const
+{
+    auto box = boundingBoxInCoordinateFrame(coordinateFrame);
+    
+    for (const auto& child : children())
+    {
+        const auto b = child->boundingBoxInCoordinateFrame(coordinateFrame);
+        box.add(b);
+    }
+    
+    return box;
+}
+
+BoundingBox
+Object3D::worldBoundingBox() const
+{
+    return boundingBoxInCoordinateFrame(float4x4_identity());
 }
 
 BoundingBox
 Object3D::worldBoundingBoxOfHierarchy() const
 {
-    auto box = worldBoundingBox();
-    
-    for (const auto& child : children())
-    {
-        const auto b = child->worldBoundingBoxOfHierarchy();
-        box.add(b);
-    }
-    
-    return box;
+    return boundingBoxOfHierarchyInCoordinateFrame(float4x4_identity());
 }
 
 void
