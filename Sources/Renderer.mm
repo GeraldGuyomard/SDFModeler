@@ -308,9 +308,10 @@ Renderer::render()
 void
 Renderer::onRenderSizeChanged(const CGSize& size)
 {
-    float aspect = size.width / (float)size.height;
-    const float farZ = 40.f;
-    _projectionMatrix = matrix_perspective_right_hand(45.0f * (M_PI / 180.0f), aspect, 0.1f, farZ);
+    const float2 s { float(size.width), float(size.height) };
+    _camera->setViewportSize(s);
+    
+    _projectionMatrix = _camera->computeProjectionMatrix();
     _invProjectionMatrix = simd_inverse(_projectionMatrix);
 }
 

@@ -47,8 +47,17 @@ public:
     
     float3 computeOrbitOrigin();
     
+    void setViewportSize(const float2&);
+    float4x4 computeProjectionMatrix() const;
+    
 private:
     float4x4 _worldTransform = float4x4_identity();
     LookAtPositionProvider::Ptr _lookAtPositionProvider;
     float3 _defaultLookAtPosition = float3 { 0.f };
+    
+    // Intrinsics
+    float _fovyRadians = 45.0f * (M_PI / 180.0f);
+    float2 _viewportSize = { 1.f, 1.f };
+    float _nearZ = 0.1f;
+    float _farZ = 40.f;
 };

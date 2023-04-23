@@ -65,3 +65,16 @@ Camera::computeOrbitOrigin()
     const float proj = dot(direction, lookAtVector);
     return position + (direction * proj);
 }
+
+void
+Camera::setViewportSize(const float2& size)
+{
+    _viewportSize = size;
+}
+
+float4x4
+Camera::computeProjectionMatrix() const
+{
+    const float aspect = _viewportSize.x / _viewportSize.y;
+    return matrix_perspective_right_hand(_fovyRadians, aspect, _nearZ, _farZ);
+}
