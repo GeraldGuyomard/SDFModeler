@@ -174,11 +174,10 @@ MultiTouchCameraInteraction::updateCameraTransform()
             
             const float3 pos = translation(newTransform);
             const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
-            float speed = expf(-0.9f * distanceToOrbitOrigin);
-            speed = clamp(speed, 0.01f, 0.05f);
-            
+            const float distanceDampening = expf(distanceToOrbitOrigin * 0.1f);
+           
             //_dollyFactor = (1.f - (currentLength / initialLength)) * speed;
-            _dollyFactor = (initialLength - currentLength) * speed;
+            _dollyFactor = (initialLength - currentLength) * 0.01f * distanceDampening;
         }
         
         // pan
