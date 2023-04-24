@@ -30,6 +30,10 @@
 		7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
 		7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
 		7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
+		748629C229F62C6C002407AA /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C029F62C6C002407AA /* Animation.cpp */; };
+		748629C329F62C6C002407AA /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C029F62C6C002407AA /* Animation.cpp */; };
+		748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */; };
+		748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */; };
 		74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
 		74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
 		74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
@@ -140,6 +144,10 @@
 		7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RemoveObjectCommand.h; sourceTree = "<group>"; };
 		7456FCA729EA284C00398E86 /* AddObjectCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddObjectCommand.h; sourceTree = "<group>"; };
 		7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AddObjectCommand.cpp; sourceTree = "<group>"; };
+		748629C029F62C6C002407AA /* Animation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Animation.cpp; sourceTree = "<group>"; };
+		748629C129F62C6C002407AA /* Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animation.h; sourceTree = "<group>"; };
+		748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MoveCameraAnimation.cpp; sourceTree = "<group>"; };
+		748629C529F62F5B002407AA /* MoveCameraAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MoveCameraAnimation.h; sourceTree = "<group>"; };
 		74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeadersArray.cpp; sourceTree = "<group>"; };
 		74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeadersArray.h; sourceTree = "<group>"; };
 		74897E9D29EF8D5A007A5CFE /* SDFTorus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFTorus.h; sourceTree = "<group>"; };
@@ -326,8 +334,12 @@
 				74A18A9329D8B7990010F1B4 /* Camera.h */,
 				7431C49729DD116300DD4A74 /* Interaction.cpp */,
 				7431C49629DD116300DD4A74 /* Interaction.h */,
+				748629C029F62C6C002407AA /* Animation.cpp */,
+				748629C129F62C6C002407AA /* Animation.h */,
 				74A18A9629D903050010F1B4 /* CameraInteraction.cpp */,
 				74A18A9729D903050010F1B4 /* CameraInteraction.h */,
+				748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */,
+				748629C529F62F5B002407AA /* MoveCameraAnimation.h */,
 				7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */,
 				7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */,
 			);
@@ -567,12 +579,14 @@
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
 				7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
+				748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74087D9029F0B1C000958CD7 /* BoundingBox.cpp in Sources */,
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.m in Sources */,
+				748629C229F62C6C002407AA /* Animation.cpp in Sources */,
 				743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
@@ -628,6 +642,7 @@
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
 				74897EA429EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
+				748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */,
@@ -650,6 +665,7 @@
 				74AAF28729D7BCB100D322DB /* SDFBox.cpp in Sources */,
 				74A18A9929D903050010F1B4 /* CameraInteraction.cpp in Sources */,
 				74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */,
+				748629C329F62C6C002407AA /* Animation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

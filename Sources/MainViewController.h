@@ -11,8 +11,10 @@
 #import "Renderer.h"
 #import "Object3D.h"
 #import "Interaction.h"
+#import "Animation.h"
 
-// Our macOS view controller.
+using HighResClock = std::chrono::high_resolution_clock;
+
 @interface MainViewController : ViewControllerBase
 
 +(MainViewController*)instance;
@@ -28,5 +30,11 @@
 - (IBAction)redo:(id)source;
 
 - (void)frameAtPosition:(float2)pos;
+
+- (void)addAnimation:(Animation::Ptr)animation;
+- (void)removeAnimation:(Animation::Ptr)animation;
+
+- (Animation::Ptr) cameraAnimation;
+- (void)setCameraAnimation:(Animation::Ptr)animation;
 
 @end

@@ -113,6 +113,11 @@
         return smoothstep(float2 { e0, e0 }, float2 { e1, e1 }, in);
     }
 
+    inline float3 mix(float3 a, float3 b, float c)
+    {
+        return mix(a, b, float3 {c, c, c});
+    }
+
     inline float4 mix(float4 a, float4 b, float c)
     {
         return mix(a, b, float4 {c, c, c, c});

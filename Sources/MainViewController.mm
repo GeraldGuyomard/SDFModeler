@@ -13,6 +13,8 @@
 #include "RenderFunctions.h"
 #include <chrono>
 
+#include "MoveCameraAnimation.h"
+
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
 TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.5f, 0.5} } };
@@ -20,10 +22,21 @@ TObject3DFactoryRegistration s_RoundedBoxRegistration {"Rounded Box", SDFRounded
 TObject3DFactoryRegistration s_TorusRegistration {"Torus", SDFTorus { 0.5f, 0.25f } };
 TObject3DFactoryRegistration s_CylinderRegistration {"Cylinder", SDFCylinder { 0.3f, 0.7f } };
 
-using HighResClock = std::chrono::high_resolution_clock;
 
 @interface MainViewController()
 @end
+
+struct AnimationEntry final
+{
+    bool started = false;
+    Animation::Ptr animation;
+    
+    AnimationEntry() = default;
+    
+    AnimationEntry(const Animation::Ptr& anim)
+    : animation(anim)
+    {}
+};
 
 @implementation MainViewController
 {
@@ -35,7 +48,10 @@ using HighResClock = std::chrono::high_resolution_clock;
     
     Interaction::Ptr _interaction;
     
-    HighResClock::time_point _lastRenderTime;
+    HighResClock::time_point _baseTime;
+    std::vector<AnimationEntry> _animationEntries;
+    
+    Animation::Ptr _cameraAnimation;
 }
 
 static __weak MainViewController* s_Instance = nil;
@@ -60,6 +76,8 @@ static __weak MainViewController* s_Instance = nil;
         }
         
         _interaction = interaction;
+        
+        [self setCameraAnimation:nullptr];
     }
 }
 
@@ -184,7 +202,7 @@ static __weak MainViewController* s_Instance = nil;
 
     _renderer = std::make_unique<Renderer>(_view);
     
-    _lastRenderTime = HighResClock::now();
+    _baseTime = HighResClock::now();
     
     __weak auto wSelf = self;
     self.renderer->setRenderCallback([wSelf](auto& renderer)
@@ -192,8 +210,11 @@ static __weak MainViewController* s_Instance = nil;
         if (auto self = wSelf)
         {
             auto now = HighResClock::now();
-            const auto dT = now - _lastRenderTime;
-            _lastRenderTime = now;
+            const auto dT = now - _baseTime;
+            
+            const float t = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count() / 1000.f;
+            
+            [self update:t];
         }
     });
 }
@@ -223,10 +244,79 @@ static __weak MainViewController* s_Instance = nil;
     auto camera = self.renderer->camera();
     const auto cameraPos = camera->computeFramePosition(object);
     
-    auto worldTransform = camera->worldTransform();
+    auto animation = std::make_shared<MoveCameraAnimation>(camera, 0.25f, cameraPos);
+    [self setCameraAnimation:animation];
+    
+    /*auto worldTransform = camera->worldTransform();
     setTranslation(worldTransform, cameraPos);
     
-    camera->setWorldTransform(worldTransform);
+    camera->setWorldTransform(worldTransform);*/
+}
+
+- (void)addAnimation:(Animation::Ptr)animation
+{
+    _animationEntries.push_back({animation});
+}
+
+- (void)removeAnimation:(Animation::Ptr)animation
+{
+    for (auto it = _animationEntries.begin(); it != _animationEntries.end(); ++it)
+    {
+        if ((*it).animation == animation)
+        {
+            _animationEntries.erase(it);
+            break;
+        }
+    }
+}
+
+- (void)update:(float)t
+{
+    for (auto it = _animationEntries.begin(); it != _animationEntries.end();)
+    {
+        auto& entry = *it;
+        if (entry.animation->isFinished())
+        {
+            it = _animationEntries.erase(it);
+        }
+        else
+        {
+            if (!entry.started)
+            {
+                entry.started = true;
+                entry.animation->start(t);
+            }
+            else
+            {
+                entry.animation->update(t);
+            }
+            
+            ++it;
+        }
+    }
+}
+
+- (Animation::Ptr) cameraAnimation
+{
+    return _cameraAnimation;
+}
+
+- (void)setCameraAnimation:(Animation::Ptr)animation
+{
+    if (animation != _cameraAnimation)
+    {
+        if (_cameraAnimation != nullptr)
+        {
+            [self removeAnimation:_cameraAnimation];
+        }
+        
+        _cameraAnimation = animation;
+        
+        if (_cameraAnimation != nullptr)
+        {
+            [self addAnimation:_cameraAnimation];
+        }
+    }
 }
 
 @end
