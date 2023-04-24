@@ -102,17 +102,18 @@
         
         auto object = self.world->rootObject()->objectByID(result.objectID);
         
-        if (object != nullptr)
+        if (object == nullptr)
         {
-            // zoom in
+            object = self.world->rootObject();
         }
-        else
-        {
-            // zoom out
-            const auto sceneBox = self.world->rootObject()->worldBoundingBoxOfHierarchy();
-            int a;
-            a = 1;
-        }
+        
+        auto camera = self.renderer->camera();
+        const auto cameraPos = camera->computeFramePosition(object);
+        
+        auto worldTransform = camera->worldTransform();
+        setTranslation(worldTransform, cameraPos);
+        
+        camera->setWorldTransform(worldTransform);
     }
 }
 

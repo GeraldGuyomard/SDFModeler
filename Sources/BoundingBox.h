@@ -40,6 +40,11 @@ public:
         maxPoint = max(maxPoint, other.maxPoint);
     }
     
+    float3 center() const
+    {
+        return (minPoint + maxPoint) * 0.5f;
+    }
+    
     void points(float3 pts[8]) const
     {
         // Rear

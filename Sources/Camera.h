@@ -42,6 +42,12 @@ public:
     const float4x4& worldTransform() const { return _worldTransform; }
     void setWorldTransform(const float4x4&);
     
+    float fovyRadians() const { return _fovyRadians; }
+    float fovxRadians() const;
+    float2 fovRadians() const { return { fovxRadians(), fovyRadians() }; }
+    
+    float aspectRatio() const;
+    
     float3 lookAtPosition();
     void setLookAtPositionProvider(LookAtPositionProvider::Ptr);
     
@@ -49,6 +55,8 @@ public:
     
     void setViewportSize(const float2&);
     float4x4 computeProjectionMatrix() const;
+    
+    float3 computeFramePosition(const Object3D::Ptr& object) const;
     
 private:
     float4x4 _worldTransform = float4x4_identity();

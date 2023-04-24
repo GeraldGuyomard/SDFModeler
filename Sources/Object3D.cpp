@@ -260,7 +260,8 @@ Object3D::boundingBoxInCoordinateFrame(const float4x4& coordinateFrame) const
         return {};
     }
     
-    return coordinateFrame * localBox;
+    const auto m = coordinateFrame * worldTransform();
+    return m * localBox;
 }
 
 BoundingBox
@@ -270,7 +271,7 @@ Object3D::boundingBoxOfHierarchyInCoordinateFrame(const float4x4& coordinateFram
     
     for (const auto& child : children())
     {
-        const auto b = child->boundingBoxInCoordinateFrame(coordinateFrame);
+        const auto b = child->boundingBoxOfHierarchyInCoordinateFrame(coordinateFrame);
         box.add(b);
     }
     
