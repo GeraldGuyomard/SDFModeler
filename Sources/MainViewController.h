@@ -27,4 +27,6 @@
 - (IBAction)undo:(id)source;
 - (IBAction)redo:(id)source;
 
+- (void)frameAtPosition:(float2)pos;
+
 @end

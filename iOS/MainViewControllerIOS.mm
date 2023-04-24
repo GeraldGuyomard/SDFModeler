@@ -6,7 +6,7 @@
 //
 
 #include "MainViewControllerIOS.h"
-#include <chrono>
+
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
 #include "MultiTouchCameraInteraction.h"
@@ -15,16 +15,13 @@
 #include "RemoveObjectCommand.h"
 #include "ToggleObjectOperationCommand.h"
 
-using HighResClock = std::chrono::high_resolution_clock;
-
 @interface MainViewControllerIOS()<UIGestureRecognizerDelegate>
 @end
 
 @implementation MainViewControllerIOS
 {
-    HighResClock::time_point _lastRenderTime;
-    
     UITapGestureRecognizer* _singleTapRecognizer;
+    UITapGestureRecognizer* _doubleTapRecognizer;
     
     UIPanGestureRecognizer* _dragObjectRecognizer;
     UITapGestureRecognizer* _undoRecognizer;
@@ -50,6 +47,10 @@ using HighResClock = std::chrono::high_resolution_clock;
     _singleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTap:)];
     _singleTapRecognizer.numberOfTapsRequired = 1;
     _singleTapRecognizer.numberOfTouchesRequired = 1;
+
+    _doubleTapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onDoubleTap:)];
+    _doubleTapRecognizer.numberOfTapsRequired = 2;
+    _doubleTapRecognizer.numberOfTouchesRequired = 1;
     
     _dragObjectRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onDragObject:)];
     _dragObjectRecognizer.minimumNumberOfTouches = 1;
@@ -63,28 +64,16 @@ using HighResClock = std::chrono::high_resolution_clock;
     _redoRecognizer.numberOfTapsRequired = 1;
     _redoRecognizer.numberOfTouchesRequired = 3;
     
-    self.view.gestureRecognizers = @[_singleTapRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
+    self.view.gestureRecognizers = @[_singleTapRecognizer, _doubleTapRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
     
     for (UIGestureRecognizer* recognizer in self.view.gestureRecognizers)
     {
         recognizer.delegate = self;
     }
     
-    _lastRenderTime = HighResClock::now();
-    
-    __weak auto wSelf = self;
-    self.renderer->setRenderCallback([wSelf](auto& renderer)
-    {
-        if (auto self = wSelf)
-        {
-            auto now = HighResClock::now();
-            const auto dT = now - _lastRenderTime;
-            _lastRenderTime = now;
-        }
-    });
-    
     [self updateUndoRedoButtons];
     
+    __weak auto wSelf = self;
     self.world->commandHistory().setStateUpdateCallback([wSelf](const auto& history)
     {
         if (auto self = wSelf)
@@ -206,6 +195,15 @@ using HighResClock = std::chrono::high_resolution_clock;
     {
         const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
         [self selectObjectAtPosition:p];
+    }
+}
+
+- (void)onDoubleTap:(UITapGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+        [self frameAtPosition:p];
     }
 }
 

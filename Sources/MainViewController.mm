@@ -11,6 +11,7 @@
 #import <MetalKit/MetalKit.h>
 
 #include "RenderFunctions.h"
+#include <chrono>
 
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
@@ -18,6 +19,8 @@ TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.
 TObject3DFactoryRegistration s_RoundedBoxRegistration {"Rounded Box", SDFRoundedBox { float3 {0.5f, 0.5f, 0.5}, 0.1f } };
 TObject3DFactoryRegistration s_TorusRegistration {"Torus", SDFTorus { 0.5f, 0.25f } };
 TObject3DFactoryRegistration s_CylinderRegistration {"Cylinder", SDFCylinder { 0.3f, 0.7f } };
+
+using HighResClock = std::chrono::high_resolution_clock;
 
 @interface MainViewController()
 @end
@@ -31,6 +34,8 @@ TObject3DFactoryRegistration s_CylinderRegistration {"Cylinder", SDFCylinder { 0
     WorldPtr _world;
     
     Interaction::Ptr _interaction;
+    
+    HighResClock::time_point _lastRenderTime;
 }
 
 static __weak MainViewController* s_Instance = nil;
@@ -178,6 +183,19 @@ static __weak MainViewController* s_Instance = nil;
     }
 
     _renderer = std::make_unique<Renderer>(_view);
+    
+    _lastRenderTime = HighResClock::now();
+    
+    __weak auto wSelf = self;
+    self.renderer->setRenderCallback([wSelf](auto& renderer)
+    {
+        if (auto self = wSelf)
+        {
+            auto now = HighResClock::now();
+            const auto dT = now - _lastRenderTime;
+            _lastRenderTime = now;
+        }
+    });
 }
 
 - (IBAction)undo:(id)source
@@ -188,6 +206,27 @@ static __weak MainViewController* s_Instance = nil;
 - (IBAction)redo:(id)source
 {
     self.world->commandHistory().redo();
+}
+
+- (void)frameAtPosition:(float2)pos
+{
+    // zoom in/out
+    const auto result = self.renderer->pick(pos);
+    
+    auto object = self.world->rootObject()->objectByID(result.objectID);
+    
+    if (object == nullptr)
+    {
+        object = self.world->rootObject();
+    }
+    
+    auto camera = self.renderer->camera();
+    const auto cameraPos = camera->computeFramePosition(object);
+    
+    auto worldTransform = camera->worldTransform();
+    setTranslation(worldTransform, cameraPos);
+    
+    camera->setWorldTransform(worldTransform);
 }
 
 @end

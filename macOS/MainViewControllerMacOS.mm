@@ -96,24 +96,8 @@
     
     if (event.clickCount == 2)
     {
-        // zoom in/out
         const auto pos = [self position:event.locationInWindow];
-        const auto result = self.renderer->pick(pos);
-        
-        auto object = self.world->rootObject()->objectByID(result.objectID);
-        
-        if (object == nullptr)
-        {
-            object = self.world->rootObject();
-        }
-        
-        auto camera = self.renderer->camera();
-        const auto cameraPos = camera->computeFramePosition(object);
-        
-        auto worldTransform = camera->worldTransform();
-        setTranslation(worldTransform, cameraPos);
-        
-        camera->setWorldTransform(worldTransform);
+        [self frameAtPosition:pos];
     }
 }
 
