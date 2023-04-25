@@ -10,6 +10,8 @@
 #include "CameraInteraction.h"
 #import <UIKit/UIKit.h>
 #include <vector>
+#include <chrono>
+#include "Animation.h"
 
 class Renderer;
 
@@ -39,6 +41,8 @@ public:
     void touchesMoved(NSSet<UITouch*>* touches);
     void touchesEnded(NSSet<UITouch*>* touches);
     
+    Animation::Ptr makeOrbitDecelerationAnimation() const;
+    
 private:
     
     void updateCameraTransform();
@@ -59,6 +63,7 @@ private:
         bool dragging() const;
         float2 dragVector() const;
         
+        float2 previousLocation() const;
         float2 currentLocation() const;
         float2 initialLocation() const { return _initialLocation; }
         
@@ -74,7 +79,11 @@ private:
     State _state = State::idle;
     float _orbitSpeed = kDefaultOrbitSpeed;
     
+    using OrbitClock = std::chrono::system_clock;
+    std::chrono::time_point<OrbitClock> _lastOrbitTime;
     float2 _orbitAngles = { 0 };
+    float2 _lastOrbitDrag = { 0 };
+    
     float _dollyFactor = 0.f;
     float2 _panTranslation = { 0 };
 };

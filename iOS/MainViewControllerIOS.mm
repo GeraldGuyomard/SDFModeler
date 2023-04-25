@@ -110,13 +110,6 @@
     if (interaction == nullptr)
     {
         auto camera = self.renderer->camera();
-        
-        UITouch* touch = [touches anyObject];
-        
-        const float2 p = [self convertPointToPixel:[touch locationInView:self.view]];
-        
-        const auto pickResult = self.renderer->pick(p);
-        
         const auto selectedObject = self.world->selectedObject();
         
         MultiTouchCameraInteraction::Ptr interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
@@ -146,21 +139,17 @@
         cameraInteraction->touchesEnded(touches);
         if (cameraInteraction->state() == MultiTouchCameraInteraction::State::done)
         {
+            auto anim = cameraInteraction->makeOrbitDecelerationAnimation();
             [self setInteraction:nil];
+            
+            [self setCameraAnimation:anim];
         }
     }
 }
 
 - (void)touchesCancelled:(NSSet<UITouch *> *)touches withEvent:(nullable UIEvent *)event
 {
-    if (auto cameraInteraction = std::dynamic_pointer_cast<MultiTouchCameraInteraction>(self.interaction))
-    {
-        cameraInteraction->touchesEnded(touches);
-        if (cameraInteraction->state() == MultiTouchCameraInteraction::State::done)
-        {
-            [self setInteraction:nil];
-        }
-    }
+    [self touchesEnded:touches withEvent:event];
 }
 
 - (Object3D::Ptr)objectFromPosition:(float2)pt

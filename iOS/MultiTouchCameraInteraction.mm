@@ -22,6 +22,13 @@ MultiTouchCameraInteraction::setOrbitSpeed(float orbitSpeed)
     _orbitSpeed = orbitSpeed;
 }
 
+float2 previousTouchLocation(UITouch* touch)
+{
+    const CGPoint loc = [touch previousLocationInView:nil];
+    
+    return float2 { float(loc.x), float(loc.y) };
+}
+
 float2 touchLocation(UITouch* touch)
 {
     const CGPoint loc = [touch locationInView:nil];
@@ -37,6 +44,12 @@ void
 MultiTouchCameraInteraction::TrackedTouch::resetInitialLocation()
 {
     _initialLocation = touchLocation(_touch);
+}
+
+float2
+MultiTouchCameraInteraction::TrackedTouch::previousLocation() const
+{
+    return previousTouchLocation(_touch);
 }
 
 float2
@@ -134,7 +147,11 @@ void
 MultiTouchCameraInteraction::reset()
 {
     _initialCameraTransform = camera()->worldTransform();
+    
     _orbitAngles = { 0 };
+    _lastOrbitTime = OrbitClock::now();
+    _lastOrbitDrag = { 0 };
+    
     _dollyFactor = 0.f;
     _panTranslation = { 0 };
     
@@ -144,6 +161,22 @@ MultiTouchCameraInteraction::reset()
     }
 }
 
+namespace
+{
+
+float4x4 computeTransformAfterOrbit(float2 orbitAngles, float3 orbitOrigin, const float4x4& initialCameraTransform)
+{
+    const auto yaw = matrix4x4_rotation(-orbitAngles.x, float3 { 0, 1, 0 }, orbitOrigin);
+    
+    // pitch on new right axis
+    const auto transformAfterYaw = yaw * initialCameraTransform;
+    const float3 pitchAxis = right(transformAfterYaw);
+    const auto pitch = matrix4x4_rotation(-orbitAngles.y, pitchAxis, orbitOrigin);
+    
+    return pitch * transformAfterYaw;
+}
+
+}
 void
 MultiTouchCameraInteraction::updateCameraTransform()
 {
@@ -191,21 +224,18 @@ MultiTouchCameraInteraction::updateCameraTransform()
     }
     else
     {
+        _lastOrbitTime = OrbitClock::now();
+        
+        const auto previousLocation0 = touch0.previousLocation();
+        _lastOrbitDrag = (currentLocation0 - previousLocation0);
+        
         _orbitAngles = touch0.dragVector();
         _orbitAngles *= _orbitSpeed;
     }
     
     // orbit
     {
-        // yaw
-        const auto yaw = matrix4x4_rotation(-_orbitAngles.x, float3 { 0, 1, 0 }, _orbitOrigin);
-        
-        // pitch on new right axis
-        const auto transformAfterYaw = yaw * _initialCameraTransform;
-        const float3 pitchAxis = right(transformAfterYaw);
-        const auto pitch = matrix4x4_rotation(-_orbitAngles.y, pitchAxis, _orbitOrigin);
-        
-        newTransform = pitch * transformAfterYaw;
+        newTransform = computeTransformAfterOrbit(_orbitAngles, _orbitOrigin, _initialCameraTransform);
     }
     
     // dolly
@@ -234,4 +264,67 @@ MultiTouchCameraInteraction::updateCameraTransform()
     }
     
     camera()->setWorldTransform(newTransform);
+}
+
+class OrbitDecelerationAnimation final : public Animation
+{
+public:
+    
+    OrbitDecelerationAnimation(const Camera::Ptr& camera, float3 orbitOrigin, float2 orbitVelocity)
+    : _camera(camera),
+    _orbitOrigin(orbitOrigin),
+    _orbitVelocity(orbitVelocity)
+    {}
+    
+    bool isFinished() const override
+    {
+        return _dampening < 1e-2f;
+    }
+    
+    void start(float t) override
+    {
+        _startT = t;
+    }
+    
+    void update(float t) override
+    {
+        const float dT = t - _startT;
+        _dampening = expf(-dT * 2.f);
+        
+        const float2 orbitAngles = _orbitVelocity * _dampening;
+        
+        const auto currentTransform = _camera->worldTransform();
+        const auto newTransform = computeTransformAfterOrbit(orbitAngles, _orbitOrigin, currentTransform);
+        _camera->setWorldTransform(newTransform);
+    }
+    
+private:
+    const Camera::Ptr _camera;
+    const float2 _orbitVelocity;
+    const float3 _orbitOrigin;
+    
+    float _startT = 0.f;
+    float _dampening = 1.f;
+};
+
+Animation::Ptr
+MultiTouchCameraInteraction::makeOrbitDecelerationAnimation() const
+{
+    const auto now = OrbitClock::now();
+    auto dT = std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastOrbitTime).count() / 1000.f;
+    dT = max(dT, 1.f / 60.f);
+    
+    const float2 velocity = _lastOrbitDrag / dT;
+    const float v = length(velocity);
+    
+    if (v <= 30.f)
+    {
+        return nullptr;
+    }
+    
+    float2 orbitAngles = normalize(_orbitAngles) * v;
+    orbitAngles.x *= 1e-4f;
+    orbitAngles.y *= 0.5e-4f;
+    
+    return std::make_shared<OrbitDecelerationAnimation>(camera(), _orbitOrigin, orbitAngles);
 }
