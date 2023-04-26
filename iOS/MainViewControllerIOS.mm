@@ -22,6 +22,7 @@
 {
     UITapGestureRecognizer* _singleTapRecognizer;
     UITapGestureRecognizer* _doubleTapRecognizer;
+    UILongPressGestureRecognizer* _longPressRecognizer;
     
     UIPanGestureRecognizer* _dragObjectRecognizer;
     UITapGestureRecognizer* _undoRecognizer;
@@ -52,6 +53,8 @@
     _doubleTapRecognizer.numberOfTapsRequired = 2;
     _doubleTapRecognizer.numberOfTouchesRequired = 1;
     
+    _longPressRecognizer = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(onLongPress:)];
+    
     _dragObjectRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(onDragObject:)];
     _dragObjectRecognizer.minimumNumberOfTouches = 1;
     _dragObjectRecognizer.maximumNumberOfTouches = 1;
@@ -64,7 +67,7 @@
     _redoRecognizer.numberOfTapsRequired = 1;
     _redoRecognizer.numberOfTouchesRequired = 3;
     
-    self.view.gestureRecognizers = @[_singleTapRecognizer, _doubleTapRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
+    self.view.gestureRecognizers = @[_singleTapRecognizer, _doubleTapRecognizer, _longPressRecognizer, _dragObjectRecognizer, _undoRecognizer, _redoRecognizer];
     
     for (UIGestureRecognizer* recognizer in self.view.gestureRecognizers)
     {
@@ -174,6 +177,15 @@
 - (void)onTap:(UITapGestureRecognizer*)recognizer
 {
     if (recognizer.state == UIGestureRecognizerStateEnded)
+    {
+        const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
+        [self selectObjectAtPosition:p];
+    }
+}
+
+- (void)onLongPress:(UILongPressGestureRecognizer*)recognizer
+{
+    if (recognizer.state == UIGestureRecognizerStateBegan)
     {
         const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
         [self selectObjectAtPosition:p];
