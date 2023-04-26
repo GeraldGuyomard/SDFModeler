@@ -87,6 +87,8 @@
     
     self.selectionActionsButton.showsMenuAsPrimaryAction = YES;
     [self updateActionsButton];
+    
+    self.propertiesView.hidden = YES;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
@@ -429,6 +431,11 @@ namespace
     self.selectionActionsButton.menu = menu;
     
     [self.selectionActionsButton sizeToFit];
+}
+
+- (IBAction)toggleSettingsPanel
+{
+    self.propertiesView.hidden = !self.propertiesView.hidden;
 }
 
 @end
