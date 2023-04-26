@@ -188,7 +188,16 @@
     if (recognizer.state == UIGestureRecognizerStateBegan)
     {
         const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-        [self selectObjectAtPosition:p];
+        
+        if (auto object = [self objectFromPosition:p])
+        {
+            self.world->setSelectedObject(object);
+            
+            auto camera = self.renderer->camera();
+            camera->setLookAtPositionProvider(object);
+        }
+        
+        [self updateActionsButton];
     }
 }
 
