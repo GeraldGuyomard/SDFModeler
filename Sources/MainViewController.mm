@@ -217,6 +217,11 @@ static __weak MainViewController* s_Instance = nil;
             [self update:t];
         }
     });
+    
+    auto root = self.world->rootObject();
+    auto camera = self.renderer->camera();
+    const auto transform = camera->computeFrameTransform(root);
+    camera->setWorldTransform(transform);
 }
 
 - (IBAction)undo:(id)source
@@ -242,15 +247,12 @@ static __weak MainViewController* s_Instance = nil;
     }
     
     auto camera = self.renderer->camera();
+    camera->setLookAtPositionProvider(object);
+    
     const auto cameraPos = camera->computeFramePosition(object);
     
     auto animation = std::make_shared<MoveCameraAnimation>(camera, 0.25f, cameraPos);
     [self setCameraAnimation:animation];
-    
-    /*auto worldTransform = camera->worldTransform();
-    setTranslation(worldTransform, cameraPos);
-    
-    camera->setWorldTransform(worldTransform);*/
 }
 
 - (void)addAnimation:(Animation::Ptr)animation

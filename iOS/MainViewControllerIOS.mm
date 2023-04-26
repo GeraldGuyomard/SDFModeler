@@ -166,14 +166,7 @@
     self.world->setSelectedObject(object);
     
     auto camera = self.renderer->camera();
-    if (object != nullptr)
-    {
-        camera->setLookAtPositionProvider(std::make_unique<LookAtObject3DProvider>(object));
-    }
-    else
-    {
-        camera->setLookAtPositionProvider(nullptr);
-    }
+    camera->setLookAtPositionProvider(object);
     
     [self updateActionsButton];
 }

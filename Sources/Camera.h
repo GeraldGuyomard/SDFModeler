@@ -50,6 +50,7 @@ public:
     
     float3 lookAtPosition();
     void setLookAtPositionProvider(LookAtPositionProvider::Ptr);
+    void setLookAtPositionProvider(const Object3D::Ptr&);
     
     float3 computeOrbitOrigin();
     
@@ -57,6 +58,7 @@ public:
     float4x4 computeProjectionMatrix() const;
     
     float3 computeFramePosition(const Object3D::Ptr& object) const;
+    float4x4 computeFrameTransform(const Object3D::Ptr& object) const;
     
 private:
     float4x4 _worldTransform = float4x4_identity();

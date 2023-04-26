@@ -58,16 +58,11 @@ MultiTouchCameraInteraction::TrackedTouch::currentLocation() const
     return touchLocation(_touch);
 }
 
-float2
-MultiTouchCameraInteraction::TrackedTouch::dragVector() const
-{
-    return currentLocation() - _initialLocation;
-}
-
 bool
 MultiTouchCameraInteraction::TrackedTouch::dragging() const
 {
-    const float d = length(dragVector());
+    const auto dist = currentLocation() - initialLocation();
+    const float d = length(dist);
     return d >= 10.f;
 }
 
@@ -186,41 +181,32 @@ MultiTouchCameraInteraction::updateCameraTransform()
     }
     
     auto newTransform = _initialCameraTransform;
-    
-    const auto& touch0 = *_trackedTouches[0];
-    const float2 initialLocation0 = touch0.initialLocation();
-    const float2 currentLocation0 = touch0.currentLocation();
+    const auto& firstTouch = _trackedTouches[0];
     
     if (_trackedTouches.size() >= 2)
     {
-        const auto& touch1 = *_trackedTouches[1];
-        const float2 initialLocation1 = touch1.initialLocation();
-        const float2 currentLocation1 = touch1.currentLocation();
+        const auto& secondTouch = _trackedTouches[1];
         
         // dolly
-        {
-            const float2 initialVector = initialLocation1 - initialLocation0;
-            const float initialLength = length(initialVector);
-            
-            const float2 currentVector = currentLocation1 - currentLocation0;
-            const float currentLength = length(currentVector);
-            
-            const float3 pos = translation(newTransform);
-            const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
-            const float distanceDampening = expf(distanceToOrbitOrigin * 0.1f);
-           
-            //_dollyFactor = (1.f - (currentLength / initialLength)) * speed;
-            _dollyFactor = (initialLength - currentLength) * 0.01f * distanceDampening;
-        }
+        const float2 initialVector = secondTouch->initialLocation() - firstTouch->initialLocation();
+        const float initialLength = length(initialVector);
+        
+        const float2 currentVector = secondTouch->currentLocation() - firstTouch->currentLocation();
+        const float currentLength = length(currentVector);
+        
+        const float3 pos = translation(newTransform);
+        const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
+        const float distanceDampening = expf(distanceToOrbitOrigin * 0.1f);
+       
+        _dollyFactor = (initialLength - currentLength) * 0.01f * distanceDampening;
     }
     else
     {
         _lastOrbitTime = OrbitClock::now();
         
-        const auto previousLocation0 = touch0.previousLocation();
-        _lastOrbitDrag = (currentLocation0 - previousLocation0);
+        _lastOrbitDrag = (firstTouch->currentLocation() - firstTouch->previousLocation());
         
-        _orbitAngles = touch0.dragVector();
+        _orbitAngles = (firstTouch->currentLocation() - firstTouch->initialLocation());
         _orbitAngles *= _orbitSpeed;
     }
     
@@ -242,10 +228,10 @@ MultiTouchCameraInteraction::updateCameraTransform()
     {
         if (_trackedTouches.size() >= 2)
         {
-            const auto& touch1 = *_trackedTouches[1];
+            const auto& secondTouch = _trackedTouches[1];
             
-            const float2 previousCentroid = (touch0.previousLocation() + touch1.previousLocation()) * 0.5f;
-            const float2 currentCentroid = (touch0.currentLocation() + touch1.currentLocation()) * 0.5f;
+            const float2 previousCentroid = (firstTouch->previousLocation() + secondTouch->previousLocation()) * 0.5f;
+            const float2 currentCentroid = (firstTouch->currentLocation() + secondTouch->currentLocation()) * 0.5f;
             float2 delta = currentCentroid - previousCentroid;
             delta.y *= -1.f;
             
@@ -254,9 +240,6 @@ MultiTouchCameraInteraction::updateCameraTransform()
             
             const float r = distanceToOrbitOrigin / 1e3f;
             _panTranslation -= delta * r;
-            
-            //_panTranslation = initialCentroid - currentCentroid;
-            //_panTranslation.y *= -1.f;
         }
         
         const float3 upVector = up(newTransform);

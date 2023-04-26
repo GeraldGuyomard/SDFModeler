@@ -61,7 +61,6 @@ private:
         UITouch* touch() const { return _touch; }
         
         bool dragging() const;
-        float2 dragVector() const;
         
         float2 previousLocation() const;
         float2 currentLocation() const;

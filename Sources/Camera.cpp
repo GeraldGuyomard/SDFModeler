@@ -27,6 +27,8 @@ LookAtObject3DProvider::position() const
 void
 Camera::setWorldTransform(const float4x4& t)
 {
+    assert(!isnan(t.columns[0].x));
+    
     _worldTransform = t;
 }
 
@@ -51,6 +53,19 @@ void
 Camera::setLookAtPositionProvider(LookAtPositionProvider::Ptr provider)
 {
     _lookAtPositionProvider = std::move(provider);
+}
+
+void
+Camera::setLookAtPositionProvider(const Object3D::Ptr& object)
+{
+    if (object != nullptr)
+    {
+        _lookAtPositionProvider = std::make_unique<LookAtObject3DProvider>(object);
+    }
+    else
+    {
+        _lookAtPositionProvider.reset();
+    }
 }
 
 float3
@@ -130,4 +145,12 @@ Camera::computeFramePosition(const Object3D::Ptr& object) const
     const auto pos = worldTransform * pt;
     
     return pos.xyz;
+}
+
+float4x4
+Camera::computeFrameTransform(const Object3D::Ptr& object) const
+{
+    auto transform = worldTransform();
+    setTranslation(transform, computeFramePosition(object));
+    return transform;
 }
