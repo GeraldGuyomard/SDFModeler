@@ -212,15 +212,6 @@ MultiTouchCameraInteraction::updateCameraTransform()
             //_dollyFactor = (1.f - (currentLength / initialLength)) * speed;
             _dollyFactor = (initialLength - currentLength) * 0.01f * distanceDampening;
         }
-        
-        // pan
-        {
-            const float2 initialCentroid = (initialLocation0 + initialLocation1) * 0.5f;
-            const float2 currentCentroid = (currentLocation0 + currentLocation1) * 0.5f;
-            
-            _panTranslation = initialCentroid - currentCentroid;
-            _panTranslation.y *= -1.f;
-        }
     }
     else
     {
@@ -249,16 +240,32 @@ MultiTouchCameraInteraction::updateCameraTransform()
     
     // pan
     {
+        if (_trackedTouches.size() >= 2)
+        {
+            const auto& touch1 = *_trackedTouches[1];
+            
+            const float2 previousCentroid = (touch0.previousLocation() + touch1.previousLocation()) * 0.5f;
+            const float2 currentCentroid = (touch0.currentLocation() + touch1.currentLocation()) * 0.5f;
+            float2 delta = currentCentroid - previousCentroid;
+            delta.y *= -1.f;
+            
+            const float3 pos = translation(newTransform);
+            const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
+            
+            const float r = distanceToOrbitOrigin / 1e3f;
+            _panTranslation -= delta * r;
+            
+            //_panTranslation = initialCentroid - currentCentroid;
+            //_panTranslation.y *= -1.f;
+        }
+        
         const float3 upVector = up(newTransform);
         const float3 rightVector = right(newTransform);
         
         auto pos = translation(newTransform);
         
-        const float distanceToOrbitOrigin = length(pos - _orbitOrigin);
-        const float dampeningFactor = distanceToOrbitOrigin * 0.5e-3f;
-        
-        pos += rightVector * _panTranslation.x * dampeningFactor;
-        pos += upVector * _panTranslation.y * dampeningFactor;
+        pos += rightVector * _panTranslation.x;
+        pos += upVector * _panTranslation.y;
         
         setTranslation(newTransform, pos);
     }
