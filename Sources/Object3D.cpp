@@ -171,6 +171,8 @@ Object3D::addChild(const Ptr& child)
         
         child->invalidateCachedWorldTransform();
     }
+    
+    invalidate();
 }
 
 void
@@ -206,6 +208,7 @@ void
 Object3D::removeFromParent()
 {
     _removeFromParent(true);
+    invalidate();
 }
 
 void

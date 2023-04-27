@@ -30,13 +30,16 @@ Vertex s_Vertices[4] = {
 @interface RendererMTKViewDelegate : NSObject<MTKViewDelegate>
 
 - (instancetype) initWithRenderer:(Renderer*)renderer;
-- (void)invalidate;
+- (void)terminate;
+
+- (void)delayPause;
 
 @end
 
 @implementation RendererMTKViewDelegate
 {
     Renderer* _renderer;
+    NSTimer* _timer;
 }
 
 - (instancetype) initWithRenderer:(Renderer*)renderer
@@ -49,7 +52,7 @@ Vertex s_Vertices[4] = {
     return self;
 }
 
-- (void)invalidate
+- (void)terminate
 {
     _renderer = nullptr;
 }
@@ -67,6 +70,21 @@ Vertex s_Vertices[4] = {
     if (_renderer != nullptr)
     {
         _renderer->updateCameraTransforms();
+        _renderer->invalidate();
+    }
+}
+
+- (void)delayPause
+{
+    [_timer invalidate];
+    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(onPause) userInfo:nil repeats:NO];
+}
+
+- (void)onPause
+{
+    if (_renderer != nullptr)
+    {
+        _renderer->pause();
     }
 }
 
@@ -79,6 +97,7 @@ _inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight))
 {
     _mtkViewDelegate = [[RendererMTKViewDelegate alloc] initWithRenderer:this];
     _mtkView.delegate = _mtkViewDelegate;
+    _mtkView.paused = YES;
     
     init();
     updateCameraTransforms();
@@ -86,7 +105,7 @@ _inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight))
 
 Renderer::~Renderer()
 {
-    [_mtkViewDelegate invalidate];
+    [_mtkViewDelegate terminate];
 }
 
 float2
@@ -372,5 +391,12 @@ Renderer::setWorld(const WorldPtr& world)
 void
 Renderer::invalidate()
 {
-    
+    _mtkView.paused = NO;
+    [_mtkViewDelegate delayPause];
+}
+
+void
+Renderer::pause()
+{
+    _mtkView.paused = YES;
 }

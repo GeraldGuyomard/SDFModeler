@@ -263,6 +263,7 @@ struct AnimationEntry final
 - (void)addAnimation:(Animation::Ptr)animation
 {
     _animationEntries.push_back({animation});
+    _renderer->invalidate();
 }
 
 - (void)removeAnimation:(Animation::Ptr)animation

@@ -90,6 +90,7 @@ public:
 public:
     void render();
     void updateCameraTransforms();
+    void pause();
     
 private:
     
