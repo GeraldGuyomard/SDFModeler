@@ -202,6 +202,9 @@ static __weak MainViewController* s_Instance = nil;
 
     _renderer = std::make_unique<Renderer>(_view);
     
+    auto camera = std::make_shared<Camera>(_world);
+    _renderer->setCamera(camera);
+    
     _baseTime = HighResClock::now();
     
     __weak auto wSelf = self;
@@ -219,7 +222,6 @@ static __weak MainViewController* s_Instance = nil;
     });
     
     auto root = self.world->rootObject();
-    auto camera = self.renderer->camera();
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
 }

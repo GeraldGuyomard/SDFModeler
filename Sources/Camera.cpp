@@ -24,13 +24,9 @@ LookAtObject3DProvider::position() const
     }
 }
 
-void
-Camera::setWorldTransform(const float4x4& t)
-{
-    assert(!isnan(t.columns[0].x));
-    
-    _worldTransform = t;
-}
+Camera::Camera(const WorldPtr& world)
+: _inherited(world)
+{}
 
 float3
 Camera::lookAtPosition()
@@ -112,7 +108,7 @@ Camera::computeFramePosition(const Object3D::Ptr& object) const
     const auto worldOrigin = worldBox.center();
     
     // Align first camera to face origin of object with arbitrary distance
-    auto worldTransform = _worldTransform;
+    auto worldTransform = this->worldTransform();
     auto startPos = worldOrigin + forward(worldTransform);
     setTranslation(worldTransform, startPos);
     

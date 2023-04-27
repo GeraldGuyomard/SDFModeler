@@ -66,7 +66,7 @@ Vertex s_Vertices[4] = {
 {
     if (_renderer != nullptr)
     {
-        _renderer->onRenderSizeChanged(size);
+        _renderer->updateCameraTransforms();
     }
 }
 
@@ -75,17 +75,13 @@ Vertex s_Vertices[4] = {
 Renderer::Renderer(MTKView* _Nonnull view)
 : _mtkView(view),
 _device(view.device),
-_inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight)),
-_camera(std::make_shared<Camera>())
+_inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight))
 {
     _mtkViewDelegate = [[RendererMTKViewDelegate alloc] initWithRenderer:this];
     _mtkView.delegate = _mtkViewDelegate;
     
-    const auto camTransform = matrix4x4_translation(float3 {0, 0, 5.f});
-    _camera->setWorldTransform(camTransform);
-    
     init();
-    onRenderSizeChanged(_mtkView.bounds.size);
+    updateCameraTransforms();
 }
 
 Renderer::~Renderer()
@@ -183,6 +179,11 @@ Renderer::updateBuffersState()
 void Renderer::setCamera(const Camera::Ptr& cam)
 {
     _camera = cam;
+    
+    if (_camera != nullptr)
+    {
+        updateCameraTransforms();
+    }
 }
 
 
@@ -210,7 +211,7 @@ Renderer::updateUniforms()
     /// Update any game state before encoding renderint commands to our drawable
     auto& uniforms = _uniformsBuffer->uniform();
 
-    const auto cameraMatrix = _camera->worldTransform();
+    const float4x4 cameraMatrix = (_camera != nullptr) ? _camera->worldTransform() : float4x4_identity();
     
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.ndcToWorldTransform = cameraMatrix * uniforms.invProjectionMatrix;
@@ -219,7 +220,6 @@ Renderer::updateUniforms()
     
     auto& serializedWorld = _serializedWorldBuffer->uniform();
     auto& serializedMaterials = _materialsBuffer->uniform();
-    
     
     const auto viewMatrix = inverse(cameraMatrix);
     const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
@@ -306,13 +306,18 @@ Renderer::render()
 }
 
 void
-Renderer::onRenderSizeChanged(const CGSize& size)
+Renderer::updateCameraTransforms()
 {
-    const float2 s { float(size.width), float(size.height) };
-    _camera->setViewportSize(s);
-    
-    _projectionMatrix = _camera->computeProjectionMatrix();
-    _invProjectionMatrix = simd_inverse(_projectionMatrix);
+    if (_camera != nullptr)
+    {
+        const CGSize size = _mtkView.bounds.size;
+        
+        const float2 s { float(size.width), float(size.height) };
+        _camera->setViewportSize(s);
+        
+        _projectionMatrix = _camera->computeProjectionMatrix();
+        _invProjectionMatrix = simd_inverse(_projectionMatrix);
+    }
 }
 
 Ray

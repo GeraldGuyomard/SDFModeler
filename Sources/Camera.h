@@ -32,15 +32,13 @@ private:
     Object3D::WPtr _object;
 };
 
-class Camera final
+class Camera final : public Object3D
 {
 public:
     using Ptr = std::shared_ptr<Camera>;
+    using _inherited = Object3D;
     
-    Camera() = default;
-    
-    const float4x4& worldTransform() const { return _worldTransform; }
-    void setWorldTransform(const float4x4&);
+    Camera(const WorldPtr&);
     
     float fovyRadians() const { return _fovyRadians; }
     float fovxRadians() const;
@@ -61,7 +59,6 @@ public:
     float4x4 computeFrameTransform(const Object3D::Ptr& object) const;
     
 private:
-    float4x4 _worldTransform = float4x4_identity();
     LookAtPositionProvider::Ptr _lookAtPositionProvider;
     float3 _defaultLookAtPosition = float3 { 0.f };
     

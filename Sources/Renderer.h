@@ -84,7 +84,7 @@ public:
     
 public:
     void render();
-    void onRenderSizeChanged(const CGSize&);
+    void updateCameraTransforms();
     
 private:
     
