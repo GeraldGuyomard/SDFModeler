@@ -632,7 +632,7 @@
                                         <menuItem title="Show CPU Render View" id="1mU-XH-rFv">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <segue destination="KVv-0j-1w9" kind="show" id="NPU-BP-8UF"/>
+                                                <segue destination="KVv-0j-1w9" kind="show" identifier="ShowRenderCPUViewController" id="NPU-BP-8UF"/>
                                             </connections>
                                         </menuItem>
                                     </items>

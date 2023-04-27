@@ -17,8 +17,6 @@ using HighResClock = std::chrono::high_resolution_clock;
 
 @interface MainViewController : ViewControllerBase
 
-+(MainViewController*)instance;
-
 @property(readonly, nonatomic) CGFloat nativeContentScale;
 @property(readonly, nonatomic) Renderer* renderer;
 @property(readonly, nonatomic) WorldPtr world;

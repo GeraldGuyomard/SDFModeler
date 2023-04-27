@@ -71,6 +71,9 @@ public:
     Camera::Ptr camera() const { return _camera; }
     void setCamera(const Camera::Ptr&);
     
+    WorldPtr world() const { return _world; }
+    void setWorld(const WorldPtr&);
+    
     const Uniforms& uniforms() const;
     const SerializedWorldObject& serializedWorld() const;
     const Materials& materials() const;
@@ -81,6 +84,8 @@ public:
     Ray ray(float2 pixelPosition) const;
     PickResult pick(float2 pixelPosition) const;
     float4 renderPixel(float2 pixelPosition) const;
+    
+    void invalidate();
     
 public:
     void render();
@@ -96,6 +101,8 @@ private:
     void updateUniforms();
     
     Camera::Ptr _camera;
+    WorldPtr _world;
+    
     RendererMTKViewDelegate* _Nonnull _mtkViewDelegate;
     
     const __weak MTKView* _Nullable _mtkView;

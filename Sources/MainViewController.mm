@@ -54,13 +54,6 @@ struct AnimationEntry final
     Animation::Ptr _cameraAnimation;
 }
 
-static __weak MainViewController* s_Instance = nil;
-
-+(MainViewController*)instance
-{
-    return s_Instance;
-}
-
 -(Interaction::Ptr) interaction
 {
     return _interaction;
@@ -185,8 +178,6 @@ static __weak MainViewController* s_Instance = nil;
 {
     [super viewDidLoad];
 
-    s_Instance = self;
-    
     [self loadWorld];
     
     _view = (MTKView *)self.view;
@@ -202,6 +193,7 @@ static __weak MainViewController* s_Instance = nil;
 
     _renderer = std::make_unique<Renderer>(_view);
     
+    _renderer->setWorld(self.world);
     auto camera = std::make_shared<Camera>(_world);
     _renderer->setCamera(camera);
     
@@ -224,6 +216,17 @@ static __weak MainViewController* s_Instance = nil;
     auto root = self.world->rootObject();
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
+    
+    self.world->setInvalidationCallback([wSelf](const auto& world)
+    {
+        if (auto self = wSelf)
+        {
+            if (auto renderer = self.renderer)
+            {
+                renderer->invalidate();
+            }
+        }
+    });
 }
 
 - (IBAction)undo:(id)source

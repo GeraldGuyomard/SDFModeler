@@ -218,13 +218,16 @@ Renderer::updateUniforms()
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    auto& serializedWorld = _serializedWorldBuffer->uniform();
-    auto& serializedMaterials = _materialsBuffer->uniform();
-    
-    const auto viewMatrix = inverse(cameraMatrix);
-    const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
-    
-    [MainViewController instance].world->serialize(viewProjectionMatrix, serializedWorld, serializedMaterials);
+    if (auto world = this->world())
+    {
+        auto& serializedWorld = _serializedWorldBuffer->uniform();
+        auto& serializedMaterials = _materialsBuffer->uniform();
+        
+        const auto viewMatrix = inverse(cameraMatrix);
+        const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
+        
+        world->serialize(viewProjectionMatrix, serializedWorld, serializedMaterials);
+    }
 }
 
 void
@@ -356,4 +359,18 @@ Renderer::renderPixel(float2 pixelPosition) const
     const auto p = pixelToNDC(size, pixelPosition);
     
     return renderDefault(p, uniforms, serializedWorld, materials);
+}
+
+void
+Renderer::setWorld(const WorldPtr& world)
+{
+    _world = world;
+    
+    invalidate();
+}
+
+void
+Renderer::invalidate()
+{
+    
 }

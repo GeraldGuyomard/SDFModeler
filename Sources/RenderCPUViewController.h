@@ -7,6 +7,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+class Renderer;
+
 // Our macOS view controller.
 @interface RenderCPUViewController : NSViewController
 
@@ -14,5 +16,7 @@
 
 @property(nonatomic) IBOutlet NSImageView* renderView;
 @property(nonatomic) IBOutlet NSTextField* resolutionLabel;
+
+@property(nonatomic) Renderer* renderer;
 
 @end

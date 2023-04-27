@@ -25,11 +25,15 @@
 
 - (IBAction) render:(id)sender
 {
+    auto renderer = self.renderer;
+    
+    if (renderer == nullptr)
+    {
+        return;
+    }
+    
     //CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
-    
-    auto gameViewController = [MainViewController instance];
-    auto renderer = gameViewController.renderer;
     
     const auto size = renderer->renderSize();
     
