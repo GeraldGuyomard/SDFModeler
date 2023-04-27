@@ -117,6 +117,8 @@ public:
     
     void setShouldChildrenShareId(bool should);
     
+    void invalidate();
+    
 private:
     
     void invalidateCachedWorldTransform();
@@ -241,6 +243,11 @@ public:
     
     ObjectID generateNewObjectID();
     
+    void invalidate();
+    
+    using InvalidationCallback = std::function<void(const WorldPtr&)>;
+    void setInvalidationCallback(const InvalidationCallback&);
+    
 private:
     World() = default;
     
@@ -254,4 +261,6 @@ private:
     Object3D::Ptr _selectedObject;
     
     CommandHistory _commandHistory;
+    
+    InvalidationCallback _invalidationCallback;
 };

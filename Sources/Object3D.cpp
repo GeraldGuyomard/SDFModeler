@@ -57,6 +57,8 @@ Object3D::setSelected(bool selected)
         {
             child->setSelected(selected);
         }
+        
+        invalidate();
     }
 }
 
@@ -295,6 +297,7 @@ Object3D::setLocalTransform(const float4x4& transform)
 {
     _localTransform = transform;
     invalidateCachedWorldTransform();
+    invalidate();
 }
 
 void
@@ -375,6 +378,15 @@ Object3D::setShouldChildrenShareId(bool should)
     _shouldChildrenShareId = should;
 }
 
+void
+Object3D::invalidate()
+{
+    if (auto world = this->world())
+    {
+        world->invalidate();
+    }
+}
+
 WorldPtr
 World::make()
 {
@@ -447,3 +459,17 @@ World::setSelectedObject(const Object3D::Ptr& object)
     }
 }
 
+void
+World::setInvalidationCallback(const InvalidationCallback& callback)
+{
+    _invalidationCallback = callback;
+}
+
+void
+World::invalidate()
+{
+    if (_invalidationCallback != nullptr)
+    {
+        _invalidationCallback(shared_from_this());
+    }
+}
