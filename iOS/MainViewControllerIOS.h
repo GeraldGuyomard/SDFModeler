@@ -17,7 +17,7 @@
 @property(nonatomic) IBOutlet UIButton* redoButton;
 
 @property(nonatomic) IBOutlet UIView* propertiesView;
-
+@property(nonatomic) IBOutlet UICollectionView* propertiesCollectionView;
 
 - (IBAction)toggleSettingsPanel;
 

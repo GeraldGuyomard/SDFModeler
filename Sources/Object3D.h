@@ -18,6 +18,7 @@
 #include "BoundingBox.h"
 
 #include "SerializationContext.h"
+#include "Type.h"
 
 class Material3D final
 {
@@ -60,6 +61,8 @@ private:
     const std::string _name;
 };
 
+class Type;
+
 class Object3D : public std::enable_shared_from_this<Object3D>
 {
 public:
@@ -70,6 +73,8 @@ public:
     virtual ~Object3D() = default;
     
     WorldPtr world() const { return _world.lock(); }
+    
+    virtual const Type* geometryType() const { return nullptr; }
     
     // return true if self has been serialized
     bool serializeHierarchy(SerializationContext&) const;
@@ -150,6 +155,11 @@ public:
     TObject3D(const WorldPtr& world, const TGeometry& geometry)
     : _inherited(world), _geometry(geometry)
     {}
+    
+    const Type* geometryType() const override
+    {
+        return &TType<TGeometry>::instance();
+    }
     
     bool isCulled(const float4x4& viewProjectionMatrix) const override
     {

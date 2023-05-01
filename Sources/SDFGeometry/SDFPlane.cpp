@@ -6,3 +6,10 @@
 //
 
 #include "SDFPlane.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFPlane>(Type& type)
+{
+    
+}

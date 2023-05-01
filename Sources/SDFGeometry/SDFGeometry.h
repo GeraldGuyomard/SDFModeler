@@ -13,6 +13,8 @@
 #include "ObjectType.h"
 #include "BoundingBox.h"
 
+class Type;
+
 class SDFGeometry final
 {
 public:
@@ -49,4 +51,7 @@ float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)
     
 #endif
 }
+
+template <typename TGeometry>
+CONSTANT Type* geometryType();
 

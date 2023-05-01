@@ -15,7 +15,7 @@
 #include "RemoveObjectCommand.h"
 #include "ToggleObjectOperationCommand.h"
 
-@interface MainViewControllerIOS()<UIGestureRecognizerDelegate>
+@interface MainViewControllerIOS()<UIGestureRecognizerDelegate, UICollectionViewDataSource>
 @end
 
 @implementation MainViewControllerIOS
@@ -89,6 +89,7 @@
     [self updateActionsButton];
     
     self.propertiesView.hidden = YES;
+    self.propertiesCollectionView.dataSource = self;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
@@ -433,9 +434,50 @@ namespace
     [self.selectionActionsButton sizeToFit];
 }
 
+- (void)populatePropertiesPanel
+{
+    self.propertiesCollectionView;
+    
+}
+
 - (IBAction)toggleSettingsPanel
 {
-    self.propertiesView.hidden = !self.propertiesView.hidden;
+    constexpr NSTimeInterval kDuration = 0.2f;
+    
+    if (self.propertiesView.hidden)
+    {
+        self.propertiesView.hidden = NO;
+        
+        // show
+        [UIView animateWithDuration:kDuration animations:^{
+            self.propertiesView.alpha = 1.f;
+        }];
+    }
+    else
+    {
+        // hide
+        [UIView animateWithDuration:kDuration
+        animations:
+         ^{ self.propertiesView.alpha = 0.f; }
+        
+        completion:^(BOOL finished)
+        {
+            self.propertiesView.hidden = YES;
+        }];
+    }
+}
+
+#pragma mark UICollectionViewDataSource
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+{
+    return 0;
+}
+
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return nil;
 }
 
 @end

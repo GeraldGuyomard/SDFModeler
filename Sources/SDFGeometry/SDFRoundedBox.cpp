@@ -6,3 +6,10 @@
 //
 
 #include "SDFRoundedBox.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFRoundedBox>(Type& type)
+{
+    
+}

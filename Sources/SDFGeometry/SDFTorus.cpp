@@ -6,3 +6,10 @@
 //
 
 #include "SDFGeometry/SDFTorus.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFTorus>(Type& type)
+{
+    
+}

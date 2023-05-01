@@ -6,3 +6,10 @@
 //
 
 #include "SDFBox.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFBox>(Type& type)
+{
+    
+}

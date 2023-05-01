@@ -5,4 +5,11 @@
 //  Created by Gérald Guyomard on 2/26/23.
 //
 
-#include "SDFGeometry/SDFGeometry.h"
+#include "SDFGeometry/SDFSphere.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFSphere>(Type& type)
+{
+    
+}

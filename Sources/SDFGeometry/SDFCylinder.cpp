@@ -6,3 +6,10 @@
 //
 
 #include "SDFGeometry/SDFCylinder.h"
+#include "Type.h"
+
+template <>
+void initializeType<SDFCylinder>(Type& type)
+{
+    
+}
