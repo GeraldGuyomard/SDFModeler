@@ -174,11 +174,31 @@ struct AnimationEntry final
     rootObject->addChild(sdfUnion);
 }
 
+void visitTypes(const Object3D::Ptr& object)
+{
+    auto type = object->geometryType();
+    if (type != nullptr)
+    {
+        int a;
+        a = 1;
+    }
+    
+    for (auto child : object->children())
+    {
+        visitTypes(child);
+    }
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
     [self loadWorld];
+    
+    {
+        // Testing types
+        visitTypes(_world->rootObject());
+    }
     
     _view = (MTKView *)self.view;
     _view.device = MTLCreateSystemDefaultDevice();
