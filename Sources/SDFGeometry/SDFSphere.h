@@ -41,6 +41,7 @@ public:
     }
     
     float radius() const { return _radiusAndPadding.x; }
+    void setRadius(float radius);
     
 private:
     float4 _radiusAndPadding;

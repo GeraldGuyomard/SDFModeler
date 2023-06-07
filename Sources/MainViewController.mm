@@ -177,10 +177,15 @@ struct AnimationEntry final
 void visitTypes(const Object3D::Ptr& object)
 {
     auto type = object->geometryType();
-    if (type != nullptr)
+    if (type == &TType<SDFSphere>::instance())
     {
-        int a;
-        a = 1;
+        const TPropertyValue value = type->getPropertyValue(object.get(), "radius");
+        if (auto v = std::get_if<float>(&value))
+        {
+            int a;
+            a = 1;
+        }
+        
     }
     
     for (auto child : object->children())
