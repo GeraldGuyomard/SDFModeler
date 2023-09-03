@@ -447,9 +447,11 @@ World::setSelectedObject(const Object3D::Ptr& object)
 {
     if (_selectedObject != object)
     {
-        if (_selectedObject != nullptr)
+        const auto old = _selectedObject;
+        
+        if (old != nullptr)
         {
-            _selectedObject->setSelected(false);
+            old->setSelected(false);
         }
         
         _selectedObject = object;
@@ -459,20 +461,31 @@ World::setSelectedObject(const Object3D::Ptr& object)
             _selectedObject->setSelected(true);
         }
         
+        if (auto delegate = this->delegate())
+        {
+            delegate->onSelectionChanged(shared_from_this(), old, _selectedObject);
+        }
     }
 }
 
-void
-World::setInvalidationCallback(const InvalidationCallback& callback)
+WorldDelegate::Ptr
+World::delegate() const
 {
-    _invalidationCallback = callback;
+    return _delegate.lock();
 }
+
+void
+World::setDelegate(const WorldDelegate::Ptr& delegate)
+{
+    _delegate = delegate;
+}
+
 
 void
 World::invalidate()
 {
-    if (_invalidationCallback != nullptr)
+    if (auto delegate = this->delegate())
     {
-        _invalidationCallback(shared_from_this());
+        delegate->onChange(shared_from_this());
     }
 }

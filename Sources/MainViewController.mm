@@ -38,6 +38,34 @@ struct AnimationEntry final
     {}
 };
 
+class Delegate final : public WorldDelegate
+{
+public:
+    
+    Delegate(MainViewController* controller)
+    : _controller(controller)
+    {}
+    
+    void onChange(const WorldPtr&) override
+    {
+        if (auto self = _controller)
+        {
+            if (auto renderer = _controller.renderer)
+            {
+                renderer->invalidate();
+            }
+        }
+    }
+    
+    void onSelectionChanged(const WorldPtr& world, const Object3D::Ptr& oldObject, const Object3D::Ptr& newObject) override
+    {
+        
+    }
+    
+private:
+    __weak MainViewController* _controller;
+};
+
 @implementation MainViewController
 {
     MTKView* _view;
@@ -45,6 +73,7 @@ struct AnimationEntry final
     std::unique_ptr<Renderer> _renderer;
     
     WorldPtr _world;
+    std::shared_ptr<Delegate> _delegate;
     
     Interaction::Ptr _interaction;
     
@@ -242,16 +271,8 @@ void visitTypes(const Object3D::Ptr& object)
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
     
-    self.world->setInvalidationCallback([wSelf](const auto& world)
-    {
-        if (auto self = wSelf)
-        {
-            if (auto renderer = self.renderer)
-            {
-                renderer->invalidate();
-            }
-        }
-    });
+    _delegate = std::make_shared<Delegate>(self);
+    self.world->setDelegate(_delegate);
 }
 
 - (IBAction)undo:(id)source

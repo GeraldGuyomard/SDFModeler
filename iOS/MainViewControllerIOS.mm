@@ -436,7 +436,10 @@ namespace
 
 - (void)populatePropertiesPanel
 {
-    self.propertiesCollectionView;
+    auto collectionView = self.propertiesCollectionView;
+    
+    collectionView.dataSource = self;
+    [collectionView reloadData];
     
 }
 
@@ -447,6 +450,8 @@ namespace
     if (self.propertiesView.hidden)
     {
         self.propertiesView.hidden = NO;
+        
+        [self populatePropertiesPanel];
         
         // show
         [UIView animateWithDuration:kDuration animations:^{
@@ -471,6 +476,20 @@ namespace
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
+    auto w = self.world;
+    if (w == nullptr)
+    {
+        return 0;
+    }
+    
+    auto object = w->selectedObject();
+    if (object == nullptr)
+    {
+        return 0;
+    }
+    
+    const auto& type = object->geometryType();
+    
     return 0;
 }
 

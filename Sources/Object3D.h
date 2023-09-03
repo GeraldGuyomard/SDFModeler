@@ -234,12 +234,27 @@ public:
     }
 };
 
+class WorldDelegate
+{
+public:
+    using Ptr = std::shared_ptr<WorldDelegate>;
+    using WPtr = std::weak_ptr<WorldDelegate>;
+    virtual ~WorldDelegate() = default;
+    
+    virtual void onChange(const WorldPtr&) = 0;
+    virtual void onSelectionChanged(const WorldPtr& world, const Object3D::Ptr& oldObject, const Object3D::Ptr& newObject) = 0;
+    
+};
+
 class World final : public std::enable_shared_from_this<World>
 {
 public:
     static WorldPtr make();
     
     void serialize(const float4x4& viewProjectionMatrix, SerializedWorldObject&, Materials& materials) const;
+    
+    WorldDelegate::Ptr delegate() const;
+    void setDelegate(const WorldDelegate::Ptr&);
     
     void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);
@@ -255,9 +270,6 @@ public:
     
     void invalidate();
     
-    using InvalidationCallback = std::function<void(const WorldPtr&)>;
-    void setInvalidationCallback(const InvalidationCallback&);
-    
 private:
     World() = default;
     
@@ -272,5 +284,5 @@ private:
     
     CommandHistory _commandHistory;
     
-    InvalidationCallback _invalidationCallback;
+    WorldDelegate::WPtr _delegate;
 };
