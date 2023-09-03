@@ -35,4 +35,6 @@ using HighResClock = std::chrono::high_resolution_clock;
 - (Animation::Ptr) cameraAnimation;
 - (void)setCameraAnimation:(Animation::Ptr)animation;
 
+- (void) onSelectionChange;
+
 @end

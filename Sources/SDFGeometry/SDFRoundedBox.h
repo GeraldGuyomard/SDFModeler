@@ -46,6 +46,18 @@ public:
     float3 halfSize() const { return _halfSizeAndRadius.xyz; }
     float radius() const { return _halfSizeAndRadius.w; }
     
+    // for editing
+    float width() const { return _halfSizeAndRadius.x * 2; }
+    void setWidth(float w) { _halfSizeAndRadius.x = w * 0.5f; }
+    
+    float height() const { return _halfSizeAndRadius.y * 2; }
+    void setHeight(float h) { _halfSizeAndRadius.y = h * 0.5f; }
+    
+    float depth() const { return _halfSizeAndRadius.z * 2; }
+    void setDepth(float d) { _halfSizeAndRadius.z = d * 0.5f; }
+    
+    void setRadius(float radius) { _halfSizeAndRadius.w = radius; }
+    
 private:
     // xyz halfsize
     // w radius

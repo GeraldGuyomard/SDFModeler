@@ -51,6 +51,10 @@ public:
         return { amplitude, t, amplitude };
     }
     
+    // For editing
+    void setRadius(float);
+    void setThickness(float);
+    
 private:
     // _innerOuterRadiusAndPadding.x = inner
     // _innerOuterRadiusAndPadding.y = outer

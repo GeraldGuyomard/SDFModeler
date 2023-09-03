@@ -41,6 +41,16 @@ public:
     
     float3 halfSize() const { return _halfSizeAndPadding.xyz; }
     
+    // for editing
+    float width() const { return _halfSizeAndPadding.x * 2; }
+    void setWidth(float w) { _halfSizeAndPadding.x = w * 0.5f; }
+    
+    float height() const { return _halfSizeAndPadding.y * 2; }
+    void setHeight(float h) { _halfSizeAndPadding.y = h * 0.5f; }
+    
+    float depth() const { return _halfSizeAndPadding.z * 2; }
+    void setDepth(float d) { _halfSizeAndPadding.z = d * 0.5f; }
+    
 private:
     // _halfSizeAndPadding.xyz = halfsize
     // _halfSizeAndPadding.w unused

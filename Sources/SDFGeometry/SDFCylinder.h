@@ -48,6 +48,10 @@ public:
         return { radius(), height(), radius() };
     }
     
+    // For editing
+    void setRadius(float);
+    void setHeight(float);
+    
 private:
     // _innerOuterRadiusAndPadding.x = inner
     // _innerOuterRadiusAndPadding.y = outer

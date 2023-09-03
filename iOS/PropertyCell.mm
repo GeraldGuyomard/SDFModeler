@@ -9,4 +9,9 @@
 
 @implementation PropertyCell
 
+- (void)setup:(const Property*)prop
+{
+   self.namelabel.text = [NSString stringWithUTF8String:prop->name().c_str()];
+}
+
 @end

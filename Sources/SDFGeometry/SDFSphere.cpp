@@ -8,20 +8,16 @@
 #include "SDFGeometry/SDFSphere.h"
 #include "Type.h"
 
+class TaMere
+{
+public:
+    float radius() const;
+};
+
 template <>
 void initializeType<SDFSphere>(Type& type)
 {
-    type.addProperty<SDFSphere, float>
-    ("radius",
-    [](const SDFSphere* object) -> float
-    {
-        return object->radius();
-    },
-                                           
-    [](SDFSphere* object, const float& v)
-    {
-        object->setRadius(v);
-    });
+    type.addProperty<SDFSphere, float, &SDFSphere::radius, &SDFSphere::setRadius>("radius");
 }
 
 void

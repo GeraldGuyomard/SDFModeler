@@ -106,6 +106,29 @@ public:
         _properties.push_back(std::move(prop));
     }
     
+    template <class TObject, typename T, T (TObject::*TGet)() const, void (TObject::*TSet)(T)>
+    void addProperty(const std::string& name)
+    {
+        auto prop = std::make_unique<Property>(name, getPropertyType<T>(),
+        [](const void* object) -> TPropertyValue
+        {
+            TObject* o = (TObject*) object;
+            return { (o->*TGet)() };
+        },
+                                               
+        [](void* object, const TPropertyValue& value)
+        {
+            TObject* o = (TObject*) object;
+            
+            if (auto v = std::get_if<T>(&value))
+            {
+                (o->*TSet)(*v);
+            }
+        });
+        
+        _properties.push_back(std::move(prop));
+    }
+    
     const std::vector<Property::Ptr>& properties() const { return _properties; }
     
     TPropertyValue getPropertyValue(const void* object, const std::string& propName) const;

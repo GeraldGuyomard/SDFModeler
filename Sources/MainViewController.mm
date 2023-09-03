@@ -59,7 +59,7 @@ public:
     
     void onSelectionChanged(const WorldPtr& world, const Object3D::Ptr& oldObject, const Object3D::Ptr& newObject) override
     {
-        
+        [_controller onSelectionChange];
     }
     
 private:
@@ -371,6 +371,11 @@ void visitTypes(const Object3D::Ptr& object)
             [self addAnimation:_cameraAnimation];
         }
     }
+}
+
+- (void) onSelectionChange
+{
+    
 }
 
 @end

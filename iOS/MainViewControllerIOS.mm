@@ -15,7 +15,9 @@
 #include "RemoveObjectCommand.h"
 #include "ToggleObjectOperationCommand.h"
 
-@interface MainViewControllerIOS()<UIGestureRecognizerDelegate, UICollectionViewDataSource>
+#import "PropertyCell.h"
+
+@interface MainViewControllerIOS()<UIGestureRecognizerDelegate, UICollectionViewDataSource, UICollectionViewDelegate>
 @end
 
 @implementation MainViewControllerIOS
@@ -90,6 +92,7 @@
     
     self.propertiesView.hidden = YES;
     self.propertiesCollectionView.dataSource = self;
+    self.propertiesCollectionView.delegate = self;
 }
 
 - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)recognizer
@@ -472,6 +475,16 @@ namespace
     }
 }
 
+- (void) onSelectionChange
+{
+    [super onSelectionChange];
+    
+    if (!self.propertiesView.hidden)
+    {
+        [self populatePropertiesPanel];
+    }
+}
+
 #pragma mark UICollectionViewDataSource
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
@@ -488,15 +501,52 @@ namespace
         return 0;
     }
     
-    const auto& type = object->geometryType();
+    const auto* type = object->geometryType();
+    if (type == nullptr)
+    {
+        return 0;
+    }
     
-    return 0;
+    return type->properties().size();
 }
 
 
 - (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return nil;
+    PropertyCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PropertyCell" forIndexPath:indexPath];
+    
+    auto object = self.world->selectedObject();
+    const auto* type = object->geometryType();
+    
+    const auto& props = type->properties();
+    
+    const auto& prop = props[indexPath.row];
+    
+    [cell setup:prop.get()];
+    
+    return cell;
+}
+
+#pragma UICollectionViewDelegate
+
+- (CGSize)collectionView:(UICollectionView *)collectionView
+                  layout:(UICollectionViewLayout *)collectionViewLayout
+  sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return CGSizeMake(collectionView.bounds.size.width, 50);
+}
+
+- (UIEdgeInsets)collectionView:(UICollectionView*)collectionView layout:(UICollectionViewLayout *)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 0.0;
+}
+
+- (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    return YES;
 }
 
 @end
