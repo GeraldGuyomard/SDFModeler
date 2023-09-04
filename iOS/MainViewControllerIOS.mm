@@ -14,6 +14,7 @@
 #include "AddObjectCommand.h"
 #include "RemoveObjectCommand.h"
 #include "ToggleObjectOperationCommand.h"
+#include "SetPropertyCommand.h"
 
 #import "PropertyCell.h"
 
@@ -29,6 +30,8 @@
     UIPanGestureRecognizer* _dragObjectRecognizer;
     UITapGestureRecognizer* _undoRecognizer;
     UITapGestureRecognizer* _redoRecognizer;
+    
+    SetPropertyCommand::Ptr _pendingSetPropertyCommand;
 }
 
 - (float2) convertPointToPixel:(CGPoint)pt
@@ -84,6 +87,7 @@
         if (auto self = wSelf)
         {
             [self updateUndoRedoButtons];
+            [self onSelectionChange];
         }
     });
     
@@ -532,14 +536,24 @@ namespace
     [cell setupWithObject:geometry prop:prop.get()];
     
     
-    __weak MainViewController* wself = self;
+    __weak MainViewControllerIOS* wself = self;
     
-    [cell setChangeCallback:[wself](void* object, const auto* prop, float newValue)
+    [cell setChangeCallback:[wself](bool finished, void* object, const auto* prop, float newValue)
     {
-        TPropertyValue v = newValue;
-        prop->set(object, v);
+        MainViewControllerIOS* self = wself;
         
-        wself.renderer->invalidate();
+        if (self->_pendingSetPropertyCommand == nullptr)
+        {
+            self->_pendingSetPropertyCommand = std::make_shared<SetPropertyCommand>(object, prop, self.renderer);
+        }
+        
+        self->_pendingSetPropertyCommand->setValue(newValue);
+        
+        if (finished)
+        {
+            self.world->commandHistory().run(self->_pendingSetPropertyCommand);
+            self->_pendingSetPropertyCommand.reset();
+        }
     }];
     
     return cell;

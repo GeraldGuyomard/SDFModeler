@@ -95,6 +95,8 @@
 		74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
 		74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */; };
 		74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
+		74B52D082AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */; };
+		74B52D092AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74DAA6D629AC439E00171C03 /* Results..cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results..cpp */; };
@@ -201,6 +203,8 @@
 		74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderCPUViewController.h; sourceTree = "<group>"; };
 		74AF134429B53D5300F9BBA8 /* Culling.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Culling.cpp; sourceTree = "<group>"; };
 		74AF134529B53D5300F9BBA8 /* Culling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Culling.h; sourceTree = "<group>"; };
+		74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SetPropertyCommand.mm; sourceTree = "<group>"; };
+		74B52D072AA55B5F00EE70C4 /* SetPropertyCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetPropertyCommand.h; sourceTree = "<group>"; };
 		74DAA6CD29AC2C1200171C03 /* CommonDefinitions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CommonDefinitions.h; sourceTree = "<group>"; };
 		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
@@ -366,6 +370,8 @@
 				7456FCA429E7B11800398E86 /* RemoveObjectCommand.h */,
 				743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */,
 				743252C429EE5C70009A44EF /* ToggleObjectOperationCommand.h */,
+				74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */,
+				74B52D072AA55B5F00EE70C4 /* SetPropertyCommand.h */,
 				7492228C29E2685F00ACCFBC /* Command.cpp */,
 				7492228D29E2685F00ACCFBC /* Command.h */,
 			);
@@ -607,6 +613,7 @@
 				743252C129EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
 				74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */,
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
+				74B52D082AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */,
 				74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
@@ -670,6 +677,7 @@
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
 				7492229329E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
 				748629CA2A004293002407AA /* PropertyCell.mm in Sources */,
+				74B52D092AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,

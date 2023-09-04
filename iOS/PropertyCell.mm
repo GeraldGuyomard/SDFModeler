@@ -12,6 +12,8 @@
     void* _object;
     const Property* _property;
     ChangeCallback _changeCallback;
+    
+    BOOL _sliderHooked;
 }
 
 -(void*) object
@@ -28,7 +30,15 @@
 {
     if (_changeCallback != nullptr)
     {
-        _changeCallback(_object, _property, sender.value);
+        _changeCallback(false, _object, _property, sender.value);
+    }
+}
+
+- (IBAction)sliderValueEnded:(UISlider *)sender
+{
+    if (_changeCallback != nullptr)
+    {
+        _changeCallback(true    , _object, _property, sender.value);
     }
 }
 
@@ -62,8 +72,13 @@
     self.valueSlider.maximumValue = maxValue;
     self.valueSlider.value = v;
     
-    [self.valueSlider removeTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
-    [self.valueSlider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    if (!_sliderHooked)
+    {
+        _sliderHooked = true;
+        
+        [self.valueSlider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+        [self.valueSlider addTarget:self action:@selector(sliderValueEnded:) forControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 - (void)setChangeCallback:(const ChangeCallback &)cb

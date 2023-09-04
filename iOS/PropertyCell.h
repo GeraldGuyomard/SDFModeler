@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-using ChangeCallback = std::function<void(void* object, const Property* property, float newValue)>;
+using ChangeCallback = std::function<void(bool finished, void* object, const Property* property, float newValue)>;
 
 @interface PropertyCell : UICollectionViewCell
 
