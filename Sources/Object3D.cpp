@@ -306,7 +306,7 @@ Object3D::setLocalTransform(const float4x4& transform)
 void
 Object3D::setLocalTransform(const RSTTransformer& transformer)
 {
-    _localTransform = transformer.transform();
+    setLocalTransform(transformer.transform());
 }
 
 void

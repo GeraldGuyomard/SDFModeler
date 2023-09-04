@@ -6,6 +6,7 @@
 //
 
 #include "Transformer/StandardTransformers.h"
+#include <math.h>
 
 float4x4
 RSTTransformer::transform() const
@@ -43,4 +44,43 @@ RSTTransformer::setTransform(float4x4 m)
 RSTTransformer::RSTTransformer(float4x4 transform)
 {
     setTransform(transform);
+}
+
+inline float coef(const float3x3& m, size_t x, size_t y)
+{
+    return m.columns[y-1][x-1];
+}
+
+void
+RSTTransformer::computeEulers(float& xAngle, float& yAngle, float& zAngle) const
+{
+    // http://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
+    const auto rotMatrix = inverse(_invRotTransform);
+    
+    float& psi = xAngle;
+    float& theta = yAngle;
+    float& phi = zAngle;
+    
+    if ((coef(rotMatrix, 3, 1) != -1.f) && (coef(rotMatrix, 3, 1) != +1.f))
+    {
+        theta = -asinf(coef(rotMatrix, 3, 1));
+        
+        const float cosTheta = cosf(theta);
+        psi = atan2f(coef(rotMatrix, 3, 2) / cosTheta, coef(rotMatrix, 3, 3) / cosTheta);
+        phi = atan2f(coef(rotMatrix, 2, 1) / cosTheta, coef(rotMatrix, 1, 1) / cosTheta);
+    }
+    else
+    {
+        phi = 0.f;
+        if (coef(rotMatrix, 3, 1) == -1.f)
+        {
+            theta = M_PI_2;
+            psi = phi + atan2f(coef(rotMatrix, 1, 2), coef(rotMatrix, 1, 3));
+        }
+        else
+        {
+            theta = -M_PI_2;
+            psi = -phi + atan2(-coef(rotMatrix, 1, 2), -coef(rotMatrix, 1, 3));
+        }
+    }
 }
