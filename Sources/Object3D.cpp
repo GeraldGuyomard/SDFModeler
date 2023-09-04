@@ -114,6 +114,18 @@ Object3D::setMaterial(const Material3D::Ptr& mat)
     }
 }
 
+const Type*
+Object3D::type() const
+{
+    return &TType<Object3D>::instance();
+}
+
+template <>
+void initializeType<Object3D>(Type& type)
+{
+    type.addProperty<Object3D, float, &Object3D::scale, &Object3D::setScale>("scale");
+}
+
 ObjectID
 Object3D::id() const
 {
@@ -302,6 +314,24 @@ Object3D::setLocalTransform(const float4x4& transform)
     invalidateCachedWorldTransform();
     invalidate();
 }
+
+float
+Object3D::scale() const
+{
+    RSTTransformer t { _localTransform };
+    return t.scale();
+}
+
+void
+Object3D::setScale(float s)
+{
+    RSTTransformer t { _localTransform };
+    t.setScale(s);
+    
+    setLocalTransform(t.transform());
+    
+}
+
 
 void
 Object3D::setLocalTransform(const RSTTransformer& transformer)

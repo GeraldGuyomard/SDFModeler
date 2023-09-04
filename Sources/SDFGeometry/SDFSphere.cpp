@@ -8,12 +8,6 @@
 #include "SDFGeometry/SDFSphere.h"
 #include "Type.h"
 
-class TaMere
-{
-public:
-    float radius() const;
-};
-
 template <>
 void initializeType<SDFSphere>(Type& type)
 {

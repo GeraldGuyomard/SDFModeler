@@ -491,6 +491,11 @@ namespace
 
 #pragma mark UICollectionViewDataSource
 
+- (NSInteger)numberOfSectionsInCollectionView:(UICollectionView *)collectionView
+{
+    return 2;
+}
+
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
     auto w = self.world;
@@ -505,19 +510,19 @@ namespace
         return 0;
     }
     
-    const auto* type = object->geometryType();
-    if (type == nullptr)
-    {
-        return 0;
-    }
+    const Type* type = nullptr;
     
-    const auto* geometry = object->geometry();
-    if (geometry == nullptr)
+    if (section == 0)
     {
-        return 0;
+        type = object->type();
     }
-    
-    return type->properties().size();
+    else if (section == 1)
+    {
+        // Geometry properties
+        type = object->geometryType();
+    }
+
+    return (type != nullptr) ? type->properties().size() : 0;
 }
 
 
@@ -526,15 +531,30 @@ namespace
     PropertyCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PropertyCell" forIndexPath:indexPath];
     
     auto object = self.world->selectedObject();
-    const auto* type = object->geometryType();
-    auto* geometry = object->geometry();
     
-    const auto& props = type->properties();
+    void* editedObject = nullptr;
+    const Property* property = nullptr;
     
-    const auto& prop = props[indexPath.row];
+    const auto section = indexPath.section;
+    if (section == 0)
+    {
+        const auto* type = object->type();
+        editedObject = object.get();
+        
+        const auto& props = type->properties();
+        property = props[indexPath.row].get();
+    }
+    else if (section == 1)
+    {
+        // geometry
+        const auto* type = object->geometryType();
+        editedObject = object->geometry();
+
+        const auto& props = type->properties();
+        property = props[indexPath.row].get();
+    }
     
-    [cell setupWithObject:geometry prop:prop.get()];
-    
+    [cell setupWithObject:editedObject prop:property];
     
     __weak MainViewControllerIOS* wself = self;
     

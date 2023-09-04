@@ -41,6 +41,12 @@ RSTTransformer::setTransform(float4x4 m)
     _translation = m.columns[3].xyz;
 }
 
+void
+RSTTransformer::setScale(float s)
+{
+    _scale = s;
+}
+
 RSTTransformer::RSTTransformer(float4x4 transform)
 {
     setTransform(transform);

@@ -74,6 +74,8 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
+    virtual const Type* type() const;
+    
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
@@ -124,6 +126,10 @@ public:
     void setShouldChildrenShareId(bool should);
     
     void invalidate();
+    
+    // Editor bindings
+    float scale() const;
+    void setScale(float);
     
 private:
     
