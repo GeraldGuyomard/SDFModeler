@@ -8,10 +8,67 @@
 #import "PropertyCell.h"
 
 @implementation PropertyCell
-
-- (void)setup:(const Property*)prop
 {
-   self.namelabel.text = [NSString stringWithUTF8String:prop->name().c_str()];
+    void* _object;
+    const Property* _property;
+    ChangeCallback _changeCallback;
+}
+
+-(void*) object
+{
+    return _object;
+}
+
+-(const Property*) property
+{
+    return _property;
+}
+
+- (IBAction)sliderValueChanged:(UISlider *)sender
+{
+    if (_changeCallback != nullptr)
+    {
+        _changeCallback(_object, _property, sender.value);
+    }
+}
+
+- (void)setupWithObject:(void*)object prop:(const Property*)prop
+{
+    _object = object;
+    _property = prop;
+    
+    self.namelabel.text = [NSString stringWithUTF8String:_property->name().c_str()];
+    
+    float minValue = 0.f;
+    float maxValue = 0.f;
+    float v = 0.f;
+    
+    const auto value = prop->get(_object);
+    const auto& defaultValue = _property->defaultValue();
+    if (const auto* range = std::get_if<FloatRangedValue>(&defaultValue))
+    {
+        minValue = range->minValue;
+        maxValue = range->maxValue;
+        v = std::get<float>(value);
+    }
+    else if (const auto* range = std::get_if<IntRangedValue>(&defaultValue))
+    {
+        minValue = range->minValue;
+        maxValue = range->maxValue;
+        v = std::get<int>(value);
+    }
+    
+    self.valueSlider.minimumValue = minValue;
+    self.valueSlider.maximumValue = maxValue;
+    self.valueSlider.value = v;
+    
+    [self.valueSlider removeTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+    [self.valueSlider addTarget:self action:@selector(sliderValueChanged:) forControlEvents:UIControlEventValueChanged];
+}
+
+- (void)setChangeCallback:(const ChangeCallback &)cb
+{
+    _changeCallback = cb;
 }
 
 @end

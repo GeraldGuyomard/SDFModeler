@@ -75,6 +75,7 @@ public:
     WorldPtr world() const { return _world.lock(); }
     
     virtual const Type* geometryType() const { return nullptr; }
+    virtual void* geometry() { return nullptr; }
     
     // return true if self has been serialized
     bool serializeHierarchy(SerializationContext&) const;
@@ -159,6 +160,11 @@ public:
     const Type* geometryType() const override
     {
         return &TType<TGeometry>::instance();
+    }
+    
+    void* geometry() override
+    {
+        return &_geometry;
     }
     
     bool isCulled(const float4x4& viewProjectionMatrix) const override

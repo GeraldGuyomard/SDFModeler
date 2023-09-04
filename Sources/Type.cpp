@@ -20,6 +20,12 @@ Property::get(const void* object) const
     return _getter(object);
 }
 
+void
+Property::set(void* object, const TPropertyValue& v) const
+{
+    _setter(object, v);
+}
+
 TPropertyValue
 Type::getPropertyValue(const void* object, const std::string& propName) const
 {

@@ -10,11 +10,19 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+using ChangeCallback = std::function<void(void* object, const Property* property, float newValue)>;
+
 @interface PropertyCell : UICollectionViewCell
 
 @property(nonatomic) IBOutlet UILabel* namelabel;
+@property(nonatomic) IBOutlet UISlider* valueSlider;
 
-- (void)setup:(const Property*)prop;
+@property(nonatomic) void* object;
+@property(nonatomic) const Property* property;
+
+- (void)setupWithObject:(void*)object prop:(const Property*)prop;
+
+- (void)setChangeCallback:(const ChangeCallback&)cb;
 
 @end
 

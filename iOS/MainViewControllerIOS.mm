@@ -507,6 +507,12 @@ namespace
         return 0;
     }
     
+    const auto* geometry = object->geometry();
+    if (geometry == nullptr)
+    {
+        return 0;
+    }
+    
     return type->properties().size();
 }
 
@@ -517,12 +523,24 @@ namespace
     
     auto object = self.world->selectedObject();
     const auto* type = object->geometryType();
+    auto* geometry = object->geometry();
     
     const auto& props = type->properties();
     
     const auto& prop = props[indexPath.row];
     
-    [cell setup:prop.get()];
+    [cell setupWithObject:geometry prop:prop.get()];
+    
+    
+    __weak MainViewController* wself = self;
+    
+    [cell setChangeCallback:[wself](void* object, const auto* prop, float newValue)
+    {
+        TPropertyValue v = newValue;
+        prop->set(object, v);
+        
+        wself.renderer->invalidate();
+    }];
     
     return cell;
 }

@@ -25,9 +25,15 @@ PropertyType getPropertyType();
 template <typename T>
 class RangedValue final
 {
+public:
     T value = {};
     T minValue = std::numeric_limits<T>::min();
     T maxValue = std::numeric_limits<T>::max();
+    
+    RangedValue() = default;
+    RangedValue(T value, T minValue, T maxValue)
+    : value(value), minValue(minValue), maxValue(maxValue)
+    {}
 };
 
 using FloatRangedValue = RangedValue<float>;
@@ -65,8 +71,11 @@ public:
     virtual ~Property() = default;
     
     TPropertyValue get(const void* object) const;
+    const TPropertyRangedValue& defaultValue() const { return _defaultValue; }
     
     const std::string& name() const { return _name; }
+    
+    void set(void* object, const TPropertyValue&) const;
     
 private:
     const std::string _name;
@@ -107,8 +116,10 @@ public:
     }
     
     template <class TObject, typename T, T (TObject::*TGet)() const, void (TObject::*TSet)(T)>
-    void addProperty(const std::string& name)
+    void addProperty(const std::string& name, T minValue = 0, T maxValue = 3)
     {
+        const RangedValue<T> defaultValue { T{}, minValue, maxValue };
+        
         auto prop = std::make_unique<Property>(name, getPropertyType<T>(),
         [](const void* object) -> TPropertyValue
         {
@@ -124,7 +135,7 @@ public:
             {
                 (o->*TSet)(*v);
             }
-        });
+        }, defaultValue);
         
         _properties.push_back(std::move(prop));
     }

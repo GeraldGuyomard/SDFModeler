@@ -106,6 +106,7 @@
                                                                 <size key="customSize" width="328" height="40"/>
                                                                 <connections>
                                                                     <outlet property="namelabel" destination="6Ha-a9-NeC" id="qNm-Rn-01c"/>
+                                                                    <outlet property="valueSlider" destination="fSa-pf-SIB" id="min-E9-Oqe"/>
                                                                 </connections>
                                                             </collectionViewCell>
                                                         </cells>
