@@ -128,6 +128,15 @@ public:
     void invalidate();
     
     // Editor bindings
+    float translationX() const;
+    void setTranslationX(float);
+
+    float translationY() const;
+    void setTranslationY(float);
+
+    float translationZ() const;
+    void setTranslationZ(float);
+    
     float scale() const;
     void setScale(float);
     
@@ -136,6 +145,9 @@ private:
     void invalidateCachedWorldTransform();
     void _removeFromParent(bool invalidateWorldTransform);
 
+    float _translation(size_t) const;
+    void _setTranslation(size_t, float);
+    
     const WorldWPtr _world;
     
     ObjectID _id = 0;

@@ -130,6 +130,8 @@ public:
     
     float3x3 invRotTransform() const { return _invRotTransform; }
     float3 translation() const { return _translation; }
+    void setTranslation(float3);
+    
     float scale() const { return _scale; }
     void setScale(float);
     

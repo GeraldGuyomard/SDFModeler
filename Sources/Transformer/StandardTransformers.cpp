@@ -47,6 +47,12 @@ RSTTransformer::setScale(float s)
     _scale = s;
 }
 
+void
+RSTTransformer::setTranslation(float3 t)
+{
+    _translation = t;
+}
+
 RSTTransformer::RSTTransformer(float4x4 transform)
 {
     setTransform(transform);

@@ -123,6 +123,13 @@ Object3D::type() const
 template <>
 void initializeType<Object3D>(Type& type)
 {
+    constexpr float minValue = -5.f;
+    constexpr float maxValue = +5.f;
+    
+    type.addProperty<Object3D, float, &Object3D::translationX, &Object3D::setTranslationX>("x", minValue, maxValue);
+    type.addProperty<Object3D, float, &Object3D::translationY, &Object3D::setTranslationY>("y", minValue, maxValue);
+    type.addProperty<Object3D, float, &Object3D::translationZ, &Object3D::setTranslationZ>("z", minValue, maxValue);
+    
     type.addProperty<Object3D, float, &Object3D::scale, &Object3D::setScale>("scale");
 }
 
@@ -329,9 +336,63 @@ Object3D::setScale(float s)
     t.setScale(s);
     
     setLocalTransform(t.transform());
-    
 }
 
+float
+Object3D::_translation(size_t index) const
+{
+    RSTTransformer t { _localTransform };
+    return t.translation()[index];
+}
+
+void
+Object3D::_setTranslation(size_t index, float v)
+{
+    RSTTransformer transform { _localTransform };
+    
+    float3 translation = transform.translation();
+    translation[index] = v;
+    transform.setTranslation(translation);
+    
+    setLocalTransform(transform.transform());
+}
+
+
+float
+Object3D::translationX() const
+{
+    return _translation(0);
+}
+
+void
+Object3D::setTranslationX(float x)
+{
+    _setTranslation(0, x);
+}
+
+float
+Object3D::translationY() const
+{
+    return _translation(1);
+}
+
+void
+Object3D::setTranslationY(float x)
+{
+    _setTranslation(1, x);
+}
+
+float
+Object3D::translationZ() const
+{
+    return _translation(2);
+}
+
+void
+Object3D::setTranslationZ(float x)
+{
+    _setTranslation(2, x);
+}
 
 void
 Object3D::setLocalTransform(const RSTTransformer& transformer)
