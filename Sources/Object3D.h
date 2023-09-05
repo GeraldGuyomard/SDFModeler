@@ -137,6 +137,15 @@ public:
     float translationZ() const;
     void setTranslationZ(float);
     
+    float rotationX() const;
+    void setRotationX(float);
+
+    float rotationY() const;
+    void setRotationY(float);
+
+    float rotationZ() const;
+    void setRotationZ(float);
+    
     float scale() const;
     void setScale(float);
     
@@ -147,6 +156,9 @@ private:
 
     float _translation(size_t) const;
     void _setTranslation(size_t, float);
+    
+    float _rotation(size_t) const;
+    void _setRotation(size_t, float);
     
     const WorldWPtr _world;
     

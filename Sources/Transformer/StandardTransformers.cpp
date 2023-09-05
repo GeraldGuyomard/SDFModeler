@@ -63,15 +63,15 @@ inline float coef(const float3x3& m, size_t x, size_t y)
     return m.columns[y-1][x-1];
 }
 
-void
-RSTTransformer::computeEulers(float& xAngle, float& yAngle, float& zAngle) const
+float3
+RSTTransformer::rotationEulers() const
 {
     // http://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
     const auto rotMatrix = inverse(_invRotTransform);
     
-    float& psi = xAngle;
-    float& theta = yAngle;
-    float& phi = zAngle;
+    float psi;
+    float theta;
+    float phi;
     
     if ((coef(rotMatrix, 3, 1) != -1.f) && (coef(rotMatrix, 3, 1) != +1.f))
     {
@@ -95,4 +95,27 @@ RSTTransformer::computeEulers(float& xAngle, float& yAngle, float& zAngle) const
             psi = -phi + atan2(-coef(rotMatrix, 1, 2), -coef(rotMatrix, 1, 3));
         }
     }
+    
+    const float radToDeg = 180.f / M_PI;
+    
+    return radToDeg * float3 { phi, theta, psi };
+}
+
+void
+RSTTransformer::setRotationEulers(float3 xyz)
+{
+    const float degToRad = M_PI / 180.f;
+    
+    const float x = xyz.x * degToRad;
+    const auto rotX = matrix3x3_rotation(x, float3 { 1, 0, 0});
+    
+    const float y = xyz.y * degToRad;
+    const auto rotY = matrix3x3_rotation(y, float3 { 0, 1, 0});
+    
+    const float z = xyz.z * degToRad;
+    const auto rotZ = matrix3x3_rotation(z, float3 { 0, 0, 1});
+    
+    const auto rot = rotZ * rotY * rotX;
+    
+    _invRotTransform = inverse(rot);
 }
