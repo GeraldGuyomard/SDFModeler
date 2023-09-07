@@ -137,7 +137,7 @@ void initializeType<Object3D>(Type& type)
         constexpr float maxValue = +180.f;
         
         type.addProperty<Object3D, float, &Object3D::rotationX, &Object3D::setRotationX>("rot x", minValue, maxValue);
-        type.addProperty<Object3D, float, &Object3D::rotationY, &Object3D::setRotationZ>("rot y", minValue, maxValue);
+        type.addProperty<Object3D, float, &Object3D::rotationY, &Object3D::setRotationY>("rot y", minValue, maxValue);
         type.addProperty<Object3D, float, &Object3D::rotationZ, &Object3D::setRotationZ>("rot z", minValue, maxValue);
     }
     

@@ -60,45 +60,34 @@ RSTTransformer::RSTTransformer(float4x4 transform)
 
 inline float coef(const float3x3& m, size_t x, size_t y)
 {
-    return m.columns[y-1][x-1];
+    return m.columns[y][x];
 }
 
 float3
 RSTTransformer::rotationEulers() const
 {
-    // http://eecs.qmul.ac.uk/~gslabaugh/publications/euler.pdf
-    const auto rotMatrix = inverse(_invRotTransform);
-    
-    float psi;
-    float theta;
-    float phi;
-    
-    if ((coef(rotMatrix, 3, 1) != -1.f) && (coef(rotMatrix, 3, 1) != +1.f))
+    // https://learnopencv.com/rotation-matrix-to-euler-angles/
+    const auto R = inverse(_invRotTransform);
+    const float sy = sqrtf(coef(R,0,0) * coef(R,0,0) +  coef(R,1,0) * coef(R,1,0) );
+ 
+    const bool singular = sy < 1e-6; // If
+ 
+    float x, y, z;
+    if (!singular)
     {
-        theta = -asinf(coef(rotMatrix, 3, 1));
-        
-        const float cosTheta = cosf(theta);
-        psi = atan2f(coef(rotMatrix, 3, 2) / cosTheta, coef(rotMatrix, 3, 3) / cosTheta);
-        phi = atan2f(coef(rotMatrix, 2, 1) / cosTheta, coef(rotMatrix, 1, 1) / cosTheta);
+        x = atan2f(coef(R,2,1) , coef(R,2,2));
+        y = atan2f(-coef(R,2,0), sy);
+        z = atan2f(coef(R,1,0), coef(R,0,0));
     }
     else
     {
-        phi = 0.f;
-        if (coef(rotMatrix, 3, 1) == -1.f)
-        {
-            theta = M_PI_2;
-            psi = phi + atan2f(coef(rotMatrix, 1, 2), coef(rotMatrix, 1, 3));
-        }
-        else
-        {
-            theta = -M_PI_2;
-            psi = -phi + atan2(-coef(rotMatrix, 1, 2), -coef(rotMatrix, 1, 3));
-        }
+        x = atan2f(-coef(R,1,2), coef(R,1,1));
+        y = atan2f(-coef(R,2,0), sy);
+        z = 0;
     }
     
     const float radToDeg = 180.f / M_PI;
-    
-    return radToDeg * float3 { phi, theta, psi };
+    return float3 { x * radToDeg, y * radToDeg, z * radToDeg };
 }
 
 void
