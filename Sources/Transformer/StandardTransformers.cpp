@@ -11,7 +11,7 @@
 float4x4
 RSTTransformer::transform() const
 {
-    const auto rot = inverse(_invRotTransform);
+    const auto rot = transpose(_invRotTransform);
     
     float4x4 m;
     for (size_t i=0; i < 3; ++i)
@@ -36,7 +36,7 @@ RSTTransformer::setTransform(float4x4 m)
         const float3 v = m.columns[i].xyz / _scale;
         rot.columns[i] = v;
     }
-    _invRotTransform = inverse(rot);
+    _invRotTransform = transpose(rot);
     
     _translation = m.columns[3].xyz;
 }
@@ -67,7 +67,7 @@ float3
 RSTTransformer::rotationEulers() const
 {
     // https://learnopencv.com/rotation-matrix-to-euler-angles/
-    const auto R = inverse(_invRotTransform);
+    const auto R = transpose(_invRotTransform);
     const float sy = sqrtf(coef(R,0,0) * coef(R,0,0) +  coef(R,1,0) * coef(R,1,0) );
  
     const bool singular = sy < 1e-6; // If
@@ -106,5 +106,5 @@ RSTTransformer::setRotationEulers(float3 xyz)
     
     const auto rot = rotZ * rotY * rotX;
     
-    _invRotTransform = inverse(rot);
+    _invRotTransform = transpose(rot);
 }
