@@ -13,6 +13,7 @@
 
 #include "SerializedWorldObject.h"
 #include "Camera.h"
+#include "RenderStats.h"
 
 #include <functional>
 
@@ -131,4 +132,6 @@ private:
     float4x4 _invProjectionMatrix;
     
     RenderCallback _renderCallback;
+    
+    RenderStats _renderStats;
 };

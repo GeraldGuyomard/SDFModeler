@@ -117,6 +117,8 @@
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
+		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
+		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -246,6 +248,8 @@
 		74F7647129CF95D400CD5259 /* Object3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3D.cpp; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
+		7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderStats.mm; sourceTree = "<group>"; };
+		7F5CCD402B685A2C00BC6A69 /* RenderStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderStats.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -355,6 +359,8 @@
 				7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */,
 				748629CB2A004350002407AA /* Type.cpp */,
 				748629CC2A004350002407AA /* Type.h */,
+				7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */,
+				7F5CCD402B685A2C00BC6A69 /* RenderStats.h */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -610,6 +616,7 @@
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
 				74087D9429F0B85E00958CD7 /* SerializationContext.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
+				7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */,
 				743252C129EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
 				74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */,
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
@@ -644,6 +651,7 @@
 				74AAF27729D7BBC900D322DB /* main.m in Sources */,
 				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,
 				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,
+				7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */,
 				74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */,
 				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
 				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,

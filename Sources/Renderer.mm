@@ -259,6 +259,7 @@ void
 Renderer::render()
 {
     /// Per frame updates here
+    auto now = HighResClock::now();
     
     dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
     
@@ -268,6 +269,12 @@ Renderer::render()
     __block dispatch_semaphore_t block_sema = _inFlightSemaphore;
     [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer)
      {
+        auto end = HighResClock::now();
+        const auto dT = end - now;
+        
+        const float renderFrameTimeInMs = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+        _renderStats.submitFrameRenderTime(renderFrameTimeInMs);
+        
         dispatch_semaphore_signal(block_sema);
     }];
     
@@ -330,10 +337,12 @@ Renderer::render()
 void
 Renderer::updateCameraTransforms()
 {
+    const CGSize size = _mtkView.bounds.size;
+    
+    _renderStats.setViewportSize({float(size.width), float(size.height)});
+    
     if (_camera != nullptr)
     {
-        const CGSize size = _mtkView.bounds.size;
-        
         const float2 s { float(size.width), float(size.height) };
         _camera->setViewportSize(s);
         
