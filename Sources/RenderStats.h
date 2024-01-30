@@ -8,7 +8,8 @@
 #pragma once
 
 #include <cstdio>
-#import <simd/simd.h>
+#import "CommonDefinitions.h"
+
 
 class RenderStats final
 {
@@ -21,12 +22,15 @@ public:
     
 private:
     
-    float _frameTimeAccumulation = 0.f;
+    void _reset();
+    
+    float _accumulatedTime = 0.f;
     size_t _nbAccumulatedFrames = 0.f;
     simd_float2 _viewportSize = {0.f, 0.f};
+    bool _firstSubmission = true;
     
-    static constexpr size_t kNbFramesForFPSComputation = 30.f;
-    size_t _nbFramesForFPSComputation = kNbFramesForFPSComputation;
+    static constexpr float kDefaultSnapshotInterval = 0.25f;
+    float _snapshotInterval = kDefaultSnapshotInterval;
 };
 
 

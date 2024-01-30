@@ -44,6 +44,10 @@
 
 #include <TargetConditionals.h>
 
+#include <chrono>
+
+using HighResClock = std::chrono::high_resolution_clock;
+
 #if defined(__OBJC__)
 
     #if TARGET_OS_OSX
@@ -138,6 +142,11 @@ INLINE size_t alignedSize(size_t size)
 INLINE bool isAligned(size_t size)
 {
     return (size & kMemoryAlignmentMask) == 0;
+}
+
+INLINE bool equals(float2 lhs, float2 rhs)
+{
+    return (lhs.x == rhs.x) && (lhs.y == rhs.y);
 }
 
 static constexpr CONSTANT float PI = 3.141592653589793238;

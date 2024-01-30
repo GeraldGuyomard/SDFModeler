@@ -13,8 +13,6 @@
 #import "Interaction.h"
 #import "Animation.h"
 
-using HighResClock = std::chrono::high_resolution_clock;
-
 @interface MainViewController : ViewControllerBase
 
 @property(readonly, nonatomic) CGFloat nativeContentScale;

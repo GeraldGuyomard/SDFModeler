@@ -7,29 +7,54 @@
 
 #include "RenderStats.h"
 #import <Foundation/Foundation.h>
+#include "CommonDefinitions.h"
+
+void
+RenderStats::setViewportSize(float2 viewportSize)
+{
+    if (!equals(_viewportSize, viewportSize))
+    {
+        _viewportSize = viewportSize;
+        _reset();
+    }
+}
 
 void 
-RenderStats::setViewportSize(simd_float2 viewportSize)
+RenderStats::_reset()
 {
-    _viewportSize = viewportSize;
+    _accumulatedTime = 0.f;
+    _nbAccumulatedFrames = 0;
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(_snapshotInterval * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        if (_nbAccumulatedFrames != 0)
+        {
+            const float averageTime = _accumulatedTime / _nbAccumulatedFrames;
+            const float fps = 1000.f / averageTime;
+            
+            printf("(%d, %d) Render Time=%5.2f FPS=%3.1f\n", int(_viewportSize.x), int(_viewportSize.y), averageTime, fps);
+        }
+        else
+        {
+            printf("(%d, %d) Render Time=N/A FPS=N/A\n", int(_viewportSize.x), int(_viewportSize.y));
+        }
+        
+        _reset();
+    });
 }
 
 void
 RenderStats::submitFrameRenderTime(float time)
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        _frameTimeAccumulation += time;
-        _nbAccumulatedFrames++;
-        if (_nbAccumulatedFrames == _nbFramesForFPSComputation)
-        {
-            const float averageTime = _frameTimeAccumulation / _nbFramesForFPSComputation;
-            const float fps = 1000.f / averageTime;
-            
-            _frameTimeAccumulation = 0.f;
-            _nbAccumulatedFrames = 0;
-            
-            printf("(%d, %d) Render Time=%5.2f FPS=%3.1f\n", int(_viewportSize.x), int(_viewportSize.y), averageTime, fps);
+        
+        if (_firstSubmission) {
+            _reset();
+            _firstSubmission = false;
         }
+        
+        _accumulatedTime += time;
+        ++_nbAccumulatedFrames;
     });
 
 }
