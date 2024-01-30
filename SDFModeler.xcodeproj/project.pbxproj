@@ -119,6 +119,14 @@
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
+
+		7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 7F74B66B2B61974900262F2D /* RealityKitContent */; };
+		7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */; };
+		7F74B6702B61974900262F2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66F2B61974900262F2D /* ContentView.swift */; };
+		7F74B6722B61974900262F2D /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B6712B61974900262F2D /* Renderer.swift */; };
+		7F74B6742B61974900262F2D /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B6732B61974900262F2D /* Shaders.metal */; };
+		7F74B6782B61974900262F2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6772B61974900262F2D /* Preview Assets.xcassets */; };
+		7F74B67A2B61974A00262F2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6792B61974A00262F2D /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -250,6 +258,16 @@
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 		7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderStats.mm; sourceTree = "<group>"; };
 		7F5CCD402B685A2C00BC6A69 /* RenderStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderStats.h; sourceTree = "<group>"; };
+		7F74B6672B61974900262F2D /* SDFModeler visionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler visionOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F74B66A2B61974900262F2D /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
+		7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDFModeler_visionOSApp.swift; sourceTree = "<group>"; };
+		7F74B66F2B61974900262F2D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7F74B6712B61974900262F2D /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
+		7F74B6732B61974900262F2D /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		7F74B6752B61974900262F2D /* ShaderTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ShaderTypes.h; sourceTree = "<group>"; };
+		7F74B6772B61974900262F2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		7F74B6792B61974A00262F2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7F74B67B2B61974A00262F2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -269,6 +287,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7F74B6642B61974900262F2D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -278,6 +304,8 @@
 				7444A4D029A1CB63009632C3 /* Sources */,
 				74A18A7E29D8B2B70010F1B4 /* macOS */,
 				74AAF26129D7BBC800D322DB /* iOS */,
+				7F74B6682B61974900262F2D /* SDFModeler visionOS */,
+				7F74B6692B61974900262F2D /* Packages */,
 				7444A4CF29A1CB63009632C3 /* Products */,
 				74A18A7929D8199D0010F1B4 /* Frameworks */,
 			);
@@ -288,6 +316,7 @@
 			children = (
 				7444A4CE29A1CB63009632C3 /* SDFModeler.app */,
 				74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */,
+				7F74B6672B61974900262F2D /* SDFModeler visionOS.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -484,6 +513,37 @@
 			path = Material;
 			sourceTree = "<group>";
 		};
+		7F74B6682B61974900262F2D /* SDFModeler visionOS */ = {
+			isa = PBXGroup;
+			children = (
+				7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */,
+				7F74B66F2B61974900262F2D /* ContentView.swift */,
+				7F74B6712B61974900262F2D /* Renderer.swift */,
+				7F74B6732B61974900262F2D /* Shaders.metal */,
+				7F74B6752B61974900262F2D /* ShaderTypes.h */,
+				7F74B6792B61974A00262F2D /* Assets.xcassets */,
+				7F74B67B2B61974A00262F2D /* Info.plist */,
+				7F74B6762B61974900262F2D /* Preview Content */,
+			);
+			path = "SDFModeler visionOS";
+			sourceTree = "<group>";
+		};
+		7F74B6692B61974900262F2D /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				7F74B66A2B61974900262F2D /* RealityKitContent */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		7F74B6762B61974900262F2D /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				7F74B6772B61974900262F2D /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -521,6 +581,26 @@
 			productReference = 74AAF26029D7BBC800D322DB /* SDFModeler iOS.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7F74B6662B61974900262F2D /* SDFModeler visionOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7F74B67C2B61974A00262F2D /* Build configuration list for PBXNativeTarget "SDFModeler visionOS" */;
+			buildPhases = (
+				7F74B6632B61974900262F2D /* Sources */,
+				7F74B6642B61974900262F2D /* Frameworks */,
+				7F74B6652B61974900262F2D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SDFModeler visionOS";
+			packageProductDependencies = (
+				7F74B66B2B61974900262F2D /* RealityKitContent */,
+			);
+			productName = "SDFModeler visionOS";
+			productReference = 7F74B6672B61974900262F2D /* SDFModeler visionOS.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -528,6 +608,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1520;
 				LastUpgradeCheck = 1420;
 				TargetAttributes = {
 					7444A4CD29A1CB63009632C3 = {
@@ -535,6 +616,9 @@
 					};
 					74AAF25F29D7BBC800D322DB = {
 						CreatedOnToolsVersion = 14.2;
+					};
+					7F74B6662B61974900262F2D = {
+						CreatedOnToolsVersion = 15.2;
 					};
 				};
 			};
@@ -553,6 +637,7 @@
 			targets = (
 				7444A4CD29A1CB63009632C3 /* SDFModeler */,
 				74AAF25F29D7BBC800D322DB /* SDFModeler iOS */,
+				7F74B6662B61974900262F2D /* SDFModeler visionOS */,
 			);
 		};
 /* End PBXProject section */
@@ -574,6 +659,15 @@
 				74AAF27529D7BBC900D322DB /* LaunchScreen.storyboard in Resources */,
 				74AAF27229D7BBC900D322DB /* Assets.xcassets in Resources */,
 				74AAF27029D7BBC800D322DB /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F74B6652B61974900262F2D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F74B67A2B61974A00262F2D /* Assets.xcassets in Resources */,
+				7F74B6782B61974900262F2D /* Preview Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -696,6 +790,17 @@
 				74A18A9929D903050010F1B4 /* CameraInteraction.cpp in Sources */,
 				74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */,
 				748629C329F62C6C002407AA /* Animation.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7F74B6632B61974900262F2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7F74B6742B61974900262F2D /* Shaders.metal in Sources */,
+				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
+				7F74B6722B61974900262F2D /* Renderer.swift in Sources */,
+				7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -861,7 +966,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				DEVELOPMENT_TEAM = T42263S576;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = Sources/;
@@ -888,7 +993,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				DEVELOPMENT_TEAM = T42263S576;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = Sources/;
@@ -913,7 +1018,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				DEVELOPMENT_TEAM = T42263S576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SDF Modeler";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -944,7 +1049,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4EUCTF8UFR;
+				DEVELOPMENT_TEAM = T42263S576;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SDF Modeler";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -966,6 +1071,76 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		7F74B67D2B61974A00262F2D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SDFModeler visionOS/Preview Content\"";
+				DEVELOPMENT_TEAM = T42263S576;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.geraldguyomard.SDFModeler-visionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(TARGET_NAME)/ShaderTypes.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 1.0;
+			};
+			name = Debug;
+		};
+		7F74B67E2B61974A00262F2D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"SDFModeler visionOS/Preview Content\"";
+				DEVELOPMENT_TEAM = T42263S576;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "$(TARGET_NAME)/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.geraldguyomard.SDFModeler-visionOS";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = xros;
+				SUPPORTED_PLATFORMS = "xros xrsimulator";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(TARGET_NAME)/ShaderTypes.h";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				VALIDATE_PRODUCT = YES;
+				XROS_DEPLOYMENT_TARGET = 1.0;
 			};
 			name = Release;
 		};
@@ -999,7 +1174,23 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		7F74B67C2B61974A00262F2D /* Build configuration list for PBXNativeTarget "SDFModeler visionOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F74B67D2B61974A00262F2D /* Debug */,
+				7F74B67E2B61974A00262F2D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7F74B66B2B61974900262F2D /* RealityKitContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RealityKitContent;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7444A4C629A1CB63009632C3 /* Project object */;
 }
