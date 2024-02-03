@@ -473,6 +473,119 @@ Object3D::setOperation(SDFOperation op)
     _operation = op;
 }
 
+ProjectedBB::ProjectedBB(const RawPoints& pts)
+{
+    for (size_t i=0; i < 8; ++i)
+    {
+        projectedPoints[i] = pts[i];
+    }
+}
+
+bool ProjectedBoundingBoxes::add(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
+{
+    float3 pts[8];
+    localBBox.points(pts);
+    
+    bool visible = false;
+    for (int i=0; i < 8; ++i)
+    {
+        float3& pt = pts[i];
+        
+        // NDC in metal is x, y between [0, 1]
+        // and z between [0, 1]
+        const float4 p = worldViewProjMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
+        pt = p.xyz / p.w;
+        
+        const bool inFrustrum = (pt.x >= -1.f) && (pt.x <= 1.f) && (pt.y >= -1.f) && (pt.y <= 1.f) && (pt.z >= 0.f) && (pt.z <= 1.f);
+        
+        if (inFrustrum)
+        {
+            visible = true;
+        }
+    }
+    
+    if (!visible)
+    {
+        return false;
+    }
+    
+    _objectIDToProjectedBB.emplace(std::pair {id, ProjectedBB{pts}});
+    
+    return true;
+}
+
+const ProjectedBB*
+ProjectedBoundingBoxes::projectedBB(ObjectID id) const
+{
+    const auto it = _objectIDToProjectedBB.find(id);
+    return (it != _objectIDToProjectedBB.end()) ? &it->second : nullptr;
+}
+
+bool Object3D::isCulled(const float4x4& viewProjectionMatrix) const
+{
+    const auto box = localBoundingBox();
+    if (box.empty())
+    {
+        return true;
+    }
+    
+    const auto worldViewProjMatrix = viewProjectionMatrix * worldTransform();
+    return Object3D::isCulled(box, worldViewProjMatrix);
+}
+
+bool Object3D::projectBoundingBoxHierarchy(const float4x4& projViewMatrix, const float2& viewportSize, ProjectedBoundingBoxes& boxes) const
+{
+    const auto worldViewProjMatrix = projViewMatrix * worldTransform();
+    const auto box = localBoundingBox();
+    
+    const bool thisVisible = boxes.add(id(), worldViewProjMatrix, box);
+    
+    std::vector<Ptr> positiveChildren;
+    std::vector<Ptr> negativeChildren;
+
+    for (const auto& child : children())
+    {
+        switch (child->operation())
+        {
+            case SDFOperation::addition:
+            {
+                positiveChildren.push_back(child);
+                break;
+            }
+
+            case SDFOperation::substraction:
+            {
+                negativeChildren.push_back(child);
+                break;
+            }
+                
+            default: break;
+        }
+    }
+    
+    bool positiveChildVisible = false;
+    for (const auto& child : positiveChildren)
+    {
+        if (child->projectBoundingBoxHierarchy(projViewMatrix, viewportSize, boxes))
+        {
+            positiveChildVisible = true;
+        }
+    }
+    
+    if (positiveChildVisible)
+    {
+        for (const auto& child : negativeChildren)
+        {
+            if (!child->isCulled(projViewMatrix))
+            {
+                child->projectBoundingBoxHierarchy(projViewMatrix, viewportSize, boxes);
+            }
+        }
+    }
+    
+    return thisVisible;
+}
+
 bool
 Object3D::serializeHierarchy(SerializationContext& context) const
 {
@@ -577,6 +690,10 @@ World::serialize(const float4x4& viewProjectionMatrix,
                  Materials& materials) const
 {
     auto firstHeader = reinterpret_cast<ObjectHeader*>(&serializedWorld.buffer[0]);
+    
+    // first pass : project the bounding boxes
+    ProjectedBoundingBoxes boxes;
+    _rootObject->projectBoundingBoxHierarchy(viewProjectionMatrix, viewportSize, boxes);
     
     Tile& tile = serializedWorld.tiles[0];
     serializedWorld.tileSize = viewportSize;

@@ -13,6 +13,7 @@
 #include <vector>
 #include <set>
 #include <string>
+#include <unordered_map>
 
 #include "Command.h"
 #include "BoundingBox.h"
@@ -63,6 +64,29 @@ private:
 
 class Type;
 
+class ProjectedBB final
+{
+public:
+    using Points = std::array<float3, 8>;
+    Points projectedPoints;
+    
+    using RawPoints = float3[8];
+    ProjectedBB(const RawPoints& pts);
+};
+
+class ProjectedBoundingBoxes final
+{
+public:
+    
+    bool add(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
+    
+    const ProjectedBB* projectedBB(ObjectID) const;
+    
+private:
+    
+    std::unordered_map<ObjectID, ProjectedBB> _objectIDToProjectedBB;
+};
+
 class Object3D : public std::enable_shared_from_this<Object3D>
 {
 public:
@@ -81,10 +105,11 @@ public:
     
     // return true if self has been serialized
     bool serializeHierarchy(SerializationContext&) const;
+    bool projectBoundingBoxHierarchy(const float4x4& projViewMatrix, const float2& viewportSize, ProjectedBoundingBoxes&) const;
     
     virtual void selfSerialize(SerializationContext&) const;
     
-    virtual bool isCulled(const float4x4& viewProjectionMatrix) const { return true; }
+    bool isCulled(const float4x4& viewProjectionMatrix) const;
     
     ObjectID id() const;
     void setId(ObjectID);
@@ -197,14 +222,6 @@ public:
     void* geometry() override
     {
         return &_geometry;
-    }
-    
-    bool isCulled(const float4x4& viewProjectionMatrix) const override
-    {
-        const auto worldViewProjMatrix = viewProjectionMatrix * worldTransform();
-        const auto box = _geometry.boundingBox();
-        
-        return Object3D::isCulled(box, worldViewProjMatrix);
     }
     
     BoundingBox localBoundingBox() const override
