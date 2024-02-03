@@ -149,6 +149,8 @@ public:
     float scale() const;
     void setScale(float);
     
+    static bool isCulled(const BoundingBox& box, const float4x4& projViewModelMatrix);
+    
 private:
     
     void invalidateCachedWorldTransform();
@@ -202,7 +204,7 @@ public:
         const auto worldViewProjMatrix = viewProjectionMatrix * worldTransform();
         const auto box = _geometry.boundingBox();
         
-        return box.isCulled(worldViewProjMatrix);
+        return Object3D::isCulled(box, worldViewProjMatrix);
     }
     
     BoundingBox localBoundingBox() const override
@@ -287,7 +289,9 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void serialize(const float4x4& viewProjectionMatrix, SerializedWorldObject&, Materials& materials) const;
+    void serialize(const float4x4& viewProjectionMatrix,
+                   const float2& viewportSize,
+                   SerializedWorldObject&, Materials& materials) const;
     
     WorldDelegate::Ptr delegate() const;
     void setDelegate(const WorldDelegate::Ptr&);

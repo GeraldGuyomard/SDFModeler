@@ -328,6 +328,8 @@ Object3D::worldBoundingBoxOfHierarchy() const
 void
 Object3D::setLocalTransform(const float4x4& transform)
 {
+    assert(isValid(transform));
+    
     _localTransform = transform;
     invalidateCachedWorldTransform();
     invalidate();
@@ -546,6 +548,11 @@ Object3D::invalidate()
     }
 }
 
+bool Object3D::isCulled(const BoundingBox& box, const float4x4& projViewModelMatrix)
+{
+    return box.isCulled(projViewModelMatrix);
+}
+
 WorldPtr
 World::make()
 {
@@ -564,9 +571,17 @@ World::init()
 }
 
 void
-World::serialize(const float4x4& viewProjectionMatrix, SerializedWorldObject& serializedWorld, Materials& materials) const
+World::serialize(const float4x4& viewProjectionMatrix,
+                 const float2& viewportSize,
+                 SerializedWorldObject& serializedWorld,
+                 Materials& materials) const
 {
-    SerializationContext context { serializedWorld, viewProjectionMatrix };
+    auto firstHeader = reinterpret_cast<ObjectHeader*>(&serializedWorld.buffer[0]);
+    
+    Tile& tile = serializedWorld.tiles[0];
+    serializedWorld.tileSize = viewportSize;
+    
+    SerializationContext context { viewProjectionMatrix, tile, firstHeader };
     _rootObject->serializeHierarchy(context);
     
     materials.nbMaterials = _materials.size();

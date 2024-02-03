@@ -119,7 +119,6 @@
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
-
 		7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 7F74B66B2B61974900262F2D /* RealityKitContent */; };
 		7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */; };
 		7F74B6702B61974900262F2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66F2B61974900262F2D /* ContentView.swift */; };
@@ -1016,9 +1015,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = T42263S576;
+				DEVELOPMENT_TEAM = 4EUCTF8UFR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SDF Modeler";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1036,6 +1036,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1047,9 +1048,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = T42263S576;
+				DEVELOPMENT_TEAM = 4EUCTF8UFR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "SDF Modeler";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -1067,6 +1069,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.geraldguyomard.SDFModeler;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -13,7 +13,10 @@
 class SerializationContext final
 {
 public:
-    SerializationContext(SerializedWorldObject& serializedWorld, const float4x4& viewProjectionMatrix);
+    SerializationContext(
+                         const float4x4& viewProjectionMatrix,
+                         Tile& tile,
+                         ObjectHeader*& availableObjectHeader);
     
     const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
     
@@ -21,8 +24,8 @@ public:
     void serializeObjectHeader(const SerializationHeaderCallback&);
     
 private:
-    SerializedWorldObject& _serializedWorld;
     const float4x4 _viewProjectionMatrix;
     
+    Tile& _tile;
     ObjectHeader* _availableObjectHeader;
 };

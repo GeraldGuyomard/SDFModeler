@@ -65,8 +65,20 @@ public:
         float3 pts[8];
         points(pts);
         
-        bool inFrustrum = false;
+#if 1
         
+        for (int i=0; i < 8; ++i)
+        {
+            if (isPointInFrustrum(pts[i], worldViewProjectionMatrix))
+            {
+                return false;
+            }
+        }
+        
+        return true;
+        
+#else
+        bool inFrustrum = false;
         inFrustrum |= isPointInFrustrum(pts[0], worldViewProjectionMatrix);
         inFrustrum |= isPointInFrustrum(pts[1], worldViewProjectionMatrix);
         inFrustrum |= isPointInFrustrum(pts[2], worldViewProjectionMatrix);
@@ -75,8 +87,9 @@ public:
         inFrustrum |= isPointInFrustrum(pts[5], worldViewProjectionMatrix);
         inFrustrum |= isPointInFrustrum(pts[6], worldViewProjectionMatrix);
         inFrustrum |= isPointInFrustrum(pts[7], worldViewProjectionMatrix);
-        
         return !inFrustrum;
+#endif
+        
     }
 };
 

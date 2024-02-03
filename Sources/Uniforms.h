@@ -15,6 +15,8 @@ struct Uniforms final
     float4x4 ndcToWorldTransform;
     
     float3 lightDirection;
+    
+    float2 viewportSize;
 };
 
 INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)

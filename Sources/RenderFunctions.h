@@ -41,17 +41,17 @@ INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT Seri
 }
 
 template <typename TShader>
-INLINE RayMarchResult rayMarch(float2 viewportNDC,
+INLINE RayMarchResult rayMarch(float2 ndcPosition,
                             CONSTANT Uniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
-    const auto ray = Ray::make(viewportNDC, uniforms);
+    const auto ray = Ray::make(ndcPosition, uniforms);
     
     const TShader shader { uniforms, materials };
     
     WorldObject<TShader> worldObject { shader, serializedWorld };
-    const auto worldRes = worldObject.rayMarch(ray);
+    const auto worldRes = worldObject.rayMarch(ndcPosition, uniforms.viewportSize, ray);
     const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
     
     if (worldRes.isValid())

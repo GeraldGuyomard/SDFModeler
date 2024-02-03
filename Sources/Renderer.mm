@@ -232,6 +232,7 @@ Renderer::updateUniforms()
 
     const float4x4 cameraMatrix = (_camera != nullptr) ? _camera->worldTransform() : float4x4_identity();
     
+    uniforms.viewportSize = renderSize();
     uniforms.invProjectionMatrix = _invProjectionMatrix;
     uniforms.ndcToWorldTransform = cameraMatrix * uniforms.invProjectionMatrix;
     
@@ -245,7 +246,7 @@ Renderer::updateUniforms()
         const auto viewMatrix = inverse(cameraMatrix);
         const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
         
-        world->serialize(viewProjectionMatrix, serializedWorld, serializedMaterials);
+        world->serialize(viewProjectionMatrix, uniforms.viewportSize, serializedWorld, serializedMaterials);
     }
 }
 

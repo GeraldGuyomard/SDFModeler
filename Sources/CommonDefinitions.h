@@ -127,6 +127,8 @@ using HighResClock = std::chrono::high_resolution_clock;
         return mix(a, b, float4 {c, c, c, c});
     }
 
+    bool isValid(const float4x4& m);
+
 #endif
 
 // Alignment utilities

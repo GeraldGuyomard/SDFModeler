@@ -14,11 +14,18 @@
 #include "ComputeDistance.h"
 #include "ShadedPrimitive.h"
 
-struct SerializedWorldObject final
+struct Tile final
 {
     uint64_t objectCount = 0;
-    
-    uint64_t padding;
+    uint64_t offsetInBuffer = 0;
+};
+
+static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
+
+struct SerializedWorldObject final
+{
+    float2 tileSize = { 0.f, 0.f };
+    Tile tiles[kMaxTiles];
     
     // should be aligned on 16 bytes
     // for SSE float moves
@@ -37,8 +44,19 @@ public:
     : _serialized(serializedWorld), _shader(shader)
     {}
     
-    RayMarchResult rayMarch(Ray ray) const
+    RayMarchResult rayMarch(float2 ndcPosition, float2 viewportSize, Ray ray) const
     {
+        // position between 0 and width, height on both axis
+        float2 position = (ndcPosition + float2{1, 1}) * 0.5f;
+        position *= viewportSize;
+        position = min(position, viewportSize - float2{1, 1});
+        
+        float2 tileCoordinates = position / _serialized.tileSize;
+        tileCoordinates = floor(tileCoordinates);
+        
+        const size_t tileIndex = (tileCoordinates.y * _serialized.tileSize.x) + tileCoordinates.x;
+        
+        CONSTANT Tile& tile = _serialized.tiles[tileIndex];
         CONSTANT uint8_t* buffer = &_serialized.buffer[0];
         
         ObjectHeadersArray headersArray { buffer };
@@ -47,7 +65,7 @@ public:
         
         CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
         
-        int64_t nbObjectsLeftToCull = _serialized.objectCount;
+        int64_t nbObjectsLeftToCull = tile.objectCount;
         bool hasNegativeObjects = false;
         
         while (nbObjectsLeftToCull > 0)

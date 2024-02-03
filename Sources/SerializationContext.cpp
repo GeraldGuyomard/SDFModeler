@@ -6,11 +6,16 @@
 
 #include "SerializationContext.h"
 
-SerializationContext::SerializationContext(SerializedWorldObject& serializedWorld, const float4x4& viewProjectionMatrix)
-: _serializedWorld(serializedWorld), _viewProjectionMatrix(viewProjectionMatrix)
+SerializationContext::SerializationContext(
+                                           const float4x4& viewProjectionMatrix,
+                                           Tile& tile,
+                                           ObjectHeader*& availableObjectHeader)
+:
+_viewProjectionMatrix(viewProjectionMatrix),
+_tile(tile),
+_availableObjectHeader(availableObjectHeader)
 {
-    _serializedWorld.objectCount = 0;
-    _availableObjectHeader = reinterpret_cast<ObjectHeader*>(&_serializedWorld.buffer[0]);
+    _tile.objectCount = 0;
 }
 
 
@@ -22,5 +27,5 @@ SerializationContext::serializeObjectHeader(const SerializationHeaderCallback& c
     _availableObjectHeader->byteSize = uint32_t(size);
     _availableObjectHeader = ObjectHeader::next(_availableObjectHeader);
     
-    ++_serializedWorld.objectCount;
+    ++_tile.objectCount;
 }
