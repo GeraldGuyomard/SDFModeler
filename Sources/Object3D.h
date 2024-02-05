@@ -64,29 +64,6 @@ private:
 
 class Type;
 
-class ProjectedBB final
-{
-public:
-    using Points = std::array<float3, 8>;
-    Points projectedPoints;
-    
-    using RawPoints = float3[8];
-    ProjectedBB(const RawPoints& pts);
-};
-
-class ProjectedBoundingBoxes final
-{
-public:
-    
-    bool add(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
-    
-    const ProjectedBB* projectedBB(ObjectID) const;
-    
-private:
-    
-    std::unordered_map<ObjectID, ProjectedBB> _objectIDToProjectedBB;
-};
-
 class Object3D : public std::enable_shared_from_this<Object3D>
 {
 public:
@@ -104,12 +81,13 @@ public:
     virtual void* geometry() { return nullptr; }
     
     // return true if self has been serialized
-    bool serializeHierarchy(SerializationContext&) const;
-    bool projectBoundingBoxHierarchy(const float4x4& projViewMatrix, const float2& viewportSize, ProjectedBoundingBoxes&) const;
+    bool serializeHierarchy(Tile&, SerializationContext&) const;
     
-    virtual void selfSerialize(SerializationContext&) const;
+    virtual void selfSerialize(Tile&, SerializationContext&) const;
     
     bool isCulled(const float4x4& viewProjectionMatrix) const;
+    
+    ObjectID directID() const { return _id; }
     
     ObjectID id() const;
     void setId(ObjectID);
@@ -174,8 +152,6 @@ public:
     float scale() const;
     void setScale(float);
     
-    static bool isCulled(const BoundingBox& box, const float4x4& projViewModelMatrix);
-    
 private:
     
     void invalidateCachedWorldTransform();
@@ -229,9 +205,9 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfSerialize(SerializationContext& context) const final override
+    void selfSerialize(Tile& tile, SerializationContext& context) const final override
     {
-        context.serializeObjectHeader([this](ObjectHeader* header)
+        context.serializeObjectHeader(tile, [this](ObjectHeader* header)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -306,9 +282,8 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void serialize(const float4x4& viewProjectionMatrix,
-                   const float2& viewportSize,
-                   SerializedWorldObject&, Materials& materials) const;
+    void serialize(SerializationContext& context,
+                   Materials& materials) const;
     
     WorldDelegate::Ptr delegate() const;
     void setDelegate(const WorldDelegate::Ptr&);

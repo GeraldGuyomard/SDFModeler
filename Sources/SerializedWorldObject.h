@@ -16,8 +16,8 @@
 
 struct Tile final
 {
-    uint64_t objectCount = 0;
-    uint64_t offsetInBuffer = 0;
+    uint32_t objectCount = 0;
+    uint32_t offsetInBuffer = 0;
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
@@ -25,6 +25,9 @@ static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
 struct SerializedWorldObject final
 {
     float2 tileSize = { 0.f, 0.f };
+    float  numTileColumns = 0;
+    float  numTileRows = 0;
+    
     Tile tiles[kMaxTiles];
     
     // should be aligned on 16 bytes
