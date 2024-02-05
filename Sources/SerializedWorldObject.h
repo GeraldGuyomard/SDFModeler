@@ -16,11 +16,13 @@
 
 struct Tile final
 {
-    uint32_t objectCount = 0;
-    uint32_t offsetInBuffer = 0;
+    float2 minPt = { 0, 0 }; // 8
+    float2 maxPt = { 0, 0 }; // 8
+    size_t objectCount = 0; // 8
+    size_t offsetInBuffer = 0; // 8
 };
 
-static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
+static CONSTANT constexpr size_t kMaxTiles = 8 * 8;
 
 struct SerializedWorldObject final
 {

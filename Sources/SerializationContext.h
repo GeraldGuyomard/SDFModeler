@@ -22,6 +22,7 @@ public:
 
 class Object3D;
 class World;
+class Rect;
 
 class SerializationContext final
 {
@@ -39,6 +40,8 @@ public:
     
     const ProjectedBB* projectedBB(ObjectID) const;
     
+    const float2& viewportSize() const { return _viewportSize; }
+    
     Tile& tileAt(size_t x, size_t y) const;
     
 private:
@@ -48,7 +51,7 @@ private:
     
     ObjectHeader* _availableObjectHeader;
     
-    bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root);
+    bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root, const Rect& viewportRect);
     bool _addBBox(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
     
     std::unordered_map<ObjectID, ProjectedBB> _objectIDToProjectedBB;

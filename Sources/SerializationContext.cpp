@@ -6,6 +6,7 @@
 
 #include "SerializationContext.h"
 #include "Object3D.h"
+#include "Rect.h"
 
 ProjectedBB::ProjectedBB(const RawPoints& pts)
 {
@@ -16,7 +17,7 @@ ProjectedBB::ProjectedBB(const RawPoints& pts)
 }
 
 bool
-SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root)
+SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const Rect& viewportRect)
 {
     const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
     const auto box = root->localBoundingBox();
@@ -49,7 +50,7 @@ SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root)
     bool positiveChildVisible = false;
     for (const auto& child : positiveChildren)
     {
-        if (_addBBoxRecursive(child))
+        if (_addBBoxRecursive(child, viewportRect))
         {
             positiveChildVisible = true;
         }
@@ -59,9 +60,9 @@ SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root)
     {
         for (const auto& child : negativeChildren)
         {
-            if (!child->isCulled(_viewProjectionMatrix))
+            if (!child->isCulled(_viewProjectionMatrix, viewportRect))
             {
-                _addBBoxRecursive(child);
+                _addBBoxRecursive(child, viewportRect);
             }
         }
     }
@@ -126,16 +127,34 @@ _serializedWorldObject(serializedWorldObject)
     _serializedWorldObject.numTileRows = 1;
     
     const size_t nbTiles = _serializedWorldObject.numTileColumns * _serializedWorldObject.numTileRows;
-    for (size_t i=0 ; i < nbTiles; ++i)
+    size_t i=0;
+    float2 minPt = { 0, 0 };
+    
+    for (size_t y=0 ; y < _serializedWorldObject.numTileRows; ++y)
     {
-        Tile& tile = _serializedWorldObject.tiles[i];
-        tile.objectCount = 0;
-        tile.offsetInBuffer = 0;
+        minPt.x = 0;
         
+        for (size_t x=0; x < _serializedWorldObject.numTileColumns; ++x)
+        {
+            Tile& tile = _serializedWorldObject.tiles[i++];
+            tile.objectCount = 0;
+            tile.offsetInBuffer = 0;
+            tile.minPt = minPt;
+            tile.maxPt = minPt + _serializedWorldObject.tileSize;
+            tile.maxPt = min(tile.maxPt, _viewportSize);
+            
+            minPt.x += _serializedWorldObject.tileSize.x;
+        }
+        
+        minPt.y += _serializedWorldObject.tileSize.y;
     }
+    
     _availableObjectHeader = reinterpret_cast<ObjectHeader*>(&_serializedWorldObject.buffer[0]);
     
-    _addBBoxRecursive(world->rootObject());
+    Rect viewportRect;
+    viewportRect.size = _viewportSize;
+    
+    _addBBoxRecursive(world->rootObject(), viewportRect);
 }
 
 Tile&

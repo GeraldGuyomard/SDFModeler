@@ -21,6 +21,8 @@
 #include "SerializationContext.h"
 #include "Type.h"
 
+class Rect;
+
 class Material3D final
 {
 public:
@@ -85,7 +87,7 @@ public:
     
     virtual void selfSerialize(Tile&, SerializationContext&) const;
     
-    bool isCulled(const float4x4& viewProjectionMatrix) const;
+    bool isCulled(const float4x4& viewProjectionMatrix, const Rect& tileCoordinates) const;
     
     ObjectID directID() const { return _id; }
     
