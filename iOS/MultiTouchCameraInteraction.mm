@@ -300,6 +300,11 @@ private:
 Animation::Ptr
 MultiTouchCameraInteraction::makeOrbitDecelerationAnimation() const
 {
+    if ((_orbitAngles.x == 0.f) && (_orbitAngles.y == 0.f))
+    {
+        return nullptr;
+    }
+    
     const auto now = OrbitClock::now();
     auto dT = std::chrono::duration_cast<std::chrono::milliseconds>(now - _lastOrbitTime).count() / 1000.f;
     dT = max(dT, 1.f / 60.f);
