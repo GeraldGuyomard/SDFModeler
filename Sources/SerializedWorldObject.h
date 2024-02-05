@@ -22,7 +22,8 @@ struct Tile final
     size_t offsetInBuffer = 0; // 8
 };
 
-static CONSTANT constexpr size_t kMaxTiles = 8 * 8;
+static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
+static CONSTANT constexpr size_t kBufferSize = 256 * 1024;
 
 struct SerializedWorldObject final
 {
@@ -37,7 +38,7 @@ struct SerializedWorldObject final
     
     // buffer is an array of serialized objects
     // that starts with ObjectHeaders
-    uint8_t buffer[16536];
+    uint8_t buffer[kBufferSize];
 };
 
 template <typename TShader>
@@ -52,17 +53,20 @@ public:
     RayMarchResult rayMarch(float2 ndcPosition, float2 viewportSize, Ray ray) const
     {
         // position between 0 and width, height on both axis
-        float2 position = (ndcPosition + float2{1, 1}) * 0.5f;
+        float2 position;
+        position.x = (ndcPosition.x + 1.f) * 0.5f;
+        position.y = (-ndcPosition.y + 1.f) * 0.5f;
         position *= viewportSize;
-        position = min(position, viewportSize - float2{1, 1});
+        //position = min(position, viewportSize - float2{1, 1});
         
         float2 tileCoordinates = position / _serialized.tileSize;
         tileCoordinates = floor(tileCoordinates);
         
-        const size_t tileIndex = (tileCoordinates.y * _serialized.tileSize.x) + tileCoordinates.x;
+        const size_t tileIndex = (tileCoordinates.y * _serialized.numTileColumns) + tileCoordinates.x;
+        //const size_t tileIndex = 0;
         
         CONSTANT Tile& tile = _serialized.tiles[tileIndex];
-        CONSTANT uint8_t* buffer = &_serialized.buffer[0];
+        CONSTANT uint8_t* buffer = &_serialized.buffer[0] + tile.offsetInBuffer;
         
         ObjectHeadersArray headersArray { buffer };
         

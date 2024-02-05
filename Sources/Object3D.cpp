@@ -6,7 +6,7 @@
 
 #include "Object3D.h"
 #include "SerializationContext.h"
-#include "Rect.h"
+#include "RectF.h"
 
 Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
@@ -474,25 +474,12 @@ Object3D::setOperation(SDFOperation op)
     _operation = op;
 }
 
-bool Object3D::isCulled(const float4x4& viewProjectionMatrix, const Rect& tileCoordinates) const
-{
-    const auto box = localBoundingBox();
-    if (box.empty())
-    {
-        return true;
-    }
-    
-    const auto worldViewProjMatrix = viewProjectionMatrix * worldTransform();
-    
-    return box.isCulled(worldViewProjMatrix);
-}
-
 bool
 Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
 {
-    const Rect tileRect { tile.minPt, tile.maxPt - tile.minPt };
+    const RectF tileRect { tile.minPt, tile.maxPt };
     
-    const bool thisVisible = !isCulled(context.viewProjectionMatrix(), tileRect);
+    const bool thisVisible = !context.isCulled(_id, tileRect);
     if (thisVisible)
     {
         selfSerialize(tile, context);
@@ -534,7 +521,7 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
     {
         for (const auto& child : negativeChildren)
         {
-            if (!child->isCulled(context.viewProjectionMatrix(), tileRect))
+            if (!context.isCulled(child->directID(), tileRect))
             {
                 child->serializeHierarchy(tile, context);
             }
@@ -585,9 +572,19 @@ void
 World::serialize(SerializationContext& context,
                  Materials& materials) const
 {
-    Tile& tile = context.tileAt(0, 0);
+    auto& serialized = context.serializedWorldObject();
     
-    _rootObject->serializeHierarchy(tile, context);
+    for (size_t y=0; y < serialized.numTileRows; ++y)
+    {
+        for (size_t x=0; x < serialized.numTileColumns; ++x)
+        {
+            const size_t index = (y * serialized.numTileColumns) + x;
+            auto& tile = serialized.tiles[index];
+            tile.offsetInBuffer = context.currentAvailableOffsetInBuffer();
+            
+            _rootObject->serializeHierarchy(tile, context);
+        }
+    }
     
     materials.nbMaterials = _materials.size();
     

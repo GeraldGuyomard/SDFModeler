@@ -8,6 +8,8 @@
 
 #include "CommonDefinitions.h"
 #include "SerializedWorldObject.h"
+#include "RectF.h"
+
 #include <functional>
 
 class ProjectedBB final
@@ -15,14 +17,15 @@ class ProjectedBB final
 public:
     using Points = std::array<float3, 8>;
     Points projectedPoints;
+    RectF boundingBoxInViewportSpace;
     
     using RawPoints = float3[8];
-    ProjectedBB(const RawPoints& pts);
+    ProjectedBB(const RawPoints& pts, const float2& viewportSize);
 };
 
 class Object3D;
 class World;
-class Rect;
+class RectF;
 
 class SerializationContext final
 {
@@ -41,8 +44,11 @@ public:
     const ProjectedBB* projectedBB(ObjectID) const;
     
     const float2& viewportSize() const { return _viewportSize; }
+    SerializedWorldObject& serializedWorldObject() { return _serializedWorldObject; }
     
-    Tile& tileAt(size_t x, size_t y) const;
+    bool isCulled(ObjectID id, const RectF& tileRect) const;
+    
+    size_t currentAvailableOffsetInBuffer() const;
     
 private:
     const float4x4 _viewProjectionMatrix;
@@ -50,8 +56,9 @@ private:
     SerializedWorldObject& _serializedWorldObject;
     
     ObjectHeader* _availableObjectHeader;
+    size_t _nbHeadersWritten = 0;
     
-    bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root, const Rect& viewportRect);
+    bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect);
     bool _addBBox(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
     
     std::unordered_map<ObjectID, ProjectedBB> _objectIDToProjectedBB;

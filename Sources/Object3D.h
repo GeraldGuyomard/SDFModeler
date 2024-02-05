@@ -21,7 +21,7 @@
 #include "SerializationContext.h"
 #include "Type.h"
 
-class Rect;
+class RectF;
 
 class Material3D final
 {
@@ -86,8 +86,6 @@ public:
     bool serializeHierarchy(Tile&, SerializationContext&) const;
     
     virtual void selfSerialize(Tile&, SerializationContext&) const;
-    
-    bool isCulled(const float4x4& viewProjectionMatrix, const Rect& tileCoordinates) const;
     
     ObjectID directID() const { return _id; }
     

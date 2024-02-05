@@ -126,9 +126,9 @@
 		7F74B6742B61974900262F2D /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B6732B61974900262F2D /* Shaders.metal */; };
 		7F74B6782B61974900262F2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6772B61974900262F2D /* Preview Assets.xcassets */; };
 		7F74B67A2B61974A00262F2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6792B61974A00262F2D /* Assets.xcassets */; };
-		7FF7D0082B7073D700D107CF /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* Rect.cpp */; };
-		7FF7D0092B7073D700D107CF /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* Rect.cpp */; };
-		7FF7D00A2B7073D700D107CF /* Rect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* Rect.cpp */; };
+		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
+		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
+		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -270,8 +270,8 @@
 		7F74B6772B61974900262F2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7F74B6792B61974A00262F2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F74B67B2B61974A00262F2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7FF7D0062B7073D600D107CF /* Rect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Rect.cpp; sourceTree = "<group>"; };
-		7FF7D0072B7073D700D107CF /* Rect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Rect.h; sourceTree = "<group>"; };
+		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
+		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -358,8 +358,8 @@
 				74DAA6CF29AC2F8B00171C03 /* Ray.cpp */,
 				74087D8E29F0B1C000958CD7 /* BoundingBox.cpp */,
 				74087D8F29F0B1C000958CD7 /* BoundingBox.h */,
-				7FF7D0062B7073D600D107CF /* Rect.cpp */,
-				7FF7D0072B7073D700D107CF /* Rect.h */,
+				7FF7D0062B7073D600D107CF /* RectF.cpp */,
+				7FF7D0072B7073D700D107CF /* RectF.h */,
 				74DAA6D429AC432C00171C03 /* Results.h */,
 				74DAA6D529AC439E00171C03 /* Results..cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
@@ -711,7 +711,7 @@
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.mm in Sources */,
 				748629C229F62C6C002407AA /* Animation.cpp in Sources */,
 				743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
-				7FF7D0082B7073D700D107CF /* Rect.cpp in Sources */,
+				7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
@@ -778,7 +778,7 @@
 				7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
 				743252C229EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
-				7FF7D0092B7073D700D107CF /* Rect.cpp in Sources */,
+				7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */,
 				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
 				74087D9529F0B85E00958CD7 /* SerializationContext.cpp in Sources */,
@@ -809,7 +809,7 @@
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
 				7F74B6722B61974900262F2D /* Renderer.swift in Sources */,
 				7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */,
-				7FF7D00A2B7073D700D107CF /* Rect.cpp in Sources */,
+				7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

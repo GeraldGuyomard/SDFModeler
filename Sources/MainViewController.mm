@@ -118,14 +118,20 @@ private:
     return _nativeContentScale;
 }
 
+//#define STRIP_OUT_EXCEPT_WHITE_CUBE 1
+
 - (void)loadWorld
 {
     _world = World::make();
     auto rootObject = _world->rootObject();
     
-    constexpr float kZ = 0;
-    
     auto white = _world->addMaterial(float4 { 1, 1, 1, 1 });
+    
+    constexpr float kZ = 0;
+    constexpr float s = 0.5f;
+    float3 pos = float3 {0.5, 0, kZ};
+    
+#if !STRIP_OUT_EXCEPT_WHITE_CUBE
     auto whiteSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.6f });
     whiteSphere->setLocalTransform(RSTTransformer { float3 { 0, 1, -0.1f } } );
     whiteSphere->setMaterial(white);
@@ -139,16 +145,14 @@ private:
     
     rootObject->addChild(redSphere);
     
-    float3 pos = float3 {0.5, 0, kZ};
-    
-    constexpr float s = 0.5f;
-    
     auto yellow = _world->addMaterial(float4 { 1, 1, 0, 1 });
     auto roundedYellowBox = std::make_shared<TObject3D<SDFRoundedBox>>(_world,
                                                                        SDFRoundedBox { float3 { 0.4f, 0.6f, 0.4f }, 0.1f });
     roundedYellowBox->setLocalTransform(RSTTransformer { pos - float3 { 0.5, 0, 0 }, float3 {1, 1, 0}, degToRad(45.f), s });
     roundedYellowBox->setMaterial(yellow);
     rootObject->addChild(roundedYellowBox);
+    
+#endif
     
     auto whiteBoxHalf = std::make_shared<TObject3D<SDFBox>>(_world,
                                                             SDFBox { float3 { 0.4f * s, 0.6f * s, 0.4f * s } });

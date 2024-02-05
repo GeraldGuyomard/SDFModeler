@@ -371,3 +371,4 @@ INLINE bool isPointInFrustrum(float3 pt, float4x4 worldViewProjectionMatrix)
     const float4 p = worldViewProjectionMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
     return (p.x >= -p.w) && (p.x <= p.w) && (p.y >= -p.w) && (p.y <= p.w) && (p.z >= 0) && (p.z <= p.w);
 }
+
