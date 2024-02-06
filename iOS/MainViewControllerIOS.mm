@@ -320,7 +320,7 @@ struct ObjectDragInfo
     
     const CGSize size = self.view.bounds.size;
     
-    const CGFloat contentScaleFactor = self.nativeContentScale * 0.75f;
+    const CGFloat contentScaleFactor = self.nativeContentScale; // * 0.75f;
   
     metalLayer.contentsScale = contentScaleFactor;
     
