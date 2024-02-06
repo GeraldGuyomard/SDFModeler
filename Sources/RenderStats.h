@@ -18,7 +18,7 @@ public:
     RenderStats() = default;
     void submitFrameRenderTime(float time);
     
-    void setViewportSize(simd_float2);
+    void setViewportInfo(const float2& viewportSize, const float2& tileGridSize);
     
 private:
     
@@ -26,7 +26,9 @@ private:
     
     float _accumulatedTime = 0.f;
     size_t _nbAccumulatedFrames = 0.f;
-    simd_float2 _viewportSize = {0.f, 0.f};
+    float2 _viewportSize = {0.f, 0.f};
+    float2 _tileGridSize = {0.f, 0.f};
+    
     bool _firstSubmission = true;
     
     static constexpr float kDefaultSnapshotInterval = 0.25f;

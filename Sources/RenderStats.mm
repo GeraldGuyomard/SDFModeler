@@ -10,11 +10,13 @@
 #include "CommonDefinitions.h"
 
 void
-RenderStats::setViewportSize(float2 viewportSize)
+RenderStats::setViewportInfo(const float2& viewportSize, const float2& tileGridSize)
 {
     if (!equals(_viewportSize, viewportSize))
     {
         _viewportSize = viewportSize;
+        _tileGridSize = tileGridSize;
+        
         _reset();
     }
 }
@@ -32,7 +34,7 @@ RenderStats::_reset()
             const float averageTime = _accumulatedTime / _nbAccumulatedFrames;
             const float fps = 1000.f / averageTime;
             
-            printf("(%d, %d) Render Time=%5.2f FPS=%3.1f\n", int(_viewportSize.x), int(_viewportSize.y), averageTime, fps);
+            printf("(%d, %d) pixels, tile grid (%d, %d), Render Time=%5.2f FPS=%3.1f\n", int(_viewportSize.x), int(_viewportSize.y), int(_tileGridSize.x), int(_tileGridSize.y), averageTime, fps);
         }
         else
         {

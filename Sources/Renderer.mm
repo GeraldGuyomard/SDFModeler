@@ -284,6 +284,13 @@ Renderer::render()
     updateBuffersState();
     updateUniforms();
     
+    const float2 viewportSize = _uniformsBuffer->uniform().viewportSize;
+    
+    const auto& serialized = _serializedWorldBuffer->uniform();
+    const float2 tileGridSize { serialized.numTileColumns, serialized.numTileRows };
+    
+    _renderStats.setViewportInfo(viewportSize, tileGridSize);
+    
     auto view = _mtkView;
     
     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
@@ -340,12 +347,10 @@ Renderer::render()
 void
 Renderer::updateCameraTransforms()
 {
-    const CGSize size = _mtkView.bounds.size;
-    
-    _renderStats.setViewportSize({float(size.width), float(size.height)});
-    
     if (_camera != nullptr)
     {
+        const CGSize size = _mtkView.bounds.size;
+        
         const float2 s { float(size.width), float(size.height) };
         _camera->setViewportSize(s);
         
