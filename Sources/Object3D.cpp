@@ -487,45 +487,40 @@ Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContex
         selfSerialize(tileDescriptor, context);
     }
     
-    std::vector<Ptr> positiveChildren;
-    std::vector<Ptr> negativeChildren;
-
+    // First pass : positive children
+    bool positiveChildVisible = false;
+    size_t nbNegativeChildren = 0;
     for (const auto& child : children())
     {
-        switch (child->operation())
+        const auto operation = child->operation();
+        if (operation == SDFOperation::addition)
         {
-            case SDFOperation::addition:
+            if (child->serializeHierarchy(tileDescriptor, context))
             {
-                positiveChildren.push_back(child);
-                break;
+                positiveChildVisible = true;
             }
-
-            case SDFOperation::substraction:
+        }
+        else if (operation == SDFOperation::substraction)
+        {
+            ++nbNegativeChildren;
+        }
+    }
+    
+    if (positiveChildVisible && (nbNegativeChildren != 0))
+    {
+        for (const auto& child : children())
+        {
+            if (child->operation() == SDFOperation::substraction)
             {
-                negativeChildren.push_back(child);
-                break;
-            }
+                if (!context.isCulled(*child, tileDescriptor.tileRect))
+                {
+                    child->serializeHierarchy(tileDescriptor, context);
+                }
                 
-            default: break;
-        }
-    }
-    
-    bool positiveChildVisible = false;
-    for (const auto& child : positiveChildren)
-    {
-        if (child->serializeHierarchy(tileDescriptor, context))
-        {
-            positiveChildVisible = true;
-        }
-    }
-    
-    if (positiveChildVisible)
-    {
-        for (const auto& child : negativeChildren)
-        {
-            if (!context.isCulled(*child, tileDescriptor.tileRect))
-            {
-                child->serializeHierarchy(tileDescriptor, context);
+                if (--nbNegativeChildren == 0)
+                {
+                    break;
+                }
             }
         }
     }
