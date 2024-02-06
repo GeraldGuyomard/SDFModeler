@@ -85,15 +85,14 @@ public:
         size_t index = 0;
         
         ObjectHeadersArray headersArray { &_serialized.primitivesBuffer[0] };
-        
+        CONSTANT ObjectHeader* headerToCull = _serialized.primitive(offsetsBuffer[index]);
+
         CullEvaluator cullEvaluator { ray };
         
         bool hasNegativeObjects = false;
         
         while (nbObjectsLeftToCull > 0)
         {
-            CONSTANT ObjectHeader* headerToCull = _serialized.primitive(offsetsBuffer[index++]);
-            
             const auto objectID = headerToCull->objectId;
             
             // cull first positive object
@@ -110,7 +109,7 @@ public:
                 }
                 
                 --nbObjectsLeftToCull;
-                headerToCull = _serialized.primitive(offsetsBuffer[index++]);
+                headerToCull = _serialized.primitive(offsetsBuffer[++index]);
             }
             
             if (!hasPositiveObjects)
@@ -121,7 +120,7 @@ public:
                        (headerToCull->sdfOperation() == SDFOperation::substraction))
                 {
                     --nbObjectsLeftToCull;
-                    headerToCull = _serialized.primitive(offsetsBuffer[index++]);
+                    headerToCull = _serialized.primitive(offsetsBuffer[++index]);
                 }
             }
             else
@@ -139,7 +138,7 @@ public:
                     }
                     
                     --nbObjectsLeftToCull;
-                    headerToCull = _serialized.primitive(offsetsBuffer[index++]);
+                    headerToCull = _serialized.primitive(offsetsBuffer[++index]);
                 }
             }
         }
