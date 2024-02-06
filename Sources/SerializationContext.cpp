@@ -160,7 +160,7 @@ _serializedWorldObject(serializedWorldObject)
         {
             Tile& tile = _serializedWorldObject.tiles[i++];
             tile.objectCount = 0;
-            tile.offsetInBuffer = 0;
+            tile.startIndexInOffsetsBuffer = 0;
             tile.minPt = minPt;
             tile.maxPt = minPt + _serializedWorldObject.tileSize;
             tile.maxPt = min(tile.maxPt, vpSize);
@@ -170,8 +170,6 @@ _serializedWorldObject(serializedWorldObject)
         
         minPt.y += _serializedWorldObject.tileSize.y;
     }
-    
-    _availableObjectHeader = reinterpret_cast<ObjectHeader*>(&_serializedWorldObject.buffer[0]);
     
     const RectF viewportRect { float2 { 0, 0 }, vpSize };
     
@@ -189,25 +187,33 @@ bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRec
     return !box->boundingBoxInViewportSpace.intersects(tileRect);
 }
 
-void
-SerializationContext::serializeObjectHeader(Tile& tile, const SerializationHeaderCallback& cb)
+TPrimitiveOffset
+SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, const SerializationHeaderCallback& cb)
 {
-    const size_t size = cb(_availableObjectHeader);
-    
-    _availableObjectHeader->byteSize = uint32_t(size);
-    _availableObjectHeader = ObjectHeader::next(_availableObjectHeader);
-    
-    assert(reinterpret_cast<uint8*>(_availableObjectHeader) < reinterpret_cast<uint8*>(&_serializedWorldObject.buffer[kBufferSize]));
     ++tile.objectCount;
     
-    ++_nbHeadersWritten;
+    const auto it = _objectToOffset.find(object);
+    if (it != _objectToOffset.end())
+    {
+        const TPrimitiveOffset offset = it->second;
+        return offset;
+    }
+    
+    _nbPrimitivesSerialized++;
+    
+    const auto offset = _availableHeaderOffset;
+    auto* header = reinterpret_cast<ObjectHeader*>(_serializedWorldObject.primitivesBuffer + offset);
+    const size_t size = alignedSize(cb(header));
+    
+    _objectToOffset.emplace(std::pair(object, offset));
+    
+    _availableHeaderOffset += size;
+    
+    return offset;
 }
 
-size_t
-SerializationContext::currentAvailableOffsetInBuffer() const
+void
+SerializationContext::writePrimitiveOffset(TPrimitiveOffset offset)
 {
-    const auto* currentPtr = reinterpret_cast<const uint8_t*>(_availableObjectHeader);
-    const auto* basePtr = &(_serializedWorldObject.buffer[0]);
-    
-    return currentPtr - basePtr;
+    _serializedWorldObject.primitiveOffsetsBuffer[_currentIndex++] = offset;
 }

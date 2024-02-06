@@ -19,11 +19,12 @@ struct Tile final
     float2 minPt = { 0, 0 }; // 8
     float2 maxPt = { 0, 0 }; // 8
     size_t objectCount = 0; // 8
-    size_t offsetInBuffer = 0; // 8
+    size_t startIndexInOffsetsBuffer = 0; // 8
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
-static CONSTANT constexpr size_t kBufferSize = 256 * 1024;
+static CONSTANT constexpr size_t kPrimitivesBufferSize = 256 * 1024;
+static CONSTANT constexpr size_t kPrimitiveOffsetsBufferSize = 4 * 256;
 
 struct SerializedWorldObject final
 {
@@ -38,7 +39,15 @@ struct SerializedWorldObject final
     
     // buffer is an array of serialized objects
     // that starts with ObjectHeaders
-    uint8_t buffer[kBufferSize];
+    uint8_t primitivesBuffer[kPrimitivesBufferSize];
+    
+    // indices of of primitives within primitivesBuffer
+    TPrimitiveOffset primitiveOffsetsBuffer[kPrimitiveOffsetsBufferSize];
+    
+    CONSTANT ObjectHeader* primitive(TPrimitiveOffset offset) CONSTANT
+    {
+        return reinterpret_cast<CONSTANT ObjectHeader*>(primitivesBuffer + offset);
+    }
 };
 
 template <typename TShader>
@@ -57,7 +66,6 @@ public:
         position.x = (ndcPosition.x + 1.f) * 0.5f;
         position.y = (-ndcPosition.y + 1.f) * 0.5f;
         position *= viewportSize;
-        //position = min(position, viewportSize - float2{1, 1});
         
         float2 tileCoordinates = position / _serialized.tileSize;
         tileCoordinates = floor(tileCoordinates);
@@ -66,19 +74,26 @@ public:
         //const size_t tileIndex = 0;
         
         CONSTANT Tile& tile = _serialized.tiles[tileIndex];
-        CONSTANT uint8_t* buffer = &_serialized.buffer[0] + tile.offsetInBuffer;
         
-        ObjectHeadersArray headersArray { buffer };
+        int64_t nbObjectsLeftToCull = tile.objectCount;
+        if (nbObjectsLeftToCull == 0)
+        {
+            return RayMarchResult { ray };
+        }
+        
+        CONSTANT TPrimitiveOffset* offsetsBuffer = _serialized.primitiveOffsetsBuffer + tile.startIndexInOffsetsBuffer;
+        size_t index = 0;
+        
+        ObjectHeadersArray headersArray { &_serialized.primitivesBuffer[0] };
         
         CullEvaluator cullEvaluator { ray };
         
-        CONSTANT ObjectHeader* headerToCull = reinterpret_cast<CONSTANT ObjectHeader*>(buffer);
-        
-        int64_t nbObjectsLeftToCull = tile.objectCount;
         bool hasNegativeObjects = false;
         
         while (nbObjectsLeftToCull > 0)
         {
+            CONSTANT ObjectHeader* headerToCull = _serialized.primitive(offsetsBuffer[index++]);
+            
             const auto objectID = headerToCull->objectId;
             
             // cull first positive object
@@ -95,7 +110,7 @@ public:
                 }
                 
                 --nbObjectsLeftToCull;
-                headerToCull = ObjectHeader::next(headerToCull);
+                headerToCull = _serialized.primitive(offsetsBuffer[index++]);
             }
             
             if (!hasPositiveObjects)
@@ -106,7 +121,7 @@ public:
                        (headerToCull->sdfOperation() == SDFOperation::substraction))
                 {
                     --nbObjectsLeftToCull;
-                    headerToCull = ObjectHeader::next(headerToCull);
+                    headerToCull = _serialized.primitive(offsetsBuffer[index++]);
                 }
             }
             else
@@ -124,7 +139,7 @@ public:
                     }
                     
                     --nbObjectsLeftToCull;
-                    headerToCull = ObjectHeader::next(headerToCull);
+                    headerToCull = _serialized.primitive(offsetsBuffer[index++]);
                 }
             }
         }

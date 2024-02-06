@@ -14,7 +14,7 @@
 #include <assert.h>
 
 template <typename TObject>
-static void copy(ObjectID id,
+static size_t copy(ObjectID id,
                  MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
@@ -27,7 +27,6 @@ static void copy(ObjectID id,
     
     const size_t size = sizeof(TObject);
     
-    header->byteSize = uint32_t(alignedSize(size));
     header->objectId = id;
     header->materialId = materialId;
     header->objectCode = computeObjectCode(objectType, transformerType);
@@ -38,10 +37,12 @@ static void copy(ObjectID id,
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
     
     memcpy(dst, src, size);
+    
+    return alignedSize(size);
 }
 
 template <typename TObject>
-static void copy(ObjectHeader* header,
+static size_t copy(ObjectHeader* header,
                  const TObject& object,
                  ObjectID id,
                  MaterialID materialId,
@@ -50,7 +51,7 @@ static void copy(ObjectHeader* header,
                  SDFOperation operation,
                  bool selected)
 {
-    copy<TObject>(id, materialId, objectType, transformerType, header, object, operation, selected);
+    return copy<TObject>(id, materialId, objectType, transformerType, header, object, operation, selected);
 }
 
 
@@ -64,7 +65,5 @@ INLINE size_t serializeObject(ObjectHeader* header,
                               SDFOperation operation,
                               bool selected)
 {
-    copy(header, primitive, id, materialId, objectType, transformerType, operation, selected);
-    
-    return header->byteSize;
+    return copy(header, primitive, id, materialId, objectType, transformerType, operation, selected);
 }

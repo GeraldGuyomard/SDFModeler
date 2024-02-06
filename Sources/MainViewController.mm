@@ -160,6 +160,7 @@ private:
     whiteBoxHalf->setMaterial(white);
     rootObject->addChild(whiteBoxHalf);
     
+#if !STRIP_OUT_EXCEPT_WHITE_CUBE
     auto blue = _world->addMaterial(float4 { 0, 0, 1, 1 });
     
     auto blueSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
@@ -205,6 +206,7 @@ private:
     sdfUnion->addChild(negativeRoundedBoxPart);
     
     rootObject->addChild(sdfUnion);
+#endif
 }
 
 void visitTypes(const Object3D::Ptr& object)

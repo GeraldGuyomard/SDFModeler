@@ -576,10 +576,16 @@ World::serialize(SerializationContext& context,
     for (size_t index=0; index < nbTiles; ++index)
     {
         auto& tile = serialized.tiles[index];
-        tile.offsetInBuffer = context.currentAvailableOffsetInBuffer();
+        tile.startIndexInOffsetsBuffer = context.currentIndex();
         
         TileDescriptor descr { tile };
         _rootObject->serializeHierarchy(descr, context);
+        
+        // easier for debugging
+        if (tile.objectCount == 0)
+        {
+            tile.startIndexInOffsetsBuffer = 0;
+        }
     }
     
     materials.nbMaterials = _materials.size();

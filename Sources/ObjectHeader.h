@@ -28,7 +28,7 @@ using ConstantObjectHeader = CONSTANT ObjectHeader;
 
 struct ObjectHeader final
 {
-    uint32_t    byteSize;
+    uint32_t    _unused;
     uint16_t    materialId;
     uint8_t     selected = false;
     uint8_t     operation = uint16_t(SDFOperation::addition);
@@ -41,18 +41,6 @@ struct ObjectHeader final
     SDFOperation sdfOperation() CONSTANT
     {
         return (SDFOperation) operation;
-    }
-    
-    static CONSTANT ObjectHeader* next(CONSTANT ObjectHeader* header)
-    {
-        CONSTANT uint8_t* ptr = reinterpret_cast<CONSTANT uint8_t*>(header);
-        return reinterpret_cast<CONSTANT ObjectHeader*>(ptr + header->byteSize);
-    }
-    
-    static DEVICE ObjectHeader* next(DEVICE ObjectHeader* header)
-    {
-        DEVICE uint8_t* ptr = reinterpret_cast<DEVICE uint8_t*>(header);
-        return reinterpret_cast<DEVICE ObjectHeader*>(ptr + header->byteSize);
     }
 };
 

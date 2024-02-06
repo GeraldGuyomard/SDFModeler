@@ -10,6 +10,7 @@
 #include "Ray.h"
 
 constexpr static CONSTANT size_t kNbObjectsMax = 128;
+using TPrimitiveOffset = uint16_t;
 
 class ObjectHeadersArray final
 {
@@ -39,6 +40,6 @@ private:
     size_t _nbObjects = 0;
     
     using TOffset = uint16_t;
-    TOffset _headerOffset[kNbObjectsMax];
+    TPrimitiveOffset _headerOffset[kNbObjectsMax];
 };
 

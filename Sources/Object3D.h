@@ -214,7 +214,7 @@ public:
     
     void selfSerialize(TileDescriptor& tileDescriptor, SerializationContext& context) const final override
     {
-        context.serializeObjectHeader(tileDescriptor.tile, [this](ObjectHeader* header)
+        const auto offset = context.serializeObjectHeader(tileDescriptor.tile, this, [this](ObjectHeader* header)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -238,6 +238,8 @@ public:
                                                 operation(),
                                                selected);
         });
+        
+        context.writePrimitiveOffset(offset);
     }
     
 private:
