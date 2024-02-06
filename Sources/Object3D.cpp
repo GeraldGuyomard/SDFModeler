@@ -474,15 +474,17 @@ Object3D::setOperation(SDFOperation op)
     _operation = op;
 }
 
+TileDescriptor::TileDescriptor(Tile& tile)
+: tile(tile), tileRect(tile.minPt, tile.maxPt)
+{}
+
 bool
-Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
+Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContext& context) const
 {
-    const RectF tileRect { tile.minPt, tile.maxPt };
-    
-    const bool thisVisible = !context.isCulled(*this, tileRect);
+    const bool thisVisible = !context.isCulled(*this, tileDescriptor.tileRect);
     if (thisVisible)
     {
-        selfSerialize(tile, context);
+        selfSerialize(tileDescriptor, context);
     }
     
     std::vector<Ptr> positiveChildren;
@@ -511,7 +513,7 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
     bool positiveChildVisible = false;
     for (const auto& child : positiveChildren)
     {
-        if (child->serializeHierarchy(tile, context))
+        if (child->serializeHierarchy(tileDescriptor, context))
         {
             positiveChildVisible = true;
         }
@@ -521,9 +523,9 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
     {
         for (const auto& child : negativeChildren)
         {
-            if (!context.isCulled(*child, tileRect))
+            if (!context.isCulled(*child, tileDescriptor.tileRect))
             {
-                child->serializeHierarchy(tile, context);
+                child->serializeHierarchy(tileDescriptor, context);
             }
         }
     }
@@ -532,7 +534,7 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
 }
 
 void
-Object3D::selfSerialize(Tile&, SerializationContext&) const
+Object3D::selfSerialize(TileDescriptor&, SerializationContext&) const
 {
 }
 
@@ -574,16 +576,15 @@ World::serialize(SerializationContext& context,
 {
     auto& serialized = context.serializedWorldObject();
     
-    for (size_t y=0; y < serialized.numTileRows; ++y)
+    const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
+    
+    for (size_t index=0; index < nbTiles; ++index)
     {
-        for (size_t x=0; x < serialized.numTileColumns; ++x)
-        {
-            const size_t index = (y * serialized.numTileColumns) + x;
-            auto& tile = serialized.tiles[index];
-            tile.offsetInBuffer = context.currentAvailableOffsetInBuffer();
-            
-            _rootObject->serializeHierarchy(tile, context);
-        }
+        auto& tile = serialized.tiles[index];
+        tile.offsetInBuffer = context.currentAvailableOffsetInBuffer();
+        
+        TileDescriptor descr { tile };
+        _rootObject->serializeHierarchy(descr, context);
     }
     
     materials.nbMaterials = _materials.size();

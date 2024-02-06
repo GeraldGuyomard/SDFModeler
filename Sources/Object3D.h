@@ -66,6 +66,15 @@ private:
 
 class Type;
 
+class TileDescriptor final
+{
+public:
+    TileDescriptor(Tile& tile);
+    
+    Tile& tile;
+    const RectF tileRect;
+};
+
 class Object3D : public std::enable_shared_from_this<Object3D>
 {
 public:
@@ -83,9 +92,9 @@ public:
     virtual void* geometry() { return nullptr; }
     
     // return true if self has been serialized
-    bool serializeHierarchy(Tile&, SerializationContext&) const;
+    bool serializeHierarchy(TileDescriptor&, SerializationContext&) const;
     
-    virtual void selfSerialize(Tile&, SerializationContext&) const;
+    virtual void selfSerialize(TileDescriptor&, SerializationContext&) const;
     
     ObjectID id() const;
     void setId(ObjectID);
@@ -203,9 +212,9 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfSerialize(Tile& tile, SerializationContext& context) const final override
+    void selfSerialize(TileDescriptor& tileDescriptor, SerializationContext& context) const final override
     {
-        context.serializeObjectHeader(tile, [this](ObjectHeader* header)
+        context.serializeObjectHeader(tileDescriptor.tile, [this](ObjectHeader* header)
         {
             RSTTransformer transformer { worldTransform() };
             
