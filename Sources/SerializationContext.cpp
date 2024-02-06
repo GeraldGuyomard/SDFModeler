@@ -8,7 +8,7 @@
 #include "Object3D.h"
 #include "RectF.h"
 
-ProjectedBB::ProjectedBB(const RawPoints& pts, const float2& viewportSize)
+ProjectedBB::ProjectedBB(const RawPoints& pts, const RectF& viewportRect)
 {
     for (size_t i=0; i < 8; ++i)
     {
@@ -17,11 +17,13 @@ ProjectedBB::ProjectedBB(const RawPoints& pts, const float2& viewportSize)
         
         // x => -1, 1 -> y => 1, -1
         float2 p { pt.x, pt.y };
-        p.x = (1.f + p.x) * 0.5f * viewportSize.x;
-        p.y = (1.f - p.y) * 0.5f * viewportSize.y;
+        p.x = (1.f + p.x) * 0.5f * viewportRect.bottom.x;
+        p.y = (1.f - p.y) * 0.5f * viewportRect.bottom.y;
         
         boundingBoxInViewportSpace.add(p);
     }
+    
+    boundingBoxInViewportSpace = boundingBoxInViewportSpace.makeIntersection(viewportRect);
 }
 
 bool
@@ -30,7 +32,7 @@ SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, c
     const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
     const auto box = root->localBoundingBox();
     
-    const bool thisVisible = _addBBox(root->directID(), worldViewProjMatrix, box);
+    const bool thisVisible = _addBBox(root.get(), worldViewProjMatrix, box);
     
     std::vector<Object3D::Ptr> positiveChildren;
     std::vector<Object3D::Ptr> negativeChildren;
@@ -77,10 +79,17 @@ SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, c
 
 
 bool
-SerializationContext::_addBBox(ObjectID id, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
+SerializationContext::_addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
 {
+    if (localBBox.empty())
+    {
+        return false;
+    }
+    
     float3 pts[8];
     localBBox.points(pts);
+    
+    bool inFrustrum = false;
     
     for (int i=0; i < 8; ++i)
     {
@@ -90,24 +99,34 @@ SerializationContext::_addBBox(ObjectID id, const float4x4& worldViewProjMatrix,
         // and z between [0, 1]
         const float4 p = worldViewProjMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
         pt = p.xyz / p.w;
+        
+        if (!inFrustrum)
+        {
+            inFrustrum = (pt.z >= 0.f) && (pt.z <= 1.f);
+        }
     }
     
-    const ProjectedBB bb {pts, _viewportSize};
+    if (!inFrustrum)
+    {
+        return false;
+    }
+    
+    const ProjectedBB bb {pts, _viewportRect};
     if (bb.boundingBoxInViewportSpace.empty())
     {
         return false;
-        
     }
-    _objectIDToProjectedBB.emplace(std::pair {id, bb});
+    
+    _objectToProjectedBB.emplace(std::pair {object, bb});
     
     return true;
 }
 
 const ProjectedBB*
-SerializationContext::projectedBB(ObjectID id) const
+SerializationContext::projectedBB(const Object3D& object) const
 {
-    const auto it = _objectIDToProjectedBB.find(id);
-    return (it != _objectIDToProjectedBB.end()) ? &it->second : nullptr;
+    const auto it = _objectToProjectedBB.find(&object);
+    return (it != _objectToProjectedBB.end()) ? &it->second : nullptr;
 }
 
 
@@ -117,15 +136,18 @@ SerializationContext::SerializationContext(const std::shared_ptr<const World>& w
                                            SerializedWorldObject& serializedWorldObject)
 :
 _viewProjectionMatrix(viewProjectionMatrix),
-_viewportSize(viewportSize),
+_viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
-    //const float2 kDefaultTileSize { 256, 256 };
-    const float2 kDefaultTileSize { 1024, 1024 };
+    const float2 kDefaultTileSize { 256, 256 };
+    //const float2 kDefaultTileSize { 1024, 1024 };
     
     _serializedWorldObject.tileSize = kDefaultTileSize;
-    _serializedWorldObject.numTileColumns = ceilf(_viewportSize.x / _serializedWorldObject.tileSize.x);
-    _serializedWorldObject.numTileRows = ceilf(_viewportSize.y / _serializedWorldObject.tileSize.y);
+    
+    const auto& vpSize = this->viewportSize();
+    
+    _serializedWorldObject.numTileColumns = ceilf(vpSize.x / _serializedWorldObject.tileSize.x);
+    _serializedWorldObject.numTileRows = ceilf(vpSize.y / _serializedWorldObject.tileSize.y);
     
     size_t i=0;
     float2 minPt = { 0, 0 };
@@ -141,7 +163,7 @@ _serializedWorldObject(serializedWorldObject)
             tile.offsetInBuffer = 0;
             tile.minPt = minPt;
             tile.maxPt = minPt + _serializedWorldObject.tileSize;
-            tile.maxPt = min(tile.maxPt, _viewportSize);
+            tile.maxPt = min(tile.maxPt, vpSize);
             
             minPt.x += _serializedWorldObject.tileSize.x;
         }
@@ -151,14 +173,14 @@ _serializedWorldObject(serializedWorldObject)
     
     _availableObjectHeader = reinterpret_cast<ObjectHeader*>(&_serializedWorldObject.buffer[0]);
     
-    const RectF viewportRect { float2 { 0, 0 }, _viewportSize };
+    const RectF viewportRect { float2 { 0, 0 }, vpSize };
     
     _addBBoxRecursive(world->rootObject(), viewportRect);
 }
 
-bool SerializationContext::isCulled(ObjectID id, const RectF& tileRect) const
+bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRect) const
 {
-    const auto* box = projectedBB(id);
+    const auto* box = projectedBB(object);
     if (box == nullptr)
     {
         return true;

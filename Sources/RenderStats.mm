@@ -36,7 +36,7 @@ RenderStats::_reset()
         }
         else
         {
-            printf("(%d, %d) Render Time=N/A FPS=N/A\n", int(_viewportSize.x), int(_viewportSize.y));
+            //printf("(%d, %d) Render Time=N/A FPS=N/A\n", int(_viewportSize.x), int(_viewportSize.y));
         }
         
         _reset();

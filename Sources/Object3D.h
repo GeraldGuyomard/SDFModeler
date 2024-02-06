@@ -87,8 +87,6 @@ public:
     
     virtual void selfSerialize(Tile&, SerializationContext&) const;
     
-    ObjectID directID() const { return _id; }
-    
     ObjectID id() const;
     void setId(ObjectID);
     

@@ -44,12 +44,18 @@ public:
         && (pt.x <= (bottom.x)) && (pt.y <= (bottom.y));
     }
     
-    bool intersects(RectF other) const
+    RectF makeIntersection(RectF other) const
     {
         const auto newTop = max(top, other.top);
         const auto newBottom = min(bottom, other.bottom);
         
-        return (newTop.x <= newBottom.x) && (newTop.y <= newBottom.y);
+        return RectF { newTop, newBottom };
+    }
+    
+    bool intersects(RectF other) const
+    {
+        const auto inter = makeIntersection(other);
+        return !inter.empty();
     }
 };
 

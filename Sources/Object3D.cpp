@@ -479,7 +479,7 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
 {
     const RectF tileRect { tile.minPt, tile.maxPt };
     
-    const bool thisVisible = !context.isCulled(_id, tileRect);
+    const bool thisVisible = !context.isCulled(*this, tileRect);
     if (thisVisible)
     {
         selfSerialize(tile, context);
@@ -521,7 +521,7 @@ Object3D::serializeHierarchy(Tile& tile, SerializationContext& context) const
     {
         for (const auto& child : negativeChildren)
         {
-            if (!context.isCulled(child->directID(), tileRect))
+            if (!context.isCulled(*child, tileRect))
             {
                 child->serializeHierarchy(tile, context);
             }
