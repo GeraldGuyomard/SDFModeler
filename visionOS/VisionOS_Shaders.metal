@@ -8,7 +8,7 @@
 #include <simd/simd.h>
 
 // Including header shared between this Metal shader code and Swift/C code executing Metal API commands
-#import "ShaderTypes.h"
+#import "VisionOS_ShaderTypes.h"
 
 using namespace metal;
 
