@@ -222,7 +222,7 @@ SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, 
     
     const auto offset = _availableHeaderOffset;
     auto* header = reinterpret_cast<ObjectHeader*>(_serializedWorldObject.primitivesBuffer + offset);
-    const size_t size = alignedSize(cb(header));
+    const size_t size = cb(header);
     
     _objectToOffset.emplace(std::pair(object, offset));
     
