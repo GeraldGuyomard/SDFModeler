@@ -31,6 +31,9 @@ struct TestingApp: App {
             CompositorLayer(configuration: ContentStageConfiguration()) { layerRenderer in
                 let renderer = Renderer(layerRenderer)
                 renderer.startRenderLoop()
+                
+                let myRenderer = VisionOSRenderer(layerRenderer: layerRenderer)
+                myRenderer?.startRenderLoop()
             }
         }.immersionStyle(selection: .constant(.full), in: .full)
     }
