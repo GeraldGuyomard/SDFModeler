@@ -169,6 +169,8 @@
 		7F5DE0862B730981003FC854 /* Type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629CB2A004350002407AA /* Type.cpp */; };
 		7F5DE0892B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */; };
 		7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */; };
+		7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4D529A1CB63009632C3 /* Renderer.mm */; };
+		7F5DE08D2B7314A3003FC854 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 7F74B66B2B61974900262F2D /* RealityKitContent */; };
 		7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */; };
 		7F74B6702B61974900262F2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66F2B61974900262F2D /* ContentView.swift */; };
@@ -873,6 +875,7 @@
 				7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */,
 				7F5DE07C2B73091F003FC854 /* ObjectHeadersArray.cpp in Sources */,
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
+				7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */,
 				7F5DE0652B73089F003FC854 /* SDFBox.cpp in Sources */,
 				7F5DE0752B730913003FC854 /* Results.cpp in Sources */,
 				7F5DE06D2B7308FA003FC854 /* ComputeDistance.cpp in Sources */,
@@ -913,6 +916,7 @@
 				7F5DE0822B73092A003FC854 /* Interaction.cpp in Sources */,
 				7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */,
 				7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */,
+				7F5DE08D2B7314A3003FC854 /* Shaders.metal in Sources */,
 				7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

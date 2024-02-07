@@ -24,7 +24,7 @@ typedef struct
     float2 texCoord;
 } ColorInOut;
 
-vertex ColorInOut vertexShader(Vertex in [[stage_in]],
+vertex ColorInOut vertexShader_visionOS(Vertex in [[stage_in]],
                                ushort amp_id [[amplification_id]],
                                constant UniformsArray & uniformsArray [[ buffer(BufferIndexUniforms) ]])
 {
@@ -39,7 +39,7 @@ vertex ColorInOut vertexShader(Vertex in [[stage_in]],
     return out;
 }
 
-fragment float4 fragmentShader(ColorInOut in [[stage_in]],
+fragment float4 fragmentShader_visionOS(ColorInOut in [[stage_in]],
                                texture2d<half> colorMap     [[ texture(TextureIndexColor) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,

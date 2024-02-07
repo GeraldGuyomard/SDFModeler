@@ -142,8 +142,8 @@ class Renderer {
 
         let library = device.makeDefaultLibrary()
 
-        let vertexFunction = library?.makeFunction(name: "vertexShader")
-        let fragmentFunction = library?.makeFunction(name: "fragmentShader")
+        let vertexFunction = library?.makeFunction(name: "vertexShader_visionOS")
+        let fragmentFunction = library?.makeFunction(name: "fragmentShader_visionOS")
 
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.label = "RenderPipeline"
