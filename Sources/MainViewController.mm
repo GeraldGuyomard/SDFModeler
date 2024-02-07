@@ -15,6 +15,8 @@
 
 #include "MoveCameraAnimation.h"
 
+#include "MTKViewRendererDelegate.h"
+
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
 TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.5f, 0.5} } };
@@ -252,7 +254,8 @@ void visitTypes(const Object3D::Ptr& object)
         return;
     }
 
-    _renderer = std::make_unique<Renderer>(_view);
+    auto delegate = std::make_unique<MTKViewRendererDelegate>(_view);
+    _renderer = std::make_unique<Renderer>(std::move(delegate));
     
     _renderer->setWorld(self.world);
     auto camera = std::make_shared<Camera>(_world);

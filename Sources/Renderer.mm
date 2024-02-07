@@ -27,105 +27,29 @@ Vertex s_Vertices[4] = {
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
 
-@interface RendererMTKViewDelegate : NSObject<MTKViewDelegate>
-
-- (instancetype) initWithRenderer:(Renderer*)renderer;
-- (void)terminate;
-
-- (void)delayPause;
-
-@end
-
-@implementation RendererMTKViewDelegate
-{
-    Renderer* _renderer;
-    NSTimer* _timer;
-}
-
-- (instancetype) initWithRenderer:(Renderer*)renderer
-{
-    if (self = [self init])
-    {
-        _renderer = renderer;
-    }
-    
-    return self;
-}
-
-- (void)terminate
-{
-    _renderer = nullptr;
-}
-
-- (void)drawInMTKView:(nonnull MTKView *)view
-{
-    if (_renderer != nullptr)
-    {
-        _renderer->render();
-    }
-}
-
-- (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
-{
-    if (_renderer != nullptr)
-    {
-        _renderer->updateCameraTransforms();
-        _renderer->invalidate();
-    }
-}
-
-- (void)delayPause
-{
-    [_timer invalidate];
-    _timer = [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(onPause) userInfo:nil repeats:NO];
-}
-
-- (void)onPause
-{
-    if (_renderer != nullptr)
-    {
-        _renderer->pause();
-    }
-}
-
-@end
-
-Renderer::Renderer(MTKView* _Nonnull view)
-: _mtkView(view),
-_device(view.device),
+Renderer::Renderer(RendererDelegate::Ptr delegate)
+: _delegate(std::move(delegate)),
 _inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight))
 {
-    _mtkViewDelegate = [[RendererMTKViewDelegate alloc] initWithRenderer:this];
-    _mtkView.delegate = _mtkViewDelegate;
-    _mtkView.paused = YES;
+    _delegate->init(this);
     
     init();
     updateCameraTransforms();
 }
 
-Renderer::~Renderer()
-{
-    [_mtkViewDelegate terminate];
-}
+Renderer::~Renderer() = default;
 
 float2
 Renderer::renderSize() const
 {
-    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
-    const CGSize size = layer.drawableSize;
-    return float2 { float(size.width), float(size.height) };
+    return _delegate->renderSize();
 }
 
 void
 Renderer::init()
 {
-    auto view = _mtkView;
     
     /// Load Metal state objects and initialize renderer dependent view properties
-
-    view.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    view.colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-    view.sampleCount = 1;
 
     _mtlVertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
@@ -145,24 +69,28 @@ Renderer::init()
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
 
-    id<MTLLibrary> defaultLibrary = [_device newDefaultLibrary];
+    const auto device = _delegate->getMTLDevice();
+    
+    id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
 
     id <MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"vertexShader"];
 
     id <MTLFunction> fragmentFunction = [defaultLibrary newFunctionWithName:@"fragmentShader"];
 
+    const auto config = _delegate->configuration();
+    
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"MyPipeline";
-    pipelineStateDescriptor.rasterSampleCount = view.sampleCount;
+    pipelineStateDescriptor.rasterSampleCount = config.sampleCount;
     pipelineStateDescriptor.vertexFunction = vertexFunction;
     pipelineStateDescriptor.fragmentFunction = fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _mtlVertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat;
-    pipelineStateDescriptor.depthAttachmentPixelFormat = view.depthStencilPixelFormat;
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = view.depthStencilPixelFormat;
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = config.colorPixelFormat;
+    pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = config.depthStencilPixelFormat;
 
     NSError *error = NULL;
-    _pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
+    _pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
     if (!_pipelineState)
     {
         NSLog(@"Failed to created pipeline state, error %@", error);
@@ -171,19 +99,19 @@ Renderer::init()
     MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
     depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
     depthStateDesc.depthWriteEnabled = YES;
-    _depthState = [_device newDepthStencilStateWithDescriptor:depthStateDesc];
+    _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
 
-    _uniformsBuffer = std::make_unique<UniformsBuffer>(_device, @"UniformBuffer");
-    _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(_device, @"SerializedSceneBuffer");
-    _materialsBuffer = std::make_unique<SerializedMaterials>(_device, @"Materials");
+    _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
+    _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
+    _materialsBuffer = std::make_unique<SerializedMaterials>(device, @"Materials");
 
-    _quadVertexBuffer = [_device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
+    _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
     
     _quadVertexBuffer.label = @"QuadVertexBuffer";
     
     //_quadVertexBuffer
-    _commandQueue = [_device newCommandQueue];
+    _commandQueue = [device newCommandQueue];
 }
 
 
@@ -291,11 +219,9 @@ Renderer::render()
     
     _renderStats.setViewportInfo(viewportSize, tileGridSize);
     
-    auto view = _mtkView;
-    
     /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
     ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-    MTLRenderPassDescriptor* renderPassDescriptor = view.currentRenderPassDescriptor;
+    MTLRenderPassDescriptor* renderPassDescriptor = _delegate->currentRenderPassDescriptor();
     
     if(renderPassDescriptor != nil)
     {
@@ -333,7 +259,8 @@ Renderer::render()
         
         [renderEncoder endEncoding];
         
-        [commandBuffer presentDrawable:view.currentDrawable];
+        auto drawable = _delegate->currentDrawable();
+        [commandBuffer presentDrawable:drawable];
     }
     
     [commandBuffer commit];
@@ -349,9 +276,8 @@ Renderer::updateCameraTransforms()
 {
     if (_camera != nullptr)
     {
-        const CGSize size = _mtkView.bounds.size;
+        const auto s = _delegate->renderSizeInPoints();
         
-        const float2 s { float(size.width), float(size.height) };
         _camera->setViewportSize(s);
         
         _projectionMatrix = _camera->computeProjectionMatrix();
@@ -408,12 +334,11 @@ Renderer::setWorld(const WorldPtr& world)
 void
 Renderer::invalidate()
 {
-    _mtkView.paused = NO;
-    [_mtkViewDelegate delayPause];
+    _delegate->invalidate();
 }
 
 void
 Renderer::pause()
 {
-    _mtkView.paused = YES;
+    _delegate->pause();
 }

@@ -5,7 +5,7 @@
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
-#import <MetalKit/MetalKit.h>
+#import <Metal/Metal.h>
 #import "CommonDefinitions.h"
 
 #import "Uniforms.h"
@@ -16,8 +16,6 @@
 #include "RenderStats.h"
 
 #include <functional>
-
-@class RendererMTKViewDelegate;
 
 template <typename TUniform, BufferIndex bufferIndex, size_t TMaxBuffersInFlight>
 class TUniformBuffer final
@@ -61,10 +59,41 @@ private:
     TUniform* _Nullable _uniform = nullptr;
 };
 
+class Renderer;
+
+class RendererDelegateConfiguration final
+{
+public:
+    MTLPixelFormat depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+    MTLPixelFormat colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+    NSUInteger sampleCount = 1;
+};
+
+class RendererDelegate
+{
+public:
+    using Ptr = std::unique_ptr<RendererDelegate>;
+    virtual ~RendererDelegate() = default;
+    
+    virtual bool init(Renderer*_Nonnull renderer) = 0;
+    
+    virtual RendererDelegateConfiguration configuration() const = 0;
+    virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
+    
+    virtual float2 renderSize() const = 0;
+    virtual float2 renderSizeInPoints() const = 0;
+    
+    virtual MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const = 0;
+    virtual id <MTLDrawable> _Nonnull currentDrawable() const = 0;
+    
+    virtual void invalidate() = 0;
+    virtual void pause() = 0;    
+};
+
 class Renderer final
 {
 public:
-    Renderer(MTKView* _Nonnull);
+    Renderer(RendererDelegate::Ptr);
     ~Renderer();
     
     float2 renderSize() const;
@@ -105,10 +134,7 @@ private:
     Camera::Ptr _camera;
     WorldPtr _world;
     
-    RendererMTKViewDelegate* _Nonnull _mtkViewDelegate;
-    
-    const __weak MTKView* _Nullable _mtkView;
-    const id <MTLDevice> _Nonnull _device;
+    RendererDelegate::Ptr _delegate;
     
     dispatch_semaphore_t _Nonnull _inFlightSemaphore;
     

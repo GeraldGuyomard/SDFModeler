@@ -80,7 +80,7 @@
 		74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
 		74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
 		74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
-		74AAF29029D7BCD300D322DB /* Results..cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results..cpp */; };
+		74AAF29029D7BCD300D322DB /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results.cpp */; };
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
 		74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
@@ -99,7 +99,7 @@
 		74B52D092AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */; };
 		74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
 		74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
-		74DAA6D629AC439E00171C03 /* Results..cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results..cpp */; };
+		74DAA6D629AC439E00171C03 /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results.cpp */; };
 		74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
 		74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
 		74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */; };
@@ -119,6 +119,56 @@
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
 		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
+		7F5DE0572B730880003FC854 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
+		7F5DE0582B730880003FC854 /* FragmentShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133929B442AE00F9BBA8 /* FragmentShader.cpp */; };
+		7F5DE0592B730880003FC854 /* PhongShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133829B442AE00F9BBA8 /* PhongShader.cpp */; };
+		7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FF29ADB5C100171C03 /* SimpleMaterial.cpp */; };
+		7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70029ADB5C100171C03 /* GridMaterial.cpp */; };
+		7F5DE05C2B73088D003FC854 /* Material.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70429ADB5C100171C03 /* Material.cpp */; };
+		7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F929ADB5B900171C03 /* StandardTransformers.cpp */; };
+		7F5DE05E2B730895003FC854 /* Transformer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6FA29ADB5B900171C03 /* Transformer.cpp */; };
+		7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
+		7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897EA229EF93A6007A5CFE /* SDFCylinder.cpp */; };
+		7F5DE0612B73089F003FC854 /* SDFPlane.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6EF29ADB5A200171C03 /* SDFPlane.cpp */; };
+		7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F329ADB5A200171C03 /* SDFGeometry.cpp */; };
+		7F5DE0632B73089F003FC854 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
+		7F5DE0642B73089F003FC854 /* SDFSphere.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6F029ADB5A200171C03 /* SDFSphere.cpp */; };
+		7F5DE0652B73089F003FC854 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
+		7F5DE0662B7308B7003FC854 /* SetPropertyCommand.mm in Sources */ = {isa = PBXBuildFile; fileRef = 74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */; };
+		7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */; };
+		7F5DE0682B7308B7003FC854 /* RemoveObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA329E7B11800398E86 /* RemoveObjectCommand.cpp */; };
+		7F5DE0692B7308B7003FC854 /* Command.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492228C29E2685F00ACCFBC /* Command.cpp */; };
+		7F5DE06A2B7308B7003FC854 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
+		7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492229029E2689F00ACCFBC /* TransformObjectCommand.cpp */; };
+		7F5DE06C2B7308EF003FC854 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
+		7F5DE06D2B7308FA003FC854 /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
+		7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
+		7F5DE06F2B7308FA003FC854 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
+		7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */; };
+		7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
+		7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */; };
+		7F5DE0732B730913003FC854 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
+		7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D8E29F0B1C000958CD7 /* BoundingBox.cpp */; };
+		7F5DE0752B730913003FC854 /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results.cpp */; };
+		7F5DE0762B730914003FC854 /* Ray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6CF29AC2F8B00171C03 /* Ray.cpp */; };
+		7F5DE0772B73091F003FC854 /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
+		7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
+		7F5DE0792B73091F003FC854 /* SerializationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D9229F0B85E00958CD7 /* SerializationContext.cpp */; };
+		7F5DE07A2B73091F003FC854 /* SerializedWorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */; };
+		7F5DE07B2B73091F003FC854 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
+		7F5DE07C2B73091F003FC854 /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
+		7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
+		7F5DE07E2B73091F003FC854 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
+		7F5DE07F2B73092A003FC854 /* MoveCameraAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */; };
+		7F5DE0802B73092A003FC854 /* CameraInteraction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9629D903050010F1B4 /* CameraInteraction.cpp */; };
+		7F5DE0812B73092A003FC854 /* Camera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74A18A9229D8B7990010F1B4 /* Camera.cpp */; };
+		7F5DE0822B73092A003FC854 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
+		7F5DE0832B73092A003FC854 /* Animation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C029F62C6C002407AA /* Animation.cpp */; };
+		7F5DE0842B73092A003FC854 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
+		7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
+		7F5DE0862B730981003FC854 /* Type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629CB2A004350002407AA /* Type.cpp */; };
+		7F5DE0892B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */; };
+		7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */; };
 		7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 7F74B66B2B61974900262F2D /* RealityKitContent */; };
 		7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */; };
 		7F74B6702B61974900262F2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66F2B61974900262F2D /* ContentView.swift */; };
@@ -223,7 +273,7 @@
 		74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommonDefinitions.cpp; sourceTree = "<group>"; };
 		74DAA6D329AC420C00171C03 /* Uniforms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uniforms.h; sourceTree = "<group>"; };
 		74DAA6D429AC432C00171C03 /* Results.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Results.h; sourceTree = "<group>"; };
-		74DAA6D529AC439E00171C03 /* Results..cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Results..cpp; sourceTree = "<group>"; };
+		74DAA6D529AC439E00171C03 /* Results.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Results.cpp; sourceTree = "<group>"; };
 		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
 		74DAA6E429AC7BD200171C03 /* SDFObject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDFObject.h; sourceTree = "<group>"; };
 		74DAA6EE29ADB5A200171C03 /* SDFPlane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFPlane.h; sourceTree = "<group>"; };
@@ -260,6 +310,8 @@
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
 		7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderStats.mm; sourceTree = "<group>"; };
 		7F5CCD402B685A2C00BC6A69 /* RenderStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderStats.h; sourceTree = "<group>"; };
+		7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MTKViewRendererDelegate.mm; sourceTree = "<group>"; };
+		7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTKViewRendererDelegate.h; sourceTree = "<group>"; };
 		7F74B6672B61974900262F2D /* SDFModeler visionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler visionOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F74B66A2B61974900262F2D /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDFModeler_visionOSApp.swift; sourceTree = "<group>"; };
@@ -344,6 +396,8 @@
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
+				7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */,
+				7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */,
 				7444A4D729A1CB63009632C3 /* MainViewController.h */,
 				7444A4D829A1CB63009632C3 /* MainViewController.mm */,
 				74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */,
@@ -361,7 +415,7 @@
 				7FF7D0062B7073D600D107CF /* RectF.cpp */,
 				7FF7D0072B7073D700D107CF /* RectF.h */,
 				74DAA6D429AC432C00171C03 /* Results.h */,
-				74DAA6D529AC439E00171C03 /* Results..cpp */,
+				74DAA6D529AC439E00171C03 /* Results.cpp */,
 				74DAA6E329AC7BD200171C03 /* SDFObject.cpp */,
 				74DAA6E429AC7BD200171C03 /* SDFObject.h */,
 				74087D9229F0B85E00958CD7 /* SerializationContext.cpp */,
@@ -615,7 +669,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					7444A4CD29A1CB63009632C3 = {
 						CreatedOnToolsVersion = 14.2;
@@ -690,7 +744,7 @@
 				74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */,
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
-				74DAA6D629AC439E00171C03 /* Results..cpp in Sources */,
+				74DAA6D629AC439E00171C03 /* Results.cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
 				743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
@@ -700,6 +754,7 @@
 				74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */,
 				74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
+				7F5DE0892B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
 				7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
 				748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
@@ -746,18 +801,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
+				7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
 				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* SimpleMaterial.cpp in Sources */,
 				74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */,
 				74AAF27729D7BBC900D322DB /* main.m in Sources */,
 				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,
 				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,
+				7F5DE0762B730914003FC854 /* Ray.cpp in Sources */,
 				7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */,
 				74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */,
 				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
 				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,
 				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
-				74AAF29029D7BCD300D322DB /* Results..cpp in Sources */,
+				74AAF29029D7BCD300D322DB /* Results.cpp in Sources */,
 				7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */,
 				7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,
@@ -788,6 +845,7 @@
 				7492229329E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
 				748629CA2A004293002407AA /* PropertyCell.mm in Sources */,
 				74B52D092AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
+				7F5DE06C2B7308EF003FC854 /* Serializer.cpp in Sources */,
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
@@ -805,11 +863,57 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F5DE07E2B73091F003FC854 /* Culling.cpp in Sources */,
+				7F5DE07A2B73091F003FC854 /* SerializedWorldObject.cpp in Sources */,
+				7F5DE0572B730880003FC854 /* CellShader.cpp in Sources */,
+				7F5DE0662B7308B7003FC854 /* SetPropertyCommand.mm in Sources */,
 				7F74B6742B61974900262F2D /* VisionOS_Shaders.metal in Sources */,
+				7F5DE05E2B730895003FC854 /* Transformer.cpp in Sources */,
+				7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */,
+				7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */,
+				7F5DE07C2B73091F003FC854 /* ObjectHeadersArray.cpp in Sources */,
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
+				7F5DE0652B73089F003FC854 /* SDFBox.cpp in Sources */,
+				7F5DE0752B730913003FC854 /* Results.cpp in Sources */,
+				7F5DE06D2B7308FA003FC854 /* ComputeDistance.cpp in Sources */,
+				7F5DE0792B73091F003FC854 /* SerializationContext.cpp in Sources */,
+				7F5DE0832B73092A003FC854 /* Animation.cpp in Sources */,
+				7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */,
+				7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */,
+				7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */,
+				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
+				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,
+				7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */,
+				7F5DE07B2B73091F003FC854 /* ObjectHeader.cpp in Sources */,
+				7F5DE0632B73089F003FC854 /* SDFRoundedBox.cpp in Sources */,
+				7F5DE0772B73091F003FC854 /* PrimitiveEvaluator.cpp in Sources */,
+				7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */,
+				7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */,
+				7F5DE0842B73092A003FC854 /* Object3DInteraction.mm in Sources */,
+				7F5DE05C2B73088D003FC854 /* Material.cpp in Sources */,
+				7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */,
+				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
+				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
+				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
+				7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */,
+				7F5DE0812B73092A003FC854 /* Camera.cpp in Sources */,
+				7F5DE0592B730880003FC854 /* PhongShader.cpp in Sources */,
+				7F5DE0612B73089F003FC854 /* SDFPlane.cpp in Sources */,
+				7F5DE0682B7308B7003FC854 /* RemoveObjectCommand.cpp in Sources */,
+				7F5DE0582B730880003FC854 /* FragmentShader.cpp in Sources */,
+				7F5DE06F2B7308FA003FC854 /* Object3D.cpp in Sources */,
+				7F5DE0642B73089F003FC854 /* SDFSphere.cpp in Sources */,
+				7F5DE07F2B73092A003FC854 /* MoveCameraAnimation.cpp in Sources */,
+				7F5DE0692B7308B7003FC854 /* Command.cpp in Sources */,
 				7F74B6722B61974900262F2D /* Renderer.swift in Sources */,
+				7F5DE0802B73092A003FC854 /* CameraInteraction.cpp in Sources */,
+				7F5DE06A2B7308B7003FC854 /* AddObjectCommand.cpp in Sources */,
+				7F5DE0862B730981003FC854 /* Type.cpp in Sources */,
 				7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */,
+				7F5DE0822B73092A003FC854 /* Interaction.cpp in Sources */,
+				7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */,
 				7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */,
+				7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -886,6 +990,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -946,6 +1051,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -964,6 +1070,7 @@
 				MTL_FAST_MATH = YES;
 				MTL_HEADER_SEARCH_PATHS = Sources/;
 				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
@@ -976,6 +1083,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = T42263S576;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1003,6 +1111,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = T42263S576;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
