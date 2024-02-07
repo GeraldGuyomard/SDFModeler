@@ -139,6 +139,7 @@ _viewProjectionMatrix(viewProjectionMatrix),
 _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
+    //const float2 kDefaultTileSize { 128, 128 };
     const float2 kDefaultTileSize { 256, 256 };
     //const float2 kDefaultTileSize { 1024, 1024 };
     
@@ -148,6 +149,24 @@ _serializedWorldObject(serializedWorldObject)
     
     _serializedWorldObject.numTileColumns = ceilf(vpSize.x / _serializedWorldObject.tileSize.x);
     _serializedWorldObject.numTileRows = ceilf(vpSize.y / _serializedWorldObject.tileSize.y);
+    
+    const size_t nbTiles = _serializedWorldObject.numTileColumns * _serializedWorldObject.numTileRows;
+    if (nbTiles > kMaxTiles)
+    {
+        // reducing
+        if (_serializedWorldObject.numTileColumns >= _serializedWorldObject.numTileRows)
+        {
+            // horizontal
+            _serializedWorldObject.numTileRows = floorf(kMaxTiles / _serializedWorldObject.numTileColumns);
+        }
+        else
+        {
+            // vertical
+            _serializedWorldObject.numTileColumns = floorf(kMaxTiles / _serializedWorldObject.numTileRows);
+        }
+        
+        assert((_serializedWorldObject.numTileColumns * _serializedWorldObject.numTileRows) < kMaxTiles);
+    }
     
     size_t i=0;
     float2 minPt = { 0, 0 };
@@ -208,6 +227,7 @@ SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, 
     _objectToOffset.emplace(std::pair(object, offset));
     
     _availableHeaderOffset += size;
+    assert(size_t(_availableHeaderOffset) <= kPrimitivesBufferSize);
     
     return offset;
 }
@@ -215,5 +235,6 @@ SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, 
 void
 SerializationContext::writePrimitiveOffset(TPrimitiveOffset offset)
 {
+    assert(_currentIndex < kPrimitiveOffsetsBufferSize);
     _serializedWorldObject.primitiveOffsetsBuffer[_currentIndex++] = offset;
 }

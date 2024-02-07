@@ -9,7 +9,7 @@
 #include "ObjectHeader.h"
 #include "Ray.h"
 
-constexpr static CONSTANT size_t kNbObjectsMax = 128;
+constexpr static CONSTANT size_t kNbObjectsMax = 64;
 using TPrimitiveOffset = uint16_t;
 
 class ObjectHeadersArray final

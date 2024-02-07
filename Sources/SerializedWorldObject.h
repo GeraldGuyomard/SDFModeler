@@ -23,8 +23,8 @@ struct Tile final
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
-static CONSTANT constexpr size_t kPrimitivesBufferSize = 256 * 1024;
-static CONSTANT constexpr size_t kPrimitiveOffsetsBufferSize = 4 * 256;
+static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * 1024;
+static CONSTANT constexpr size_t kPrimitiveOffsetsBufferSize = kMaxTiles * 32;
 
 struct SerializedWorldObject final
 {
