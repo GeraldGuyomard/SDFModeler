@@ -70,10 +70,10 @@ class DrawCommandStack final
 {
 public:
     DrawCommandStack(CONSTANT Tile& tile, CONSTANT SerializedWorldObject& serializedWorldObject)
-    : _serializedWorldObject(serializedWorldObject), _nbCommands(tile.nbCommands)
+    : _serializedWorldObject(serializedWorldObject),
+    _nbCommands(tile.nbCommands),
+    _rootCommandIndex(tile.rootCommandIndex)
     {
-        _currentIndex = tile.rootCommandIndex;
-        _stackSize = 0;
     }
     
     CONSTANT ObjectHeader* header() const
@@ -93,48 +93,42 @@ public:
     
     CONSTANT DrawCommand* next()
     {
-        if (_currentIndex == _nbCommands)
-        {
-            return nullptr;
-        }
-        else
-        {
-            auto cmd = reinterpret_cast<CONSTANT DrawCommand*>(_serializedWorldObject.drawCommands + _currentIndex);
-            ++_currentIndex;
-            return cmd;
-        }
+        ++_relativeIndex;
+        return current();
     }
     
     void enterChildren()
     {
-        _indexStack[++_stackSize] = ++_currentIndex;
+        _indexStack[_stackSize++] = _relativeIndex++;
     }
     
     void exitChildren()
     {
         --_stackSize;
-        _currentIndex = _indexStack[_stackSize];
+        _relativeIndex = _indexStack[_stackSize];
     }
     
 private:
     
     CONSTANT DrawCommand* current() const
     {
-        if (_stackSize == 0)
+        if (_relativeIndex == _nbCommands)
         {
             return nullptr;
         }
         
-        return reinterpret_cast<CONSTANT DrawCommand*>(_serializedWorldObject.drawCommands + _currentIndex);
+        return reinterpret_cast<CONSTANT DrawCommand*>(_serializedWorldObject.drawCommands + _rootCommandIndex + _relativeIndex);
     }
     
     CONSTANT SerializedWorldObject& _serializedWorldObject;
     
     static CONSTANT constexpr size_t kMaxStackSize = 8;
-    const size_t _nbCommands;
+    const int64_t _nbCommands;
+    const int64_t _rootCommandIndex;
+    
     size_t _indexStack[kMaxStackSize];
-    size_t _stackSize;
-    size_t _currentIndex;
+    size_t _stackSize = 0;
+    int64_t _relativeIndex = -1;
 };
 
 
@@ -235,103 +229,53 @@ public:
         
         const size_t nbObjects = headersArray.nbObjects();
         
-        if (hasNegativeObjects)
+
+        for (size_t i=0; i < kNbSteps; ++i)
         {
-            for (size_t i=0; i < kNbSteps; ++i)
+            pt = ray.pt(d);
+            
+            minDistance = 1e5f;
+            minObjectHeaderIndex = -1;
+            
+            size_t objectIndex = 0;
+            
+            while (objectIndex < nbObjects)
             {
-                pt = ray.pt(d);
+                const auto startIndex = objectIndex;
                 
-                minDistance = 1e5f;
-                minObjectHeaderIndex = -1;
+                const float dist = computeDistance(pt, headersArray, objectIndex);
                 
-                size_t objectIndex = 0;
+                CONSTANT ObjectHeader* startHeader = headersArray.header(startIndex);
                 
-                while (objectIndex < nbObjects)
+                if (startHeader->selected && (outlineHeaderIndex < 0))
                 {
-                    const auto startIndex = objectIndex;
-                    
-                    const float dist = computeDistance(pt, headersArray, objectIndex);
-                    
-                    CONSTANT ObjectHeader* startHeader = headersArray.header(startIndex);
-                    
-                    if (startHeader->selected && (outlineHeaderIndex < 0))
+                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
-                        {
-                            outlineHeaderIndex = startIndex;
-                        }
-                    }
-                    
-                    if (dist <= minDistance)
-                    {
-                        minDistance = dist;
-                        minObjectHeaderIndex = startIndex;
+                        outlineHeaderIndex = startIndex;
                     }
                 }
                 
-                if (minDistance <= kDistanceEpsilon)
+                if (dist <= minDistance)
                 {
-                    hit = true;
-                    break;
+                    minDistance = dist;
+                    minObjectHeaderIndex = startIndex;
                 }
-                
-                d += minDistance;
-                
-                if (d > ray.maxLength)
-                {
-                    break;
-                }
-                
-                prevMinDistance = minDistance;
             }
-        }
-        else
-        {
-            // only positive parts
-            for (size_t i=0; i < kNbSteps; ++i)
+            
+            if (minDistance <= kDistanceEpsilon)
             {
-                pt = ray.pt(d);
-                
-                minDistance = 1e5f;
-                minObjectHeaderIndex = -1;
-                DistanceEvaluator distanceEvaluator { pt };
-                
-                for (size_t objectIndex = 0; objectIndex < nbObjects; ++objectIndex)
-                {
-                    CONSTANT ObjectHeader* header = headersArray.header(objectIndex);
-                    
-                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
-                    
-                    if (header->selected && (outlineHeaderIndex < 0))
-                    {
-                        if ((prevMinDistance < dist) && (dist < kOutlineThickness))
-                        {
-                            outlineHeaderIndex = objectIndex;
-                        }
-                    }
-                    
-                    if (dist <= minDistance)
-                    {
-                        minDistance = dist;
-                        minObjectHeaderIndex = objectIndex;
-                    }
-                }
-                
-                if (minDistance <= kDistanceEpsilon)
-                {
-                    hit = true;
-                    break;
-                }
-                
-                d += minDistance;
-                
-                if (d > ray.maxLength)
-                {
-                    break;
-                }
-                
-                prevMinDistance = minDistance;
+                hit = true;
+                break;
             }
+            
+            d += minDistance;
+            
+            if (d > ray.maxLength)
+            {
+                break;
+            }
+            
+            prevMinDistance = minDistance;
         }
         
         if (outlineHeaderIndex >= 0)
