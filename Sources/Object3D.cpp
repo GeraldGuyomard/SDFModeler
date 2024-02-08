@@ -478,58 +478,60 @@ TileDescriptor::TileDescriptor(Tile& tile)
 : tile(tile), tileRect(tile.minPt, tile.maxPt)
 {}
 
-bool
+void
 Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContext& context) const
 {
-    const bool thisVisible = !context.isCulled(*this, tileDescriptor.tileRect);
-    if (thisVisible)
-    {
-        selfSerialize(tileDescriptor, context);
-    }
+    TPrimitiveOffset myPrimitiveOffset = kInvalidPrimitiveOffset;
     
-    // First pass : positive children
-    bool positiveChildVisible = false;
-    size_t nbNegativeChildren = 0;
+    std::vector<Object3D::Ptr> positiveChildren;
+    std::vector<Object3D::Ptr> negativeChildren;
+
+    const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
+    if (!isCulled)
+    {
+        myPrimitiveOffset = context.objectHeaderOffset(this);
+    }
+
     for (const auto& child : children())
     {
-        const auto operation = child->operation();
-        if (operation == SDFOperation::addition)
+        const bool isChildCulled = context.isCulled(*child, tileDescriptor.tileRect);
+        
+        if (!isChildCulled)
         {
-            if (child->serializeHierarchy(tileDescriptor, context))
+            const auto operation = child->operation();
+            if (operation == SDFOperation::addition)
             {
-                positiveChildVisible = true;
+                positiveChildren.push_back(child);
             }
-        }
-        else if (operation == SDFOperation::substraction)
-        {
-            ++nbNegativeChildren;
+            else if (operation == SDFOperation::substraction)
+            {
+                negativeChildren.push_back(child);
+            }
         }
     }
     
-    if (positiveChildVisible && (nbNegativeChildren != 0))
+    if (positiveChildren.empty())
     {
-        for (const auto& child : children())
+        context.writeDrawCommand(myPrimitiveOffset, 0, 0);
+    }
+    else
+    {
+        context.writeDrawCommand(myPrimitiveOffset, positiveChildren.size(), negativeChildren.size());
+        
+        for (const auto& child: positiveChildren)
         {
-            if (child->operation() == SDFOperation::substraction)
-            {
-                if (!context.isCulled(*child, tileDescriptor.tileRect))
-                {
-                    child->serializeHierarchy(tileDescriptor, context);
-                }
-                
-                if (--nbNegativeChildren == 0)
-                {
-                    break;
-                }
-            }
+            child->serializeHierarchy(tileDescriptor, context);
+        }
+        
+        for (const auto& child: negativeChildren)
+        {
+            child->serializeHierarchy(tileDescriptor, context);
         }
     }
-    
-    return thisVisible;
 }
 
 void
-Object3D::selfSerialize(TileDescriptor&, SerializationContext&) const
+Object3D::selfSerialize(SerializationContext&) const
 {
 }
 
@@ -571,20 +573,22 @@ World::serialize(SerializationContext& context,
 {
     auto& serialized = context.serializedWorldObject();
     
+    context.serializePrimitives(*_rootObject);
+    
     const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
     
     for (size_t index=0; index < nbTiles; ++index)
     {
         auto& tile = serialized.tiles[index];
-        tile.startIndexInOffsetsBuffer = context.currentIndex();
+        tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
         _rootObject->serializeHierarchy(descr, context);
         
-        // easier for debugging
-        if (tile.objectCount == 0)
+        tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
+        if (tile.nbCommands == 0)
         {
-            tile.startIndexInOffsetsBuffer = 0;
+            tile.rootCommandIndex = -1;
         }
     }
     

@@ -18,13 +18,23 @@ struct Tile final
 {
     float2 minPt = { 0, 0 }; // 8
     float2 maxPt = { 0, 0 }; // 8
-    size_t objectCount = 0; // 8
-    size_t startIndexInOffsetsBuffer = 0; // 8
+    size_t nbCommands = 0; // 8
+    size_t rootCommandIndex = -1; // 8
+};
+
+struct DrawCommand final
+{
+    size_t nbPositiveChildren = 0;
+    size_t nbNegativeChildren = 0;
+    
+    TPrimitiveOffset primitiveOffset = 0; // -1 if no primitive
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
-static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * 1024;
-static CONSTANT constexpr size_t kPrimitiveOffsetsBufferSize = kMaxTiles * 32;
+static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
+static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
+
+static CONSTANT constexpr size_t kInvalidCommandIndex = size_t(-1);
 
 struct SerializedWorldObject final
 {
@@ -41,14 +51,92 @@ struct SerializedWorldObject final
     // that starts with ObjectHeaders
     uint8_t primitivesBuffer[kPrimitivesBufferSize];
     
-    // indices of of primitives within primitivesBuffer
-    TPrimitiveOffset primitiveOffsetsBuffer[kPrimitiveOffsetsBufferSize];
+    DrawCommand drawCommands[kDrawCommandArraySize];
     
     CONSTANT ObjectHeader* primitive(TPrimitiveOffset offset) CONSTANT
     {
-        return reinterpret_cast<CONSTANT ObjectHeader*>(primitivesBuffer + offset);
+        if (offset == kInvalidPrimitiveOffset)
+        {
+            return nullptr;
+        }
+        else
+        {
+            return reinterpret_cast<CONSTANT ObjectHeader*>(primitivesBuffer + offset);
+        }
     }
 };
+
+class DrawCommandStack final
+{
+public:
+    DrawCommandStack(CONSTANT Tile& tile, CONSTANT SerializedWorldObject& serializedWorldObject)
+    : _serializedWorldObject(serializedWorldObject), _nbCommands(tile.nbCommands)
+    {
+        _currentIndex = tile.rootCommandIndex;
+        _stackSize = 0;
+    }
+    
+    CONSTANT ObjectHeader* header() const
+    {
+        return _serializedWorldObject.primitive(current()->primitiveOffset);
+    }
+    
+    size_t nbPositiveChildren() const
+    {
+        return current()->nbPositiveChildren;
+    }
+
+    size_t nbNegativeChildren() const
+    {
+        return current()->nbNegativeChildren;
+    }
+    
+    CONSTANT DrawCommand* next()
+    {
+        if (_currentIndex == _nbCommands)
+        {
+            return nullptr;
+        }
+        else
+        {
+            auto cmd = reinterpret_cast<CONSTANT DrawCommand*>(_serializedWorldObject.drawCommands + _currentIndex);
+            ++_currentIndex;
+            return cmd;
+        }
+    }
+    
+    void enterChildren()
+    {
+        _indexStack[++_stackSize] = ++_currentIndex;
+    }
+    
+    void exitChildren()
+    {
+        --_stackSize;
+        _currentIndex = _indexStack[_stackSize];
+    }
+    
+private:
+    
+    CONSTANT DrawCommand* current() const
+    {
+        if (_stackSize == 0)
+        {
+            return nullptr;
+        }
+        
+        return reinterpret_cast<CONSTANT DrawCommand*>(_serializedWorldObject.drawCommands + _currentIndex);
+    }
+    
+    CONSTANT SerializedWorldObject& _serializedWorldObject;
+    
+    static CONSTANT constexpr size_t kMaxStackSize = 8;
+    const size_t _nbCommands;
+    size_t _indexStack[kMaxStackSize];
+    size_t _stackSize;
+    size_t _currentIndex;
+};
+
 
 template <typename TShader>
 class WorldObject final
@@ -75,72 +163,62 @@ public:
         
         CONSTANT Tile& tile = _serialized.tiles[tileIndex];
         
-        int64_t nbObjectsLeftToCull = tile.objectCount;
-        if (nbObjectsLeftToCull == 0)
+        if (tile.rootCommandIndex == kInvalidCommandIndex)
         {
             return RayMarchResult { ray };
         }
         
-        CONSTANT TPrimitiveOffset* offsetsBuffer = _serialized.primitiveOffsetsBuffer + tile.startIndexInOffsetsBuffer;
-        size_t index = 0;
-        
         ObjectHeadersArray headersArray { &_serialized.primitivesBuffer[0] };
-        CONSTANT ObjectHeader* headerToCull = _serialized.primitive(offsetsBuffer[index]);
-
+        
         CullEvaluator cullEvaluator { ray };
         
         bool hasNegativeObjects = false;
         
-        while (nbObjectsLeftToCull > 0)
+        DrawCommandStack stack { tile, _serialized };
+        
+        while (auto cmd = stack.next())
         {
-            const auto objectID = headerToCull->objectId;
-            
-            // cull first positive object
             bool hasPositiveObjects = false;
-            while ((nbObjectsLeftToCull > 0) &&
-                   (headerToCull->objectId == objectID) &&
-                   (headerToCull->sdfOperation() == SDFOperation::addition))
+            
+            if (auto header = stack.header())
             {
-                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                // primitive at this level
+                hasPositiveObjects = true;
+                headersArray.add(header);
+            }
+            
+            const size_t nbPositiveChildren = stack.nbPositiveChildren();
+            const size_t nbNegativeChildren = stack.nbNegativeChildren();
+            
+            stack.enterChildren();
+            
+            for (size_t i=0; i < nbPositiveChildren; ++i)
+            {
+                auto childHeader = stack.header();
+                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
                 if (!culled)
                 {
                     hasPositiveObjects = true;
-                    headersArray.add(headerToCull);
+                    headersArray.add(childHeader);
                 }
-                
-                --nbObjectsLeftToCull;
-                headerToCull = _serialized.primitive(offsetsBuffer[++index]);
             }
             
-            if (!hasPositiveObjects)
-            {
-                // remove any negative objects
-                while ((nbObjectsLeftToCull > 0) &&
-                       (headerToCull->objectId == objectID) &&
-                       (headerToCull->sdfOperation() == SDFOperation::substraction))
-                {
-                    --nbObjectsLeftToCull;
-                    headerToCull = _serialized.primitive(offsetsBuffer[++index]);
-                }
-            }
-            else
+            if (hasPositiveObjects)
             {
                 // cull all the negative parts
-                while ((nbObjectsLeftToCull > 0) &&
-                       (headerToCull->objectId == objectID) &&
-                       (headerToCull->sdfOperation() == SDFOperation::substraction))
+                for (size_t i=0; i < nbNegativeChildren; ++i)
                 {
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, headerToCull);
+                    auto childHeader = stack.header();
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
                     if (!culled)
                     {
-                        headersArray.add(headerToCull);
+                        headersArray.add(childHeader);
                         hasNegativeObjects = true;
                     }
-                    
-                    --nbObjectsLeftToCull;
-                    headerToCull = _serialized.primitive(offsetsBuffer[++index]);
                 }
             }
+            
+            stack.exitChildren();
         }
         
         constexpr size_t kNbSteps = 100;

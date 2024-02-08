@@ -91,10 +91,9 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    // return true if self has been serialized
-    bool serializeHierarchy(TileDescriptor&, SerializationContext&) const;
+    void serializeHierarchy(TileDescriptor&, SerializationContext&) const;
     
-    virtual void selfSerialize(TileDescriptor&, SerializationContext&) const;
+    virtual void selfSerialize(SerializationContext&) const;
     
     ObjectID id() const;
     void setId(ObjectID);
@@ -212,9 +211,9 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfSerialize(TileDescriptor& tileDescriptor, SerializationContext& context) const final override
+    void selfSerialize(SerializationContext& context) const final
     {
-        const auto offset = context.serializeObjectHeader(tileDescriptor.tile, this, [this](ObjectHeader* header)
+        context.serializeObjectHeader(this, [this](ObjectHeader* header)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -238,8 +237,6 @@ public:
                                                 operation(),
                                                selected);
         });
-        
-        context.writePrimitiveOffset(offset);
     }
     
 private:

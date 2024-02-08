@@ -140,8 +140,8 @@ _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
     //const float2 kDefaultTileSize { 128, 128 };
-    const float2 kDefaultTileSize { 256, 256 };
-    //const float2 kDefaultTileSize { 1024, 1024 };
+    //const float2 kDefaultTileSize { 256, 256 };
+    const float2 kDefaultTileSize { 1024, 1024 };
     
     _serializedWorldObject.tileSize = kDefaultTileSize;
     
@@ -178,8 +178,7 @@ _serializedWorldObject(serializedWorldObject)
         for (size_t x=0; x < _serializedWorldObject.numTileColumns; ++x)
         {
             Tile& tile = _serializedWorldObject.tiles[i++];
-            tile.objectCount = 0;
-            tile.startIndexInOffsetsBuffer = 0;
+            tile.rootCommandIndex = -1;
             tile.minPt = minPt;
             tile.maxPt = minPt + _serializedWorldObject.tileSize;
             tile.maxPt = min(tile.maxPt, vpSize);
@@ -206,17 +205,10 @@ bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRec
     return !box->boundingBoxInViewportSpace.intersects(tileRect);
 }
 
-TPrimitiveOffset
-SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, const SerializationHeaderCallback& cb)
+void
+SerializationContext::serializeObjectHeader(const Object3D* object, const SerializationHeaderCallback& cb)
 {
-    ++tile.objectCount;
-    
-    const auto it = _objectToOffset.find(object);
-    if (it != _objectToOffset.end())
-    {
-        const TPrimitiveOffset offset = it->second;
-        return offset;
-    }
+    assert (_objectToOffset.find(object) == _objectToOffset.end());
     
     _nbPrimitivesSerialized++;
     
@@ -228,13 +220,43 @@ SerializationContext::serializeObjectHeader(Tile& tile, const Object3D* object, 
     
     _availableHeaderOffset += size;
     assert(size_t(_availableHeaderOffset) <= kPrimitivesBufferSize);
-    
-    return offset;
+}
+
+TPrimitiveOffset
+SerializationContext::objectHeaderOffset(const Object3D* object) const
+{
+    const auto it = _objectToOffset.find(object);
+    if (it != _objectToOffset.end())
+    {
+        const TPrimitiveOffset offset = it->second;
+        return offset;
+    }
+    else
+    {
+        assert(false);
+        return -1;
+    }
 }
 
 void
-SerializationContext::writePrimitiveOffset(TPrimitiveOffset offset)
+SerializationContext::serializePrimitives(const Object3D& root)
 {
-    assert(_currentIndex < kPrimitiveOffsetsBufferSize);
-    _serializedWorldObject.primitiveOffsetsBuffer[_currentIndex++] = offset;
+    root.selfSerialize(*this);
+    
+    for (const auto& child : root.children())
+    {
+        serializePrimitives(*child);
+    }
 }
+
+void
+SerializationContext::writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren)
+{
+    assert(_availableDrawCommandIndex < kDrawCommandArraySize);
+    
+    DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    cmd.primitiveOffset = primitiveOffset;
+    cmd.nbPositiveChildren = nbPositiveChildren;
+    cmd.nbNegativeChildren = nbNegativeChildren;
+}
+

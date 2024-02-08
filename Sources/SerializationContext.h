@@ -39,7 +39,8 @@ public:
     const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
     
     using SerializationHeaderCallback = std::function<size_t (ObjectHeader*)>;
-    TPrimitiveOffset serializeObjectHeader(Tile& tile, const Object3D* object, const SerializationHeaderCallback&);
+    void serializeObjectHeader(const Object3D* object, const SerializationHeaderCallback&);
+    TPrimitiveOffset objectHeaderOffset(const Object3D* object) const;
     
     const ProjectedBB* projectedBB(const Object3D&) const;
     
@@ -48,8 +49,10 @@ public:
     
     bool isCulled(const Object3D& object, const RectF& tileRect) const;
     
-    size_t currentIndex() const { return _currentIndex; }
-    void writePrimitiveOffset(TPrimitiveOffset offset);
+    void serializePrimitives(const Object3D& root);
+    
+    void writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren);
+    size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
     
 private:
     const float4x4 _viewProjectionMatrix;
@@ -58,7 +61,7 @@ private:
     
     TPrimitiveOffset _availableHeaderOffset = 0;
     size_t _nbPrimitivesSerialized = 0;
-    size_t _currentIndex = 0;
+    size_t _availableDrawCommandIndex = 0;
     
     bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect);
     bool _addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
