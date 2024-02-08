@@ -30,7 +30,7 @@ bool
 SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect)
 {
     const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
-    const auto box = root->localBoundingBox();
+    const auto box = root->boundingBoxOfHierarchyInCoordinateFrame(float4x4_identity());
     
     const bool thisVisible = _addBBox(root.get(), worldViewProjMatrix, box);
     
@@ -233,8 +233,7 @@ SerializationContext::objectHeaderOffset(const Object3D* object) const
     }
     else
     {
-        assert(false);
-        return -1;
+        return kInvalidPrimitiveOffset;
     }
 }
 
