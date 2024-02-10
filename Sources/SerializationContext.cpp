@@ -30,8 +30,7 @@ bool
 SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect)
 {
     const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
-    const auto inv = inverse(root->localTransform());
-    const auto box = root->boundingBoxOfHierarchyInCoordinateFrame(inv);
+    const auto box = root->localBoundingBox();
     
     const bool thisVisible = _addBBox(root.get(), worldViewProjMatrix, box);
     

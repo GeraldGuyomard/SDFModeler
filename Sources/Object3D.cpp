@@ -494,18 +494,25 @@ Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContex
 
     for (const auto& child : children())
     {
-        const bool isChildCulled = context.isCulled(*child, tileDescriptor.tileRect);
-        
-        if (!isChildCulled)
+        if (child->geometryType() == nullptr)
         {
-            const auto operation = child->operation();
-            if (operation == SDFOperation::addition)
+            positiveChildren.push_back(child);
+        }
+        else
+        {
+            const bool isChildCulled = context.isCulled(*child, tileDescriptor.tileRect);
+            
+            if (!isChildCulled)
             {
-                positiveChildren.push_back(child);
-            }
-            else if (operation == SDFOperation::substraction)
-            {
-                negativeChildren.push_back(child);
+                const auto operation = child->operation();
+                if (operation == SDFOperation::addition)
+                {
+                    positiveChildren.push_back(child);
+                }
+                else if (operation == SDFOperation::substraction)
+                {
+                    negativeChildren.push_back(child);
+                }
             }
         }
     }

@@ -189,11 +189,14 @@ public:
             for (size_t i=0; i < nbPositiveChildren; ++i)
             {
                 auto childHeader = stack.header();
-                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
-                if (!culled)
+                if (childHeader != nullptr)
                 {
-                    hasPositiveObjects = true;
-                    headersArray.add(childHeader);
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
+                    if (!culled)
+                    {
+                        hasPositiveObjects = true;
+                        headersArray.add(childHeader);
+                    }
                 }
             }
             
