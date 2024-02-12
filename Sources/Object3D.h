@@ -132,6 +132,7 @@ public:
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
+    bool shouldChildrenShareId() const { return _shouldChildrenShareId; }
     void setShouldChildrenShareId(bool should);
     
     void invalidate();
