@@ -96,7 +96,9 @@ public:
     virtual void selfSerialize(SerializationContext&) const;
     
     ObjectID id() const;
-    void setId(ObjectID);
+    
+    ObjectID partId() const { return _partId; }
+    void setPartId(ObjectID);
     
     Object3D::Ptr objectByID(ObjectID id) const;
     
@@ -172,7 +174,7 @@ private:
     
     const WorldWPtr _world;
     
-    ObjectID _id = 0;
+    ObjectID _partId = kInvalidObjectID;
     Material3D::Ptr _material;
     SDFOperation _operation = SDFOperation::addition;
     
@@ -232,6 +234,7 @@ public:
                                                 header,
                                                object,
                                                id(),
+                                                partId(),
                                                 materialId,
                                                object.objectType(),
                                                transformer.transformerType(),

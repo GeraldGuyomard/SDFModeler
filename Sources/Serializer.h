@@ -15,6 +15,7 @@
 
 template <typename TObject>
 static size_t copy(ObjectID id,
+                   ObjectID partId,
                  MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
@@ -28,6 +29,7 @@ static size_t copy(ObjectID id,
     const size_t size = sizeof(TObject);
     
     header->objectId = id;
+    header->partId = partId;
     header->materialId = materialId;
     header->objectCode = computeObjectCode(objectType, transformerType);
     header->operation = uint16_t(operation);
@@ -45,13 +47,14 @@ template <typename TObject>
 static size_t copy(ObjectHeader* header,
                  const TObject& object,
                  ObjectID id,
+                 ObjectID partId,
                  MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
                  SDFOperation operation,
                  bool selected)
 {
-    return copy<TObject>(id, materialId, objectType, transformerType, header, object, operation, selected);
+    return copy<TObject>(id, partId, materialId, objectType, transformerType, header, object, operation, selected);
 }
 
 
@@ -59,11 +62,12 @@ template <typename TPrimitive>
 INLINE size_t serializeObject(ObjectHeader* header,
                               const TPrimitive& primitive,
                               ObjectID id,
+                              ObjectID partId,
                               MaterialID materialId,
                               ObjectType objectType,
                               TransformerType transformerType,
                               SDFOperation operation,
                               bool selected)
 {
-    return copy(header, primitive, id, materialId, objectType, transformerType, operation, selected);
+    return copy(header, primitive, id, partId, materialId, objectType, transformerType, operation, selected);
 }

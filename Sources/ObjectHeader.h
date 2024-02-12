@@ -28,12 +28,12 @@ using ConstantObjectHeader = CONSTANT ObjectHeader;
 
 struct ObjectHeader final
 {
-    uint32_t    _unused;
     uint16_t    materialId;
     uint8_t     selected = false;
     uint8_t     operation = uint16_t(SDFOperation::addition);
     
     uint32_t    objectId;
+    uint32_t    partId;
     uint32_t    objectCode;
     
     uint8_t     firstByte;
