@@ -59,7 +59,7 @@ public:
         }
     }
     
-    void onSelectionChanged(const WorldPtr& world, const Object3D::Ptr& oldObject, const Object3D::Ptr& newObject) override
+    void onSelectionChanged(const WorldPtr& world, const Object3DSelection& oldObject, const Object3DSelection& newObject) override
     {
         [_controller onSelectionChange];
     }
@@ -166,6 +166,7 @@ private:
     auto blue = _world->addMaterial(float4 { 0, 0, 1, 1 });
     
     auto blueSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.4f });
+    //blueSphere->setOperation(SDFOperation::substraction);
     blueSphere->setLocalTransform(RSTTransformer { pos });
     blueSphere->setMaterial(blue);
     rootObject->addChild(blueSphere);

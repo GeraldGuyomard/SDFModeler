@@ -9,19 +9,20 @@
 #include "SDFPlane.h"
 
 DragObject3DInteraction::DragObject3DInteraction(const WorldPtr& world,
-                                                 const Object3D::Ptr& object,
+                                                 const Object3DSelection& selection,
                                                  const float3& hitPos3D,
                                                  const float2& initialPos,
                                                  const Renderer& renderer)
 : PanInteraction(initialPos),
 _world(world),
-_object(object),
 _hitPos3D(hitPos3D),
-_renderer(renderer),
-_initialTransform(object->worldTransform()),
-_command(std::make_shared<TransformObjectCommand>(_object))
+_renderer(renderer)
 {
-    _transform = _initialTransform;
+    for (const auto& object : selection.objects())
+    {
+        _initialState.emplace_back(object);
+    }
+    
     _world->commandHistory().enable(false);
 }
 
@@ -36,19 +37,31 @@ DragObject3DInteraction::pan(const float2& pos)
     float d = plane.raycast(ray);
     
     const float3 p = ray.pt(d);
+    const float3 delta = p - _hitPos3D;
     
-    _transform = _initialTransform;
-    const float3 newPos = translation(_transform) + p - _hitPos3D;
-    
-    setTranslation(_transform, newPos);
-    
-    _object->setWorldTransform(_transform);
+    for (const auto& entry: _initialState)
+    {
+        auto transform = entry.transform;
+        const float3 newPos = translation(transform) + delta;
+        
+        setTranslation(transform, newPos);
+        
+        entry.object->setWorldTransform(transform);
+    }
 }
 
 void
 DragObject3DInteraction::commit()
 {
-    _command->setTransform(_transform);
-    _world->commandHistory().run(_command);
+    std::vector<TransformObjectCommand::Entry> newState;
+    
+    for (auto& entry : _initialState)
+    {
+        newState.emplace_back(entry.object);
+    }
+    
+    auto command = std::make_shared<TransformObjectCommand>(_initialState);
+    
+    _world->commandHistory().run(command);
     _world->commandHistory().enable(true);
 }

@@ -23,6 +23,17 @@ public:
     virtual void redo() { run(); }
 };
 
+class SymetricalCommand : public Command
+{
+public:
+    void run() override { execute(); }
+    void undo() override { execute(); }
+    void redo() override { execute(); }
+    
+protected:
+    virtual void execute() = 0;
+};
+
 class CommandHistory final
 {
 public:

@@ -271,6 +271,25 @@ public:
     }
 };
 
+class Object3DSelection final
+{
+public:
+    Object3DSelection() = default;
+    Object3DSelection(const Object3D::Ptr&);
+    
+    void add(const Object3D::Ptr& object);
+    bool remove(const Object3D::Ptr& object);
+    
+    bool empty() const;
+    Object3D::Ptr single() const;
+    bool contains(const Object3D::Ptr&) const;
+    
+    const std::vector<Object3D::Ptr> objects() const { return _objects; }
+    
+private:
+    std::vector<Object3D::Ptr> _objects;
+};
+
 class WorldDelegate
 {
 public:
@@ -279,7 +298,7 @@ public:
     virtual ~WorldDelegate() = default;
     
     virtual void onChange(const WorldPtr&) = 0;
-    virtual void onSelectionChanged(const WorldPtr& world, const Object3D::Ptr& oldObject, const Object3D::Ptr& newObject) = 0;
+    virtual void onSelectionChanged(const WorldPtr& world, const Object3DSelection& oldSelection, const Object3DSelection& newSelection) = 0;
     
 };
 
@@ -299,8 +318,8 @@ public:
     
     Object3D::Ptr rootObject() const { return _rootObject; }
     
-    const Object3D::Ptr& selectedObject() const { return _selectedObject; }
-    void setSelectedObject(const Object3D::Ptr&);
+    const Object3DSelection& selection() const { return _selection; }
+    void setSelection(const Object3DSelection&);
     
     CommandHistory& commandHistory() { return _commandHistory; }
     
@@ -318,7 +337,7 @@ private:
     ObjectID _nextAvailableObjectID = 1;
     std::vector<Material3D::Ptr> _materials;
     
-    Object3D::Ptr _selectedObject;
+    Object3DSelection _selection;
     
     CommandHistory _commandHistory;
     

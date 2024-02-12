@@ -557,6 +557,77 @@ Object3D::invalidate()
     }
 }
 
+Object3DSelection::Object3DSelection(const Object3D::Ptr& object)
+{
+    if (object != nullptr)
+    {
+        _objects.push_back(object);
+    }
+}
+
+void
+Object3DSelection::add(const Object3D::Ptr& object)
+{
+    assert(object != nullptr);
+    
+    if (!contains(object))
+    {
+        _objects.push_back(object);
+    }
+}
+
+bool
+Object3DSelection::remove(const Object3D::Ptr& object)
+{
+    assert(object != nullptr);
+    
+    const auto end = _objects.end();
+    for (auto it = _objects.begin(); it != end; ++it)
+    {
+        if (*it == object)
+        {
+            _objects.erase(it);
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+bool
+Object3DSelection::empty() const
+{
+    return _objects.empty();
+}
+
+bool
+Object3DSelection::contains(const Object3D::Ptr& object) const
+{
+    assert(object != nullptr);
+    
+    const auto end = _objects.end();
+    for (auto it = _objects.begin(); it != end; ++it)
+    {
+        if (*it == object)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+Object3D::Ptr
+Object3DSelection::single() const
+{
+    if (_objects.size() != 1)
+    {
+        return nullptr;
+    }
+    
+    return _objects.front();
+}
+
 WorldPtr
 World::make()
 {
@@ -629,28 +700,24 @@ World::addMaterial(const float4& color)
 }
 
 void
-World::setSelectedObject(const Object3D::Ptr& object)
+World::setSelection(const Object3DSelection& sel)
 {
-    if (_selectedObject != object)
+    const auto old = _selection;
+    for (const auto& object: old.objects())
     {
-        const auto old = _selectedObject;
-        
-        if (old != nullptr)
-        {
-            old->setSelected(false);
-        }
-        
-        _selectedObject = object;
-        
-        if (_selectedObject != nullptr)
-        {
-            _selectedObject->setSelected(true);
-        }
-        
-        if (auto delegate = this->delegate())
-        {
-            delegate->onSelectionChanged(shared_from_this(), old, _selectedObject);
-        }
+        object->setSelected(false);
+    }
+    
+    _selection = sel;
+    
+    for (const auto& object: _selection.objects())
+    {
+        object->setSelected(true);
+    }
+    
+    if (auto delegate = this->delegate())
+    {
+        delegate->onSelectionChanged(shared_from_this(), old, _selection);
     }
 }
 

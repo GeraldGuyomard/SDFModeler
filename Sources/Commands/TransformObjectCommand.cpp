@@ -6,26 +6,30 @@
 
 #include "TransformObjectCommand.h"
 
-TransformObjectCommand::TransformObjectCommand(const Object3D::Ptr& object)
-: _object(object), _initialObjectTransform(object->worldTransform())
+TransformObjectCommand::Entry::Entry(const Object3D::Ptr& object)
+: object(object), transform(object->worldTransform())
 {
-    _transform = _initialObjectTransform;
 }
 
-void
-TransformObjectCommand::setTransform(const float4x4& transform)
-{
-    _transform = transform;
-}
+
+TransformObjectCommand::TransformObjectCommand(const std::vector<Entry>& state)
+: _state(state)
+{}
+
 
 void
-TransformObjectCommand::run()
+TransformObjectCommand::undoRedo()
 {
-    _object->setWorldTransform(_transform);
-}
-
-void
-TransformObjectCommand::undo()
-{
-    _object->setWorldTransform(_initialObjectTransform);
+    auto saved = _state;
+    for (auto& entry: saved)
+    {
+        entry.transform = entry.object->worldTransform();
+    }
+    
+    for (const auto& entry: _state)
+    {
+        entry.object->setWorldTransform(entry.transform);
+    }
+    
+    _state = saved;
 }

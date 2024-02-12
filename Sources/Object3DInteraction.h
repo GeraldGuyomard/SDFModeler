@@ -21,7 +21,7 @@ public:
     using _inherited = PanInteraction;
     
     DragObject3DInteraction(const WorldPtr& world,
-                            const Object3D::Ptr& object,
+                            const Object3DSelection& selection,
                             const float3& hitPos3D,
                             const float2& initialPos,
                             const Renderer&);
@@ -33,11 +33,8 @@ public:
 private:
     const WorldPtr _world;
     
-    const Object3D::Ptr _object;
     const float3 _hitPos3D;
     const Renderer& _renderer;
-    const float4x4 _initialTransform;
-    float4x4 _transform;
     
-    const std::shared_ptr<class TransformObjectCommand> _command;
+    std::vector<TransformObjectCommand::Entry> _initialState;
 };

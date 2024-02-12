@@ -123,7 +123,6 @@
     if (interaction == nullptr)
     {
         auto camera = self.renderer->camera();
-        const auto selectedObject = self.world->selectedObject();
         
         MultiTouchCameraInteraction::Ptr interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
 
@@ -176,7 +175,7 @@
 - (void)selectObjectAtPosition:(float2)pt
 {
     auto object = [self objectFromPosition:pt];
-    self.world->setSelectedObject(object);
+    self.world->setSelection(object);
     
     auto camera = self.renderer->camera();
     camera->setLookAtPositionProvider(object);
@@ -201,7 +200,7 @@
         
         if (auto object = [self objectFromPosition:p])
         {
-            self.world->setSelectedObject(object);
+            self.world->setSelection(object);
             
             auto camera = self.renderer->camera();
             camera->setLookAtPositionProvider(object);
@@ -400,7 +399,7 @@ namespace
     NSMutableArray<UIMenuElement*>* children = [NSMutableArray new];
     
     auto world = self.world;
-    auto selectedObject = world->selectedObject();
+    auto selectedObject = world->selection().single();
     if (selectedObject != nullptr)
     {
         auto removeObjectCommand = std::make_shared<RemoveObjectCommand>(selectedObject);
@@ -504,7 +503,7 @@ namespace
         return 0;
     }
     
-    auto object = w->selectedObject();
+    auto object = w->selection().single();
     if (object == nullptr)
     {
         return 0;
@@ -530,7 +529,7 @@ namespace
 {
     PropertyCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:@"PropertyCell" forIndexPath:indexPath];
     
-    auto object = self.world->selectedObject();
+    auto object = self.world->selection().single();
     
     void* editedObject = nullptr;
     const Property* property = nullptr;
