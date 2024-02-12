@@ -53,7 +53,18 @@
     const auto result = self.renderer->pick(initialPos);
     if (auto object = world->rootObject()->objectByID(result.objectID))
     {
-        world->setSelection(object);
+        Object3DSelection sel;
+        if ((event.modifierFlags & NSEventModifierFlagShift) != 0)
+        {
+            sel = world->selection();
+            sel.add(object);
+        }
+        else
+        {
+            sel = { object };
+        }
+        
+        world->setSelection(sel);
         camera->setLookAtPositionProvider(object);
         
         interaction = std::make_shared<DragObject3DInteraction>(world,
