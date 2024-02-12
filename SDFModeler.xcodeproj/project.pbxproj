@@ -180,6 +180,9 @@
 		7F74B6742B61974900262F2D /* VisionOS_Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B6732B61974900262F2D /* VisionOS_Shaders.metal */; };
 		7F74B6782B61974900262F2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6772B61974900262F2D /* Preview Assets.xcassets */; };
 		7F74B67A2B61974A00262F2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6792B61974A00262F2D /* Assets.xcassets */; };
+		7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
+		7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
+		7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -331,6 +334,8 @@
 		7F74B6772B61974900262F2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7F74B6792B61974A00262F2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F74B67B2B61974A00262F2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupSelectionCommand.cpp; sourceTree = "<group>"; };
+		7F8D0D9C2B79A3E700AA2225 /* GroupSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupSelectionCommand.h; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -476,6 +481,8 @@
 				743252C429EE5C70009A44EF /* ToggleObjectOperationCommand.h */,
 				74B52D062AA55B5F00EE70C4 /* SetPropertyCommand.mm */,
 				74B52D072AA55B5F00EE70C4 /* SetPropertyCommand.h */,
+				7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */,
+				7F8D0D9C2B79A3E700AA2225 /* GroupSelectionCommand.h */,
 				7492228C29E2685F00ACCFBC /* Command.cpp */,
 				7492228D29E2685F00ACCFBC /* Command.h */,
 			);
@@ -772,6 +779,7 @@
 				7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
 				748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
+				7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
@@ -840,6 +848,7 @@
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
+				7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				74897EA429EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
@@ -897,6 +906,7 @@
 				7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */,
 				7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */,
 				7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */,
+				7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
 				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,
 				7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */,

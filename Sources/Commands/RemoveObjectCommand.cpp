@@ -6,19 +6,32 @@
 
 #include "RemoveObjectCommand.h"
 
-RemoveObjectCommand::RemoveObjectCommand(const Object3D::Ptr& object)
-: _object(object), _parent(object->parent())
+RemoveObjectCommand::Entry::Entry(const Object3D::Ptr& object)
+: object(object), parent(object->parent())
+{}
+
+RemoveObjectCommand::RemoveObjectCommand(const Object3DSelection& selection)
 {
+    for (const auto& object : selection.objects())
+    {
+        _entries.emplace_back(object);
+    }
 }
 
 void
 RemoveObjectCommand::run()
 {
-    _object->removeFromParent();
+    for (const auto& entry: _entries)
+    {
+        entry.object->removeFromParent();
+    }
 }
 
 void
 RemoveObjectCommand::undo()
 {
-    _parent->addChild(_object);
+    for (const auto& entry: _entries)
+    {
+        entry.parent->addChild(entry.object);
+    }
 }

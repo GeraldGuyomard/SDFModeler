@@ -144,6 +144,14 @@
     {
         return self.world->commandHistory().canRedo();
     }
+    else if (menuItem.action == @selector(delete:))
+    {
+        return !self.world->selection().empty();
+    }
+    else if (menuItem.action == @selector(group:))
+    {
+        return !self.world->selection().empty();
+    }
     
     return NO;
 }

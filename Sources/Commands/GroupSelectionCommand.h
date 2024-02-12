@@ -9,12 +9,10 @@
 #include "Command.h"
 #include "Object3D.h"
 
-class RemoveObjectCommand : public Command
+class GroupSelectionCommand : public Command
 {
 public:
-    using Ptr = std::shared_ptr<RemoveObjectCommand>;
-    
-    RemoveObjectCommand(const Object3DSelection& selection);
+    GroupSelectionCommand(const Object3DSelection&);
     
     void run() override;
     void undo() override;
@@ -23,11 +21,13 @@ private:
     
     struct Entry final
     {
-        const Object3D::Ptr parent;
         const Object3D::Ptr object;
+        const Object3D::Ptr parent;
+        const ObjectID id;
         
-        Entry(const Object3D::Ptr& object);
+        Entry(const Object3D::Ptr&);
     };
     
     std::vector<Entry> _entries;
+    Object3D::Ptr _group;
 };

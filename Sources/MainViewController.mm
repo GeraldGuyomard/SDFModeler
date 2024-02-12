@@ -17,6 +17,9 @@
 
 #include "MTKViewRendererDelegate.h"
 
+#include "Commands/RemoveObjectCommand.h"
+#include "Commands/GroupSelectionCommand.h"
+
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
 TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.5f, 0.5} } };
@@ -294,6 +297,18 @@ void visitTypes(const Object3D::Ptr& object)
 - (IBAction)redo:(id)source
 {
     self.world->commandHistory().redo();
+}
+
+- (IBAction)delete:(id)source
+{
+    auto cmd = std::make_shared<RemoveObjectCommand>(self.world->selection());
+    self.world->commandHistory().run(cmd);
+}
+
+- (IBAction)group:(id)source
+{
+    auto cmd = std::make_shared<GroupSelectionCommand>(self.world->selection());
+    self.world->commandHistory().run(cmd);
 }
 
 - (void)frameAtPosition:(float2)pos
