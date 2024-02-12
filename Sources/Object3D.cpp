@@ -156,7 +156,7 @@ Object3D::id() const
             return object->_id;
         }
         
-        object = parent().get();
+        object = object->parent().get();
     }
     
     return kInvalidObjectID;
