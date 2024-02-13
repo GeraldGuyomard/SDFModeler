@@ -174,9 +174,9 @@ Renderer::updateUniforms()
         const auto viewMatrix = inverse(cameraMatrix);
         const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
         
-        SerializationContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
+        EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
         
-        world->serialize(context, serializedMaterials);
+        world->encode(context, serializedMaterials);
     }
 }
 

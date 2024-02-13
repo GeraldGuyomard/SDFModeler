@@ -80,7 +80,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "217"
             endingLineNumber = "217"
-            landmarkName = "selfSerialize(context)"
+            landmarkName = "selfEncode(context)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -173,7 +173,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "654"
             endingLineNumber = "654"
-            landmarkName = "World::serialize(context, materials)"
+            landmarkName = "World::encode(context, materials)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -189,7 +189,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "484"
             endingLineNumber = "484"
-            landmarkName = "Object3D::serializeHierarchy(tileDescriptor, context)"
+            landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -205,7 +205,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "499"
             endingLineNumber = "499"
-            landmarkName = "Object3D::serializeHierarchy(tileDescriptor, context)"
+            landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -222,22 +222,6 @@
             startingLineNumber = "562"
             endingLineNumber = "562"
             landmarkName = "Object3DSelection::Object3DSelection(object)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "51D767DA-1C9F-480D-A625-D6EFD27D2EE6"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/ShadedPrimitive.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "23"
-            endingLineNumber = "23"
-            landmarkName = "materialID()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

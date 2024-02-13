@@ -221,14 +221,14 @@ public:
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        int64_t outlineHeaderIndex = -1;
+        int64_t outlinePrimIndex = -1;
         bool hit = false;
         
         float minDistance = 1e5f;
         float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        int64_t minObjectHeaderIndex = -1;
+        int64_t minPrimIndex = -1;
         
         const size_t nbPrims = primsArray.nbPrimitives();
         
@@ -237,7 +237,7 @@ public:
             pt = ray.pt(d);
             
             minDistance = 1e5f;
-            minObjectHeaderIndex = -1;
+            minPrimIndex = -1;
             
             size_t primIndex = 0;
             
@@ -249,18 +249,18 @@ public:
                 
                 CONSTANT EncodedPrimitive* startPrim = primsArray.primitive(startIndex);
                 
-                if (startPrim->selected && (outlineHeaderIndex < 0))
+                if (startPrim->selected && (outlinePrimIndex < 0))
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
-                        outlineHeaderIndex = startIndex;
+                        outlinePrimIndex = startIndex;
                     }
                 }
                 
                 if (dist <= minDistance)
                 {
                     minDistance = dist;
-                    minObjectHeaderIndex = startIndex;
+                    minPrimIndex = startIndex;
                 }
             }
             
@@ -280,17 +280,17 @@ public:
             prevMinDistance = minDistance;
         }
         
-        if (outlineHeaderIndex >= 0)
+        if (outlinePrimIndex >= 0)
         {
             if (!hit)
             {
-                CONSTANT EncodedPrimitive* minHeader = primsArray.primitive(minObjectHeaderIndex);
+                CONSTANT EncodedPrimitive* minHeader = primsArray.primitive(minPrimIndex);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
             }
-            else if (outlineHeaderIndex != minObjectHeaderIndex)
+            else if (outlinePrimIndex != minPrimIndex)
             {
-                CONSTANT EncodedPrimitive* outlinePrimitive = primsArray.primitive(outlineHeaderIndex);
-                CONSTANT EncodedPrimitive* minPrimitive = primsArray.primitive(minObjectHeaderIndex);
+                CONSTANT EncodedPrimitive* outlinePrimitive = primsArray.primitive(outlinePrimIndex);
+                CONSTANT EncodedPrimitive* minPrimitive = primsArray.primitive(minPrimIndex);
                 
                 if (outlinePrimitive->objectId != minPrimitive->objectId)
                 {
@@ -301,10 +301,10 @@ public:
         
         if (hit)
         {
-            ShadedPrimitive primitive { primsArray, size_t(minObjectHeaderIndex) };
+            ShadedPrimitive primitive { primsArray, size_t(minPrimIndex) };
             const float4 color = _shader.computeShade(primitive, ray, minDistance, pt);
             
-            CONSTANT EncodedPrimitive* minPrim = primsArray.primitive(minObjectHeaderIndex);
+            CONSTANT EncodedPrimitive* minPrim = primsArray.primitive(minPrimIndex);
             
             return RayMarchResult { ray, minPrim->objectId, color, d };
         }

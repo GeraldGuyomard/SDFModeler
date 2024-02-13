@@ -18,7 +18,7 @@
 #include "Command.h"
 #include "BoundingBox.h"
 
-#include "SerializationContext.h"
+#include "EncodingContext.h"
 #include "Type.h"
 
 class RectF;
@@ -91,9 +91,9 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    void serializeHierarchy(TileDescriptor&, SerializationContext&) const;
+    void encodeHierarchy(TileDescriptor&, EncodingContext&) const;
     
-    virtual void selfSerialize(SerializationContext&) const;
+    virtual void selfEncode(EncodingContext&) const;
     
     ObjectID id() const;
     
@@ -214,7 +214,7 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfSerialize(SerializationContext& context) const final
+    void selfEncode(EncodingContext& context) const final
     {
         context.encodePrimitive(this, [this](EncodedPrimitive* encodedPrimitive)
         {
@@ -311,7 +311,7 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void serialize(SerializationContext& context,
+    void encode(EncodingContext& context,
                    Materials& materials) const;
     
     WorldDelegate::Ptr delegate() const;

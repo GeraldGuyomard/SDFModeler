@@ -4,7 +4,7 @@
 //  Created by Gérald Guyomard on 3/5/23.
 //
 
-#include "SerializationContext.h"
+#include "EncodingContext.h"
 #include "Object3D.h"
 #include "RectF.h"
 
@@ -27,7 +27,7 @@ ProjectedBB::ProjectedBB(const RawPoints& pts, const RectF& viewportRect)
 }
 
 bool
-SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect)
+EncodingContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect)
 {
     const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
     const auto box = root->localBoundingBox();
@@ -79,7 +79,7 @@ SerializationContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, c
 
 
 bool
-SerializationContext::_addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
+EncodingContext::_addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
 {
     if (localBBox.empty())
     {
@@ -123,14 +123,14 @@ SerializationContext::_addBBox(const Object3D* object, const float4x4& worldView
 }
 
 const ProjectedBB*
-SerializationContext::projectedBB(const Object3D& object) const
+EncodingContext::projectedBB(const Object3D& object) const
 {
     const auto it = _objectToProjectedBB.find(&object);
     return (it != _objectToProjectedBB.end()) ? &it->second : nullptr;
 }
 
 
-SerializationContext::SerializationContext(const std::shared_ptr<const World>& world,
+EncodingContext::EncodingContext(const std::shared_ptr<const World>& world,
                                            const float4x4& viewProjectionMatrix,
                                            const float2& viewportSize,
                                            SerializedWorldObject& serializedWorldObject)
@@ -194,7 +194,7 @@ _serializedWorldObject(serializedWorldObject)
     _addBBoxRecursive(world->rootObject(), viewportRect);
 }
 
-bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRect) const
+bool EncodingContext::isCulled(const Object3D& object, const RectF& tileRect) const
 {
     const auto* box = projectedBB(object);
     if (box == nullptr)
@@ -206,7 +206,7 @@ bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRec
 }
 
 void
-SerializationContext::encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback& cb)
+EncodingContext::encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback& cb)
 {
     assert (_objectToOffset.find(object) == _objectToOffset.end());
     
@@ -223,7 +223,7 @@ SerializationContext::encodePrimitive(const Object3D* object, const EncodingPrim
 }
 
 TPrimitiveOffset
-SerializationContext::encodedPrimitiveOffset(const Object3D* object) const
+EncodingContext::encodedPrimitiveOffset(const Object3D* object) const
 {
     const auto it = _objectToOffset.find(object);
     if (it != _objectToOffset.end())
@@ -238,18 +238,18 @@ SerializationContext::encodedPrimitiveOffset(const Object3D* object) const
 }
 
 void
-SerializationContext::serializePrimitives(const Object3D& root)
+EncodingContext::encodePrimitives(const Object3D& root)
 {
-    root.selfSerialize(*this);
+    root.selfEncode(*this);
     
     for (const auto& child : root.children())
     {
-        serializePrimitives(*child);
+        encodePrimitives(*child);
     }
 }
 
 void
-SerializationContext::writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren)
+EncodingContext::writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren)
 {
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     

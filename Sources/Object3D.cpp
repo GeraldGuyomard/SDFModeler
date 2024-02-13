@@ -5,7 +5,7 @@
 //
 
 #include "Object3D.h"
-#include "SerializationContext.h"
+#include "EncodingContext.h"
 #include "RectF.h"
 
 Material3D::Material3D(const SimpleMaterial& m)
@@ -479,7 +479,7 @@ TileDescriptor::TileDescriptor(Tile& tile)
 {}
 
 void
-Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContext& context) const
+Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context) const
 {
     TPrimitiveOffset myPrimitiveOffset = kInvalidPrimitiveOffset;
     
@@ -527,18 +527,18 @@ Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContex
         
         for (const auto& child: positiveChildren)
         {
-            child->serializeHierarchy(tileDescriptor, context);
+            child->encodeHierarchy(tileDescriptor, context);
         }
         
         for (const auto& child: negativeChildren)
         {
-            child->serializeHierarchy(tileDescriptor, context);
+            child->encodeHierarchy(tileDescriptor, context);
         }
     }
 }
 
 void
-Object3D::selfSerialize(SerializationContext&) const
+Object3D::selfEncode(EncodingContext&) const
 {
 }
 
@@ -646,12 +646,12 @@ World::init()
 }
 
 void
-World::serialize(SerializationContext& context,
+World::encode(EncodingContext& context,
                  Materials& materials) const
 {
     auto& serialized = context.serializedWorldObject();
     
-    context.serializePrimitives(*_rootObject);
+    context.encodePrimitives(*_rootObject);
     
     const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
     
@@ -661,7 +661,7 @@ World::serialize(SerializationContext& context,
         tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
-        _rootObject->serializeHierarchy(descr, context);
+        _rootObject->encodeHierarchy(descr, context);
         
         tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
         if (tile.nbCommands == 0)

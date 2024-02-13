@@ -27,10 +27,10 @@ class Object3D;
 class World;
 class RectF;
 
-class SerializationContext final
+class EncodingContext final
 {
 public:
-    SerializationContext(
+    EncodingContext(
                          const std::shared_ptr<const World>& world,
                          const float4x4& viewProjectionMatrix,
                          const float2& viewportSize,
@@ -49,7 +49,7 @@ public:
     
     bool isCulled(const Object3D& object, const RectF& tileRect) const;
     
-    void serializePrimitives(const Object3D& root);
+    void encodePrimitives(const Object3D& root);
     
     void writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren);
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
