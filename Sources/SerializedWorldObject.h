@@ -53,7 +53,7 @@ struct SerializedWorldObject final
     
     DrawCommand drawCommands[kDrawCommandArraySize];
     
-    CONSTANT ObjectHeader* primitive(TPrimitiveOffset offset) CONSTANT
+    CONSTANT EncodedPrimitive* primitive(TPrimitiveOffset offset) CONSTANT
     {
         if (offset == kInvalidPrimitiveOffset)
         {
@@ -61,7 +61,7 @@ struct SerializedWorldObject final
         }
         else
         {
-            return reinterpret_cast<CONSTANT ObjectHeader*>(primitivesBuffer + offset);
+            return reinterpret_cast<CONSTANT EncodedPrimitive*>(primitivesBuffer + offset);
         }
     }
 };
@@ -76,7 +76,7 @@ public:
     {
     }
     
-    CONSTANT ObjectHeader* header() const
+    CONSTANT EncodedPrimitive* primitive() const
     {
         return _serializedWorldObject.primitive(current()->primitiveOffset);
     }
@@ -162,23 +162,23 @@ public:
             return RayMarchResult { ray };
         }
         
-        ObjectHeadersArray headersArray { &_serialized.primitivesBuffer[0] };
+        EncodedPrimitiveArray primsArray { &_serialized.primitivesBuffer[0] };
         
         CullEvaluator cullEvaluator { ray };
         
-        bool hasNegativeObjects = false;
+        bool hasNegativePrims = false;
         
         DrawCommandStack stack { tile, _serialized };
         
         while (auto cmd = stack.next())
         {
-            bool hasPositiveObjects = false;
+            bool hasPositivePrims = false;
             
-            if (auto header = stack.header())
+            if (auto prim = stack.primitive())
             {
                 // primitive at this level
-                hasPositiveObjects = true;
-                headersArray.add(header);
+                hasPositivePrims = true;
+                primsArray.add(prim);
             }
             
             const size_t nbPositiveChildren = stack.nbPositiveChildren();
@@ -188,29 +188,29 @@ public:
             
             for (size_t i=0; i < nbPositiveChildren; ++i)
             {
-                auto childHeader = stack.header();
-                if (childHeader != nullptr)
+                auto childPrim = stack.primitive();
+                if (childPrim != nullptr)
                 {
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
                     if (!culled)
                     {
-                        hasPositiveObjects = true;
-                        headersArray.add(childHeader);
+                        hasPositivePrims = true;
+                        primsArray.add(childPrim);
                     }
                 }
             }
             
-            if (hasPositiveObjects)
+            if (hasPositivePrims)
             {
                 // cull all the negative parts
                 for (size_t i=0; i < nbNegativeChildren; ++i)
                 {
-                    auto childHeader = stack.header();
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childHeader);
+                    auto childPrim = stack.primitive();
+                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
                     if (!culled)
                     {
-                        headersArray.add(childHeader);
-                        hasNegativeObjects = true;
+                        primsArray.add(childPrim);
+                        hasNegativePrims = true;
                     }
                 }
             }
@@ -230,9 +230,8 @@ public:
         float3 pt = ray.origin;
         int64_t minObjectHeaderIndex = -1;
         
-        const size_t nbObjects = headersArray.nbObjects();
+        const size_t nbPrims = primsArray.nbPrimitives();
         
-
         for (size_t i=0; i < kNbSteps; ++i)
         {
             pt = ray.pt(d);
@@ -240,17 +239,17 @@ public:
             minDistance = 1e5f;
             minObjectHeaderIndex = -1;
             
-            size_t objectIndex = 0;
+            size_t primIndex = 0;
             
-            while (objectIndex < nbObjects)
+            while (primIndex < nbPrims)
             {
-                const auto startIndex = objectIndex;
+                const auto startIndex = primIndex;
                 
-                const float dist = computeDistance(pt, headersArray, objectIndex);
+                const float dist = computeDistance(pt, primsArray, primIndex);
                 
-                CONSTANT ObjectHeader* startHeader = headersArray.header(startIndex);
+                CONSTANT EncodedPrimitive* startPrim = primsArray.primitive(startIndex);
                 
-                if (startHeader->selected && (outlineHeaderIndex < 0))
+                if (startPrim->selected && (outlineHeaderIndex < 0))
                 {
                     if ((prevMinDistance < dist) && (dist < kOutlineThickness))
                     {
@@ -285,29 +284,29 @@ public:
         {
             if (!hit)
             {
-                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
+                CONSTANT EncodedPrimitive* minHeader = primsArray.primitive(minObjectHeaderIndex);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
             }
             else if (outlineHeaderIndex != minObjectHeaderIndex)
             {
-                CONSTANT ObjectHeader* outlineHeader = headersArray.header(outlineHeaderIndex);
-                CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
+                CONSTANT EncodedPrimitive* outlinePrimitive = primsArray.primitive(outlineHeaderIndex);
+                CONSTANT EncodedPrimitive* minPrimitive = primsArray.primitive(minObjectHeaderIndex);
                 
-                if (outlineHeader->objectId != minHeader->objectId)
+                if (outlinePrimitive->objectId != minPrimitive->objectId)
                 {
-                    return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
+                    return RayMarchResult { ray, minPrimitive->objectId, float4{ 1, 1, 1, 1 }, 0.f };
                 }
             }
         }
         
         if (hit)
         {
-            ShadedPrimitive primitive { headersArray, size_t(minObjectHeaderIndex) };
+            ShadedPrimitive primitive { primsArray, size_t(minObjectHeaderIndex) };
             const float4 color = _shader.computeShade(primitive, ray, minDistance, pt);
             
-            CONSTANT ObjectHeader* minHeader = headersArray.header(minObjectHeaderIndex);
+            CONSTANT EncodedPrimitive* minPrim = primsArray.primitive(minObjectHeaderIndex);
             
-            return RayMarchResult { ray, minHeader->objectId, color, d };
+            return RayMarchResult { ray, minPrim->objectId, color, d };
         }
         
         return RayMarchResult { ray };

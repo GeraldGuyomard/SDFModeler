@@ -7,29 +7,29 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "ObjectHeader.h"
-#include "ObjectHeadersArray.h"
+#include "EncodedPrimitive.h"
+#include "EncodedPrimitiveArray.h"
 #include "PrimitiveEvaluator.h"
 
 
 INLINE float computeDistance(float3 pt,
-                    const THREAD ObjectHeadersArray& headersArray,
-                    THREAD size_t& objectIndex)
+                    const THREAD EncodedPrimitiveArray& encodedPrimitivesArray,
+                    THREAD size_t& index)
 {
     DistanceEvaluator distanceEvaluator { pt };
     
-    CONSTANT ObjectHeader* header = headersArray.header(objectIndex);
-    const auto objectID = header->objectId;
+    CONSTANT EncodedPrimitive* prim = encodedPrimitivesArray.primitive(index);
+    const auto objectID = prim->objectId;
     float2 distances { 1e7f, 1e7f };
     
-    const size_t nbObjects = headersArray.nbObjects();
+    const size_t nbPrims = encodedPrimitivesArray.nbPrimitives();
     
-    while ((objectIndex < nbObjects) && (header->objectId == objectID))
+    while ((index < nbPrims) && (prim->objectId == objectID))
     {
-        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, header);
-        distances[header->operation] = min(distances[header->operation], dist);
+        const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
+        distances[prim->operation] = min(distances[prim->operation], dist);
         
-        header = headersArray.header(++objectIndex);
+        prim = encodedPrimitivesArray.primitive(++index);
     }
     
     return max(distances.x, -distances.y);

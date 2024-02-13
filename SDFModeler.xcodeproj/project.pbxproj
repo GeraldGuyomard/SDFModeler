@@ -37,8 +37,8 @@
 		748629CA2A004293002407AA /* PropertyCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = 748629C92A004293002407AA /* PropertyCell.mm */; };
 		748629CD2A004350002407AA /* Type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629CB2A004350002407AA /* Type.cpp */; };
 		748629CE2A004350002407AA /* Type.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629CB2A004350002407AA /* Type.cpp */; };
-		74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
-		74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
+		74897E9B29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */; };
+		74897E9C29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */; };
 		74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
 		74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */; };
 		74897EA329EF93A6007A5CFE /* SDFCylinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897EA229EF93A6007A5CFE /* SDFCylinder.cpp */; };
@@ -82,7 +82,7 @@
 		74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
 		74AAF29029D7BCD300D322DB /* Results.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6D529AC439E00171C03 /* Results.cpp */; };
 		74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
-		74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
+		74AAF29229D7BCD300D322DB /* EncodedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */; };
 		74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		74AAF29429D7BCD300D322DB /* SerializedWorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */; };
 		74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
@@ -112,7 +112,7 @@
 		74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70829ADB85D00171C03 /* SDFRoundedBox.cpp */; };
 		74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646129CE87CF00CD5259 /* ObjectType.cpp */; };
-		74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
+		74F7646929CE8BFC00CD5259 /* EncodedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */; };
 		74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */; };
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
@@ -155,8 +155,8 @@
 		7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA70E29AEEE7200171C03 /* RenderFunctions.cpp */; };
 		7F5DE0792B73091F003FC854 /* SerializationContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74087D9229F0B85E00958CD7 /* SerializationContext.cpp */; };
 		7F5DE07A2B73091F003FC854 /* SerializedWorldObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */; };
-		7F5DE07B2B73091F003FC854 /* ObjectHeader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */; };
-		7F5DE07C2B73091F003FC854 /* ObjectHeadersArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */; };
+		7F5DE07B2B73091F003FC854 /* EncodedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */; };
+		7F5DE07C2B73091F003FC854 /* EncodedPrimitiveArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */; };
 		7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74DAA6E329AC7BD200171C03 /* SDFObject.cpp */; };
 		7F5DE07E2B73091F003FC854 /* Culling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF134429B53D5300F9BBA8 /* Culling.cpp */; };
 		7F5DE07F2B73092A003FC854 /* MoveCameraAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 748629C429F62F5B002407AA /* MoveCameraAnimation.cpp */; };
@@ -226,8 +226,8 @@
 		748629C92A004293002407AA /* PropertyCell.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PropertyCell.mm; sourceTree = "<group>"; };
 		748629CB2A004350002407AA /* Type.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Type.cpp; sourceTree = "<group>"; };
 		748629CC2A004350002407AA /* Type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Type.h; sourceTree = "<group>"; };
-		74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeadersArray.cpp; sourceTree = "<group>"; };
-		74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeadersArray.h; sourceTree = "<group>"; };
+		74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodedPrimitiveArray.cpp; sourceTree = "<group>"; };
+		74897E9A29EF56EC007A5CFE /* EncodedPrimitiveArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncodedPrimitiveArray.h; sourceTree = "<group>"; };
 		74897E9D29EF8D5A007A5CFE /* SDFTorus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFTorus.h; sourceTree = "<group>"; };
 		74897E9E29EF8D5A007A5CFE /* SDFTorus.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFTorus.cpp; sourceTree = "<group>"; };
 		74897EA129EF93A6007A5CFE /* SDFCylinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFCylinder.h; sourceTree = "<group>"; };
@@ -305,8 +305,8 @@
 		74DAA70F29AEEE7200171C03 /* RenderFunctions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderFunctions.h; sourceTree = "<group>"; };
 		74F7646129CE87CF00CD5259 /* ObjectType.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectType.cpp; sourceTree = "<group>"; };
 		74F7646229CE87CF00CD5259 /* ObjectType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectType.h; sourceTree = "<group>"; };
-		74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ObjectHeader.cpp; sourceTree = "<group>"; };
-		74F7646829CE8BFC00CD5259 /* ObjectHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectHeader.h; sourceTree = "<group>"; };
+		74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncodedPrimitive.cpp; sourceTree = "<group>"; };
+		74F7646829CE8BFC00CD5259 /* EncodedPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EncodedPrimitive.h; sourceTree = "<group>"; };
 		74F7646A29CF8FC500CD5259 /* PrimitiveEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrimitiveEvaluator.h; sourceTree = "<group>"; };
 		74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrimitiveEvaluator.cpp; sourceTree = "<group>"; };
 		74F7646D29CF93FD00CD5259 /* Serializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Serializer.cpp; sourceTree = "<group>"; };
@@ -436,10 +436,10 @@
 				74087D9329F0B85E00958CD7 /* SerializationContext.h */,
 				7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */,
 				7451041629C1538100F69BC4 /* SerializedWorldObject.h */,
-				74F7646729CE8BFC00CD5259 /* ObjectHeader.cpp */,
-				74F7646829CE8BFC00CD5259 /* ObjectHeader.h */,
-				74897E9929EF56EC007A5CFE /* ObjectHeadersArray.cpp */,
-				74897E9A29EF56EC007A5CFE /* ObjectHeadersArray.h */,
+				74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */,
+				74F7646829CE8BFC00CD5259 /* EncodedPrimitive.h */,
+				74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */,
+				74897E9A29EF56EC007A5CFE /* EncodedPrimitiveArray.h */,
 				74F7646B29CF8FC500CD5259 /* PrimitiveEvaluator.cpp */,
 				74F7646A29CF8FC500CD5259 /* PrimitiveEvaluator.h */,
 				74AF134529B53D5300F9BBA8 /* Culling.h */,
@@ -762,7 +762,7 @@
 				74DAA6D229AC30A800171C03 /* CommonDefinitions.cpp in Sources */,
 				7492228E29E2685F00ACCFBC /* Command.cpp in Sources */,
 				74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */,
-				74F7646929CE8BFC00CD5259 /* ObjectHeader.cpp in Sources */,
+				74F7646929CE8BFC00CD5259 /* EncodedPrimitive.cpp in Sources */,
 				74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */,
 				74DAA6D029AC2F8B00171C03 /* Ray.cpp in Sources */,
 				74DAA6D629AC439E00171C03 /* Results.cpp in Sources */,
@@ -801,7 +801,7 @@
 				74B52D082AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */,
-				74897E9B29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
+				74897E9B29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
@@ -843,7 +843,7 @@
 				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
 				743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
-				74897E9C29EF56EC007A5CFE /* ObjectHeadersArray.cpp in Sources */,
+				74897E9C29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */,
 				748629CE2A004350002407AA /* Type.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
@@ -854,7 +854,7 @@
 				748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
-				74AAF29229D7BCD300D322DB /* ObjectHeader.cpp in Sources */,
+				74AAF29229D7BCD300D322DB /* EncodedPrimitive.cpp in Sources */,
 				7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
 				743252C229EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
@@ -894,7 +894,7 @@
 				7F5DE05E2B730895003FC854 /* Transformer.cpp in Sources */,
 				7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */,
 				7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */,
-				7F5DE07C2B73091F003FC854 /* ObjectHeadersArray.cpp in Sources */,
+				7F5DE07C2B73091F003FC854 /* EncodedPrimitiveArray.cpp in Sources */,
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
 				7F5DE0902B731697003FC854 /* CompositorServicesRendererDelegate.mm in Sources */,
 				7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */,
@@ -910,7 +910,7 @@
 				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
 				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,
 				7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */,
-				7F5DE07B2B73091F003FC854 /* ObjectHeader.cpp in Sources */,
+				7F5DE07B2B73091F003FC854 /* EncodedPrimitive.cpp in Sources */,
 				7F5DE0632B73089F003FC854 /* SDFRoundedBox.cpp in Sources */,
 				7F5DE0772B73091F003FC854 /* PrimitiveEvaluator.cpp in Sources */,
 				7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */,

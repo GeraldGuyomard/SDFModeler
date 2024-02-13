@@ -7,7 +7,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "ObjectHeader.h"
+#include "EncodedPrimitive.h"
 #include "Material/Material.h"
 
 #include <cstring>
@@ -19,7 +19,7 @@ static size_t copy(ObjectID id,
                  MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
-                 ObjectHeader* header,
+                 EncodedPrimitive* encodedPrimitive,
                  const TObject& object,
                  SDFOperation operation,
                  bool selected)
@@ -28,14 +28,14 @@ static size_t copy(ObjectID id,
     
     const size_t size = sizeof(TObject);
     
-    header->objectId = id;
-    header->partId = partId;
-    header->materialId = materialId;
-    header->objectCode = computeObjectCode(objectType, transformerType);
-    header->operation = uint16_t(operation);
-    header->selected = selected;
+    encodedPrimitive->objectId = id;
+    encodedPrimitive->partId = partId;
+    encodedPrimitive->materialId = materialId;
+    encodedPrimitive->objectCode = computeObjectCode(objectType, transformerType);
+    encodedPrimitive->operation = uint16_t(operation);
+    encodedPrimitive->selected = selected;
     
-    uint8_t* dst = &(header->firstByte);
+    uint8_t* dst = &(encodedPrimitive->firstByte);
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
     
     memcpy(dst, src, size);
@@ -44,7 +44,7 @@ static size_t copy(ObjectID id,
 }
 
 template <typename TObject>
-static size_t copy(ObjectHeader* header,
+static size_t copy(EncodedPrimitive* primitive,
                  const TObject& object,
                  ObjectID id,
                  ObjectID partId,
@@ -54,12 +54,12 @@ static size_t copy(ObjectHeader* header,
                  SDFOperation operation,
                  bool selected)
 {
-    return copy<TObject>(id, partId, materialId, objectType, transformerType, header, object, operation, selected);
+    return copy<TObject>(id, partId, materialId, objectType, transformerType, primitive, object, operation, selected);
 }
 
 
 template <typename TPrimitive>
-INLINE size_t serializeObject(ObjectHeader* header,
+INLINE size_t encodePrimitive(EncodedPrimitive* encodedPrimitive,
                               const TPrimitive& primitive,
                               ObjectID id,
                               ObjectID partId,
@@ -69,5 +69,5 @@ INLINE size_t serializeObject(ObjectHeader* header,
                               SDFOperation operation,
                               bool selected)
 {
-    return copy(header, primitive, id, partId, materialId, objectType, transformerType, operation, selected);
+    return copy(encodedPrimitive, primitive, id, partId, materialId, objectType, transformerType, operation, selected);
 }

@@ -7,7 +7,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "ObjectHeader.h"
+#include "EncodedPrimitive.h"
 
 #include "SDFGeometry/SDFSphere.h"
 #include "SDFGeometry/SDFPlane.h"
@@ -29,7 +29,7 @@ class PrimitiveEvaluator
 public:
     PrimitiveEvaluator() = delete;
     
-    TReturnType evaluate(CONSTANT ObjectHeader*, TPrimitive) const;
+    TReturnType evaluate(CONSTANT EncodedPrimitive*, TPrimitive) const;
 };
 
 class DistanceEvaluator
@@ -41,7 +41,7 @@ public:
     {}
     
     template <typename TPrimitive>
-    float evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive) const
+    float evaluate(TPrimitive primitive) const
     {
         return primitive.computeDistance(_pt);
     }
@@ -58,7 +58,7 @@ public:
     {}
     
     template <typename TPrimitive>
-    bool evaluate(CONSTANT ObjectHeader* header, TPrimitive prim) const
+    bool evaluate(TPrimitive prim) const
     {
         return prim.evaluateCulling(_ray);
     }
@@ -77,7 +77,7 @@ public:
     {}
     
     template <typename TPrimitive>
-    float4 evaluate(CONSTANT ObjectHeader* header, TPrimitive primitive) const
+    float4 evaluate(CONSTANT EncodedPrimitive* header, TPrimitive primitive) const
     {
         return _shader.computeShade(primitive, _ray, _distance, _pt);
     }
@@ -90,10 +90,10 @@ private:
 };
 
 template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
-INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluateTypedPrimitive(TEvaluator evaluator, CONSTANT EncodedPrimitive* header)
 {
     CONSTANT TPrimitive* prim = typedPrimitive<TPrimitive>(header);
-    return evaluator.evaluate(header, *prim);
+    return evaluator.evaluate(*prim);
 }
 
 template <typename TReturnValue>
@@ -118,7 +118,7 @@ struct EvaluationReturn
 
 template <typename TEvaluator, typename TPrimitive, typename TReturnValue>
 INLINE EvaluationReturn<TReturnValue>
-computeEvaluationReturn(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+computeEvaluationReturn(TEvaluator evaluator, CONSTANT EncodedPrimitive* header)
 {
     const auto objectCode = header->objectCode;
     
@@ -144,7 +144,7 @@ computeEvaluationReturn(TEvaluator evaluator, CONSTANT ObjectHeader* header)
 }
 
 template <typename TEvaluator, typename TReturnValue>
-INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT ObjectHeader* header)
+INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT EncodedPrimitive* header)
 {
     if (auto ret = computeEvaluationReturn<TEvaluator, SDFSphere, TReturnValue>(evaluator, header))
     {

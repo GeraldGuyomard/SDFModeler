@@ -64,7 +64,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "238"
             endingLineNumber = "238"
-            landmarkName = "SerializationContext::objectHeaderOffset(object)"
+            landmarkName = "SerializationContext::encodedPrimitiveOffset(object)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -222,6 +222,22 @@
             startingLineNumber = "562"
             endingLineNumber = "562"
             landmarkName = "Object3DSelection::Object3DSelection(object)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "51D767DA-1C9F-480D-A625-D6EFD27D2EE6"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/ShadedPrimitive.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
+            landmarkName = "materialID()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

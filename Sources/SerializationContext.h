@@ -38,9 +38,9 @@ public:
     
     const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
     
-    using SerializationHeaderCallback = std::function<size_t (ObjectHeader*)>;
-    void serializeObjectHeader(const Object3D* object, const SerializationHeaderCallback&);
-    TPrimitiveOffset objectHeaderOffset(const Object3D* object) const;
+    using EncodingPrimitiveCallback = std::function<size_t (EncodedPrimitive*)>;
+    void encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback&);
+    TPrimitiveOffset encodedPrimitiveOffset(const Object3D* object) const;
     
     const ProjectedBB* projectedBB(const Object3D&) const;
     

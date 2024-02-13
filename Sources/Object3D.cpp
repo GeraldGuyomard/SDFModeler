@@ -489,7 +489,7 @@ Object3D::serializeHierarchy(TileDescriptor& tileDescriptor, SerializationContex
     const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
     if (!isCulled)
     {
-        myPrimitiveOffset = context.objectHeaderOffset(this);
+        myPrimitiveOffset = context.encodedPrimitiveOffset(this);
     }
 
     for (const auto& child : children())

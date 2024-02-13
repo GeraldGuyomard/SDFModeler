@@ -7,31 +7,31 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "ObjectHeader.h"
+#include "EncodedPrimitive.h"
 #include "PrimitiveEvaluator.h"
 #include "ComputeDistance.h"
 
 class ShadedPrimitive final
 {
 public:
-    ShadedPrimitive(const THREAD ObjectHeadersArray& headersArray, size_t objectIndex)
-    : _headersArray(headersArray), _objectIndex(objectIndex)
+    ShadedPrimitive(const THREAD EncodedPrimitiveArray& primArray, size_t index)
+    : _primsArray(primArray), _primIndex(index)
     {}
     
     MaterialID materialID() const
     {
-        auto header = _headersArray.header(_objectIndex);
-        return header->materialId;
+        auto prim = _primsArray.primitive(_primIndex);
+        return prim->materialId;
     }
     
     float computeDistance(float3 pt) const
     {
-        auto index = _objectIndex;
-        return ::computeDistance(pt, _headersArray, index);
+        auto index = _primIndex;
+        return ::computeDistance(pt, _primsArray, index);
     }
     
 private:
-    const THREAD ObjectHeadersArray& _headersArray;
-    const size_t _objectIndex;
+    const THREAD EncodedPrimitiveArray& _primsArray;
+    const size_t _primIndex;
 };
 

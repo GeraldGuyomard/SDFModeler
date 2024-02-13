@@ -206,14 +206,14 @@ bool SerializationContext::isCulled(const Object3D& object, const RectF& tileRec
 }
 
 void
-SerializationContext::serializeObjectHeader(const Object3D* object, const SerializationHeaderCallback& cb)
+SerializationContext::encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback& cb)
 {
     assert (_objectToOffset.find(object) == _objectToOffset.end());
     
     _nbPrimitivesSerialized++;
     
     const auto offset = _availableHeaderOffset;
-    auto* header = reinterpret_cast<ObjectHeader*>(_serializedWorldObject.primitivesBuffer + offset);
+    auto* header = reinterpret_cast<EncodedPrimitive*>(_serializedWorldObject.primitivesBuffer + offset);
     const size_t size = cb(header);
     
     _objectToOffset.emplace(std::pair(object, offset));
@@ -223,7 +223,7 @@ SerializationContext::serializeObjectHeader(const Object3D* object, const Serial
 }
 
 TPrimitiveOffset
-SerializationContext::objectHeaderOffset(const Object3D* object) const
+SerializationContext::encodedPrimitiveOffset(const Object3D* object) const
 {
     const auto it = _objectToOffset.find(object);
     if (it != _objectToOffset.end())

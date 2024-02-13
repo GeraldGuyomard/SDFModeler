@@ -216,7 +216,7 @@ public:
     
     void selfSerialize(SerializationContext& context) const final
     {
-        context.serializeObjectHeader(this, [this](ObjectHeader* header)
+        context.encodePrimitive(this, [this](EncodedPrimitive* encodedPrimitive)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -230,8 +230,8 @@ public:
             
             const auto materialId = materialID();
          
-            return serializeObject<SDFObject<TGeometry, RSTTransformer>>(
-                                                header,
+            return encodePrimitive<SDFObject<TGeometry, RSTTransformer>>(
+                                                encodedPrimitive,
                                                object,
                                                id(),
                                                 partId(),

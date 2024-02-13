@@ -23,10 +23,7 @@ INLINE constexpr uint64_t computeObjectCode()
     return computeObjectCode(TObject::objectType(), TTransformer::transformerType());
 }
 
-struct ObjectHeader;
-using ConstantObjectHeader = CONSTANT ObjectHeader;
-
-struct ObjectHeader final
+struct EncodedPrimitive final
 {
     uint16_t    materialId;
     uint8_t     selected = false;
@@ -45,9 +42,9 @@ struct ObjectHeader final
 };
 
 template <typename TPrimitive>
-INLINE CONSTANT TPrimitive* typedPrimitive(CONSTANT ObjectHeader* header)
+INLINE CONSTANT TPrimitive* typedPrimitive(CONSTANT EncodedPrimitive* primitive)
 {
-    CONSTANT uint8_t* firstBytePtr = &(header->firstByte);
+    CONSTANT uint8_t* firstBytePtr = &(primitive->firstByte);
     return reinterpret_cast<CONSTANT TPrimitive*>(firstBytePtr);
 }
 
