@@ -11,7 +11,6 @@
 #include "Results.h"
 #include "PrimitiveEvaluator.h"
 
-#include "ComputeDistance.h"
 #include "ShadedPrimitive.h"
 
 struct Tile final
@@ -245,7 +244,7 @@ public:
             {
                 const auto startIndex = primIndex;
                 
-                const float dist = computeDistance(pt, primsArray, primIndex);
+                const float dist = primsArray.computeDistance(pt, primIndex);
                 
                 CONSTANT EncodedPrimitive* startPrim = primsArray.primitive(startIndex);
                 

@@ -9,7 +9,7 @@
 #include "CommonDefinitions.h"
 #include "EncodedPrimitive.h"
 #include "PrimitiveEvaluator.h"
-#include "ComputeDistance.h"
+#include "EncodedPrimitiveArray.h"
 
 class ShadedPrimitive final
 {
@@ -27,7 +27,7 @@ public:
     float computeDistance(float3 pt) const
     {
         auto index = _primIndex;
-        return ::computeDistance(pt, _primsArray, index);
+        return _primsArray.computeDistance(pt, index);
     }
     
 private:

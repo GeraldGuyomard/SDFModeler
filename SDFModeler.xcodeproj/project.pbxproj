@@ -15,8 +15,6 @@
 		7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49729DD116300DD4A74 /* Interaction.cpp */; };
 		7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
 		7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */; };
-		743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
-		743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
 		743252C129EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */; };
 		743252C229EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */; };
 		743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */; };
@@ -141,7 +139,6 @@
 		7F5DE06A2B7308B7003FC854 /* AddObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7456FCA829EA284C00398E86 /* AddObjectCommand.cpp */; };
 		7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7492229029E2689F00ACCFBC /* TransformObjectCommand.cpp */; };
 		7F5DE06C2B7308EF003FC854 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
-		7F5DE06D2B7308FA003FC854 /* ComputeDistance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252BC29EE406F009A44EF /* ComputeDistance.cpp */; };
 		7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		7F5DE06F2B7308FA003FC854 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
 		7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */; };
@@ -197,8 +194,6 @@
 		7431C49729DD116300DD4A74 /* Interaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interaction.cpp; sourceTree = "<group>"; };
 		7431C49A29DD179D00DD4A74 /* Object3DInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Object3DInteraction.mm; sourceTree = "<group>"; };
 		7431C49B29DD179D00DD4A74 /* Object3DInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Object3DInteraction.h; sourceTree = "<group>"; };
-		743252BB29EE406F009A44EF /* ComputeDistance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComputeDistance.h; sourceTree = "<group>"; };
-		743252BC29EE406F009A44EF /* ComputeDistance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComputeDistance.cpp; sourceTree = "<group>"; };
 		743252BF29EE41A7009A44EF /* ShadedPrimitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadedPrimitive.h; sourceTree = "<group>"; };
 		743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadedPrimitive.cpp; sourceTree = "<group>"; };
 		743252C329EE5C70009A44EF /* ToggleObjectOperationCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ToggleObjectOperationCommand.cpp; sourceTree = "<group>"; };
@@ -404,8 +399,6 @@
 				74F7646E29CF93FD00CD5259 /* Serializer.h */,
 				74F7647129CF95D400CD5259 /* Object3D.cpp */,
 				74F7647029CF95D400CD5259 /* Object3D.h */,
-				743252BC29EE406F009A44EF /* ComputeDistance.cpp */,
-				743252BB29EE406F009A44EF /* ComputeDistance.h */,
 				743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */,
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
@@ -787,7 +780,6 @@
 				74087D9029F0B1C000958CD7 /* BoundingBox.cpp in Sources */,
 				74A18A8729D8B2B80010F1B4 /* AppDelegate.mm in Sources */,
 				748629C229F62C6C002407AA /* Animation.cpp in Sources */,
-				743252BD29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
@@ -862,7 +854,6 @@
 				74AAF29129D7BCD300D322DB /* Culling.cpp in Sources */,
 				74AAF26429D7BBC800D322DB /* AppDelegate.m in Sources */,
 				74087D9529F0B85E00958CD7 /* EncodingContext.h.cpp in Sources */,
-				743252BE29EE406F009A44EF /* ComputeDistance.cpp in Sources */,
 				74AAF29429D7BCD300D322DB /* SerializedWorldObject.cpp in Sources */,
 				74AAF27F29D7BCA400D322DB /* GridMaterial.cpp in Sources */,
 				7492229329E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
@@ -900,7 +891,6 @@
 				7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */,
 				7F5DE0652B73089F003FC854 /* SDFBox.cpp in Sources */,
 				7F5DE0752B730913003FC854 /* Results.cpp in Sources */,
-				7F5DE06D2B7308FA003FC854 /* ComputeDistance.cpp in Sources */,
 				7F5DE0792B73091F003FC854 /* EncodingContext.h.cpp in Sources */,
 				7F5DE0832B73092A003FC854 /* Animation.cpp in Sources */,
 				7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */,
