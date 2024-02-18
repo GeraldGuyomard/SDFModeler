@@ -165,56 +165,55 @@ public:
         
         CullEvaluator cullEvaluator { ray };
         
-        bool hasNegativePrims = false;
-        
         DrawCommandStack stack { tile, _serialized };
         
+        // First step is culling
         while (auto cmd = stack.next())
         {
-            bool hasPositivePrims = false;
-            
             if (auto prim = stack.primitive())
             {
                 // primitive at this level
-                hasPositivePrims = true;
                 primsArray.add(prim);
             }
-            
-            const size_t nbPositiveChildren = stack.nbPositiveChildren();
-            const size_t nbNegativeChildren = stack.nbNegativeChildren();
-            
-            stack.enterChildren();
-            
-            for (size_t i=0; i < nbPositiveChildren; ++i)
+            else
             {
-                auto childPrim = stack.primitive();
-                if (childPrim != nullptr)
-                {
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
-                    if (!culled)
-                    {
-                        hasPositivePrims = true;
-                        primsArray.add(childPrim);
-                    }
-                }
-            }
-            
-            if (hasPositivePrims)
-            {
-                // cull all the negative parts
-                for (size_t i=0; i < nbNegativeChildren; ++i)
+                bool hasPositivePrims = false;
+                
+                const size_t nbPositiveChildren = stack.nbPositiveChildren();
+                const size_t nbNegativeChildren = stack.nbNegativeChildren();
+                
+                stack.enterChildren();
+                
+                for (size_t i=0; i < nbPositiveChildren; ++i)
                 {
                     auto childPrim = stack.primitive();
-                    const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
-                    if (!culled)
+                    if (childPrim != nullptr)
                     {
-                        primsArray.add(childPrim);
-                        hasNegativePrims = true;
+                        const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
+                        if (!culled)
+                        {
+                            hasPositivePrims = true;
+                            primsArray.add(childPrim);
+                        }
                     }
                 }
+                
+                if (hasPositivePrims)
+                {
+                    // cull all the negative parts
+                    for (size_t i=0; i < nbNegativeChildren; ++i)
+                    {
+                        auto childPrim = stack.primitive();
+                        const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
+                        if (!culled)
+                        {
+                            primsArray.add(childPrim);
+                        }
+                    }
+                }
+                
+                stack.exitChildren();
             }
-            
-            stack.exitChildren();
         }
         
         constexpr size_t kNbSteps = 100;
