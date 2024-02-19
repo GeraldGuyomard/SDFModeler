@@ -15,6 +15,10 @@
 
     using namespace metal;
 
+    #define SHADER_ON_CPU 0
+
+    #define ASSERT(cond)
+
     #define CONSTANT constant
     #define DEVICE device
     #define THREAD thread
@@ -42,92 +46,97 @@
 
 #else
 
-#include <TargetConditionals.h>
+    #define SHADER_ON_CPU 1
 
-#include <chrono>
+    #include <TargetConditionals.h>
 
-using HighResClock = std::chrono::high_resolution_clock;
+    #include <chrono>
+    #include <assert.h>
 
-#if defined(__OBJC__)
+    #define ASSERT(cond) assert((cond))
 
-    #if TARGET_OS_OSX
-        #import <AppKit/AppKit.h>
-        typedef NSViewController ViewControllerBase;
-        typedef NSView View;
-    #else
-        #import <UIKit/UIKit.h>
-        typedef UIViewController ViewControllerBase;
-        typedef UIView View;
-    #endif
+    using HighResClock = std::chrono::high_resolution_clock;
 
-#endif // __OBJC__
+    #if defined(__OBJC__)
 
-    using namespace simd;
+        #if TARGET_OS_OSX
+            #import <AppKit/AppKit.h>
+            typedef NSViewController ViewControllerBase;
+            typedef NSView View;
+        #else
+            #import <UIKit/UIKit.h>
+            typedef UIViewController ViewControllerBase;
+            typedef UIView View;
+        #endif
 
-    #define CONSTANT const
-    #define DEVICE
-    #define THREAD
-    #define INLINE inline
+    #endif // __OBJC__
 
-    using EnumBackingType = int32_t;
-    #define VB_ATTRIBUTE(a)
+        using namespace simd;
 
-    inline float3x3 float3x3_identity()
-    {
-        return matrix_identity_float3x3;
-    }
+        #define CONSTANT const
+        #define DEVICE
+        #define THREAD
+        #define INLINE inline
 
-    inline float4x4 float4x4_identity()
-    {
-        return matrix_identity_float4x4;
-    }
+        using EnumBackingType = int32_t;
+        #define VB_ATTRIBUTE(a)
 
-    inline float2 min(float2 lhs, float rhs)
-    {
-        return min(lhs, float2 { rhs });
-    }
+        inline float3x3 float3x3_identity()
+        {
+            return matrix_identity_float3x3;
+        }
 
-    inline float2 max(float2 lhs, float rhs)
-    {
-        return max(lhs, float2 { rhs });
-    }
+        inline float4x4 float4x4_identity()
+        {
+            return matrix_identity_float4x4;
+        }
 
-    inline float3 min(float3 lhs, float rhs)
-    {
-        return min(lhs, float3 { rhs });
-    }
+        inline float2 min(float2 lhs, float rhs)
+        {
+            return min(lhs, float2 { rhs });
+        }
 
-    inline float3 max(float3 lhs, float rhs)
-    {
-        return max(lhs, float3 { rhs });
-    }
+        inline float2 max(float2 lhs, float rhs)
+        {
+            return max(lhs, float2 { rhs });
+        }
 
-    inline float2 fmod(float2 in, float m)
-    {
-        return fmod(in, float2 { m });
-    }
+        inline float3 min(float3 lhs, float rhs)
+        {
+            return min(lhs, float3 { rhs });
+        }
 
-    inline float2 step(float m, float2 in)
-    {
-        return step(float2 { m, m }, in);
-    }
+        inline float3 max(float3 lhs, float rhs)
+        {
+            return max(lhs, float3 { rhs });
+        }
 
-    inline float2 smoothstep(float e0, float e1, float2 in)
-    {
-        return smoothstep(float2 { e0, e0 }, float2 { e1, e1 }, in);
-    }
+        inline float2 fmod(float2 in, float m)
+        {
+            return fmod(in, float2 { m });
+        }
 
-    inline float3 mix(float3 a, float3 b, float c)
-    {
-        return mix(a, b, float3 {c, c, c});
-    }
+        inline float2 step(float m, float2 in)
+        {
+            return step(float2 { m, m }, in);
+        }
 
-    inline float4 mix(float4 a, float4 b, float c)
-    {
-        return mix(a, b, float4 {c, c, c, c});
-    }
+        inline float2 smoothstep(float e0, float e1, float2 in)
+        {
+            return smoothstep(float2 { e0, e0 }, float2 { e1, e1 }, in);
+        }
 
-    bool isValid(const float4x4& m);
+        inline float3 mix(float3 a, float3 b, float c)
+        {
+            return mix(a, b, float3 {c, c, c});
+        }
+
+        inline float4 mix(float4 a, float4 b, float c)
+        {
+            return mix(a, b, float4 {c, c, c, c});
+        }
+
+        bool isValid(const float4x4& m);
 
 #endif
 

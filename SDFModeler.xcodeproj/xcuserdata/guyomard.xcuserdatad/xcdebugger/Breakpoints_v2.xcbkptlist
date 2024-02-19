@@ -219,8 +219,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "218"
+            endingLineNumber = "218"
             landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
             landmarkType = "7">
             <Locations>
@@ -253,6 +253,54 @@
                   startingLineNumber = "174"
                   endingLineNumber = "174"
                   offsetFromSymbolStart = "272">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9A959DC2-EB4A-4680-A889-F9B95FF6687E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SerializedWorldObject.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "245"
+            endingLineNumber = "245"
+            landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9A959DC2-EB4A-4680-A889-F9B95FF6687E - 7385186434de68e8"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WorldObject&lt;NoShader&gt;::rayMarch(float vector[2], float vector[2], Ray) const"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "222"
+                  endingLineNumber = "222"
+                  offsetFromSymbolStart = "340">
+               </Location>
+               <Location
+                  uuid = "9A959DC2-EB4A-4680-A889-F9B95FF6687E - 279c67f63db253a6"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WorldObject&lt;PhongShader&gt;::rayMarch(float vector[2], float vector[2], Ray) const"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "222"
+                  endingLineNumber = "222"
+                  offsetFromSymbolStart = "340">
                </Location>
             </Locations>
          </BreakpointContent>

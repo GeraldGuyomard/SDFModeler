@@ -543,7 +543,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
                     }
                 }
                 
-                cmd.nbChildren = -n;
+                cmd.primitiveOffsetOrNegativeChildrenCount = -n;
                 return true;
             }
             else

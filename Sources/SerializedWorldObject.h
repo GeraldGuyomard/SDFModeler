@@ -24,11 +24,7 @@ struct Tile final
 using TDrawCommandIndex = uint16_t;
 struct DrawCommand final
 {
-    union
-    {
-        TPrimitiveOffset primitiveOffset = 0; // -1 if no primitive
-        uint16_t nbChildren;
-    };
+    TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
@@ -82,7 +78,7 @@ public:
     
     TPrimitiveOffset primitiveOffset() const
     {
-        return current()->primitiveOffset;
+        return current()->primitiveOffsetOrNegativeChildrenCount;
     }
     
     CONSTANT DrawCommand* next()
@@ -125,6 +121,75 @@ private:
     int8_t _relativeIndex = -1;
 };
 
+template <typename TLocals>
+class Stack final
+{
+public:
+    Stack() = default;
+    
+    bool empty() const { return _stackIndex < 0; }
+    void push(THREAD const TLocals& locals)
+    {
+        _stack[++_stackIndex] = locals;
+    }
+    
+    TLocals pop()
+    {
+        ASSERT(_stackIndex >= 0);
+        return _stack[_stackIndex--] ;
+    }
+    
+private:
+    static CONSTANT constexpr size_t kMaxStackDepth = 7;
+    TLocals _stack[kMaxStackDepth];
+    int8_t _stackIndex = -1;
+};
+
+template <typename TVisitor, typename TLocals>
+void visitDrawCommandTree(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
+{
+    auto cmd = &serialized.drawCommands[rootCmdIndex];
+    Stack<TLocals> stack;
+    stack.push(cmd);
+    
+    while (!stack.empty())
+    {
+        auto locals = stack.pop();
+        visitor.visit(locals);
+        
+        if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+        {
+            const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            for (size_t i=0; i < n; ++i)
+            {
+                TLocals l { ++ cmd };
+                stack.push(l);
+            }
+        }
+    }
+}
+
+class CullingInfo final
+{
+public:
+    void storeCulling(bool culled)
+    {
+        _bits = (_bits << 1) | (culled? 1 : 0);
+    }
+    
+    bool nextCulling()
+    {
+        const bool culled = (_bits & 1);
+        _bits >>= 1;
+        
+        return culled;
+    }
+    
+private:
+    uint64_t _bits = 0;
+    uint8_t _currentBit = 0;
+};
+
 template <typename TShader>
 class WorldObject final
 {
@@ -154,6 +219,31 @@ public:
         {
             return RayMarchResult { ray };
         }
+        
+#if SHADER_ON_CPU
+        
+        class Locals
+        {
+        public:
+            Locals() = default;
+            Locals(CONSTANT DrawCommand* cmd)
+            : _cmd(cmd)
+            {}
+            
+        private:
+            CONSTANT DrawCommand* _cmd;
+        };
+        
+        struct Visitor final
+        {
+            void visit(THREAD Locals& locals)
+            {
+                
+            }
+        } visitor;
+        
+        visitDrawCommandTree<Visitor, Locals>(_serialized, tile.rootCommandIndex, visitor);
+#endif
         
         EncodedPrimitiveArray primsArray { &_serialized.primitivesBuffer[0] };
         

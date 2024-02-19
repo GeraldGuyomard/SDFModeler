@@ -256,7 +256,7 @@ EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset)
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
-    cmd.primitiveOffset = primitiveOffset;
+    cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
 }
 
 DrawCommand&
