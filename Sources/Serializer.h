@@ -22,7 +22,8 @@ static size_t copy(ObjectID id,
                  EncodedPrimitive* encodedPrimitive,
                  const TObject& object,
                  SDFOperation operation,
-                 bool selected)
+                 bool selected,
+                 uint32_t depth)
 {
     assert(objectType != ObjectType::invalid);
     
@@ -34,6 +35,7 @@ static size_t copy(ObjectID id,
     encodedPrimitive->objectCode = computeObjectCode(objectType, transformerType);
     encodedPrimitive->operation = uint16_t(operation);
     encodedPrimitive->selected = selected;
+    encodedPrimitive->depth = depth;
     
     uint8_t* dst = &(encodedPrimitive->firstByte);
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
@@ -52,9 +54,10 @@ static size_t copy(EncodedPrimitive* primitive,
                  ObjectType objectType,
                  TransformerType transformerType,
                  SDFOperation operation,
-                 bool selected)
+                 bool selected,
+                uint32_t depth)
 {
-    return copy<TObject>(id, partId, materialId, objectType, transformerType, primitive, object, operation, selected);
+    return copy<TObject>(id, partId, materialId, objectType, transformerType, primitive, object, operation, selected, depth);
 }
 
 
@@ -67,7 +70,8 @@ INLINE size_t encodePrimitive(EncodedPrimitive* encodedPrimitive,
                               ObjectType objectType,
                               TransformerType transformerType,
                               SDFOperation operation,
-                              bool selected)
+                              bool selected,
+                              uint32_t depth)
 {
-    return copy(encodedPrimitive, primitive, id, partId, materialId, objectType, transformerType, operation, selected);
+    return copy(encodedPrimitive, primitive, id, partId, materialId, objectType, transformerType, operation, selected, depth);
 }

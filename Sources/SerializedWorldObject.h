@@ -21,7 +21,7 @@ struct Tile final
     size_t rootCommandIndex = -1; // 8
 };
 
-using TDrawCommandIndex = uint16_t;
+using TDrawCommandIndex = int16_t;
 struct DrawCommand final
 {
     TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
@@ -31,7 +31,7 @@ static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
 static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
 static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
 
-static CONSTANT constexpr size_t kInvalidCommandIndex = size_t(-1);
+static CONSTANT constexpr size_t kInvalidCommandIndex(-1);
 
 struct SerializedWorldObject final
 {
@@ -133,10 +133,16 @@ public:
         _stack[++_stackIndex] = locals;
     }
     
-    TLocals pop()
+    THREAD TLocals& current()
     {
         ASSERT(_stackIndex >= 0);
-        return _stack[_stackIndex--] ;
+        return _stack[_stackIndex];
+    }
+    
+    void pop()
+    {
+        ASSERT(_stackIndex > 0);
+        --_stackIndex;
     }
     
 private:
@@ -150,22 +156,24 @@ void visitDrawCommandTree(CONSTANT SerializedWorldObject& serialized, TDrawComma
 {
     auto cmd = &serialized.drawCommands[rootCmdIndex];
     Stack<TLocals> stack;
-    stack.push(cmd);
+    stack.push(visitor.locals(serialized, cmd));
     
     while (!stack.empty())
     {
-        auto locals = stack.pop();
-        visitor.visit(locals);
+        auto& locals = stack.current();
+        visitor.visit(serialized, cmd, locals);
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
             const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
             for (size_t i=0; i < n; ++i)
             {
-                TLocals l { ++ cmd };
-                stack.push(l);
+                ++cmd;
+                stack.push(visitor.locals(serialized, cmd));
             }
         }
+        
+        stack.pop();
     }
 }
 
@@ -192,7 +200,112 @@ public:
     
 private:
     uint64_t _bits = 0;
-    uint8_t _currentBit = 0;
+};
+
+class Locals
+{
+public:
+    Locals() = default;
+    
+    float distance;
+};
+
+class Visitor final
+{
+public:
+    Visitor(float3 pt)
+    : _pt(pt)
+    {}
+    
+    void reset(CullingInfo info)
+    {
+        _cullingInfo = info;
+        _prevMinDistance = _minDistance;
+        _minDistance = 1e5f;
+        _minCmdIndex = -1;
+    }
+    
+    Locals locals(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand*) const
+    {
+        return {};
+    }
+    
+    void visit(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd, THREAD Locals& locals)
+    {
+        locals.distance = 1e7f;
+        
+        const bool culled = _cullingInfo.nextCulling();
+        
+        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+        {
+            if (!culled)
+            {
+                auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                const float dist = ::computeDistance(_pt, prim);
+                
+                locals.distance = dist;
+                
+                if (prim->selected && (_outlineCmdIndex < 0))
+                {
+                    if ((_prevMinDistance < dist) && (dist < kOutlineThickness))
+                    {
+                        _outlineCmdIndex = serialized.drawCommandIndex(cmd);
+                    }
+                }
+                
+                if (dist <= _minDistance)
+                {
+                    _minDistance = dist;
+                    _outlineCmdIndex = serialized.drawCommandIndex(cmd);
+                }
+            }
+        }
+        
+        if (locals.distance <= kDistanceEpsilon)
+        {
+            _hit = true;
+        }
+    }
+    
+    float minDistance() const
+    {
+        return _minDistance;
+    }
+    
+    bool hit() const
+    {
+        return _hit;
+    }
+    
+    TPrimitiveOffset outlinePrimOffset(CONSTANT SerializedWorldObject& serialized) const
+    {
+        if (_outlineCmdIndex >= 0)
+        {
+            const TPrimitiveOffset offset = serialized.drawCommand(_outlineCmdIndex)->primitiveOffsetOrNegativeChildrenCount;
+            ASSERT(offset >= 0);
+            return offset;
+        }
+        else
+        {
+            return kInvalidPrimitiveOffset;
+        }
+    }
+    
+    TDrawCommandIndex minCmdIndex() const
+    {
+        return _minCmdIndex;
+    }
+    
+private:
+    const float3 _pt;
+    CullingInfo _cullingInfo;
+    
+    float _minDistance = 1e5f;
+    float _prevMinDistance = 1e5f;
+    TDrawCommandIndex _minCmdIndex = -1;
+    TDrawCommandIndex _outlineCmdIndex = -1;
+    
+    bool _hit = false;
 };
 
 template <typename TShader>
@@ -225,185 +338,69 @@ public:
             return RayMarchResult { ray };
         }
         
-#if SHADER_ON_CPU
-        
-        class Locals
-        {
-        public:
-            Locals() = default;
-            Locals(CONSTANT DrawCommand* cmd)
-            : _cmd(cmd)
-            {}
-            
-        private:
-            CONSTANT DrawCommand* _cmd;
-        };
-        
-        struct Visitor final
-        {
-            void visit(THREAD Locals& locals)
-            {
-                
-            }
-        } visitor;
-        
-        visitDrawCommandTree<Visitor, Locals>(_serialized, tile.rootCommandIndex, visitor);
-#endif
-        
         CullEvaluator cullEvaluator { ray };
         
         CullingInfo cullingInfo;
         
         auto cmd = _serialized.drawCommand(tile.rootCommandIndex);
         const auto end = cmd + tile.nbCommands;
-        while (cmd < end)
+        for (;cmd < end; ++cmd)
         {
             if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
             {
                 auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
                 const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, prim);
+
+                if (!culled)
+                {
+                    int a;
+                    a = 1;
+                }
+                
                 cullingInfo.storeCulling(culled);
             }
             else
             {
                 cullingInfo.storeNoCulling();
             }
-            
-            ++cmd;
-        }
-        
-        EncodedPrimitiveArray primsArray { &_serialized.primitivesBuffer[0] };
-        
-        
-        
-        DrawCommandStack stack { tile, _serialized };
-        
-        // First step is culling
-        while (auto cmd = stack.next())
-        {
-            const auto primOffset = stack.primitiveOffset();
-            
-            if (primOffset >= 0)
-            {
-                // primitive at this level
-                primsArray.add(_serialized.primitive(primOffset));
-            }
-            else
-            {
-                const size_t nbChildren = -primOffset;
-                bool hasPositivePrims = false;
-                
-                stack.enterChildren();
-                
-                size_t i=0;
-                
-                for (; i < nbChildren; ++i)
-                {
-                    const auto childPrimOffset = stack.primitiveOffset();
-                    if (childPrimOffset >= 0)
-                    {
-                        auto childPrim = _serialized.primitive(childPrimOffset);
-                        if (childPrim->sdfOperation() == SDFOperation::substraction)
-                        {
-                            break;
-                        }
-                        
-                        const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
-                        if (!culled)
-                        {
-                            hasPositivePrims = true;
-                            primsArray.add(childPrim);
-                        }
-                    }
-                }
-                
-                if (hasPositivePrims)
-                {
-                    // cull all the negative parts
-                    for (; i < nbChildren; ++i)
-                    {
-                        const auto childPrimOffset = stack.primitiveOffset();
-                        auto childPrim = _serialized.primitive(childPrimOffset);
-                        
-                        const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
-                        if (!culled)
-                        {
-                            primsArray.add(childPrim);
-                        }
-                    }
-                }
-                
-                stack.exitChildren();
-            }
         }
         
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        int64_t outlinePrimIndex = -1;
-        bool hit = false;
-        
-        float minDistance = 1e5f;
-        float prevMinDistance = minDistance;
         
         float3 pt = ray.origin;
-        int64_t minPrimIndex = -1;
         
-        const size_t nbPrims = primsArray.nbPrimitives();
+        Visitor visitor { pt };
         
         for (size_t i=0; i < kNbSteps; ++i)
         {
             pt = ray.pt(d);
             
-            minDistance = 1e5f;
-            minPrimIndex = -1;
+            visitor.reset(cullingInfo);
             
-            size_t primIndex = 0;
+            visitDrawCommandTree<Visitor, Locals>(_serialized, tile.rootCommandIndex, visitor);
             
-            while (primIndex < nbPrims)
+            if (visitor.hit())
             {
-                const auto startIndex = primIndex;
-                
-                const float dist = primsArray.computeDistance(pt, primIndex);
-                
-                CONSTANT EncodedPrimitive* startPrim = primsArray.primitive(startIndex);
-                
-                if (startPrim->selected && (outlinePrimIndex < 0))
-                {
-                    if ((prevMinDistance < dist) && (dist < kOutlineThickness))
-                    {
-                        outlinePrimIndex = startIndex;
-                    }
-                }
-                
-                if (dist <= minDistance)
-                {
-                    minDistance = dist;
-                    minPrimIndex = startIndex;
-                }
-            }
-            
-            if (minDistance <= kDistanceEpsilon)
-            {
-                hit = true;
                 break;
             }
             
-            d += minDistance;
+            d += visitor.minDistance();
             
             if (d > ray.maxLength)
             {
                 break;
             }
-            
-            prevMinDistance = minDistance;
         }
         
-        if (outlinePrimIndex >= 0)
+        const auto outlinePrimOffset = visitor.outlinePrimOffset(_serialized);
+        
+        /*if (outlinePrimOffset >= 0)
         {
-            if (!hit)
+            if (!visitor.hit())
             {
-                CONSTANT EncodedPrimitive* minHeader = primsArray.primitive(minPrimIndex);
+                CONSTANT EncodedPrimitive* minHeader = _serialized.primitive(outlinePrimOffset);
                 return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
             }
             else if (outlinePrimIndex != minPrimIndex)
@@ -416,16 +413,20 @@ public:
                     return RayMarchResult { ray, minPrimitive->objectId, float4{ 1, 1, 1, 1 }, 0.f };
                 }
             }
-        }
+        }*/
         
-        if (hit)
+        if (visitor.hit())
         {
-            ShadedPrimitive primitive { primsArray, size_t(minPrimIndex) };
-            const float4 color = _shader.computeShade(primitive, ray, minDistance, pt);
+            const auto minCmdIndex = visitor.minCmdIndex();
+            ASSERT(minCmdIndex >= 0);
             
-            CONSTANT EncodedPrimitive* minPrim = primsArray.primitive(minPrimIndex);
+            auto cmd = _serialized.drawCommand(minCmdIndex);
+            auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
             
-            return RayMarchResult { ray, minPrim->objectId, color, d };
+            ShadedPrimitive primitive { prim };
+            const float4 color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
+            
+            return RayMarchResult { ray, prim->objectId, color, d };
         }
         
         return RayMarchResult { ray };

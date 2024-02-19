@@ -140,8 +140,9 @@ _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
     //const float2 kDefaultTileSize { 128, 128 };
-    const float2 kDefaultTileSize { 256, 256 };
+    //const float2 kDefaultTileSize { 256, 256 };
     //const float2 kDefaultTileSize { 1024, 1024 };
+    const float2 kDefaultTileSize { 2048, 2048 };
     
     _serializedWorldObject.tileSize = kDefaultTileSize;
     
@@ -238,13 +239,14 @@ EncodingContext::encodedPrimitiveOffset(const Object3D* object) const
 }
 
 void
-EncodingContext::encodePrimitives(const Object3D& root)
+EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 {
-    root.selfEncode(*this);
+    root.selfEncode(*this, depth);
     
+    const uint32_t childrenDepth = depth  + 1;
     for (const auto& child : root.children())
     {
-        encodePrimitives(*child);
+        encodePrimitives(*child, childrenDepth);
     }
 }
 

@@ -26,8 +26,9 @@ INLINE constexpr uint64_t computeObjectCode()
 struct EncodedPrimitive final
 {
     uint16_t    materialId;
-    uint8_t     selected = false;
-    uint8_t     operation = uint16_t(SDFOperation::addition);
+    uint8_t     selected: 1;
+    uint8_t     operation: 1;
+    uint32_t    depth;
     
     uint32_t    objectId;
     uint32_t    partId;

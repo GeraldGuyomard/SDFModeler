@@ -93,7 +93,7 @@ public:
     
     bool encodeHierarchy(TileDescriptor&, EncodingContext&) const;
     
-    virtual void selfEncode(EncodingContext&) const;
+    virtual void selfEncode(EncodingContext& context, uint32_t depth) const;
     
     ObjectID id() const;
     
@@ -214,9 +214,9 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfEncode(EncodingContext& context) const final
+    void selfEncode(EncodingContext& context, uint32_t depth) const override final
     {
-        context.encodePrimitive(this, [this](EncodedPrimitive* encodedPrimitive)
+        context.encodePrimitive(this, [this, depth](EncodedPrimitive* encodedPrimitive)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -239,7 +239,8 @@ public:
                                                object.objectType(),
                                                transformer.transformerType(),
                                                 operation(),
-                                               selected);
+                                               selected,
+                                                depth);
         });
     }
     

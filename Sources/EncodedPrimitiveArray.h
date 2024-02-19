@@ -15,6 +15,18 @@ constexpr static CONSTANT size_t kNbObjectsMax = 64;
 using TPrimitiveOffset = int16_t;
 constexpr static CONSTANT TPrimitiveOffset kInvalidPrimitiveOffset = -1;
 
+INLINE float computeDistance(float3 pt, CONSTANT EncodedPrimitive* prim)
+{
+    DistanceEvaluator distanceEvaluator { pt };
+    
+    float2 distances { 1e7f, 1e7f };
+    
+    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
+    distances[prim->operation] = min(distances[prim->operation], dist);
+    
+    return max(distances.x, -distances.y);
+}
+
 class EncodedPrimitiveArray final
 {
 public:
@@ -40,23 +52,8 @@ public:
     
     float computeDistance(float3 pt, THREAD size_t& index) const
     {
-        DistanceEvaluator distanceEvaluator { pt };
-        
         CONSTANT EncodedPrimitive* prim = primitive(index);
-        const auto objectID = prim->objectId;
-        float2 distances { 1e7f, 1e7f };
-        
-        const size_t nbPrims = nbPrimitives();
-        
-        while ((index < nbPrims) && (prim->objectId == objectID))
-        {
-            const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-            distances[prim->operation] = min(distances[prim->operation], dist);
-            
-            prim = primitive(++index);
-        }
-        
-        return max(distances.x, -distances.y);
+        return ::computeDistance(pt, prim);
     }
     
 private:

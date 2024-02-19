@@ -14,24 +14,21 @@
 class ShadedPrimitive final
 {
 public:
-    ShadedPrimitive(const THREAD EncodedPrimitiveArray& primArray, size_t index)
-    : _primsArray(primArray), _primIndex(index)
+    ShadedPrimitive(CONSTANT EncodedPrimitive* prim)
+    : _prim(prim)
     {}
     
     MaterialID materialID() const
     {
-        auto prim = _primsArray.primitive(_primIndex);
-        return prim->materialId;
+        return _prim->materialId;
     }
     
     float computeDistance(float3 pt) const
     {
-        auto index = _primIndex;
-        return _primsArray.computeDistance(pt, index);
+        return ::computeDistance(pt, _prim);
     }
     
 private:
-    const THREAD EncodedPrimitiveArray& _primsArray;
-    const size_t _primIndex;
+    CONSTANT EncodedPrimitive* _prim;
 };
 

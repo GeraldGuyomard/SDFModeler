@@ -557,7 +557,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
 }
 
 void
-Object3D::selfEncode(EncodingContext&) const
+Object3D::selfEncode(EncodingContext&, uint32_t) const
 {
 }
 
@@ -670,7 +670,7 @@ World::encode(EncodingContext& context,
 {
     auto& serialized = context.serializedWorldObject();
     
-    context.encodePrimitives(*_rootObject);
+    context.encodePrimitives(*_rootObject, 0);
     
     const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
     
