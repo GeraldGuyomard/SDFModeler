@@ -177,6 +177,11 @@ public:
         _bits = (_bits << 1) | (culled? 1 : 0);
     }
     
+    void storeNoCulling()
+    {
+        _bits <<= 1;
+    }
+    
     bool nextCulling()
     {
         const bool culled = (_bits & 1);
@@ -245,9 +250,31 @@ public:
         visitDrawCommandTree<Visitor, Locals>(_serialized, tile.rootCommandIndex, visitor);
 #endif
         
+        CullEvaluator cullEvaluator { ray };
+        
+        CullingInfo cullingInfo;
+        
+        auto cmd = _serialized.drawCommand(tile.rootCommandIndex);
+        const auto end = cmd + tile.nbCommands;
+        while (cmd < end)
+        {
+            if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+            {
+                auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, prim);
+                cullingInfo.storeCulling(culled);
+            }
+            else
+            {
+                cullingInfo.storeNoCulling();
+            }
+            
+            ++cmd;
+        }
+        
         EncodedPrimitiveArray primsArray { &_serialized.primitivesBuffer[0] };
         
-        CullEvaluator cullEvaluator { ray };
+        
         
         DrawCommandStack stack { tile, _serialized };
         
