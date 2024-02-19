@@ -12,8 +12,8 @@
 
 constexpr static CONSTANT size_t kNbObjectsMax = 64;
 
-using TPrimitiveOffset = uint16_t;
-constexpr static CONSTANT TPrimitiveOffset kInvalidPrimitiveOffset = TPrimitiveOffset(-1);
+using TPrimitiveOffset = int16_t;
+constexpr static CONSTANT TPrimitiveOffset kInvalidPrimitiveOffset = -1;
 
 class EncodedPrimitiveArray final
 {

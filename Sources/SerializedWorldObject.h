@@ -21,12 +21,14 @@ struct Tile final
     size_t rootCommandIndex = -1; // 8
 };
 
+using TDrawCommandIndex = uint16_t;
 struct DrawCommand final
 {
-    size_t nbPositiveChildren = 0;
-    size_t nbNegativeChildren = 0;
-    
-    TPrimitiveOffset primitiveOffset = 0; // -1 if no primitive
+    union
+    {
+        TPrimitiveOffset primitiveOffset = 0; // -1 if no primitive
+        uint16_t nbChildren;
+    };
 };
 
 static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
@@ -54,14 +56,17 @@ struct SerializedWorldObject final
     
     CONSTANT EncodedPrimitive* primitive(TPrimitiveOffset offset) CONSTANT
     {
-        if (offset == kInvalidPrimitiveOffset)
-        {
-            return nullptr;
-        }
-        else
-        {
-            return reinterpret_cast<CONSTANT EncodedPrimitive*>(primitivesBuffer + offset);
-        }
+        return reinterpret_cast<CONSTANT EncodedPrimitive*>(primitivesBuffer + offset);
+    }
+    
+    TDrawCommandIndex drawCommandIndex(CONSTANT DrawCommand* cmd) CONSTANT
+    {
+        return TDrawCommandIndex(cmd - drawCommands);
+    }
+    
+    CONSTANT DrawCommand* drawCommand(TDrawCommandIndex index) CONSTANT
+    {
+        return &drawCommands[index];
     }
 };
 
@@ -77,17 +82,28 @@ public:
     
     CONSTANT EncodedPrimitive* primitive() const
     {
-        return _serializedWorldObject.primitive(current()->primitiveOffset);
+        const auto offsetOrNegativeChildrenCount = current()->primitiveOffset;
+        if (offsetOrNegativeChildrenCount >= 0)
+        {
+            return _serializedWorldObject.primitive(offsetOrNegativeChildrenCount);
+        }
+        else
+        {
+            return nullptr;
+        }
     }
     
-    size_t nbPositiveChildren() const
+    size_t nbChildren() const
     {
-        return current()->nbPositiveChildren;
-    }
-
-    size_t nbNegativeChildren() const
-    {
-        return current()->nbNegativeChildren;
+        const auto offsetOrNegativeChildrenCount = current()->primitiveOffset;
+        if (offsetOrNegativeChildrenCount < 0)
+        {
+            return -offsetOrNegativeChildrenCount;
+        }
+        else
+        {
+            return 0;
+        }
     }
     
     CONSTANT DrawCommand* next()
@@ -129,7 +145,6 @@ private:
     size_t _stackSize = 0;
     int64_t _relativeIndex = -1;
 };
-
 
 template <typename TShader>
 class WorldObject final
@@ -177,18 +192,23 @@ public:
             }
             else
             {
+                const size_t nbChildren = stack.nbChildren();
                 bool hasPositivePrims = false;
-                
-                const size_t nbPositiveChildren = stack.nbPositiveChildren();
-                const size_t nbNegativeChildren = stack.nbNegativeChildren();
                 
                 stack.enterChildren();
                 
-                for (size_t i=0; i < nbPositiveChildren; ++i)
+                size_t i=0;
+                
+                for (; i < nbChildren; ++i)
                 {
                     auto childPrim = stack.primitive();
                     if (childPrim != nullptr)
                     {
+                        if (childPrim->sdfOperation() == SDFOperation::substraction)
+                        {
+                            break;
+                        }
+                        
                         const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
                         if (!culled)
                         {
@@ -201,7 +221,7 @@ public:
                 if (hasPositivePrims)
                 {
                     // cull all the negative parts
-                    for (size_t i=0; i < nbNegativeChildren; ++i)
+                    for (; i < nbChildren; ++i)
                     {
                         auto childPrim = stack.primitive();
                         const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);

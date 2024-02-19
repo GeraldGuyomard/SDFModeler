@@ -51,7 +51,10 @@ public:
     
     void encodePrimitives(const Object3D& root);
     
-    void writeDrawCommand(TPrimitiveOffset primitiveOffset, size_t nbPositiveChildren, size_t nbNegativeChildren);
+    void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset);
+    DrawCommand& writeGroupDrawCommand();
+    void cancelLastDrawCommand();
+    
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
     
 private:

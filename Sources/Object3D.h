@@ -91,7 +91,7 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    void encodeHierarchy(TileDescriptor&, EncodingContext&) const;
+    bool encodeHierarchy(TileDescriptor&, EncodingContext&) const;
     
     virtual void selfEncode(EncodingContext&) const;
     

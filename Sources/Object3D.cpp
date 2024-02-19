@@ -478,63 +478,82 @@ TileDescriptor::TileDescriptor(Tile& tile)
 : tile(tile), tileRect(tile.minPt, tile.maxPt)
 {}
 
-void
+bool
 Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context) const
 {
-    TPrimitiveOffset myPrimitiveOffset = kInvalidPrimitiveOffset;
-    
-    std::vector<Object3D::Ptr> positiveChildren;
-    std::vector<Object3D::Ptr> negativeChildren;
-
-    const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
-    if (!isCulled)
+    const auto* geomType = geometryType();
+    if (geomType != nullptr)
     {
-        myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-    }
-
-    for (const auto& child : children())
-    {
-        if (child->geometryType() == nullptr)
+        assert(children().empty());
+        
+        const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
+        if (isCulled)
         {
-            positiveChildren.push_back(child);
+            return false;
         }
-        else
+        
+        const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
+        context.writePrimitiveDrawCommand(myPrimitiveOffset);
+        return true;
+    }
+    else
+    {
+        // a compound
+        const size_t childrenCount = children().size();
+        
+        std::vector<Object3D::Ptr> positiveChildren;
+        positiveChildren.reserve(childrenCount);
+        
+        std::vector<Object3D::Ptr> negativeChildren;
+        negativeChildren.reserve(childrenCount);
+
+        for (const auto& child : children())
         {
-            const bool isChildCulled = context.isCulled(*child, tileDescriptor.tileRect);
-            
-            if (!isChildCulled)
+            const auto operation = child->operation();
+            if (operation == SDFOperation::addition)
             {
-                const auto operation = child->operation();
-                if (operation == SDFOperation::addition)
+                positiveChildren.push_back(child);
+            }
+            else if (operation == SDFOperation::substraction)
+            {
+                negativeChildren.push_back(child);
+            }
+        }
+        
+        if (!positiveChildren.empty())
+        {
+            auto& cmd = context.writeGroupDrawCommand();
+            int16_t n = 0;
+            
+            for (const auto& child: positiveChildren)
+            {
+                if (child->encodeHierarchy(tileDescriptor, context))
                 {
-                    positiveChildren.push_back(child);
+                    ++n;
                 }
-                else if (operation == SDFOperation::substraction)
+            }
+            
+            if (n != 0)
+            {
+                for (const auto& child: negativeChildren)
                 {
-                    negativeChildren.push_back(child);
+                    if (child->encodeHierarchy(tileDescriptor, context))
+                    {
+                        ++n;
+                    }
                 }
+                
+                cmd.nbChildren = -n;
+                return true;
+            }
+            else
+            {
+                context.cancelLastDrawCommand();
             }
         }
     }
     
-    if (positiveChildren.empty())
-    {
-        context.writeDrawCommand(myPrimitiveOffset, 0, 0);
-    }
-    else
-    {
-        context.writeDrawCommand(myPrimitiveOffset, positiveChildren.size(), negativeChildren.size());
-        
-        for (const auto& child: positiveChildren)
-        {
-            child->encodeHierarchy(tileDescriptor, context);
-        }
-        
-        for (const auto& child: negativeChildren)
-        {
-            child->encodeHierarchy(tileDescriptor, context);
-        }
-    }
+    return false;
 }
 
 void
