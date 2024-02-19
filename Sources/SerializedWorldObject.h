@@ -80,30 +80,9 @@ public:
     {
     }
     
-    CONSTANT EncodedPrimitive* primitive() const
+    TPrimitiveOffset primitiveOffset() const
     {
-        const auto offsetOrNegativeChildrenCount = current()->primitiveOffset;
-        if (offsetOrNegativeChildrenCount >= 0)
-        {
-            return _serializedWorldObject.primitive(offsetOrNegativeChildrenCount);
-        }
-        else
-        {
-            return nullptr;
-        }
-    }
-    
-    size_t nbChildren() const
-    {
-        const auto offsetOrNegativeChildrenCount = current()->primitiveOffset;
-        if (offsetOrNegativeChildrenCount < 0)
-        {
-            return -offsetOrNegativeChildrenCount;
-        }
-        else
-        {
-            return 0;
-        }
+        return current()->primitiveOffset;
     }
     
     CONSTANT DrawCommand* next()
@@ -185,14 +164,16 @@ public:
         // First step is culling
         while (auto cmd = stack.next())
         {
-            if (auto prim = stack.primitive())
+            const auto primOffset = stack.primitiveOffset();
+            
+            if (primOffset >= 0)
             {
                 // primitive at this level
-                primsArray.add(prim);
+                primsArray.add(_serialized.primitive(primOffset));
             }
             else
             {
-                const size_t nbChildren = stack.nbChildren();
+                const size_t nbChildren = -primOffset;
                 bool hasPositivePrims = false;
                 
                 stack.enterChildren();
@@ -201,9 +182,10 @@ public:
                 
                 for (; i < nbChildren; ++i)
                 {
-                    auto childPrim = stack.primitive();
-                    if (childPrim != nullptr)
+                    const auto childPrimOffset = stack.primitiveOffset();
+                    if (childPrimOffset >= 0)
                     {
+                        auto childPrim = _serialized.primitive(childPrimOffset);
                         if (childPrim->sdfOperation() == SDFOperation::substraction)
                         {
                             break;
@@ -223,7 +205,9 @@ public:
                     // cull all the negative parts
                     for (; i < nbChildren; ++i)
                     {
-                        auto childPrim = stack.primitive();
+                        const auto childPrimOffset = stack.primitiveOffset();
+                        auto childPrim = _serialized.primitive(childPrimOffset);
+                        
                         const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, childPrim);
                         if (!culled)
                         {
