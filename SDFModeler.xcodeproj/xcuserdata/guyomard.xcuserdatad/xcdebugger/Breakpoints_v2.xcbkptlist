@@ -219,8 +219,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "392"
-            endingLineNumber = "392"
+            startingLineNumber = "361"
+            endingLineNumber = "361"
             landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
             landmarkType = "7">
             <Locations>
@@ -297,8 +297,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "416"
-            endingLineNumber = "416"
+            startingLineNumber = "379"
+            endingLineNumber = "379"
             landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
             landmarkType = "7">
             <Locations>
@@ -345,8 +345,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "424"
-            endingLineNumber = "424"
+            startingLineNumber = "387"
+            endingLineNumber = "387"
             landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
             landmarkType = "7">
             <Locations>
@@ -483,8 +483,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "405"
-            endingLineNumber = "405"
+            startingLineNumber = "374"
+            endingLineNumber = "374"
             landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
             landmarkType = "7">
             <Locations>
@@ -554,54 +554,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "D73FF3B2-656C-457D-A9E4-60BCD1774629"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "413"
-            endingLineNumber = "413"
-            landmarkName = "rayMarch(ndcPosition, viewportSize, ray)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "D73FF3B2-656C-457D-A9E4-60BCD1774629 - 7385186434de7b16"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "WorldObject&lt;NoShader&gt;::rayMarch(float vector[2], float vector[2], Ray) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "348"
-                  endingLineNumber = "348"
-                  offsetFromSymbolStart = "564">
-               </Location>
-               <Location
-                  uuid = "D73FF3B2-656C-457D-A9E4-60BCD1774629 - 279c67f63db24058"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "WorldObject&lt;PhongShader&gt;::rayMarch(float vector[2], float vector[2], Ray) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "348"
-                  endingLineNumber = "348"
-                  offsetFromSymbolStart = "564">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "91754F60-AFCC-4921-8C38-6B55A07692B9"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -609,9 +561,9 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "282"
-            endingLineNumber = "282"
-            landmarkName = "visit(serialized, cmd, locals)"
+            startingLineNumber = "189"
+            endingLineNumber = "189"
+            landmarkName = "visit(distanceEvaluator, serialized, cmd, locals)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -672,9 +624,9 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "289"
-            endingLineNumber = "289"
-            landmarkName = "visit(serialized, cmd, locals)"
+            startingLineNumber = "196"
+            endingLineNumber = "196"
+            landmarkName = "visit(distanceEvaluator, serialized, cmd, locals)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -714,15 +666,15 @@
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             uuid = "A416F30D-18BA-43AA-B8F8-0A5B7C2C3030"
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "312"
-            endingLineNumber = "312"
-            landmarkName = "visit(serialized, cmd, locals)"
+            startingLineNumber = "219"
+            endingLineNumber = "219"
+            landmarkName = "visit(distanceEvaluator, serialized, cmd, locals)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -783,9 +735,9 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "293"
-            endingLineNumber = "293"
-            landmarkName = "visit(serialized, cmd, locals)"
+            startingLineNumber = "200"
+            endingLineNumber = "200"
+            landmarkName = "visit(distanceEvaluator, serialized, cmd, locals)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -799,9 +751,73 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "298"
-            endingLineNumber = "298"
-            landmarkName = "visit(serialized, cmd, locals)"
+            startingLineNumber = "205"
+            endingLineNumber = "205"
+            landmarkName = "visit(distanceEvaluator, serialized, cmd, locals)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "903C330C-F828-48D8-AF8C-F9169426BFD9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SerializedWorldObject.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "243"
+            endingLineNumber = "243"
+            landmarkName = "computeDistRecursive(distanceEvaluator, serialized, cmd)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D7CF8B01-12F6-4679-846A-066DE17B701D"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SerializedWorldObject.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "251"
+            endingLineNumber = "251"
+            landmarkName = "computeDistRecursive(distanceEvaluator, serialized, cmd)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "139C6B8C-8A3E-445F-805F-39CB34EA7D26"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SerializedWorldObject.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "255"
+            endingLineNumber = "255"
+            landmarkName = "computeDistRecursive(distanceEvaluator, serialized, cmd)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "04B002A0-628A-456E-9139-DE3A03D091A3"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/SerializedWorldObject.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "278"
+            endingLineNumber = "278"
+            landmarkName = "computeDistRecursive(distanceEvaluator, serialized, cmd)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
