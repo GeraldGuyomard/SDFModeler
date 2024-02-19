@@ -479,7 +479,7 @@ TileDescriptor::TileDescriptor(Tile& tile)
 {}
 
 bool
-Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context) const
+Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context,  uint8_t depth) const
 {
     const auto* geomType = geometryType();
     if (geomType != nullptr)
@@ -493,7 +493,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         }
         
         const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-        context.writePrimitiveDrawCommand(myPrimitiveOffset);
+        context.writePrimitiveDrawCommand(depth, myPrimitiveOffset);
         return true;
     }
     else
@@ -522,12 +522,14 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         
         if (!positiveChildren.empty())
         {
-            auto& cmd = context.writeGroupDrawCommand();
+            auto& cmd = context.writeGroupDrawCommand(depth);
             int16_t n = 0;
+            
+            const uint8_t childrenDepth = depth + 1;
             
             for (const auto& child: positiveChildren)
             {
-                if (child->encodeHierarchy(tileDescriptor, context))
+                if (child->encodeHierarchy(tileDescriptor, context, childrenDepth))
                 {
                     ++n;
                 }
@@ -537,7 +539,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
             {
                 for (const auto& child: negativeChildren)
                 {
-                    if (child->encodeHierarchy(tileDescriptor, context))
+                    if (child->encodeHierarchy(tileDescriptor, context, childrenDepth))
                     {
                         ++n;
                     }
@@ -557,7 +559,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
 }
 
 void
-Object3D::selfEncode(EncodingContext&, uint32_t) const
+Object3D::selfEncode(EncodingContext&) const
 {
 }
 
@@ -680,7 +682,7 @@ World::encode(EncodingContext& context,
         tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
-        _rootObject->encodeHierarchy(descr, context);
+        _rootObject->encodeHierarchy(descr, context, 0);
         
         tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
         if (tile.nbCommands == 0)

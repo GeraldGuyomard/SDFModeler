@@ -241,7 +241,7 @@ EncodingContext::encodedPrimitiveOffset(const Object3D* object) const
 void
 EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 {
-    root.selfEncode(*this, depth);
+    root.selfEncode(*this);
     
     const uint32_t childrenDepth = depth  + 1;
     for (const auto& child : root.children())
@@ -251,22 +251,24 @@ EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 }
 
 void
-EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset)
+EncodingContext::writePrimitiveDrawCommand(uint8_t depth, TPrimitiveOffset primitiveOffset)
 {
     assert(primitiveOffset >= 0);
     
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    cmd.depth = depth;
     cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
 }
 
 DrawCommand&
-EncodingContext::writeGroupDrawCommand()
+EncodingContext::writeGroupDrawCommand(uint8_t depth)
 {
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    cmd.depth = depth;
     
     return cmd;
 }

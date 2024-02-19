@@ -91,9 +91,9 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    bool encodeHierarchy(TileDescriptor&, EncodingContext&) const;
+    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx, uint8_t depth) const;
     
-    virtual void selfEncode(EncodingContext& context, uint32_t depth) const;
+    virtual void selfEncode(EncodingContext& context) const;
     
     ObjectID id() const;
     
@@ -214,9 +214,9 @@ public:
         return _geometry.boundingBox();
     }
     
-    void selfEncode(EncodingContext& context, uint32_t depth) const override final
+    void selfEncode(EncodingContext& context) const override final
     {
-        context.encodePrimitive(this, [this, depth](EncodedPrimitive* encodedPrimitive)
+        context.encodePrimitive(this, [this](EncodedPrimitive* encodedPrimitive)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -239,8 +239,7 @@ public:
                                                object.objectType(),
                                                transformer.transformerType(),
                                                 operation(),
-                                               selected,
-                                                depth);
+                                               selected);
         });
     }
     

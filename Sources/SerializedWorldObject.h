@@ -24,6 +24,7 @@ struct Tile final
 using TDrawCommandIndex = int16_t;
 struct DrawCommand final
 {
+    uint16_t depth = 0;
     TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
 };
 
@@ -139,9 +140,8 @@ public:
         return _stack[_stackIndex];
     }
     
-    void pop()
+    void back()
     {
-        ASSERT(_stackIndex > 0);
         --_stackIndex;
     }
     
@@ -160,22 +160,69 @@ void visitDrawCommandTree(CONSTANT SerializedWorldObject& serialized, TDrawComma
     
     while (!stack.empty())
     {
-        auto& locals = stack.current();
+        THREAD auto& locals = stack.current();
         visitor.visit(serialized, cmd, locals);
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
             const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
-            for (size_t i=0; i < n; ++i)
+            
+            if (locals.currentChildIndex < n)
             {
+                ++locals.currentChildIndex;
                 ++cmd;
                 stack.push(visitor.locals(serialized, cmd));
             }
+            else
+            {
+                stack.back();
+            }
         }
-        
-        stack.pop();
+        else
+        {
+            // prim
+            stack.back();
+        }
     }
 }
+
+#if SHADER_ON_CPU
+    
+    INLINE float computeDistRecursive(float3 pt, CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand*& cmd)
+    {
+        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+        {
+            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            DistanceEvaluator ev { pt };
+            
+            const float dist = evaluatePrimitive<DistanceEvaluator, float>(ev, prim);
+            return dist;
+        }
+        else
+        {
+            float2 distances = { 1e7f, 1e7f };
+            
+            const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            for (size_t i=0; i < n; ++i)
+            {
+                const float childDist = computeDistRecursive(pt, serialized, ++cmd);
+                if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+                {
+                    distances.x = min(distances.x, childDist);
+                }
+                else
+                {
+                    auto childPrim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    const size_t op = size_t(childPrim->sdfOperation());
+                    distances[op] = min(distances[op], childDist);
+                }
+            }
+            
+            return max(distances.x, -distances.y);
+        }
+    }
+
+#endif
 
 class CullingInfo final
 {
@@ -206,15 +253,15 @@ class Locals
 {
 public:
     Locals() = default;
-    
-    float distance;
+    uint8_t currentChildIndex = 0;
+    float2 distances = { 1e7f, 1e7f };
 };
 
 class Visitor final
 {
 public:
     Visitor(float3 pt)
-    : _pt(pt)
+    : _distanceEvaluator(pt)
     {}
     
     void reset(CullingInfo info)
@@ -232,36 +279,44 @@ public:
     
     void visit(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd, THREAD Locals& locals)
     {
-        locals.distance = 1e7f;
-        
         const bool culled = _cullingInfo.nextCulling();
+        const uint8_t depth = cmd->depth;
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
         {
             if (!culled)
             {
                 auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-                const float dist = ::computeDistance(_pt, prim);
-                
-                locals.distance = dist;
-                
-                if (prim->selected && (_outlineCmdIndex < 0))
+
+                if (depth == _currentDepth)
                 {
-                    if ((_prevMinDistance < dist) && (dist < kOutlineThickness))
+                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(_distanceEvaluator, prim);
+                    locals.distances[prim->operation] = min(locals.distances[prim->operation], dist);
+                }
+                else if (depth < _currentDepth)
+                {
+                    _currentDepth = depth;
+                    
+                    const float dist = max(locals.distances.x, -locals.distances.y);
+                    
+                    if (prim->selected && (_outlineCmdIndex < 0))
                     {
+                        if ((_prevMinDistance < dist) && (dist < kOutlineThickness))
+                        {
+                            _outlineCmdIndex = serialized.drawCommandIndex(cmd);
+                        }
+                    }
+                    
+                    if (dist <= _minDistance)
+                    {
+                        _minDistance = dist;
                         _outlineCmdIndex = serialized.drawCommandIndex(cmd);
                     }
-                }
-                
-                if (dist <= _minDistance)
-                {
-                    _minDistance = dist;
-                    _outlineCmdIndex = serialized.drawCommandIndex(cmd);
                 }
             }
         }
         
-        if (locals.distance <= kDistanceEpsilon)
+        if (_minDistance <= kDistanceEpsilon)
         {
             _hit = true;
         }
@@ -297,9 +352,10 @@ public:
     }
     
 private:
-    const float3 _pt;
     CullingInfo _cullingInfo;
+    DistanceEvaluator _distanceEvaluator;
     
+    uint8_t _currentDepth = 0;
     float _minDistance = 1e5f;
     float _prevMinDistance = 1e5f;
     TDrawCommandIndex _minCmdIndex = -1;

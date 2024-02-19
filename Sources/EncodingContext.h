@@ -51,8 +51,8 @@ public:
     
     void encodePrimitives(const Object3D& root, uint32_t depth);
     
-    void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset);
-    DrawCommand& writeGroupDrawCommand();
+    void writePrimitiveDrawCommand(uint8_t depth, TPrimitiveOffset primitiveOffset);
+    DrawCommand& writeGroupDrawCommand(uint8_t depth);
     void cancelLastDrawCommand();
     
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
