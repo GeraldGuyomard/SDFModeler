@@ -116,13 +116,13 @@ private:
     
     CONSTANT SerializedWorldObject& _serializedWorldObject;
     
-    static CONSTANT constexpr size_t kMaxStackSize = 8;
+    static CONSTANT constexpr size_t kMaxStackSize = 4;
     const int64_t _nbCommands;
     const int64_t _rootCommandIndex;
     
-    size_t _indexStack[kMaxStackSize];
-    size_t _stackSize = 0;
-    int64_t _relativeIndex = -1;
+    uint8_t _indexStack[kMaxStackSize];
+    uint8_t _stackSize = 0;
+    int8_t _relativeIndex = -1;
 };
 
 template <typename TShader>
