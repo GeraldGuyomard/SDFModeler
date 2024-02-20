@@ -77,7 +77,7 @@ public:
         return _stackIndex;
     }
     
-    void push(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd)
+    void push(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd, bool isCulled)
     {
         ++_stackIndex;
         
@@ -92,11 +92,17 @@ public:
         
         _drawCommandIndex[_stackIndex] = serialized.drawCommandIndex(cmd);
         _distances[_stackIndex] = { 1e7f, 1e7f };
+        _isCulled[_stackIndex] = isCulled;
     }
     
     TDrawCommandIndex drawCommandIndex() const
     {
         return _drawCommandIndex[_stackIndex];
+    }
+    
+    bool isCulled() const
+    {
+        return _isCulled[_stackIndex];
     }
     
     float2 distances() const
@@ -135,6 +141,7 @@ private:
     float2 _distances[kMaxStackDepth];
     TDrawCommandIndex _drawCommandIndex[kMaxStackDepth];
     int8_t _nbChildrenLeft[kMaxStackDepth];
+    uint8_t _isCulled[kMaxStackDepth];
     
     int8_t _stackIndex = -1;
 };
@@ -146,29 +153,28 @@ void _computeDistIterative(
                            CONSTANT SerializedWorldObject& serialized,
                            CONSTANT DrawCommand*& inCmd)
 {
-    if (visitor.nextCulling())
-    {
-        return;
-    }
-    
     Stack stack;
-    stack.push(serialized, inCmd++);
+    stack.push(serialized, inCmd++, visitor.nextCulling());
     
     while (!stack.empty())
     {
         CONSTANT auto* cmd = serialized.drawCommand(stack.drawCommandIndex());
+        const bool culled = stack.isCulled();
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
         {
-            auto parentDistances = stack.parentDistances();
+            if (!culled)
+            {
+                auto parentDistances = stack.parentDistances();
 
-            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-            const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-            const size_t opIndex = size_t(prim->sdfOperation());
-            parentDistances[opIndex] = min(parentDistances[opIndex], d);
-            
-            stack.setParentDistances(parentDistances);
-            
+                auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
+                const size_t opIndex = size_t(prim->sdfOperation());
+                parentDistances[opIndex] = min(parentDistances[opIndex], d);
+                
+                stack.setParentDistances(parentDistances);
+            }
+
             stack.back();
         }
         else
@@ -177,10 +183,7 @@ void _computeDistIterative(
             if (n > 0)
             {
                 CONSTANT auto* childCmd = inCmd++;
-                if (!visitor.nextCulling())
-                {
-                    stack.push(serialized, childCmd);
-                }
+                stack.push(serialized, childCmd, visitor.nextCulling());
             }
             else
             {

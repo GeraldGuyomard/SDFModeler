@@ -123,8 +123,6 @@ private:
     return _nativeContentScale;
 }
 
-//#define STRIP_OUT_EXCEPT_WHITE_CUBE 1
-
 - (void)loadWorld
 {
     _world = World::make();
@@ -136,7 +134,6 @@ private:
     constexpr float s = 0.5f;
     float3 pos = float3 {0.5, 0, kZ};
     
-#if !STRIP_OUT_EXCEPT_WHITE_CUBE
     auto whiteSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.6f });
     whiteSphere->setLocalTransform(RSTTransformer { float3 { 0, 1, -0.1f } } );
     whiteSphere->setMaterial(white);
@@ -157,8 +154,6 @@ private:
     roundedYellowBox->setMaterial(yellow);
     rootObject->addChild(roundedYellowBox);
     
-#endif
-    
     auto whiteBoxHalf = std::make_shared<TObject3D<SDFBox>>(_world,
                                                             SDFBox { float3 { 0.4f * s, 0.6f * s, 0.4f * s } });
     whiteBoxHalf->setLocalTransform(RSTTransformer { pos + float3 { 0.5, 0, 0 } , float3 {1, 1, 0}, degToRad(45.f) });
@@ -174,7 +169,6 @@ private:
     blueSphere->setMaterial(blue);
     rootObject->addChild(blueSphere);
  
-#if !STRIP_OUT_EXCEPT_WHITE_CUBE
     auto green = _world->addMaterial(float4 { 0, 1, 0, 1 });
     
     auto greenSphere = std::make_shared<TObject3D<SDFSphere>>(_world, SDFSphere { 0.45f });
@@ -212,7 +206,6 @@ private:
     sdfUnion->addChild(negativeRoundedBoxPart);
     
     rootObject->addChild(sdfUnion);
-#endif
 }
 
 void visitTypes(const Object3D::Ptr& object)
