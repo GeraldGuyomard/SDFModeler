@@ -7,7 +7,7 @@
 #include "GroupSelectionCommand.h"
 
 GroupSelectionCommand::Entry::Entry(const Object3D::Ptr& object)
-:object(object), parent(object->parent()), id(object->partId())
+:object(object), parent(object->parent()), id(object->id())
 {}
 
 GroupSelectionCommand::GroupSelectionCommand(const Object3DSelection& selection)
@@ -56,7 +56,7 @@ GroupSelectionCommand::undo()
         const auto t = entry.object->worldTransform();
         entry.parent->addChild(entry.object);
         entry.object->setWorldTransform(t);
-        entry.object->setPartId(entry.id);
+        entry.object->setId(entry.id);
     }
     
     _group->removeFromParent();

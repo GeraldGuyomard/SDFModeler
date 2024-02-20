@@ -22,23 +22,17 @@ Object3D::Object3D(const WorldPtr& world)
 : _world(world)
 {}
 
-void
-Object3D::setPartId(ObjectID id)
-{
-    _partId = id;
-}
-
 Object3D::Ptr
 Object3D::objectByID(ObjectID id) const
 {
-    if (id == _partId)
+    if (id == _id)
     {
         return ((Object3D*) this)->shared_from_this();
     }
     
     for (const auto& object : children())
     {
-        if (object->partId() == id)
+        if (object->id() == id)
         {
             return object;
         }
@@ -148,18 +142,13 @@ void initializeType<Object3D>(Type& type)
 ObjectID
 Object3D::id() const
 {
-    const Object3D* object = this;
-    while (object != nullptr)
-    {
-        if (object->_partId != kInvalidObjectID)
-        {
-            return object->_partId;
-        }
-        
-        object = object->parent().get();
-    }
-    
-    return kInvalidObjectID;
+    return _id;
+}
+
+void
+Object3D::setId(ObjectID id)
+{
+    _id = id;
 }
 
 MaterialID
@@ -183,9 +172,9 @@ Object3D::materialID() const
 void
 Object3D::addChild(const Ptr& child)
 {
-    if (child->_partId == kInvalidObjectID)
+    if (child->_id == kInvalidObjectID)
     {
-        child->_partId = world()->generateNewObjectID();
+        child->_id = world()->generateNewObjectID();
     }
     
     auto self = shared_from_this();
@@ -651,7 +640,7 @@ void
 World::init()
 {
     _rootObject = std::make_shared<Object3D>(shared_from_this());
-    _rootObject->setPartId(generateNewObjectID());
+    _rootObject->setId(generateNewObjectID());
     
     addMaterial(float4 {1, 0, 0, 1});
 }

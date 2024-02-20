@@ -97,9 +97,6 @@ public:
     
     ObjectID id() const;
     
-    ObjectID partId() const { return _partId; }
-    void setPartId(ObjectID);
-    
     Object3D::Ptr objectByID(ObjectID id) const;
     
     Material3D::Ptr material() const { return _material; }
@@ -158,6 +155,9 @@ public:
     float scale() const;
     void setScale(float);
     
+public:
+    void setId(ObjectID);
+    
 private:
     
     void invalidateCachedWorldTransform();
@@ -171,7 +171,7 @@ private:
     
     const WorldWPtr _world;
     
-    ObjectID _partId = kInvalidObjectID;
+    ObjectID _id = kInvalidObjectID;
     Material3D::Ptr _material;
     SDFOperation _operation = SDFOperation::addition;
     
@@ -228,7 +228,6 @@ public:
                                                 encodedPrimitive,
                                                object,
                                                id(),
-                                                partId(),
                                                object.objectType(),
                                                transformer.transformerType(),
                                                 operation(),
