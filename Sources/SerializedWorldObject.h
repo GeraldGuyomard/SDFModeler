@@ -100,7 +100,7 @@ private:
 };
 
 template <typename TVisitor>
-void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
+void _visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
 {
     auto cmd = &serialized.drawCommands[rootCmdIndex];
     Stack stack;
@@ -186,13 +186,25 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
     }
 
 template <typename TVisitor>
-void visitDrawCommandTreeRecursive(DistanceEvaluator distanceEvaluator,
+void visitDrawCommandTree(DistanceEvaluator distanceEvaluator,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
                     THREAD TVisitor& visitor)
 {
     CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
     computeDistRecursive<TVisitor>(distanceEvaluator, visitor, serialized, cmd);
+}
+
+#else
+
+// GPU
+template <typename TVisitor>
+void visitDrawCommandTree(DistanceEvaluator distanceEvaluator,
+                    CONSTANT SerializedWorldObject& serialized,
+                    TDrawCommandIndex rootCmdIndex,
+                    THREAD TVisitor& visitor)
+{
+    _visitDrawCommandTree<TVisitor>(distanceEvaluator, serialized, rootCmdIndex, visitor);
 }
 
 #endif
@@ -360,10 +372,9 @@ public:
         DistanceEvaluator distanceEvaluator { pt };
         Visitor v;
         
-#if SHADER_ON_CPU
-        visitDrawCommandTreeRecursive(distanceEvaluator,
-                                      _serialized, _rootCommandIndex, v);
-#endif
+
+        visitDrawCommandTree(distanceEvaluator,
+                            _serialized, _rootCommandIndex, v);
         
         return v.minDistance();
     }
@@ -438,11 +449,8 @@ public:
             
             DistanceEvaluator distanceEvaluator { pt };
             
-#if SHADER_ON_CPU
-            visitDrawCommandTreeRecursive<Visitor>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
-#else
             visitDrawCommandTree<Visitor>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
-#endif
+            
             if (visitor.hit())
             {
                 break;
