@@ -18,7 +18,7 @@ struct Tile final
     float2 minPt = { 0, 0 }; // 8
     float2 maxPt = { 0, 0 }; // 8
     size_t nbCommands = 0; // 8
-    size_t rootCommandIndex = -1; // 8
+    TDrawCommandIndex rootCommandIndex = -1; // 8
 };
 
 
@@ -61,57 +61,67 @@ struct SerializedWorldObject final
     }
 };
 
-class Locals
-{
-public:
-    Locals() = default;
-    
-    float2 distances;
-    TDrawCommandIndex drawCommandIndex;
-    int8_t nbChildrenLeft;
-};
-
 
 class Stack final
 {
 public:
     Stack() = default;
     
-    bool empty() const { return _stackIndex < 0; }
-    THREAD Locals& push(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd)
+    bool empty() const
     {
-        THREAD auto& locals = _stack[++_stackIndex];
+        return _stackIndex < 0;
+    }
+    
+    int8_t depth() const
+    {
+        return _stackIndex;
+    }
+    
+    void push(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd)
+    {
+        ++_stackIndex;
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
-            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            _nbChildrenLeft[_stackIndex] = -cmd->primitiveOffsetOrNegativeChildrenCount;
         }
         else
         {
-            locals.nbChildrenLeft = 0;
+            _nbChildrenLeft[_stackIndex] = 0;
         }
         
-        locals.drawCommandIndex = serialized.drawCommandIndex(cmd);
-        locals.distances = { 1e7f, 1e7f };
-        return locals;
+        _drawCommandIndex[_stackIndex] = serialized.drawCommandIndex(cmd);
+        _distances[_stackIndex] = { 1e7f, 1e7f };
     }
     
-    THREAD Locals& current()
+    TDrawCommandIndex drawCommandIndex() const
     {
-        ASSERT(_stackIndex >= 0);
-        return _stack[_stackIndex];
+        return _drawCommandIndex[_stackIndex];
     }
     
-    THREAD Locals* parentLocal()
+    float2 distances() const
     {
-        if (_stackIndex >= 1)
-        {
-            return &_stack[_stackIndex - 1];
-        }
-        else
-        {
-            return nullptr;
-        }
+        return _distances[_stackIndex];
+    }
+    
+    float2 parentDistances()
+    {
+        return _distances[_stackIndex - 1];
+    }
+    
+    void setParentDistances(float2 d)
+    {
+        _distances[_stackIndex - 1] = d;
+    }
+    
+    int8_t nbChildrenLeft() const
+    {
+        return _nbChildrenLeft[_stackIndex];
+    }
+    
+    void oneLessChildrenLeft()
+    {
+        --_nbChildrenLeft[_stackIndex];
     }
     
     void back()
@@ -121,7 +131,11 @@ public:
     
 private:
     static CONSTANT constexpr size_t kMaxStackDepth = 7;
-    Locals _stack[kMaxStackDepth];
+    
+    float2 _distances[kMaxStackDepth];
+    TDrawCommandIndex _drawCommandIndex[kMaxStackDepth];
+    int8_t _nbChildrenLeft[kMaxStackDepth];
+    
     int8_t _stackIndex = -1;
 };
 
@@ -142,41 +156,47 @@ void _computeDistIterative(
     
     while (!stack.empty())
     {
-        THREAD auto& locals = stack.current();
-        CONSTANT auto* cmd = serialized.drawCommand(locals.drawCommandIndex);
+        CONSTANT auto* cmd = serialized.drawCommand(stack.drawCommandIndex());
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
         {
-            THREAD auto* parentLocals = stack.parentLocal();
+            auto parentDistances = stack.parentDistances();
 
             auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
             const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
             const size_t opIndex = size_t(prim->sdfOperation());
-            parentLocals->distances[opIndex] = min(parentLocals->distances[opIndex], d);
+            parentDistances[opIndex] = min(parentDistances[opIndex], d);
+            
+            stack.setParentDistances(parentDistances);
             
             stack.back();
         }
         else
         {
-            if (locals.nbChildrenLeft > 0)
+            auto n = stack.nbChildrenLeft();
+            if (n > 0)
             {
+                stack.oneLessChildrenLeft();
+                
                 CONSTANT auto* childCmd = ++inCmd;
                 if (!visitor.nextCulling())
                 {
                     stack.push(serialized, childCmd);
                 }
-                
-                --locals.nbChildrenLeft;
             }
             else
             {
-                const float dist = max(locals.distances.x, -locals.distances.y);
+                const float2 distances = stack.distances();
+                const float dist = max(distances.x, -distances.y);
                 visitor.submitMinDistance(serialized, dist, cmd);
                 
-                THREAD auto* parentLocal = stack.parentLocal();
-                if (parentLocal != nullptr)
+                if (stack.depth() > 0)
                 {
-                    parentLocal->distances[0] = min(parentLocal->distances[0], dist);
+                    float2 parentDistances = stack.parentDistances();
+                    
+                    parentDistances[0] = min(parentDistances[0], dist);
+                    
+                    stack.setParentDistances(parentDistances);
                 }
                 
                 stack.back();
@@ -217,28 +237,28 @@ void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized
         }
         else
         {
-            Locals locals;
-            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            int32_t nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            float2 distances { 1e7f, 1e7f };
             
-            while (locals.nbChildrenLeft > 0)
+            while (nbChildrenLeft > 0)
             {
                 auto childCmd = inCmd;
                 const float childDist = computeDistRecursive(distanceEvaluator, visitor, serialized, inCmd);
                 if (childCmd->primitiveOffsetOrNegativeChildrenCount < 0)
                 {
-                    locals.distances.x = min(locals.distances.x, childDist);
+                    distances.x = min(distances.x, childDist);
                 }
                 else
                 {
                     auto childPrim = serialized.primitive(childCmd->primitiveOffsetOrNegativeChildrenCount);
                     const size_t op = size_t(childPrim->sdfOperation());
-                    locals.distances[op] = min(locals.distances[op], childDist);
+                    distances[op] = min(distances[op], childDist);
                 }
                 
-                --locals.nbChildrenLeft;
+                --nbChildrenLeft;
             }
             
-            const float dist = max(locals.distances.x, -locals.distances.y);
+            const float dist = max(distances.x, -distances.y);
             visitor.submitMinDistance(serialized, dist, cmd);
             
             return dist;
@@ -308,52 +328,6 @@ public:
         _prevMinDistance = _minDistance;
         _minDistance = 1e5f;
         _minCmdIndex = -1;
-    }
-    
-    void visit(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd, THREAD Locals& locals)
-    {
-        const bool culled = _cullingInfo.nextCulling();
-        const uint8_t depth = cmd->depth;
-        
-        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
-        {
-            if (!culled)
-            {
-                auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-
-                if (depth == _currentDepth)
-                {
-                    const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-                    locals.distances[prim->operation] = min(locals.distances[prim->operation], dist);
-                }
-                else if (depth < _currentDepth)
-                {
-                    _currentDepth = depth;
-                    
-                    const float dist = max(locals.distances.x, -locals.distances.y);
-                    
-                    if (prim->selected && (_outlineCmdIndex < 0))
-                    {
-                        if ((_prevMinDistance < dist) && (dist < kOutlineThickness))
-                        {
-                            _outlineCmdIndex = serialized.drawCommandIndex(cmd);
-                        }
-                    }
-                    
-                    if (dist <= _minDistance)
-                    {
-                        _minDistance = dist;
-                        _minCmdIndex = serialized.drawCommandIndex(cmd);
-                        _outlineCmdIndex = _minCmdIndex;
-                    }
-                }
-            }
-        }
-        
-        if (_minDistance <= kDistanceEpsilon)
-        {
-            _hit = true;
-        }
     }
     
     float minDistance() const
