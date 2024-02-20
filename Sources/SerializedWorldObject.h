@@ -86,11 +86,12 @@ public:
         return _stackIndex;
     }
     
-    void push(CONSTANT DrawCommand* cmd, bool isCulled)
+    void push(bool isCulled)
     {
-        ++_stackIndex;
+        const auto relativeCommandIndex = _relativeCmdIndex++;
+        CONSTANT DrawCommand* cmd = _serialized.drawCommand(_rootCommandIndex + relativeCommandIndex);
         
-        THREAD auto& locals = _stack[_stackIndex];
+        THREAD auto& locals = _stack[++_stackIndex];
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
@@ -101,7 +102,7 @@ public:
             locals.nbChildrenLeft = 0;
         }
         
-        locals.relativeDrawCommandIndex = _serialized.drawCommandIndex(cmd) - _rootCommandIndex;
+        locals.relativeDrawCommandIndex = relativeCommandIndex;
         locals.distances = { 1e7f, 1e7f };
         locals.isCulled = isCulled;
     }
@@ -139,6 +140,7 @@ private:
     const TDrawCommandIndex _rootCommandIndex;
     Locals _stack[kMaxStackDepth];
     int8_t _stackIndex = -1;
+    uint8_t _relativeCmdIndex = 0;
 };
 
 template <typename TVisitor>
@@ -150,8 +152,7 @@ void _computeDistIterative(
 {
     Stack stack { serialized, rootCommandIndex };
     
-    CONSTANT DrawCommand* inCmd = serialized.drawCommand(rootCommandIndex);
-    stack.push(inCmd++, visitor.nextCulling());
+    stack.push(visitor.nextCulling());
     
     while (!stack.empty())
     {
@@ -177,8 +178,7 @@ void _computeDistIterative(
             auto n = locals.nbChildrenLeft;
             if (n > 0)
             {
-                CONSTANT auto* childCmd = inCmd++;
-                stack.push(childCmd, visitor.nextCulling());
+                stack.push(visitor.nextCulling());
             }
             else
             {
