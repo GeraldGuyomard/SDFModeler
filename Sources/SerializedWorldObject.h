@@ -132,20 +132,16 @@ void _computeDistIterative(
                            CONSTANT SerializedWorldObject& serialized,
                            CONSTANT DrawCommand*& inCmd)
 {
+    if (visitor.nextCulling())
+    {
+        return;
+    }
+    
     Stack stack;
     stack.push(serialized, inCmd++);
     
-    size_t nbIter = 0;
-    
     while (!stack.empty())
     {
-        ++nbIter;
-        
-        /*if (visitor.nextCulling())
-        {
-            continue;
-        }*/
-        
         THREAD auto& locals = stack.current();
         CONSTANT auto* cmd = serialized.drawCommand(locals.drawCommandIndex);
         
@@ -165,7 +161,11 @@ void _computeDistIterative(
             if (locals.nbChildrenLeft > 0)
             {
                 CONSTANT auto* childCmd = ++inCmd;
-                stack.push(serialized, childCmd);
+                if (!visitor.nextCulling())
+                {
+                    stack.push(serialized, childCmd);
+                }
+                
                 --locals.nbChildrenLeft;
             }
             else

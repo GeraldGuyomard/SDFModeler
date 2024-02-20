@@ -956,8 +956,8 @@
             filePath = "Sources/SerializedWorldObject.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
             landmarkName = "_computeDistIterative(distanceEvaluator, visitor, serialized, inCmd)"
             landmarkType = "9">
             <Locations>
@@ -1007,133 +1007,6 @@
                   offsetFromSymbolStart = "368">
                </Location>
             </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "46E0D6D3-9F46-4E3C-A3D1-2457229B799E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "138"
-            endingLineNumber = "138"
-            landmarkName = "_computeDistIterative(distanceEvaluator, visitor, serialized, inCmd)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "46E0D6D3-9F46-4E3C-A3D1-2457229B799E - d06d292cd38394e9"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void _computeDistIterative&lt;Visitor&gt;(DistanceEvaluator, Visitor&amp;, SerializedWorldObject const&amp;, DrawCommand const*&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "140"
-                  endingLineNumber = "140"
-                  offsetFromSymbolStart = "124">
-               </Location>
-               <Location
-                  uuid = "46E0D6D3-9F46-4E3C-A3D1-2457229B799E - d06d292cd38394ab"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void _computeDistIterative&lt;Visitor&gt;(DistanceEvaluator, Visitor&amp;, SerializedWorldObject const&amp;, DrawCommand const*&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "138"
-                  endingLineNumber = "138"
-                  offsetFromSymbolStart = "84">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "441DEAB2-5052-4C43-9295-91092D2CAFD1"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
-            landmarkName = "_computeDistIterative(distanceEvaluator, visitor, serialized, inCmd)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "441DEAB2-5052-4C43-9295-91092D2CAFD1 - d06d292cd3839452"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void _computeDistIterative&lt;Visitor&gt;(DistanceEvaluator, Visitor&amp;, SerializedWorldObject const&amp;, DrawCommand const*&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "145"
-                  endingLineNumber = "145"
-                  offsetFromSymbolStart = "176">
-               </Location>
-               <Location
-                  uuid = "441DEAB2-5052-4C43-9295-91092D2CAFD1 - d06d292cd3839390"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void _computeDistIterative&lt;Visitor&gt;(DistanceEvaluator, Visitor&amp;, SerializedWorldObject const&amp;, DrawCommand const*&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "147"
-                  endingLineNumber = "147"
-                  offsetFromSymbolStart = "184">
-               </Location>
-               <Location
-                  uuid = "441DEAB2-5052-4C43-9295-91092D2CAFD1 - d06d292cd38393de"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void _computeDistIterative&lt;Visitor&gt;(DistanceEvaluator, Visitor&amp;, SerializedWorldObject const&amp;, DrawCommand const*&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "149"
-                  endingLineNumber = "149"
-                  offsetFromSymbolStart = "124">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B9CC642D-0133-44C0-97CE-45489533004B"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "145"
-            endingLineNumber = "145"
-            landmarkName = "_computeDistIterative(distanceEvaluator, visitor, serialized, inCmd)"
-            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
