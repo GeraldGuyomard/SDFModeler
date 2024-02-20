@@ -493,7 +493,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         }
         
         const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-        context.writePrimitiveDrawCommand(depth, id(), myPrimitiveOffset);
+        context.writePrimitiveDrawCommand(depth, id(), materialID(), myPrimitiveOffset);
         return true;
     }
     else
@@ -522,7 +522,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         
         if (!positiveChildren.empty())
         {
-            auto& cmd = context.writeGroupDrawCommand(depth, id());
+            auto& cmd = context.writeGroupDrawCommand(depth, id(), materialID());
             int16_t n = 0;
             
             const uint8_t childrenDepth = depth + 1;

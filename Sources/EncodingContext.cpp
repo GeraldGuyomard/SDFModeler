@@ -139,10 +139,10 @@ _viewProjectionMatrix(viewProjectionMatrix),
 _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
-    //const float2 kDefaultTileSize { 128, 128 };
+    const float2 kDefaultTileSize { 128, 128 };
     //const float2 kDefaultTileSize { 256, 256 };
     //const float2 kDefaultTileSize { 1024, 1024 };
-    const float2 kDefaultTileSize { 2048, 2048 };
+    //const float2 kDefaultTileSize { 2048, 2048 };
     
     _serializedWorldObject.tileSize = kDefaultTileSize;
     
@@ -251,7 +251,7 @@ EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 }
 
 void
-EncodingContext::writePrimitiveDrawCommand(uint8_t depth, ObjectID id, TPrimitiveOffset primitiveOffset)
+EncodingContext::writePrimitiveDrawCommand(uint8_t depth, ObjectID id, MaterialID materialID, TPrimitiveOffset primitiveOffset)
 {
     assert(primitiveOffset >= 0);
     
@@ -260,17 +260,20 @@ EncodingContext::writePrimitiveDrawCommand(uint8_t depth, ObjectID id, TPrimitiv
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
     cmd.depth = depth;
     cmd.objectID = id;
+    cmd.materialID = materialID;
+    
     cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
 }
 
 DrawCommand&
-EncodingContext::writeGroupDrawCommand(uint8_t depth, ObjectID id)
+EncodingContext::writeGroupDrawCommand(uint8_t depth, ObjectID id, MaterialID materialID)
 {
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
     cmd.depth = depth;
     cmd.objectID = id;
+    cmd.materialID = materialID;
     
     return cmd;
 }

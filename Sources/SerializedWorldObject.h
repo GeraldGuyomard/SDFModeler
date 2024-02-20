@@ -342,6 +342,38 @@ private:
     bool _hit = false;
 };
 
+class ShadedPrimitive final
+{
+public:
+    ShadedPrimitive(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCommandIndex)
+    : _serialized(serialized), _rootCommandIndex(rootCommandIndex)
+    {}
+    
+    MaterialID materialID() const
+    {
+        auto cmd = _serialized.drawCommand(_rootCommandIndex);
+        return cmd->materialID;
+    }
+    
+    float computeDistance(float3 pt) const
+    {
+        DistanceEvaluator distanceEvaluator { pt };
+        Visitor v;
+        
+#if SHADER_ON_CPU
+        visitDrawCommandTreeRecursive(distanceEvaluator,
+                                      _serialized, _rootCommandIndex, v);
+#endif
+        
+        return v.minDistance();
+    }
+    
+private:
+    CONSTANT SerializedWorldObject& _serialized;
+    TDrawCommandIndex _rootCommandIndex;
+};
+
+
 template <typename TShader>
 class WorldObject final
 {
@@ -456,9 +488,7 @@ public:
             {
                 //ASSERT(minCmdIndex >= 0);
                 
-                auto cmd = _serialized.drawCommand(minCmdIndex);
-                
-                ShadedPrimitive primitive { cmd };
+                ShadedPrimitive primitive { _serialized, minCmdIndex };
                 color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
                 objectID = cmd->objectID;
             }
