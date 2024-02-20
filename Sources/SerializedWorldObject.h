@@ -61,20 +61,27 @@ struct SerializedWorldObject final
     }
 };
 
+class Locals
+{
+public:
+    Locals() = default;
+    uint8_t currentChildIndex = 0;
+    float2 distances = { 1e7f, 1e7f };
+};
 
-template <typename TLocals>
+
 class Stack final
 {
 public:
     Stack() = default;
     
     bool empty() const { return _stackIndex < 0; }
-    void push(THREAD const TLocals& locals)
+    void push()
     {
-        _stack[++_stackIndex] = locals;
+        _stack[++_stackIndex] = {};
     }
     
-    THREAD TLocals& current()
+    THREAD Locals& current()
     {
         ASSERT(_stackIndex >= 0);
         return _stack[_stackIndex];
@@ -87,16 +94,16 @@ public:
     
 private:
     static CONSTANT constexpr size_t kMaxStackDepth = 7;
-    TLocals _stack[kMaxStackDepth];
+    Locals _stack[kMaxStackDepth];
     int8_t _stackIndex = -1;
 };
 
-template <typename TVisitor, typename TLocals>
+template <typename TVisitor>
 void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
 {
     auto cmd = &serialized.drawCommands[rootCmdIndex];
-    Stack<TLocals> stack;
-    stack.push(visitor.locals(serialized, cmd));
+    Stack stack;
+    stack.push();
     
     while (!stack.empty())
     {
@@ -111,7 +118,7 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
             {
                 ++locals.currentChildIndex;
                 ++cmd;
-                stack.push(visitor.locals(serialized, cmd));
+                stack.push();
             }
             else
             {
@@ -178,7 +185,7 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
         }
     }
 
-template <typename TVisitor, typename TLocals>
+template <typename TVisitor>
 void visitDrawCommandTreeRecursive(DistanceEvaluator distanceEvaluator,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
@@ -211,14 +218,6 @@ private:
     uint64_t _bits = 0;
 };
 
-class Locals
-{
-public:
-    Locals() = default;
-    uint8_t currentChildIndex = 0;
-    float2 distances = { 1e7f, 1e7f };
-};
-
 class Visitor final
 {
 public:
@@ -230,11 +229,6 @@ public:
         _prevMinDistance = _minDistance;
         _minDistance = 1e5f;
         _minCmdIndex = -1;
-    }
-    
-    Locals locals(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand*) const
-    {
-        return {};
     }
     
     void visit(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd, THREAD Locals& locals)
@@ -408,9 +402,9 @@ public:
             DistanceEvaluator distanceEvaluator { pt };
             
 #if SHADER_ON_CPU
-            visitDrawCommandTreeRecursive<Visitor, Locals>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
+            visitDrawCommandTreeRecursive<Visitor>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
 #else
-            visitDrawCommandTree<Visitor, Locals>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
+            visitDrawCommandTree<Visitor>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
 #endif
             if (visitor.hit())
             {
