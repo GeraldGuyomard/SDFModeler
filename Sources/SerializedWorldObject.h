@@ -186,7 +186,11 @@ void _computeDistIterative(
             {
                 const float2 distances = stack.distances();
                 const float dist = max(distances.x, -distances.y);
-                visitor.submitMinDistance(serialized, dist, cmd);
+                if (visitor.submitMinDistance(serialized, dist, cmd))
+                {
+                    // hit
+                    break;
+                }
                 
                 if (stack.depth() > 0)
                 {
@@ -362,7 +366,7 @@ public:
         return _cullingInfo.nextCulling();
     }
     
-    void submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist, CONSTANT DrawCommand* cmd)
+    bool submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist, CONSTANT DrawCommand* cmd)
     {
         if (dist < _minDistance)
         {
@@ -377,8 +381,11 @@ public:
             if (_minDistance <= kDistanceEpsilon)
             {
                 _hit = true;
+                return true;
             }
         }
+        
+        return false;
     }
     
 private:
