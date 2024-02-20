@@ -316,7 +316,12 @@ public:
         if (dist < _minDistance)
         {
             _minDistance = dist;
-            _minCmdIndex = serialized.drawCommandIndex(cmd);
+            
+            const auto index = serialized.drawCommandIndex(cmd);
+            if (index != 0)
+            {
+                _minCmdIndex = index;
+            }
             
             if (_minDistance <= kDistanceEpsilon)
             {

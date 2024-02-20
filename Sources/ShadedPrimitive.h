@@ -25,6 +25,7 @@ public:
     
     float computeDistance(float3 pt) const
     {
+        //Visitor v;
         return 1;
         //return ::computeDistance(pt, _prim);
     }
