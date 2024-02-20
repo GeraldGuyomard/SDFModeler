@@ -119,14 +119,14 @@ public:
         return _nbChildrenLeft[_stackIndex];
     }
     
-    void oneLessChildrenLeft()
-    {
-        --_nbChildrenLeft[_stackIndex];
-    }
     
     void back()
     {
-        --_stackIndex;
+        if (--_stackIndex >= 0)
+        {
+            --_nbChildrenLeft[_stackIndex];
+        }
+        
     }
     
 private:
@@ -176,9 +176,7 @@ void _computeDistIterative(
             auto n = stack.nbChildrenLeft();
             if (n > 0)
             {
-                stack.oneLessChildrenLeft();
-                
-                CONSTANT auto* childCmd = ++inCmd;
+                CONSTANT auto* childCmd = inCmd++;
                 if (!visitor.nextCulling())
                 {
                     stack.push(serialized, childCmd);
@@ -468,6 +466,8 @@ public:
                     cullingInfo.storeCulling(i);
                 }
             }
+            
+            cmd++;
         }
         
         constexpr size_t kNbSteps = 100;
