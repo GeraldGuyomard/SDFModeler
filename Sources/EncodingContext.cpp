@@ -139,10 +139,10 @@ _viewProjectionMatrix(viewProjectionMatrix),
 _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
-    //const float2 kDefaultTileSize { 128, 128 };
+    const float2 kDefaultTileSize { 128, 128 };
     //const float2 kDefaultTileSize { 256, 256 };
     //const float2 kDefaultTileSize { 1024, 1024 };
-    const float2 kDefaultTileSize { 2048, 2048 };
+    //const float2 kDefaultTileSize { 2048, 2048 };
     
     _serializedWorldObject.tileSize = kDefaultTileSize;
     
