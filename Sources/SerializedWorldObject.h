@@ -100,8 +100,10 @@ private:
 };
 
 template <typename TVisitor>
-void _visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
+void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
 {
+    DistanceEvaluator distanceEvaluator { pt };
+    
     auto cmd = &serialized.drawCommands[rootCmdIndex];
     Stack stack;
     stack.push();
@@ -186,12 +188,13 @@ void _visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Seriali
     }
 
 template <typename TVisitor>
-void visitDrawCommandTree(DistanceEvaluator distanceEvaluator,
+void visitDrawCommandTree(float3 pt,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
                     THREAD TVisitor& visitor)
 {
     CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
+    DistanceEvaluator distanceEvaluator { pt };
     computeDistRecursive<TVisitor>(distanceEvaluator, visitor, serialized, cmd);
 }
 
@@ -199,12 +202,12 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator,
 
 // GPU
 template <typename TVisitor>
-void visitDrawCommandTree(DistanceEvaluator distanceEvaluator,
+void visitDrawCommandTree(float3 pt,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
                     THREAD TVisitor& visitor)
 {
-    _visitDrawCommandTree<TVisitor>(distanceEvaluator, serialized, rootCmdIndex, visitor);
+    _visitDrawCommandTree<TVisitor>(pt, serialized, rootCmdIndex, visitor);
 }
 
 #endif
@@ -369,12 +372,8 @@ public:
     
     float computeDistance(float3 pt) const
     {
-        DistanceEvaluator distanceEvaluator { pt };
         Visitor v;
-        
-
-        visitDrawCommandTree(distanceEvaluator,
-                            _serialized, _rootCommandIndex, v);
+        visitDrawCommandTree(pt, _serialized, _rootCommandIndex, v);
         
         return v.minDistance();
     }
@@ -447,9 +446,7 @@ public:
             
             visitor.reset(cullingInfo);
             
-            DistanceEvaluator distanceEvaluator { pt };
-            
-            visitDrawCommandTree<Visitor>(distanceEvaluator, _serialized, tile.rootCommandIndex, visitor);
+            visitDrawCommandTree<Visitor>(pt, _serialized, tile.rootCommandIndex, visitor);
             
             if (visitor.hit())
             {
