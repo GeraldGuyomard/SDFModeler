@@ -65,8 +65,9 @@ class Locals
 {
 public:
     Locals() = default;
-    uint8_t currentChildIndex = 0;
+    
     float2 distances = { 1e7f, 1e7f };
+    int8_t nbChildrenLeft = 0;
 };
 
 
@@ -112,11 +113,11 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
-            const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
             
-            if (locals.currentChildIndex < n)
+            if (locals.nbChildrenLeft > 0)
             {
-                ++locals.currentChildIndex;
+                --locals.nbChildrenLeft;
                 ++cmd;
                 stack.push();
             }
@@ -156,29 +157,28 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
         }
         else
         {
-            float2 distances = { 1e7f, 1e7f };
+            Locals locals;
+            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
             
-            int8_t nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
-            
-            while (nbChildrenLeft > 0)
+            while (locals.nbChildrenLeft > 0)
             {
                 auto childCmd = inCmd;
                 const float childDist = computeDistRecursive(distanceEvaluator, visitor, serialized, inCmd);
                 if (childCmd->primitiveOffsetOrNegativeChildrenCount < 0)
                 {
-                    distances.x = min(distances.x, childDist);
+                    locals.distances.x = min(locals.distances.x, childDist);
                 }
                 else
                 {
                     auto childPrim = serialized.primitive(childCmd->primitiveOffsetOrNegativeChildrenCount);
                     const size_t op = size_t(childPrim->sdfOperation());
-                    distances[op] = min(distances[op], childDist);
+                    locals.distances[op] = min(locals.distances[op], childDist);
                 }
                 
-                --nbChildrenLeft;
+                --locals.nbChildrenLeft;
             }
             
-            const float dist = max(distances.x, -distances.y);
+            const float dist = max(locals.distances.x, -locals.distances.y);
             visitor.submitMinDistance(serialized, dist, cmd);
             
             return dist;
