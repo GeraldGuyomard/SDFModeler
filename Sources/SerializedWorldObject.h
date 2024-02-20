@@ -136,14 +136,9 @@ void visitDrawCommandTree(DistanceEvaluator distanceEvaluator, CONSTANT Serializ
 class CullingInfo final
 {
 public:
-    void storeCulling(bool culled)
+    void storeCulling(size_t bitIndex)
     {
-        _bits = (_bits << 1) | (culled? 1 : 0);
-    }
-    
-    void storeNoCulling()
-    {
-        _bits <<= 1;
+        _bits |= (1 << bitIndex);
     }
     
     bool nextCulling()
@@ -238,19 +233,20 @@ public:
         computeDistRecursive(distanceEvaluator, serialized, cmd);
     }
     
-    float computeDistRecursive(DistanceEvaluator distanceEvaluator, CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand*& cmd)
+    float computeDistRecursive(DistanceEvaluator distanceEvaluator,
+                               CONSTANT SerializedWorldObject& serialized,
+                               CONSTANT DrawCommand*& inCmd)
     {
+        auto cmd = inCmd++;
+        
+        if (_cullingInfo.nextCulling())
+        {
+            return 1e7f;
+        }
+        
         if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
         {
-            if (_cullingInfo.nextCulling())
-            {
-                ++cmd;
-                return 1e7f;
-            }
-            
             auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-            ++cmd;
-            
             const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
             return dist;
         }
@@ -259,17 +255,18 @@ public:
             float2 distances = { 1e7f, 1e7f };
             
             const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            
             for (size_t i=0; i < n; ++i)
             {
-                ++cmd;
-                const float childDist = computeDistRecursive(distanceEvaluator, serialized, cmd);
-                if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+                auto childCmd = inCmd;
+                const float childDist = computeDistRecursive(distanceEvaluator, serialized, inCmd);
+                if (childCmd->primitiveOffsetOrNegativeChildrenCount < 0)
                 {
                     distances.x = min(distances.x, childDist);
                 }
                 else
                 {
-                    auto childPrim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    auto childPrim = serialized.primitive(childCmd->primitiveOffsetOrNegativeChildrenCount);
                     const size_t op = size_t(childPrim->sdfOperation());
                     distances[op] = min(distances[op], childDist);
                 }
@@ -368,19 +365,16 @@ public:
         CullingInfo cullingInfo;
         
         auto cmd = _serialized.drawCommand(tile.rootCommandIndex);
-        const auto end = cmd + tile.nbCommands;
-        for (;cmd < end; ++cmd)
+        for (uint8_t i=0; i < tile.nbCommands; ++i)
         {
             if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
             {
                 auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
                 const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, prim);
-
-                cullingInfo.storeCulling(culled);
-            }
-            else
-            {
-                cullingInfo.storeNoCulling();
+                if (culled)
+                {
+                    cullingInfo.storeCulling(i);
+                }
             }
         }
         
