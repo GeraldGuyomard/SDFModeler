@@ -183,11 +183,7 @@ Object3D::materialID() const
 void
 Object3D::addChild(const Ptr& child)
 {
-    if (_shouldChildrenShareId)
-    {
-        child->_partId = kInvalidObjectID;
-    }
-    else if (child->_partId == kInvalidObjectID)
+    if (child->_partId == kInvalidObjectID)
     {
         child->_partId = world()->generateNewObjectID();
     }
@@ -561,12 +557,6 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
 void
 Object3D::selfEncode(EncodingContext&) const
 {
-}
-
-void
-Object3D::setShouldChildrenShareId(bool should)
-{
-    _shouldChildrenShareId = should;
 }
 
 void

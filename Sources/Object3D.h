@@ -134,9 +134,6 @@ public:
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
-    bool shouldChildrenShareId() const { return _shouldChildrenShareId; }
-    void setShouldChildrenShareId(bool should);
-    
     void invalidate();
     
     // Editor bindings
@@ -183,7 +180,6 @@ private:
     
     float4x4 _localTransform = float4x4_identity();
     bool _selected = false;
-    bool _shouldChildrenShareId = false;
     
     mutable float4x4 _cachedWorldTransform;
     mutable bool _cachedWorldTransformValid = false;

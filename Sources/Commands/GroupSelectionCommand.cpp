@@ -23,7 +23,6 @@ GroupSelectionCommand::run()
 {
     auto world = _entries.front().object->world();
     _group = std::make_shared<Object3D>(world);
-    _group->setShouldChildrenShareId(true);
     
     BoundingBox box;
     for (const auto& entry : _entries)
