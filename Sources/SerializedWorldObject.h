@@ -254,9 +254,9 @@ public:
         {
             float2 distances = { 1e7f, 1e7f };
             
-            const size_t n = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            int8_t nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
             
-            for (size_t i=0; i < n; ++i)
+            while (nbChildrenLeft > 0)
             {
                 auto childCmd = inCmd;
                 const float childDist = computeDistRecursive(distanceEvaluator, serialized, inCmd);
@@ -270,6 +270,8 @@ public:
                     const size_t op = size_t(childPrim->sdfOperation());
                     distances[op] = min(distances[op], childDist);
                 }
+                
+                --nbChildrenLeft;
             }
             
             const float dist = max(distances.x, -distances.y);
