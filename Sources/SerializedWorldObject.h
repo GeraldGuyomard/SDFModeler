@@ -26,7 +26,7 @@ static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
 static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
 static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
 
-static CONSTANT constexpr size_t kInvalidCommandIndex(-1);
+static CONSTANT constexpr TDrawCommandIndex kInvalidCommandIndex(-1);
 
 struct SerializedWorldObject final
 {
@@ -66,8 +66,9 @@ class Locals
 public:
     Locals() = default;
     
-    float2 distances = { 1e7f, 1e7f };
-    int8_t nbChildrenLeft = 0;
+    float2 distances;
+    TDrawCommandIndex drawCommandIndex;
+    int8_t nbChildrenLeft;
 };
 
 
@@ -77,15 +78,40 @@ public:
     Stack() = default;
     
     bool empty() const { return _stackIndex < 0; }
-    void push()
+    THREAD Locals& push(CONSTANT SerializedWorldObject& serialized, CONSTANT DrawCommand* cmd)
     {
-        _stack[++_stackIndex] = {};
+        THREAD auto& locals = _stack[++_stackIndex];
+        
+        if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+        {
+            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+        }
+        else
+        {
+            locals.nbChildrenLeft = 0;
+        }
+        
+        locals.drawCommandIndex = serialized.drawCommandIndex(cmd);
+        locals.distances = { 1e7f, 1e7f };
+        return locals;
     }
     
     THREAD Locals& current()
     {
         ASSERT(_stackIndex >= 0);
         return _stack[_stackIndex];
+    }
+    
+    THREAD Locals* parentLocal()
+    {
+        if (_stackIndex >= 1)
+        {
+            return &_stack[_stackIndex - 1];
+        }
+        else
+        {
+            return nullptr;
+        }
     }
     
     void back()
@@ -100,40 +126,72 @@ private:
 };
 
 template <typename TVisitor>
-void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
+void _computeDistIterative(
+                           DistanceEvaluator distanceEvaluator,
+                           THREAD TVisitor& visitor,
+                           CONSTANT SerializedWorldObject& serialized,
+                           CONSTANT DrawCommand*& inCmd)
 {
-    DistanceEvaluator distanceEvaluator { pt };
-    
-    auto cmd = &serialized.drawCommands[rootCmdIndex];
     Stack stack;
-    stack.push();
+    stack.push(serialized, inCmd++);
+    
+    size_t nbIter = 0;
     
     while (!stack.empty())
     {
-        THREAD auto& locals = stack.current();
-        visitor.visit(distanceEvaluator, serialized, cmd, locals);
+        ++nbIter;
         
-        if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+        /*if (visitor.nextCulling())
         {
-            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            continue;
+        }*/
+        
+        THREAD auto& locals = stack.current();
+        CONSTANT auto* cmd = serialized.drawCommand(locals.drawCommandIndex);
+        
+        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+        {
+            THREAD auto* parentLocals = stack.parentLocal();
+
+            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
+            const size_t opIndex = size_t(prim->sdfOperation());
+            parentLocals->distances[opIndex] = min(parentLocals->distances[opIndex], d);
             
-            if (locals.nbChildrenLeft > 0)
-            {
-                --locals.nbChildrenLeft;
-                ++cmd;
-                stack.push();
-            }
-            else
-            {
-                stack.back();
-            }
+            stack.back();
         }
         else
         {
-            // prim
-            stack.back();
+            if (locals.nbChildrenLeft > 0)
+            {
+                CONSTANT auto* childCmd = ++inCmd;
+                stack.push(serialized, childCmd);
+                --locals.nbChildrenLeft;
+            }
+            else
+            {
+                const float dist = max(locals.distances.x, -locals.distances.y);
+                visitor.submitMinDistance(serialized, dist, cmd);
+                
+                THREAD auto* parentLocal = stack.parentLocal();
+                if (parentLocal != nullptr)
+                {
+                    parentLocal->distances[0] = min(parentLocal->distances[0], dist);
+                }
+                
+                stack.back();
+            }
         }
     }
+}
+
+template <typename TVisitor>
+void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
+{
+    CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
+    DistanceEvaluator distanceEvaluator { pt };
+    
+    _computeDistIterative<TVisitor>(distanceEvaluator, visitor, serialized, cmd);
 }
 
 #if SHADER_ON_CPU
@@ -187,15 +245,21 @@ void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized
         }
     }
 
+#define CPU_ITERATIVE 1
+
 template <typename TVisitor>
 void visitDrawCommandTree(float3 pt,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
                     THREAD TVisitor& visitor)
 {
+#if CPU_ITERATIVE
+    return _visitDrawCommandTree<TVisitor>(pt, serialized, rootCmdIndex, visitor);
+#else
     CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
     DistanceEvaluator distanceEvaluator { pt };
     computeDistRecursive<TVisitor>(distanceEvaluator, visitor, serialized, cmd);
+#endif
 }
 
 #else
