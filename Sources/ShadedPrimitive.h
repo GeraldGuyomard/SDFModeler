@@ -14,21 +14,22 @@
 class ShadedPrimitive final
 {
 public:
-    ShadedPrimitive(CONSTANT EncodedPrimitive* prim)
-    : _prim(prim)
+    ShadedPrimitive(CONSTANT DrawCommand* cmd)
+    : _cmd(cmd)
     {}
     
     MaterialID materialID() const
     {
-        return _prim->materialId;
+        return 0; //_prim->materialId;
     }
     
     float computeDistance(float3 pt) const
     {
-        return ::computeDistance(pt, _prim);
+        return 1;
+        //return ::computeDistance(pt, _prim);
     }
     
 private:
-    CONSTANT EncodedPrimitive* _prim;
+    CONSTANT DrawCommand* _cmd;
 };
 

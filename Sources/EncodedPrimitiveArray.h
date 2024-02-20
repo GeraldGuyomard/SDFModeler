@@ -26,3 +26,11 @@ INLINE float computeDistance(float3 pt, CONSTANT EncodedPrimitive* prim)
     
     return max(distances.x, -distances.y);
 }
+
+using TDrawCommandIndex = int16_t;
+struct DrawCommand final
+{
+    uint16_t depth = 0;
+    TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
+    ObjectID objectID;
+};
