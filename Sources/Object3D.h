@@ -227,15 +227,12 @@ public:
             {
                 object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
             }
-            
-            const auto materialId = materialID();
          
             return encodePrimitive<SDFObject<TGeometry, RSTTransformer>>(
                                                 encodedPrimitive,
                                                object,
                                                id(),
                                                 partId(),
-                                                materialId,
                                                object.objectType(),
                                                transformer.transformerType(),
                                                 operation(),

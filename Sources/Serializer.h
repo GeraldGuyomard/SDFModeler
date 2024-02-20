@@ -16,7 +16,6 @@
 template <typename TObject>
 static size_t copy(ObjectID id,
                    ObjectID partId,
-                 MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
                  EncodedPrimitive* encodedPrimitive,
@@ -30,7 +29,6 @@ static size_t copy(ObjectID id,
     
     encodedPrimitive->objectId = id;
     encodedPrimitive->partId = partId;
-    encodedPrimitive->materialId = materialId;
     encodedPrimitive->objectCode = computeObjectCode(objectType, transformerType);
     encodedPrimitive->operation = uint16_t(operation);
     encodedPrimitive->selected = selected;
@@ -48,13 +46,12 @@ static size_t copy(EncodedPrimitive* primitive,
                  const TObject& object,
                  ObjectID id,
                  ObjectID partId,
-                 MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
                  SDFOperation operation,
                  bool selected)
 {
-    return copy<TObject>(id, partId, materialId, objectType, transformerType, primitive, object, operation, selected);
+    return copy<TObject>(id, partId, objectType, transformerType, primitive, object, operation, selected);
 }
 
 
@@ -63,11 +60,10 @@ INLINE size_t encodePrimitive(EncodedPrimitive* encodedPrimitive,
                               const TPrimitive& primitive,
                               ObjectID id,
                               ObjectID partId,
-                              MaterialID materialId,
                               ObjectType objectType,
                               TransformerType transformerType,
                               SDFOperation operation,
                               bool selected)
 {
-    return copy(encodedPrimitive, primitive, id, partId, materialId, objectType, transformerType, operation, selected);
+    return copy(encodedPrimitive, primitive, id, partId, objectType, transformerType, operation, selected);
 }

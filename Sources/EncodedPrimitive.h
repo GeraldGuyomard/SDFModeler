@@ -25,7 +25,7 @@ INLINE constexpr uint64_t computeObjectCode()
 
 struct EncodedPrimitive final
 {
-    uint16_t    materialId;
+    uint16_t    _unused;
     uint8_t     selected;
     uint8_t     operation;
     
