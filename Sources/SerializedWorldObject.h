@@ -69,11 +69,31 @@ struct Locals // 16
     uint8_t isCulled; // 1
 };
 
+class CullingInfo final
+{
+public:
+    void storeCulling(size_t bitIndex)
+    {
+        _bits |= (1 << bitIndex);
+    }
+    
+    bool nextCulling()
+    {
+        const bool culled = (_bits & 1);
+        _bits >>= 1;
+        
+        return culled;
+    }
+    
+private:
+    uint64_t _bits = 0;
+};
+
 class Stack final
 {
 public:
-    Stack(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCommandIndex)
-    : _serialized(serialized), _rootCommandIndex(rootCommandIndex)
+    Stack(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCommandIndex, CullingInfo cullingInfo)
+    : _serialized(serialized), _rootCommandIndex(rootCommandIndex), _cullingInfo(cullingInfo)
     {}
     
     bool empty() const
@@ -86,7 +106,7 @@ public:
         return _stackIndex;
     }
     
-    void push(bool isCulled)
+    void push()
     {
         const auto relativeCommandIndex = _relativeCmdIndex++;
         CONSTANT DrawCommand* cmd = _serialized.drawCommand(_rootCommandIndex + relativeCommandIndex);
@@ -97,14 +117,14 @@ public:
         {
              locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
         }
-        else
+        /*else
         {
             locals.nbChildrenLeft = 0;
-        }
+        }*/
         
         locals.relativeDrawCommandIndex = relativeCommandIndex;
         locals.distances = { 1e7f, 1e7f };
-        locals.isCulled = isCulled;
+        locals.isCulled = _cullingInfo.nextCulling();
     }
 
     THREAD Locals& parentLocals()
@@ -133,9 +153,16 @@ public:
         }
     }
     
+    void alwaysBack()
+    {
+        ASSERT(_stackIndex > 0);
+        --_stack[--_stackIndex].nbChildrenLeft;
+    }
+    
 private:
     static CONSTANT constexpr size_t kMaxStackDepth = 7;
     
+    CullingInfo _cullingInfo;
     CONSTANT SerializedWorldObject& _serialized;
     const TDrawCommandIndex _rootCommandIndex;
     Locals _stack[kMaxStackDepth];
@@ -150,9 +177,9 @@ void _computeDistIterative(
                            CONSTANT SerializedWorldObject& serialized,
                            TDrawCommandIndex rootCommandIndex)
 {
-    Stack stack { serialized, rootCommandIndex };
+    Stack stack { serialized, rootCommandIndex, visitor.cullingInfo() };
     
-    stack.push(visitor.nextCulling());
+    stack.push();
     
     while (!stack.empty())
     {
@@ -171,14 +198,14 @@ void _computeDistIterative(
                 parentLocals.distances[opIndex] = min(parentLocals.distances[opIndex], d);
             }
 
-            stack.back();
+            stack.alwaysBack();
         }
         else
         {
             auto n = locals.nbChildrenLeft;
             if (n > 0)
             {
-                stack.push(visitor.nextCulling());
+                stack.push();
             }
             else
             {
@@ -194,9 +221,12 @@ void _computeDistIterative(
                 {
                     THREAD auto & parentLocals = stack.parentLocals();
                     parentLocals.distances[0] = min(parentLocals.distances[0], dist);
+                    stack.alwaysBack();
                 }
-                
-                stack.back();
+                else
+                {
+                    stack.back();
+                }
             }
         }
     }
@@ -291,27 +321,6 @@ void visitDrawCommandTree(float3 pt,
 
 #endif
 
-
-class CullingInfo final
-{
-public:
-    void storeCulling(size_t bitIndex)
-    {
-        _bits |= (1 << bitIndex);
-    }
-    
-    bool nextCulling()
-    {
-        const bool culled = (_bits & 1);
-        _bits >>= 1;
-        
-        return culled;
-    }
-    
-private:
-    uint64_t _bits = 0;
-};
-
 class Visitor final
 {
 public:
@@ -354,9 +363,9 @@ public:
         return _minCmdIndex;
     }
     
-    bool nextCulling()
+    CullingInfo cullingInfo()
     {
-        return _cullingInfo.nextCulling();
+        return _cullingInfo;
     }
     
     bool submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist, CONSTANT DrawCommand* cmd)
