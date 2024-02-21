@@ -27,7 +27,7 @@
 - (IBAction)delete:(id)source;
 - (IBAction)group:(id)source;
 
-- (void)frameAtPosition:(float2)pos wholeComposite:(BOOL)wholeComposite;
+- (void)frameAtPosition:(float2)pos owner:(BOOL)frameOwner;
 
 - (void)addAnimation:(Animation::Ptr)animation;
 - (void)removeAnimation:(Animation::Ptr)animation;

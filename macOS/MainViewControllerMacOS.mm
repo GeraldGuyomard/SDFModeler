@@ -53,6 +53,11 @@
     const auto result = self.renderer->pick(initialPos);
     if (auto object = world->rootObject()->objectByID(result.objectID))
     {
+        if ((event.modifierFlags & NSEventModifierFlagOption) == 0)
+        {
+            object = object->owner();
+        }
+        
         Object3DSelection sel;
         if ((event.modifierFlags & NSEventModifierFlagShift) != 0)
         {
@@ -109,7 +114,7 @@
     {
         const auto pos = [self position:event.locationInWindow];
         const bool optionDown = (event.modifierFlags & NSEventModifierFlagOption) != 0;
-        [self frameAtPosition:pos wholeComposite:!optionDown];
+        [self frameAtPosition:pos owner:!optionDown];
     }
 }
 
