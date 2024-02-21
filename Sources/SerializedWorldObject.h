@@ -187,7 +187,7 @@ public:
     }
     
 private:
-    static CONSTANT constexpr size_t kMaxStackDepth = 4;
+    static CONSTANT constexpr size_t kMaxStackDepth = 8;
     
     CullingInfo _cullingInfo;
     CONSTANT SerializedWorldObject& _serialized;
