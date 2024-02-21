@@ -22,7 +22,7 @@ struct Tile final
 };
 
 
-static CONSTANT constexpr size_t kMaxTiles = 32 * 32;
+static CONSTANT constexpr size_t kMaxTiles = 64 * 64;
 static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
 static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
 
@@ -227,8 +227,7 @@ void _computeDistIterative(
                 const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
                 const size_t opIndex = size_t(prim->sdfOperation());
                 
-                THREAD auto* parentLocals = stack.parentLocals();
-                if (parentLocals != nullptr)
+                if (auto parentLocals = stack.parentLocals())
                 {
                     if (d < parentLocals->distances[opIndex])
                     {
@@ -247,6 +246,9 @@ void _computeDistIterative(
         }
         else if (n > 0)
         {
+            // groups could be culled too in future
+            ASSERT(!locals.isCulled);
+            
             // A inner Draw Command
             stack.push();
         }
@@ -276,12 +278,9 @@ void _computeDistIterative(
             {
                 THREAD auto& parentLocals = stack.parentLocalsNoCheck();
                 parentLocals.distances[0] = min(parentLocals.distances[0], dist);
-                stack.back();
             }
-            else
-            {
-                stack.back();
-            }
+
+            stack.back();
         }
     }
 }
