@@ -298,6 +298,8 @@ Renderer::ray(float2 pixelPosition) const
 PickResult
 Renderer::pick(float2 pixelPosition) const
 {
+    const auto pixel = renderPixel(pixelPosition);
+    
     const auto& uniforms = this->uniforms();
     const auto& serializedWorld = this->serializedWorld();
     const auto& materials = this->materials();
