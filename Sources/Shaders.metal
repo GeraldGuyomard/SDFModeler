@@ -26,14 +26,26 @@ vertex VertexShaderOut vertexShader(Vertex in [[stage_in]])
     return out;
 }
 
-fragment float4 fragmentShader(VertexShaderOut in [[stage_in]],
+struct FragmentShaderOut
+{
+    float4 color [[color(0)]];
+    float depth [[depth(any)]];
+};
+
+fragment FragmentShaderOut fragmentShader(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
                                constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
-    return renderDefault(in.viewportNDC,
+    const auto res = renderDefault(in.viewportNDC,
                          uniforms,
                          serializedWorld,
                          materials);
+    
+    FragmentShaderOut out;
+    out.color = res.color;
+    out.depth = res.depth;
+    
+    return out;
 }

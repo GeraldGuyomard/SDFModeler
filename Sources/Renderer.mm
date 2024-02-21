@@ -161,8 +161,8 @@ Renderer::updateUniforms()
     const float4x4 cameraMatrix = (_camera != nullptr) ? _camera->worldTransform() : float4x4_identity();
     
     uniforms.viewportSize = renderSize();
-    uniforms.invProjectionMatrix = _invProjectionMatrix;
-    uniforms.ndcToWorldTransform = cameraMatrix * uniforms.invProjectionMatrix;
+    uniforms.ndcToWorldTransform = cameraMatrix * _invProjectionMatrix;
+    uniforms.worldTransformToNdc = inverse(uniforms.ndcToWorldTransform);
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
@@ -322,7 +322,7 @@ Renderer::renderPixel(float2 pixelPosition) const
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    return renderDefault(p, uniforms, serializedWorld, materials);
+    return renderDefault(p, uniforms, serializedWorld, materials).color;
 }
 
 void

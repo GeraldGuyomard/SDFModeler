@@ -30,8 +30,8 @@
             filePath = "Sources/Object3D.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "220"
-            endingLineNumber = "220"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
             landmarkName = "selfEncode(context)"
             landmarkType = "7">
             <Locations>
@@ -123,8 +123,8 @@
             filePath = "Sources/Object3D.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "685"
-            endingLineNumber = "685"
+            startingLineNumber = "709"
+            endingLineNumber = "709"
             landmarkName = "World::encode(context, materials)"
             landmarkType = "7">
          </BreakpointContent>
@@ -139,8 +139,8 @@
             filePath = "Sources/Object3D.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "593"
-            endingLineNumber = "593"
+            startingLineNumber = "617"
+            endingLineNumber = "617"
             landmarkName = "Object3DSelection::Object3DSelection(object)"
             landmarkType = "7">
          </BreakpointContent>
@@ -155,8 +155,8 @@
             filePath = "Sources/Object3D.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "534"
-            endingLineNumber = "534"
+            startingLineNumber = "558"
+            endingLineNumber = "558"
             landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context, owner)"
             landmarkType = "7">
          </BreakpointContent>
@@ -377,8 +377,8 @@
             filePath = "Sources/Object3D.cpp"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "521"
-            endingLineNumber = "521"
+            startingLineNumber = "545"
+            endingLineNumber = "545"
             landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context, owner)"
             landmarkType = "7">
          </BreakpointContent>
@@ -413,6 +413,70 @@
             endingLineNumber = "58"
             landmarkName = "-mouseDown:"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B5214453-3707-480D-8C04-C8BF8D69B914"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/RenderFunctions.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "98"
+            endingLineNumber = "98"
+            landmarkName = "render(viewportNDC, uniforms, serializedWorld, materials)"
+            landmarkType = "9">
+            <Locations>
+               <Location
+                  uuid = "B5214453-3707-480D-8C04-C8BF8D69B914 - 95f372773b66e50b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RenderResult render&lt;PhongShader&gt;(float vector[2], Uniforms const&amp;, SerializedWorldObject const&amp;, Materials const&amp;)"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/RenderFunctions.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "97"
+                  endingLineNumber = "97"
+                  offsetFromSymbolStart = "504">
+               </Location>
+               <Location
+                  uuid = "B5214453-3707-480D-8C04-C8BF8D69B914 - 95f372773b66e52a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RenderResult render&lt;PhongShader&gt;(float vector[2], Uniforms const&amp;, SerializedWorldObject const&amp;, Materials const&amp;)"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/RenderFunctions.h"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "98"
+                  endingLineNumber = "98"
+                  offsetFromSymbolStart = "448">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "06A0BA81-74CC-42BF-962D-8BA90C53BE9E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/RenderFunctions.h"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "95"
+            endingLineNumber = "95"
+            landmarkName = "render(viewportNDC, uniforms, serializedWorld, materials)"
+            landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

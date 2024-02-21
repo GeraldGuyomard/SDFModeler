@@ -11,7 +11,7 @@
 
 struct Uniforms final
 {
-    float4x4 invProjectionMatrix;
+    float4x4 worldTransformToNdc;
     float4x4 ndcToWorldTransform;
     
     float3 lightDirection;

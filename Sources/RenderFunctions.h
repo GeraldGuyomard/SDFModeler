@@ -73,8 +73,18 @@ INLINE RayMarchResult rayMarch(float2 ndcPosition,
     return { ray };
 }
 
+struct RenderResult final
+{
+    const float4 color;
+    const float depth;
+    
+    RenderResult(float4 color, float depth)
+    : color(color), depth(depth)
+    {}
+};
+
 template <typename TShader>
-INLINE float4 render(float2 viewportNDC,
+INLINE RenderResult render(float2 viewportNDC,
                      CONSTANT Uniforms& uniforms,
                      CONSTANT SerializedWorldObject& serializedWorld,
                      CONSTANT Materials& materials)
@@ -82,17 +92,22 @@ INLINE float4 render(float2 viewportNDC,
     const auto res = rayMarch<TShader>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isValid())
     {
-        return res.color;
+        const float3 pt = res.ray.pt(res.distance);
+        
+        const float4 proj = uniforms.worldTransformToNdc * float4 { pt.x, pt.y, pt.z, 1 };
+        const float z = proj.z / proj.w;
+        //return { res.color, z };
+        return { res.color, z };
     }
     
     // Background
     //const float grey = max(ray.direction.y, 0.f);
     const float grey = 0.f;
     const float4 c = { grey, grey, grey, 1.f };
-    return c;
+    return RenderResult { c, 0.5f };
 }
 
-INLINE float4 renderPhong(float2 viewportNDC,
+INLINE RenderResult renderPhong(float2 viewportNDC,
                           CONSTANT Uniforms& uniforms,
                           CONSTANT SerializedWorldObject& serializedWorld,
                           CONSTANT Materials& materials)
@@ -100,7 +115,7 @@ INLINE float4 renderPhong(float2 viewportNDC,
     return render<PhongShader>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE float4 renderCellShaded(float2 viewportNDC,
+INLINE RenderResult renderCellShaded(float2 viewportNDC,
                                CONSTANT Uniforms& uniforms,
                                CONSTANT SerializedWorldObject& serializedWorld,
                                CONSTANT Materials& materials)
@@ -108,7 +123,7 @@ INLINE float4 renderCellShaded(float2 viewportNDC,
     return render<CellShader>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
-INLINE float4 renderDefault(float2 viewportNDC,
+INLINE RenderResult renderDefault(float2 viewportNDC,
                             CONSTANT Uniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
