@@ -180,22 +180,9 @@ public:
     
     void back()
     {
-        const auto relativeMinDrawCommandIndices = _stack[_stackIndex].relativeMinDrawCommandIndices;
-        
         if (--_stackIndex >= 0)
         {
-            THREAD auto& locals = _stack[_stackIndex];
-            if (locals.relativeMinDrawCommandIndices[0] < 0)
-            {
-                locals.relativeMinDrawCommandIndices[0] = relativeMinDrawCommandIndices[0];
-            }
-            
-            if (locals.relativeMinDrawCommandIndices[1] < 0)
-            {
-                locals.relativeMinDrawCommandIndices[1] = relativeMinDrawCommandIndices[1];
-            }
-            
-            --locals.nbChildrenLeft;
+            --_stack[_stackIndex].nbChildrenLeft;
         }
     }
     
