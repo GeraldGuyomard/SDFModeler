@@ -158,6 +158,10 @@
     {
         return !self.world->selection().empty();
     }
+    else if (menuItem.action == @selector(toggleOperation:))
+    {
+        return !self.world->selection().empty();
+    }
     
     return NO;
 }

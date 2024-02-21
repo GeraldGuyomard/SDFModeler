@@ -26,6 +26,7 @@
 - (IBAction)redo:(id)source;
 - (IBAction)delete:(id)source;
 - (IBAction)group:(id)source;
+- (IBAction)toggleOperation:(id)source;
 
 - (void)frameAtPosition:(float2)pos owner:(BOOL)frameOwner;
 

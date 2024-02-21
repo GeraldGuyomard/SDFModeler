@@ -146,6 +146,12 @@
                                                 <action selector="group:" target="Ady-hI-5gd" id="g4J-x8-7gE"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Toggle Operation" id="ZAt-H7-R7y" userLabel="Toggle Operation">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="toggleOperation:" target="Ady-hI-5gd" id="VdJ-cK-d1p"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Select All" keyEquivalent="a" id="Ruw-6m-B2m">
                                             <connections>
                                                 <action selector="selectAll:" target="Ady-hI-5gd" id="VNm-Mi-diN"/>

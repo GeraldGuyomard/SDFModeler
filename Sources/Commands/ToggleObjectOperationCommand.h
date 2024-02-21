@@ -14,11 +14,12 @@ class ToggleObjectOperationCommand : public Command
 public:
     using Ptr = std::shared_ptr<ToggleObjectOperationCommand>;
     
-    ToggleObjectOperationCommand(const Object3D::Ptr& object);
+    ToggleObjectOperationCommand(const Object3DSelection& selection);
     
     void run() override;
     void undo() override;
     
 private:
-    const Object3D::Ptr _object;
+    
+    const Object3DSelection _selection;
 };

@@ -6,17 +6,20 @@
 
 #include "ToggleObjectOperationCommand.h"
 
-ToggleObjectOperationCommand::ToggleObjectOperationCommand(const Object3D::Ptr& object)
-: _object(object)
+ToggleObjectOperationCommand::ToggleObjectOperationCommand(const Object3DSelection& selection)
+: _selection(selection)
 {
 }
 
 void
 ToggleObjectOperationCommand::run()
 {
-    const auto currentOp = _object->operation();
-    const SDFOperation newOp = (currentOp == SDFOperation::addition) ? SDFOperation::substraction : SDFOperation::addition;
-    _object->setOperation(newOp);
+    for (const auto& object: _selection.objects())
+    {
+        const auto currentOp = object->operation();
+        const SDFOperation newOp = (currentOp == SDFOperation::addition) ? SDFOperation::substraction : SDFOperation::addition;
+        object->setOperation(newOp);
+    }
 }
 
 void

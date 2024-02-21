@@ -19,6 +19,7 @@
 
 #include "Commands/RemoveObjectCommand.h"
 #include "Commands/GroupSelectionCommand.h"
+#include "Commands/ToggleObjectOperationCommand.h"
 
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
@@ -301,6 +302,12 @@ void visitTypes(const Object3D::Ptr& object)
 - (IBAction)group:(id)source
 {
     auto cmd = std::make_shared<GroupSelectionCommand>(self.world->selection());
+    self.world->commandHistory().run(cmd);
+}
+
+- (IBAction)toggleOperation:(id)source
+{
+    auto cmd = std::make_shared<ToggleObjectOperationCommand>(self.world->selection());
     self.world->commandHistory().run(cmd);
 }
 
