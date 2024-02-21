@@ -490,28 +490,31 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
     else
     {
         // a compound or a group
-        const size_t childrenCount = children().size();
+        const auto& children = this->children();
+        const size_t childrenCount = children.size();
         
-        std::vector<Object3D::Ptr> positiveChildren;
-        positiveChildren.reserve(childrenCount);
-        
-        std::vector<Object3D::Ptr> negativeChildren;
-        negativeChildren.reserve(childrenCount);
+        auto& scratch = context.childOrderingArray();
+        auto positiveChildrenIndices = scratch.allocate(childrenCount);
+        auto negativeChildrenIndices = scratch.allocate(childrenCount);
 
-        for (const auto& child : children())
+        uint8_t index = 0;
+        for (const auto& child : children)
         {
             const auto operation = child->operation();
             if (operation == SDFOperation::addition)
             {
-                positiveChildren.push_back(child);
+                positiveChildrenIndices.push_back(index);
             }
             else if (operation == SDFOperation::substraction)
             {
-                negativeChildren.push_back(child);
+                negativeChildrenIndices.push_back(index);
             }
+            
+            ++index;
         }
         
-        if (!positiveChildren.empty())
+        const size_t nbPositiveChildren = positiveChildrenIndices.size();
+        if (nbPositiveChildren != 0)
         {
             auto& cmd = context.writeGroupDrawCommand(owner);
             
@@ -522,8 +525,9 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
             
             int16_t n = 0;
             
-            for (const auto& child: positiveChildren)
+            for (index = 0; index < nbPositiveChildren; ++index)
             {
+                const auto& child = children[positiveChildrenIndices[index]];
                 if (child->encodeHierarchy(tileDescriptor, context, owner))
                 {
                     ++n;
@@ -532,8 +536,10 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
             
             if (n != 0)
             {
-                for (const auto& child: negativeChildren)
+                const size_t nbNegativeChildren = negativeChildrenIndices.size();
+                for (index = 0; index < nbNegativeChildren; ++index)
                 {
+                    const auto& child = children[negativeChildrenIndices[index]];
                     if (child->encodeHierarchy(tileDescriptor, context, owner))
                     {
                         ++n;

@@ -31,7 +31,7 @@ class ChildReorderingArray;
 class ChildReorderingArrayChunk final
 {
 public:
-    ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t size);
+    ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t capacity);
     ChildReorderingArrayChunk(ChildReorderingArrayChunk&&);
     ~ChildReorderingArrayChunk();
     
@@ -39,12 +39,15 @@ public:
     uint8_t operator[](size_t index) const;
     uint8_t& operator[](size_t index);
     
+    void push_back(uint8_t v);
+    
 private:
     
     ChildReorderingArrayChunk(const ChildReorderingArrayChunk&) = delete;
     
     ChildReorderingArray* _array;
-    const size_t _size;
+    const size_t _capacity;
+    size_t _size = 0;
     const size_t _startIndex;
 };
 
@@ -72,6 +75,13 @@ INLINE uint8_t& ChildReorderingArrayChunk::operator[](size_t index)
 {
     ASSERT(index < _size);
     return _array->_scratch[_startIndex + index];
+}
+
+INLINE void ChildReorderingArrayChunk::push_back(uint8_t v)
+{
+    ASSERT(_size < _capacity);
+
+    _array->_scratch[_startIndex + _size++] = v;
 }
 
 class EncodingContext final

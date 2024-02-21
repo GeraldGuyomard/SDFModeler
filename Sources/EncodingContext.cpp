@@ -8,12 +8,12 @@
 #include "Object3D.h"
 #include "RectF.h"
 
-ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t size)
-: _array(&array), _startIndex(startIndex), _size(size)
+ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t capacity)
+: _array(&array), _startIndex(startIndex), _capacity(capacity)
 {}
 
 ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArrayChunk&& other)
-: _array(other._array), _startIndex(other._startIndex), _size(other._size)
+: _array(other._array), _startIndex(other._startIndex), _size(other._size), _capacity(other._capacity)
 {
     other._array = nullptr;
 }
