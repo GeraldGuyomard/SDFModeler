@@ -463,8 +463,14 @@ TileDescriptor::TileDescriptor(Tile& tile)
 : tile(tile), tileRect(tile.minPt, tile.maxPt)
 {}
 
+void
+Object3D::setIsCompound(bool isCompound)
+{
+    _isCompound = isCompound;
+}
+
 bool
-Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context) const
+Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context, const DrawCommand* owner) const
 {
     const auto* geomType = geometryType();
     if (geomType != nullptr)
@@ -478,12 +484,12 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         }
         
         const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-        context.writePrimitiveDrawCommand(myPrimitiveOffset);
+        context.writePrimitiveDrawCommand(myPrimitiveOffset, owner);
         return true;
     }
     else
     {
-        // a compound
+        // a compound or a group
         const size_t childrenCount = children().size();
         
         std::vector<Object3D::Ptr> positiveChildren;
@@ -507,12 +513,18 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         
         if (!positiveChildren.empty())
         {
-            auto& cmd = context.writeGroupDrawCommand();
+            auto& cmd = context.writeGroupDrawCommand(owner);
+            
+            if (isCompound())
+            {
+                owner = &cmd;
+            }
+            
             int16_t n = 0;
             
             for (const auto& child: positiveChildren)
             {
-                if (child->encodeHierarchy(tileDescriptor, context))
+                if (child->encodeHierarchy(tileDescriptor, context, owner))
                 {
                     ++n;
                 }
@@ -522,7 +534,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
             {
                 for (const auto& child: negativeChildren)
                 {
-                    if (child->encodeHierarchy(tileDescriptor, context))
+                    if (child->encodeHierarchy(tileDescriptor, context, owner))
                     {
                         ++n;
                     }
@@ -659,7 +671,7 @@ World::encode(EncodingContext& context,
         tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
-        _rootObject->encodeHierarchy(descr, context);
+        _rootObject->encodeHierarchy(descr, context, nullptr);
         
         tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
         if (tile.nbCommands == 0)

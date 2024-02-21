@@ -91,7 +91,7 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx) const;
+    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx, const DrawCommand* owner) const;
     
     virtual void selfEncode(EncodingContext& context) const;
     
@@ -105,6 +105,9 @@ public:
     MaterialID materialID() const;
     
     Ptr parent() const { return _parent.lock(); }
+    
+    bool isCompound() const { return _isCompound; }
+    void setIsCompound(bool);
     
     float4x4 worldTransform() const;
     void setWorldTransform(const float4x4&);
@@ -175,6 +178,8 @@ private:
     Material3D::Ptr _material;
     SDFOperation _operation = SDFOperation::addition;
     
+    bool _isCompound = false;
+    
     Object3D::WPtr _parent;
     std::vector<Ptr> _children;
     
@@ -183,6 +188,7 @@ private:
     
     mutable float4x4 _cachedWorldTransform;
     mutable bool _cachedWorldTransformValid = false;
+    
 };
 
 template <typename TGeometry>

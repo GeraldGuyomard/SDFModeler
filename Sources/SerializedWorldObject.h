@@ -268,7 +268,6 @@ void _computeDistIterative(
                 ASSERT(relativeCmdIndex >= 0);
                 
                 visitor.setMinCmdIndex(rootCommandIndex + relativeCmdIndex);
-                //visitor.setMinCmdIndex(rootCommandIndex);
                 
                 break;
             }
@@ -443,17 +442,19 @@ private:
 class ShadedPrimitive final
 {
 public:
-    ShadedPrimitive(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCommandIndex, CullingInfo cullingInfo)
-    : _serialized(serialized), _rootCommandIndex(rootCommandIndex), _cullingInfo(cullingInfo)
+    ShadedPrimitive(CONSTANT SerializedWorldObject& serialized,
+                    TDrawCommandIndex rootCommandIndex,
+                    MaterialID materialID,
+                    CullingInfo cullingInfo)
+    : _serialized(serialized),
+    _rootCommandIndex(rootCommandIndex),
+    _materialID(materialID),
+    _cullingInfo(cullingInfo)
     {}
     
     MaterialID materialID() const
     {
-        auto cmd = _serialized.drawCommand(_rootCommandIndex);
-        ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
-        auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-        
-        return prim->materialId;
+        return _materialID;
     }
     
     float computeDistance(float3 pt) const
@@ -468,6 +469,8 @@ public:
 private:
     CONSTANT SerializedWorldObject& _serialized;
     const CullingInfo _cullingInfo;
+    const MaterialID _materialID;
+    
     TDrawCommandIndex _rootCommandIndex;
 };
 
@@ -557,14 +560,16 @@ public:
             ASSERT(minCmdIndex >= 0);
             
             // This should be a leaf primitive
-            const auto cmd = _serialized.drawCommand(minCmdIndex);
+            auto cmd = _serialized.drawCommand(minCmdIndex);
             ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
             
-            const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, minCmdIndex);
-            ShadedPrimitive primitive { _serialized, minCmdIndex, subCullingInfo };
-            const auto color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
+            const TDrawCommandIndex startCmdIndex = minCmdIndex + cmd->ownerOffset;
             
             auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            const auto materialID = prim->materialId;
+            const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, startCmdIndex);
+            ShadedPrimitive primitive { _serialized, startCmdIndex, materialID, subCullingInfo };
+            const auto color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
             
             const auto objectID = prim->objectId;
             

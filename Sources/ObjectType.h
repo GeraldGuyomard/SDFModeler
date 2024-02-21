@@ -21,7 +21,7 @@ enum class ObjectType : int64_t
     cylinder
 };
 
-using ObjectID = uint32_t;
+using ObjectID = uint16_t;
 static CONSTANT constexpr ObjectID kInvalidObjectID = 0;
 
 enum class SDFOperation : uint32_t

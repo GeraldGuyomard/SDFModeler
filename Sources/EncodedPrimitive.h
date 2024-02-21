@@ -8,6 +8,7 @@
 
 #include "CommonDefinitions.h"
 #include "ObjectType.h"
+#include "Material/Material.h"
 #include "Transformer/Transformer.h"
 
 CONSTANT static constexpr uint64_t kObjectTypeShift = 2;
@@ -25,12 +26,12 @@ INLINE constexpr uint64_t computeObjectCode()
 
 struct EncodedPrimitive final
 {
-    uint16_t    _unused;
+    ObjectID    ownerId;
     uint8_t     selected;
     uint8_t     operation;
     
-    uint32_t    objectId;
-    uint32_t    materialId;
+    ObjectID    objectId;
+    MaterialID  materialId;
     uint32_t    objectCode;
     
     uint8_t     firstByte;

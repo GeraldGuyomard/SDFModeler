@@ -251,21 +251,25 @@ EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 }
 
 void
-EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset)
+EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner)
 {
     assert(primitiveOffset >= 0);
     
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
-    DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    auto& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
     cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
+    cmd.ownerOffset = (owner != nullptr) ? (owner - &cmd) : 0;
 }
 
 DrawCommand&
-EncodingContext::writeGroupDrawCommand()
+EncodingContext::writeGroupDrawCommand(const DrawCommand* owner)
 {
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
-    return _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    
+    auto& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    cmd.ownerOffset = (owner != nullptr) ? (owner - &cmd) : 0;
+    return cmd;
 }
 
 void

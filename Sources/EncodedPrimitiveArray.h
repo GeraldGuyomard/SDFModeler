@@ -16,7 +16,8 @@ using TPrimitiveOffset = int16_t;
 constexpr static CONSTANT TPrimitiveOffset kInvalidPrimitiveOffset = -1;
 
 using TDrawCommandIndex = int16_t;
-struct DrawCommand final
+struct DrawCommand final // 4
 {
-    TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
+    TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount;
+    int16_t ownerOffset; // 0 if self owned, negative otherwise
 };

@@ -199,6 +199,7 @@ private:
     auto sdfUnion = std::make_shared<Object3D>(_world);
     sdfUnion->setMaterial(sdfUnionMaterial);
     sdfUnion->setLocalTransform(matrix4x4_translation(compositionOrigin));
+    sdfUnion->setIsCompound(true);
     
     sdfUnion->addChild(spherePart);
     sdfUnion->addChild(boxPart);

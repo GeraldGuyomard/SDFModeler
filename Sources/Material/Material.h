@@ -11,7 +11,7 @@
 #include "CommonDefinitions.h"
 #include "Ray.h"
 
-using MaterialID = uint64_t;
+using MaterialID = uint16_t;
 constexpr static CONSTANT MaterialID kNoMaterialID = 0;
 
 class Material final
