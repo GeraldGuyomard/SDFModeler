@@ -108,7 +108,8 @@
     if (event.clickCount == 2)
     {
         const auto pos = [self position:event.locationInWindow];
-        [self frameAtPosition:pos];
+        const bool optionDown = (event.modifierFlags & NSEventModifierFlagOption) != 0;
+        [self frameAtPosition:pos wholeComposite:!optionDown];
     }
 }
 

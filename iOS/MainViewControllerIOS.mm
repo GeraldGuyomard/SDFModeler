@@ -215,7 +215,7 @@
     if (recognizer.state == UIGestureRecognizerStateEnded)
     {
         const auto p = [self convertPointToPixel:[recognizer locationInView:self.view]];
-        [self frameAtPosition:p];
+        [self frameAtPosition:p wholeComposite:YES];
     }
 }
 

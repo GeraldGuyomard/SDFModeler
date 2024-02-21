@@ -304,7 +304,7 @@ void visitTypes(const Object3D::Ptr& object)
     self.world->commandHistory().run(cmd);
 }
 
-- (void)frameAtPosition:(float2)pos
+- (void)frameAtPosition:(float2)pos wholeComposite:(BOOL)wholeComposite
 {
     // zoom in/out
     const auto result = self.renderer->pick(pos);
@@ -314,6 +314,10 @@ void visitTypes(const Object3D::Ptr& object)
     if (object == nullptr)
     {
         object = self.world->rootObject();
+    }
+    else if (wholeComposite)
+    {
+        object = object->owner();
     }
     
     auto camera = self.renderer->camera();

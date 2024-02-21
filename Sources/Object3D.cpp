@@ -30,15 +30,30 @@ Object3D::objectByID(ObjectID id) const
         return ((Object3D*) this)->shared_from_this();
     }
     
-    for (const auto& object : children())
+    for (const auto& child : children())
     {
-        if (object->id() == id)
+        if (auto found = child->objectByID(id))
         {
-            return object;
+            return found;
         }
     }
     
     return nullptr;
+}
+
+Object3D::Ptr
+Object3D::owner() const
+{
+    auto self = std::const_pointer_cast<Object3D>(shared_from_this());
+    auto object = self;
+    
+    while ((object != nullptr) && !object->isCompound())
+    {
+        object = object->parent();
+    }
+    
+    
+    return (object != nullptr) ? object : self;
 }
 
 void
