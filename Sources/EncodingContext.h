@@ -27,6 +27,53 @@ class Object3D;
 class World;
 class RectF;
 
+class ChildReorderingArray;
+class ChildReorderingArrayChunk final
+{
+public:
+    ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t size);
+    ChildReorderingArrayChunk(ChildReorderingArrayChunk&&);
+    ~ChildReorderingArrayChunk();
+    
+    size_t size() const { return _size; }
+    uint8_t operator[](size_t index) const;
+    uint8_t& operator[](size_t index);
+    
+private:
+    
+    ChildReorderingArrayChunk(const ChildReorderingArrayChunk&) = delete;
+    
+    ChildReorderingArray* _array;
+    const size_t _size;
+    const size_t _startIndex;
+};
+
+class ChildReorderingArray final
+{
+public:
+    ChildReorderingArray(size_t reserve = 128);
+    
+    ChildReorderingArrayChunk allocate(size_t);
+    
+private:
+    friend class ChildReorderingArrayChunk;
+    
+    std::vector<uint8_t> _scratch;
+    size_t _availableIndex = 0;
+};
+
+INLINE uint8_t ChildReorderingArrayChunk::operator[](size_t index) const
+{
+    ASSERT(index < _size);
+    return _array->_scratch[_startIndex + index];
+}
+
+INLINE uint8_t& ChildReorderingArrayChunk::operator[](size_t index)
+{
+    ASSERT(index < _size);
+    return _array->_scratch[_startIndex + index];
+}
+
 class EncodingContext final
 {
 public:
@@ -57,6 +104,8 @@ public:
     
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
     
+    ChildReorderingArray& childOrderingArray() { return _childOrderingArray; }
+    
 private:
     const float4x4 _viewProjectionMatrix;
     const RectF _viewportRect;
@@ -71,4 +120,6 @@ private:
     
     std::unordered_map<const Object3D*, ProjectedBB> _objectToProjectedBB;
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
+    
+    ChildReorderingArray _childOrderingArray;
 };

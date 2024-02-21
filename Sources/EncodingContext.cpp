@@ -8,6 +8,44 @@
 #include "Object3D.h"
 #include "RectF.h"
 
+ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t size)
+: _array(&array), _startIndex(startIndex), _size(size)
+{}
+
+ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArrayChunk&& other)
+: _array(other._array), _startIndex(other._startIndex), _size(other._size)
+{
+    other._array = nullptr;
+}
+
+ChildReorderingArrayChunk::~ChildReorderingArrayChunk()
+{
+    if (_array != nullptr)
+    {
+        _array->_availableIndex = _startIndex;
+    }
+}
+
+ChildReorderingArray::ChildReorderingArray(size_t reserve)
+{
+    _scratch.resize(reserve);
+}
+
+ChildReorderingArrayChunk
+ChildReorderingArray::allocate(size_t size)
+{
+    const size_t requiredScratchSize = _availableIndex + size;
+    if (_scratch.size() < requiredScratchSize)
+    {
+        _scratch.resize(requiredScratchSize);
+    }
+    
+    ChildReorderingArrayChunk chunk { *this, _availableIndex, size };
+    _availableIndex += size;
+    
+    return chunk;
+}
+
 ProjectedBB::ProjectedBB(const RawPoints& pts, const RectF& viewportRect)
 {
     for (size_t i=0; i < 8; ++i)
