@@ -185,7 +185,16 @@ public:
         if (--_stackIndex >= 0)
         {
             THREAD auto& locals = _stack[_stackIndex];
-            locals.relativeMinDrawCommandIndices = max(locals.relativeMinDrawCommandIndices, relativeMinDrawCommandIndices);
+            if (locals.relativeMinDrawCommandIndices[0] < 0)
+            {
+                locals.relativeMinDrawCommandIndices[0] = relativeMinDrawCommandIndices[0];
+            }
+            
+            if (locals.relativeMinDrawCommandIndices[1] < 0)
+            {
+                locals.relativeMinDrawCommandIndices[1] = relativeMinDrawCommandIndices[1];
+            }
+            
             --locals.nbChildrenLeft;
         }
     }
