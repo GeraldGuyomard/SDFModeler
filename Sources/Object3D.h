@@ -105,6 +105,7 @@ public:
     MaterialID materialID() const;
     
     Ptr parent() const { return _parent.lock(); }
+    Ptr directOwner() const;
     Ptr owner() const;
     
     bool isCompound() const { return _isCompound; }

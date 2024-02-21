@@ -42,7 +42,7 @@ Object3D::objectByID(ObjectID id) const
 }
 
 Object3D::Ptr
-Object3D::owner() const
+Object3D::directOwner() const
 {
     auto self = std::const_pointer_cast<Object3D>(shared_from_this());
     auto object = self;
@@ -54,6 +54,26 @@ Object3D::owner() const
     
     
     return (object != nullptr) ? object : self;
+}
+
+Object3D::Ptr
+Object3D::owner() const
+{
+    auto self = std::const_pointer_cast<Object3D>(shared_from_this());
+    auto object = self;
+    Ptr owner;
+    
+    while (object != nullptr)
+    {
+        if (object->isCompound())
+        {
+            owner = object;
+        }
+        
+        object = object->parent();
+    }
+    
+    return (owner != nullptr) ? owner : self;
 }
 
 void
@@ -471,7 +491,11 @@ Object3D::setLocalTransform(const RSTTransformer& transformer)
 void
 Object3D::setOperation(SDFOperation op)
 {
-    _operation = op;
+    if (_operation != op)
+    {
+        _operation = op;
+        invalidate();
+    }
 }
 
 TileDescriptor::TileDescriptor(Tile& tile)
