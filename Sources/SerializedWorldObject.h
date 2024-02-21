@@ -17,12 +17,12 @@ struct Tile final
 {
     float2 minPt = { 0, 0 }; // 8
     float2 maxPt = { 0, 0 }; // 8
-    size_t nbCommands = 0; // 8
-    TDrawCommandIndex rootCommandIndex = -1; // 8
+    uint16_t nbCommands = 0; // 2
+    TDrawCommandIndex rootCommandIndex = -1; // 2
 };
 
 
-static CONSTANT constexpr size_t kMaxTiles = 16 * 16;
+static CONSTANT constexpr size_t kMaxTiles = 32 * 32;
 static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
 static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
 
