@@ -18,8 +18,5 @@ constexpr static CONSTANT TPrimitiveOffset kInvalidPrimitiveOffset = -1;
 using TDrawCommandIndex = int16_t;
 struct DrawCommand final
 {
-    uint16_t depth = 0;
     TPrimitiveOffset primitiveOffsetOrNegativeChildrenCount = 0; // -1 if no primitive
-    ObjectID objectID;
-    MaterialID materialID;
 };

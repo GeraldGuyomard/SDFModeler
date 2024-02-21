@@ -30,7 +30,7 @@ struct EncodedPrimitive final
     uint8_t     operation;
     
     uint32_t    objectId;
-    uint32_t    _unused2;
+    uint32_t    materialId;
     uint32_t    objectCode;
     
     uint8_t     firstByte;

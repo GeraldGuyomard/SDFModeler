@@ -251,31 +251,21 @@ EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
 }
 
 void
-EncodingContext::writePrimitiveDrawCommand(uint8_t depth, ObjectID id, MaterialID materialID, TPrimitiveOffset primitiveOffset)
+EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset)
 {
     assert(primitiveOffset >= 0);
     
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
-    cmd.depth = depth;
-    cmd.objectID = id;
-    cmd.materialID = materialID;
-    
     cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
 }
 
 DrawCommand&
-EncodingContext::writeGroupDrawCommand(uint8_t depth, ObjectID id, MaterialID materialID)
+EncodingContext::writeGroupDrawCommand()
 {
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
-    
-    DrawCommand& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
-    cmd.depth = depth;
-    cmd.objectID = id;
-    cmd.materialID = materialID;
-    
-    return cmd;
+    return _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
 }
 
 void

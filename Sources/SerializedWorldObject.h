@@ -466,7 +466,10 @@ public:
     MaterialID materialID() const
     {
         auto cmd = _serialized.drawCommand(_rootCommandIndex);
-        return cmd->materialID;
+        ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+        auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+        
+        return prim->materialId;
     }
     
     float computeDistance(float3 pt) const
@@ -588,25 +591,19 @@ public:
         if (visitor.hit())
         {
             const auto minCmdIndex = visitor.minCmdIndex();
+            ASSERT(minCmdIndex >= 0);
             
-            float4 color;
-            ObjectID objectID;
+            // This should be a leaf primitive
+            const auto cmd = _serialized.drawCommand(minCmdIndex);
+            ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
             
-            if (minCmdIndex >= 0)
-            {
-                //ASSERT(minCmdIndex >= 0);
-                
-                const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, minCmdIndex);
-                ShadedPrimitive primitive { _serialized, minCmdIndex, subCullingInfo };
-                color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
-                objectID = cmd->objectID;
-            }
-            else
-            {
-                color = { 1, 1, 1, 1 };
-                objectID = 1;
-            }
+            const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, minCmdIndex);
+            ShadedPrimitive primitive { _serialized, minCmdIndex, subCullingInfo };
+            const auto color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
             
+            auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            
+            const auto objectID = prim->objectId;
             
             return RayMarchResult { ray, objectID, color, d };
         }

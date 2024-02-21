@@ -91,7 +91,7 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx, uint8_t depth) const;
+    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx) const;
     
     virtual void selfEncode(EncodingContext& context) const;
     
@@ -224,10 +224,14 @@ public:
                 object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
             }
          
+            const auto matID = materialID();
+            ASSERT(matID >= 0);
+            
             return encodePrimitive<SDFObject<TGeometry, RSTTransformer>>(
                                                 encodedPrimitive,
                                                object,
                                                id(),
+                                                matID,
                                                object.objectType(),
                                                transformer.transformerType(),
                                                 operation(),

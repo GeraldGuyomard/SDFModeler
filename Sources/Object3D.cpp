@@ -464,7 +464,7 @@ TileDescriptor::TileDescriptor(Tile& tile)
 {}
 
 bool
-Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context,  uint8_t depth) const
+Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context) const
 {
     const auto* geomType = geometryType();
     if (geomType != nullptr)
@@ -478,7 +478,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         }
         
         const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-        context.writePrimitiveDrawCommand(depth, id(), materialID(), myPrimitiveOffset);
+        context.writePrimitiveDrawCommand(myPrimitiveOffset);
         return true;
     }
     else
@@ -507,14 +507,12 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         
         if (!positiveChildren.empty())
         {
-            auto& cmd = context.writeGroupDrawCommand(depth, id(), materialID());
+            auto& cmd = context.writeGroupDrawCommand();
             int16_t n = 0;
-            
-            const uint8_t childrenDepth = depth + 1;
             
             for (const auto& child: positiveChildren)
             {
-                if (child->encodeHierarchy(tileDescriptor, context, childrenDepth))
+                if (child->encodeHierarchy(tileDescriptor, context))
                 {
                     ++n;
                 }
@@ -524,7 +522,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
             {
                 for (const auto& child: negativeChildren)
                 {
-                    if (child->encodeHierarchy(tileDescriptor, context, childrenDepth))
+                    if (child->encodeHierarchy(tileDescriptor, context))
                     {
                         ++n;
                     }
@@ -661,7 +659,7 @@ World::encode(EncodingContext& context,
         tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
-        _rootObject->encodeHierarchy(descr, context, 0);
+        _rootObject->encodeHierarchy(descr, context);
         
         tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
         if (tile.nbCommands == 0)
