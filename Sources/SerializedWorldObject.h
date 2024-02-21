@@ -399,20 +399,6 @@ public:
         return _hit;
     }
     
-    TPrimitiveOffset outlinePrimOffset(CONSTANT SerializedWorldObject& serialized) const
-    {
-        if (_outlineCmdIndex >= 0)
-        {
-            const TPrimitiveOffset offset = serialized.drawCommand(_outlineCmdIndex)->primitiveOffsetOrNegativeChildrenCount;
-            ASSERT(offset >= 0);
-            return offset;
-        }
-        else
-        {
-            return kInvalidPrimitiveOffset;
-        }
-    }
-    
     TDrawCommandIndex minCmdIndex() const
     {
         return _minCmdIndex;
@@ -447,11 +433,9 @@ public:
 private:
     CullingInfo _cullingInfo;
     
-    uint8_t _currentDepth = 0;
     float _minDistance = 1e5f;
     float _prevMinDistance = 1e5f;
     TDrawCommandIndex _minCmdIndex = -1;
-    TDrawCommandIndex _outlineCmdIndex = -1;
     
     bool _hit = false;
 };
@@ -566,27 +550,6 @@ public:
                 break;
             }
         }
-        
-        const auto outlinePrimOffset = visitor.outlinePrimOffset(_serialized);
-        
-        /*if (outlinePrimOffset >= 0)
-        {
-            if (!visitor.hit())
-            {
-                CONSTANT EncodedPrimitive* minHeader = _serialized.primitive(outlinePrimOffset);
-                return RayMarchResult { ray, minHeader->objectId, float4{ 1, 1, 1, 1 }, 0.f };
-            }
-            else if (outlinePrimIndex != minPrimIndex)
-            {
-                CONSTANT EncodedPrimitive* outlinePrimitive = primsArray.primitive(outlinePrimIndex);
-                CONSTANT EncodedPrimitive* minPrimitive = primsArray.primitive(minPrimIndex);
-                
-                if (outlinePrimitive->objectId != minPrimitive->objectId)
-                {
-                    return RayMarchResult { ray, minPrimitive->objectId, float4{ 1, 1, 1, 1 }, 0.f };
-                }
-            }
-        }*/
         
         if (visitor.hit())
         {
