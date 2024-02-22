@@ -5,6 +5,8 @@
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
+#pragma once
+
 #import <Metal/Metal.h>
 #import "CommonDefinitions.h"
 
@@ -140,6 +142,10 @@ public:
         return _materialsBuffer->uniform();
     }
     
+protected:
+    virtual id<MTLFunction> vertexFunction(id<MTLLibrary> _Nonnull mtlLib) const;
+    virtual id<MTLFunction> fragmentFunction(id<MTLLibrary> _Nonnull mtlLib) const;
+    
 private:
     MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
     
@@ -208,7 +214,9 @@ private:
     id <MTLCommandQueue> _Nonnull _commandQueue;
 
     std::vector<RenderPass*> _renderPasses;
+    
     std::unique_ptr<SDFRenderPass> _sdfRenderPass;
+    RenderPass::Ptr _outlineRenderPass;
 
     
     float4x4 _projectionMatrix;

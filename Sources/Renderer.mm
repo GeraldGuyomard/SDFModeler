@@ -17,6 +17,7 @@
 
 #include "Object3D.h"
 #include "RenderFunctions.h"
+#include "OutlineRenderPass.h"
 
 #include "MainViewController.h"
 
@@ -26,6 +27,19 @@ Vertex s_Vertices[4] = {
     { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
+
+id<MTLFunction>
+SDFRenderPass::vertexFunction(id<MTLLibrary> _Nonnull mtlLib) const
+{
+    return [mtlLib newFunctionWithName:@"vertexShaderSDF"];
+}
+
+id<MTLFunction>
+SDFRenderPass::fragmentFunction(id<MTLLibrary> _Nonnull mtlLib) const
+{
+    return [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
+    //return [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
+}
 
 bool
 SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config)
@@ -48,14 +62,14 @@ SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLi
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
-    id <MTLFunction> vertexFunction = [mtlLib newFunctionWithName:@"vertexShader"];
-    id <MTLFunction> fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShader"];
+    id <MTLFunction> vertexFunc = vertexFunction(mtlLib);
+    id <MTLFunction> fragmentFunc = fragmentFunction(mtlLib);
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"MyPipeline";
     pipelineStateDescriptor.rasterSampleCount = config.sampleCount;
-    pipelineStateDescriptor.vertexFunction = vertexFunction;
-    pipelineStateDescriptor.fragmentFunction = fragmentFunction;
+    pipelineStateDescriptor.vertexFunction = vertexFunc;
+    pipelineStateDescriptor.fragmentFunction = fragmentFunc;
     pipelineStateDescriptor.vertexDescriptor = _mtlVertexDescriptor;
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = config.colorPixelFormat;
     pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
@@ -194,6 +208,8 @@ void
 Renderer::init()
 {
     _sdfRenderPass = std::make_unique<SDFRenderPass>();
+    _outlineRenderPass = std::make_unique<OutlineRenderPass>();
+    
     _renderPasses.push_back(_sdfRenderPass.get());
     
     const auto device = _delegate->getMTLDevice();

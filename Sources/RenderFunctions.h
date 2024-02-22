@@ -15,32 +15,47 @@
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
+#include "FragmentShader/MattingShader.h"
 
 template <typename TShader>
-INLINE RayMarchResult rayMarchEnvironment(TShader shader, Ray ray, CONSTANT SerializedWorldObject& serializedWorld)
+class NullEnvironment final
 {
-    SDFObject<SDFPlane> grid({}, { float3(-0.5f) });
-    
-    RayMarchResult res { ray };
-    res.distance = grid.raycast(ray);
-    
-    if ((res.distance >= 0) && (res.distance <= ray.maxLength))
-    {
-        constexpr float kGridGreyLevel = 0.5f;
-        const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
-        GridMaterial mat(0.5f, color);
-        
-        const auto pt = ray.pt(res.distance);
-        res.color = mat.computeAlbedo(ray, res.distance, pt);
-        return res;
-    }
-    else
+public:
+    RayMarchResult rayMarch(TShader shader, Ray ray, CONSTANT SerializedWorldObject& serializedWorld) const
     {
         return { ray };
     }
-}
+};
 
 template <typename TShader>
+class GridEnvironment final
+{
+public:
+    RayMarchResult rayMarch(TShader shader, Ray ray, CONSTANT SerializedWorldObject& serializedWorld) const
+    {
+        SDFObject<SDFPlane> grid({}, { float3(-0.5f) });
+        
+        RayMarchResult res { ray };
+        res.distance = grid.raycast(ray);
+        
+        if ((res.distance >= 0) && (res.distance <= ray.maxLength))
+        {
+            constexpr float kGridGreyLevel = 0.5f;
+            const float4 color{ kGridGreyLevel, kGridGreyLevel, kGridGreyLevel, kGridGreyLevel };
+            GridMaterial mat(0.5f, color);
+            
+            const auto pt = ray.pt(res.distance);
+            res.color = mat.computeAlbedo(ray, res.distance, pt);
+            return res;
+        }
+        else
+        {
+            return { ray };
+        }
+    }
+};
+
+template <typename TShader, typename TEnvironment = GridEnvironment<TShader>>
 INLINE RayMarchResult rayMarch(float2 ndcPosition,
                             CONSTANT Uniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
@@ -52,7 +67,9 @@ INLINE RayMarchResult rayMarch(float2 ndcPosition,
     
     WorldObject<TShader> worldObject { shader, serializedWorld };
     const auto worldRes = worldObject.rayMarch(ndcPosition, uniforms.viewportSize, ray);
-    const auto envRes = rayMarchEnvironment(shader, ray, serializedWorld);
+    
+    TEnvironment environment;
+    const auto envRes = environment.rayMarch(shader, ray, serializedWorld);
     
     if (worldRes.isValid())
     {
@@ -83,13 +100,13 @@ struct RenderResult final
     {}
 };
 
-template <typename TShader>
+template <typename TShader, typename TEnvironment>
 INLINE RenderResult render(float2 viewportNDC,
                      CONSTANT Uniforms& uniforms,
                      CONSTANT SerializedWorldObject& serializedWorld,
                      CONSTANT Materials& materials)
 {
-    const auto res = rayMarch<TShader>(viewportNDC, uniforms, serializedWorld, materials);
+    const auto res = rayMarch<TShader, TEnvironment>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isValid())
     {
         const float3 pt = res.ray.pt(res.distance);
@@ -107,28 +124,12 @@ INLINE RenderResult render(float2 viewportNDC,
     return RenderResult { c, 1.f };
 }
 
-INLINE RenderResult renderPhong(float2 viewportNDC,
-                          CONSTANT Uniforms& uniforms,
-                          CONSTANT SerializedWorldObject& serializedWorld,
-                          CONSTANT Materials& materials)
-{
-    return render<PhongShader>(viewportNDC, uniforms, serializedWorld, materials);
-}
-
-INLINE RenderResult renderCellShaded(float2 viewportNDC,
-                               CONSTANT Uniforms& uniforms,
-                               CONSTANT SerializedWorldObject& serializedWorld,
-                               CONSTANT Materials& materials)
-{
-    return render<CellShader>(viewportNDC, uniforms, serializedWorld, materials);
-}
-
 INLINE RenderResult renderDefault(float2 viewportNDC,
                             CONSTANT Uniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
-    return renderPhong(viewportNDC, uniforms, serializedWorld, materials);
+    return render<PhongShader, GridEnvironment<PhongShader>>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
 INLINE PickResult pickObject(float2 viewportNDC,

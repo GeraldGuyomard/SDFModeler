@@ -345,8 +345,8 @@
             filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "325"
-            endingLineNumber = "325"
+            startingLineNumber = "370"
+            endingLineNumber = "370"
             landmarkName = "Renderer::renderPixel(pixelPosition)"
             landmarkType = "7">
          </BreakpointContent>
@@ -418,47 +418,63 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B5214453-3707-480D-8C04-C8BF8D69B914"
+            uuid = "67E56665-5BC2-43D7-966B-7C684656A932"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Sources/RenderFunctions.h"
+            filePath = "Sources/MTKViewRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "98"
-            endingLineNumber = "98"
-            landmarkName = "render(viewportNDC, uniforms, serializedWorld, materials)"
-            landmarkType = "9">
+            startingLineNumber = "86"
+            endingLineNumber = "86"
+            landmarkName = "MTKViewRendererDelegate::init(renderer)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/Renderer.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "195"
+            endingLineNumber = "195"
+            landmarkName = "Renderer::Renderer(delegate)"
+            landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "B5214453-3707-480D-8C04-C8BF8D69B914 - 95f372773b66e50b"
+                  uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5 - fe4bf7496a6c25c0"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "RenderResult render&lt;PhongShader&gt;(float vector[2], Uniforms const&amp;, SerializedWorldObject const&amp;, Materials const&amp;)"
+                  symbolName = "Renderer::Renderer(std::__1::unique_ptr&lt;RendererDelegate, std::__1::default_delete&lt;RendererDelegate&gt;&gt;)"
                   moduleName = "SDFModeler"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/RenderFunctions.h"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "97"
-                  endingLineNumber = "97"
-                  offsetFromSymbolStart = "504">
+                  startingLineNumber = "36"
+                  endingLineNumber = "36"
+                  offsetFromSymbolStart = "292">
                </Location>
                <Location
-                  uuid = "B5214453-3707-480D-8C04-C8BF8D69B914 - 95f372773b66e52a"
+                  uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5 - fe4bf7496a6c5613"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "RenderResult render&lt;PhongShader&gt;(float vector[2], Uniforms const&amp;, SerializedWorldObject const&amp;, Materials const&amp;)"
+                  symbolName = "Renderer::Renderer(std::__1::unique_ptr&lt;RendererDelegate, std::__1::default_delete&lt;RendererDelegate&gt;&gt;)"
                   moduleName = "SDFModeler"
                   usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/RenderFunctions.h"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "98"
-                  endingLineNumber = "98"
-                  offsetFromSymbolStart = "448">
+                  startingLineNumber = "181"
+                  endingLineNumber = "181"
+                  offsetFromSymbolStart = "216">
                </Location>
             </Locations>
          </BreakpointContent>
@@ -466,15 +482,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "06A0BA81-74CC-42BF-962D-8BA90C53BE9E"
+            uuid = "4BA35CFB-8022-4DB1-9EED-6B8BA0EB2938"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Sources/RenderFunctions.h"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "95"
-            endingLineNumber = "95"
+            startingLineNumber = "109"
+            endingLineNumber = "109"
             landmarkName = "render(viewportNDC, uniforms, serializedWorld, materials)"
             landmarkType = "9">
          </BreakpointContent>

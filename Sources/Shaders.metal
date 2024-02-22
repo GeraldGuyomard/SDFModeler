@@ -16,7 +16,7 @@ struct VertexShaderOut
     float2 viewportNDC;
 };
 
-vertex VertexShaderOut vertexShader(Vertex in [[stage_in]])
+vertex VertexShaderOut vertexShaderSDF(Vertex in [[stage_in]])
 {
     VertexShaderOut out;
 
@@ -32,7 +32,7 @@ struct FragmentShaderOut
     float depth [[depth(any)]];
 };
 
-fragment FragmentShaderOut fragmentShader(VertexShaderOut in [[stage_in]],
+fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
                                constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
@@ -42,6 +42,21 @@ fragment FragmentShaderOut fragmentShader(VertexShaderOut in [[stage_in]],
                          uniforms,
                          serializedWorld,
                          materials);
+    
+    FragmentShaderOut out;
+    out.color = res.color;
+    out.depth = res.depth;
+    
+    return out;
+}
+
+fragment FragmentShaderOut fragmentShaderMatting(VertexShaderOut in [[stage_in]],
+                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+                               constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
+                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
+                               )
+{
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>>(in.viewportNDC, uniforms, serializedWorld, materials);
     
     FragmentShaderOut out;
     out.color = res.color;

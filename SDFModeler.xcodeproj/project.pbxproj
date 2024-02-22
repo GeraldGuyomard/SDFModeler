@@ -180,6 +180,12 @@
 		7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
 		7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
 		7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
+		7F9234132B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */; };
+		7F9234142B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */; };
+		7F9234152B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */; };
+		7F9234182B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
+		7F9234192B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
+		7F92341A2B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -331,6 +337,10 @@
 		7F74B67B2B61974A00262F2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupSelectionCommand.cpp; sourceTree = "<group>"; };
 		7F8D0D9C2B79A3E700AA2225 /* GroupSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupSelectionCommand.h; sourceTree = "<group>"; };
+		7F9234112B86E2D400E6A7A6 /* OutlineRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutlineRenderPass.h; sourceTree = "<group>"; };
+		7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OutlineRenderPass.mm; sourceTree = "<group>"; };
+		7F9234162B86E60D00E6A7A6 /* MattingShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MattingShader.h; sourceTree = "<group>"; };
+		7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MattingShader.cpp; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -403,6 +413,8 @@
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
+				7F9234112B86E2D400E6A7A6 /* OutlineRenderPass.h */,
+				7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */,
 				7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */,
 				7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */,
 				7444A4D729A1CB63009632C3 /* MainViewController.h */,
@@ -533,6 +545,8 @@
 				74AF133B29B442AE00F9BBA8 /* PhongShader.h */,
 				74AF133F29B4466B00F9BBA8 /* CellShader.cpp */,
 				74AF133E29B4466B00F9BBA8 /* CellShader.h */,
+				7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */,
+				7F9234162B86E60D00E6A7A6 /* MattingShader.h */,
 			);
 			path = FragmentShader;
 			sourceTree = "<group>";
@@ -761,6 +775,7 @@
 				74DAA6D629AC439E00171C03 /* Results.cpp in Sources */,
 				74DAA6FC29ADB5B900171C03 /* StandardTransformers.cpp in Sources */,
 				743252C529EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
+				7F9234132B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
 				74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */,
@@ -804,6 +819,7 @@
 				748629CD2A004350002407AA /* Type.cpp in Sources */,
 				74A18A9529D9012A0010F1B4 /* Camera.cpp in Sources */,
 				74DAA70A29ADB85D00171C03 /* SDFRoundedBox.cpp in Sources */,
+				7F9234182B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,
 				7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
@@ -816,6 +832,7 @@
 			files = (
 				7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
+				7F9234142B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */,
 				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* SimpleMaterial.cpp in Sources */,
 				74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */,
@@ -834,6 +851,7 @@
 				74AAF29629D7BD3100D322DB /* Renderer.mm in Sources */,
 				74AAF28629D7BCB100D322DB /* SDFGeometry.cpp in Sources */,
 				74AAF27B29D7BC9E00D322DB /* FragmentShader.cpp in Sources */,
+				7F9234192B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,
 				743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74897E9C29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */,
 				748629CE2A004350002407AA /* Type.cpp in Sources */,
@@ -886,6 +904,7 @@
 				7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */,
 				7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */,
 				7F5DE07C2B73091F003FC854 /* EncodedPrimitiveArray.cpp in Sources */,
+				7F9234152B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */,
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
 				7F5DE0902B731697003FC854 /* CompositorServicesRendererDelegate.mm in Sources */,
 				7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */,
@@ -929,6 +948,7 @@
 				7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */,
 				7F5DE0822B73092A003FC854 /* Interaction.cpp in Sources */,
 				7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */,
+				7F92341A2B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,
 				7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */,
 				7F5DE08D2B7314A3003FC854 /* Shaders.metal in Sources */,
 				7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */,
