@@ -96,7 +96,7 @@ INLINE RenderResult render(float2 viewportNDC,
         
         const float4 proj = uniforms.worldTransformToNdc * float4 { pt.x, pt.y, pt.z, 1 };
         const float z = proj.z / proj.w;
-        //return { res.color, z };
+        
         return { res.color, z };
     }
     
@@ -104,7 +104,7 @@ INLINE RenderResult render(float2 viewportNDC,
     //const float grey = max(ray.direction.y, 0.f);
     const float grey = 0.f;
     const float4 c = { grey, grey, grey, 1.f };
-    return RenderResult { c, 0.5f };
+    return RenderResult { c, 1.f };
 }
 
 INLINE RenderResult renderPhong(float2 viewportNDC,

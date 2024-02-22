@@ -90,6 +90,75 @@ public:
     virtual void pause() = 0;    
 };
 
+class RenderPass
+{
+public:
+    using Ptr = std::unique_ptr<RenderPass>;
+    
+    virtual ~RenderPass() = default;
+    
+    virtual bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config) = 0;
+    
+    virtual void updateBuffersState() = 0;
+    virtual void updateUniforms(Renderer&) = 0;
+    
+    virtual void render(Renderer&, id <MTLRenderCommandEncoder>_Nullable renderEncoder) = 0;
+    
+    virtual void onCompletedCommandBuffer(float renderDuration) {}
+    
+    static constexpr size_t kMaxBuffersInFlight = 3;
+    
+private:
+    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
+    
+    id <MTLBuffer> _Nonnull _quadVertexBuffer;
+    id <MTLRenderPipelineState> _Nonnull _pipelineState;
+    id <MTLDepthStencilState> _Nonnull _depthState;
+};
+
+class SDFRenderPass : public RenderPass
+{
+public:
+    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config) override;
+    void updateBuffersState() override;
+    void updateUniforms(Renderer&) override;
+    void render(Renderer&, id <MTLRenderCommandEncoder>_Nullable renderEncoder) override;
+    void onCompletedCommandBuffer(float renderDuration) override;
+    
+    const Uniforms& uniforms() const
+    {
+        return _uniformsBuffer->uniform();
+    }
+
+    const SerializedWorldObject& serializedWorld() const
+    {
+        return _serializedWorldBuffer->uniform();
+    }
+
+    const Materials& materials() const
+    {
+        return _materialsBuffer->uniform();
+    }
+    
+private:
+    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
+    
+    id <MTLBuffer> _Nonnull _quadVertexBuffer;
+    id <MTLRenderPipelineState> _Nonnull _pipelineState;
+    id <MTLDepthStencilState> _Nonnull _depthState;
+    
+    using UniformsBuffer = TUniformBuffer<Uniforms, BufferIndex::BufferIndexUniforms, kMaxBuffersInFlight>;
+    std::unique_ptr<UniformsBuffer> _uniformsBuffer;
+    
+    using SerializedWorldBuffer = TUniformBuffer<SerializedWorldObject, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
+    std::unique_ptr<SerializedWorldBuffer> _serializedWorldBuffer;
+
+    using SerializedMaterials = TUniformBuffer<Materials, BufferIndex::BufferIndexMaterials, kMaxBuffersInFlight>;
+    std::unique_ptr<SerializedMaterials> _materialsBuffer;
+    
+    RenderStats _renderStats;
+};
+
 class Renderer final
 {
 public:
@@ -103,10 +172,6 @@ public:
     
     WorldPtr world() const { return _world; }
     void setWorld(const WorldPtr&);
-    
-    const Uniforms& uniforms() const;
-    const SerializedWorldObject& serializedWorld() const;
-    const Materials& materials() const;
     
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
@@ -122,9 +187,11 @@ public:
     void updateCameraTransforms();
     void pause();
     
-private:
+public:
+    const float4x4& projectionMatrix() const { return _projectionMatrix; }
+    const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
     
-    static constexpr size_t kMaxBuffersInFlight = 3;
+private:
     
     void init();
     
@@ -139,25 +206,13 @@ private:
     dispatch_semaphore_t _Nonnull _inFlightSemaphore;
     
     id <MTLCommandQueue> _Nonnull _commandQueue;
-    
-    id <MTLBuffer> _Nonnull _quadVertexBuffer;
-    id <MTLRenderPipelineState> _Nonnull _pipelineState;
-    id <MTLDepthStencilState> _Nonnull _depthState;
-    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
 
-    using UniformsBuffer = TUniformBuffer<Uniforms, BufferIndex::BufferIndexUniforms, kMaxBuffersInFlight>;
-    std::unique_ptr<UniformsBuffer> _uniformsBuffer;
-    
-    using SerializedWorldBuffer = TUniformBuffer<SerializedWorldObject, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
-    std::unique_ptr<SerializedWorldBuffer> _serializedWorldBuffer;
+    std::vector<RenderPass*> _renderPasses;
+    std::unique_ptr<SDFRenderPass> _sdfRenderPass;
 
-    using SerializedMaterials = TUniformBuffer<Materials, BufferIndex::BufferIndexMaterials, kMaxBuffersInFlight>;
-    std::unique_ptr<SerializedMaterials> _materialsBuffer;
     
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;
     
     RenderCallback _renderCallback;
-    
-    RenderStats _renderStats;
 };

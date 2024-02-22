@@ -27,30 +27,9 @@ Vertex s_Vertices[4] = {
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
 
-Renderer::Renderer(RendererDelegate::Ptr delegate)
-: _delegate(std::move(delegate)),
-_inFlightSemaphore(dispatch_semaphore_create(kMaxBuffersInFlight))
+bool
+SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config)
 {
-    _delegate->init(this);
-    
-    init();
-    updateCameraTransforms();
-}
-
-Renderer::~Renderer() = default;
-
-float2
-Renderer::renderSize() const
-{
-    return _delegate->renderSize();
-}
-
-void
-Renderer::init()
-{
-    
-    /// Load Metal state objects and initialize renderer dependent view properties
-
     _mtlVertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
     _mtlVertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
@@ -68,16 +47,9 @@ Renderer::init()
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(Vertex);
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
-
-    const auto device = _delegate->getMTLDevice();
     
-    id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
-
-    id <MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"vertexShader"];
-
-    id <MTLFunction> fragmentFunction = [defaultLibrary newFunctionWithName:@"fragmentShader"];
-
-    const auto config = _delegate->configuration();
+    id <MTLFunction> vertexFunction = [mtlLib newFunctionWithName:@"vertexShader"];
+    id <MTLFunction> fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShader"];
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = @"MyPipeline";
@@ -100,7 +72,7 @@ Renderer::init()
     depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
     depthStateDesc.depthWriteEnabled = YES;
     _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
-
+    
     _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
     _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
     _materialsBuffer = std::make_unique<SerializedMaterials>(device, @"Materials");
@@ -110,69 +82,39 @@ Renderer::init()
     
     _quadVertexBuffer.label = @"QuadVertexBuffer";
     
-    //_quadVertexBuffer
-    _commandQueue = [device newCommandQueue];
+    return true;
 }
 
-
 void
-Renderer::updateBuffersState()
+SDFRenderPass::updateBuffersState()
 {
     _uniformsBuffer->update();
     _serializedWorldBuffer->update();
     _materialsBuffer->update();
 }
 
-void Renderer::setCamera(const Camera::Ptr& cam)
+void 
+SDFRenderPass::updateUniforms(Renderer& renderer)
 {
-    _camera = cam;
-    
-    if (_camera != nullptr)
-    {
-        updateCameraTransforms();
-    }
-}
-
-
-const Uniforms&
-Renderer::uniforms() const
-{
-    return _uniformsBuffer->uniform();
-}
-
-const SerializedWorldObject&
-Renderer::serializedWorld() const
-{
-    return _serializedWorldBuffer->uniform();
-}
-
-const Materials&
-Renderer::materials() const
-{
-    return _materialsBuffer->uniform();
-}
-
-void
-Renderer::updateUniforms()
-{
-    /// Update any game state before encoding renderint commands to our drawable
     auto& uniforms = _uniformsBuffer->uniform();
 
-    const float4x4 cameraMatrix = (_camera != nullptr) ? _camera->worldTransform() : float4x4_identity();
+    const auto camera = renderer.camera();
     
-    uniforms.viewportSize = renderSize();
-    uniforms.ndcToWorldTransform = cameraMatrix * _invProjectionMatrix;
+    const float4x4 cameraMatrix = (camera != nullptr) ? camera->worldTransform() : float4x4_identity();
+    
+    uniforms.viewportSize = renderer.renderSize();
+    uniforms.ndcToWorldTransform = cameraMatrix * renderer.invProjectionMatrix();
     uniforms.worldTransformToNdc = inverse(uniforms.ndcToWorldTransform);
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
-    if (auto world = this->world())
+    if (auto world = renderer.world())
     {
         auto& serializedWorld = _serializedWorldBuffer->uniform();
         auto& serializedMaterials = _materialsBuffer->uniform();
         
         const auto viewMatrix = inverse(cameraMatrix);
-        const auto viewProjectionMatrix = _projectionMatrix * viewMatrix;
+        const auto viewProjectionMatrix = renderer.projectionMatrix() * viewMatrix;
         
         EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
         
@@ -181,54 +123,17 @@ Renderer::updateUniforms()
 }
 
 void
-Renderer::setRenderCallback(const RenderCallback& cb)
+SDFRenderPass::render(Renderer& renderer, id <MTLRenderCommandEncoder>_Nullable renderEncoder)
 {
-    _renderCallback = cb;
-}
-
-void
-Renderer::render()
-{
-    /// Per frame updates here
-    auto now = HighResClock::now();
-    
-    dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
-    
-    id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
-    commandBuffer.label = @"MyCommand";
-    
-    __block dispatch_semaphore_t block_sema = _inFlightSemaphore;
-    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer)
-     {
-        auto end = HighResClock::now();
-        const auto dT = end - now;
-        
-        const float renderFrameTimeInMs = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
-        _renderStats.submitFrameRenderTime(renderFrameTimeInMs);
-        
-        dispatch_semaphore_signal(block_sema);
-    }];
-    
-    updateBuffersState();
-    updateUniforms();
-    
-    const float2 viewportSize = _uniformsBuffer->uniform().viewportSize;
+    const float2 viewportSize = renderer.renderSize();
     
     const auto& serialized = _serializedWorldBuffer->uniform();
     const float2 tileGridSize { serialized.numTileColumns, serialized.numTileRows };
     
     _renderStats.setViewportInfo(viewportSize, tileGridSize);
     
-    /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
-    ///   holding onto the drawable and blocking the display pipeline any longer than necessary
-    MTLRenderPassDescriptor* renderPassDescriptor = _delegate->currentRenderPassDescriptor();
-    
-    if(renderPassDescriptor != nil)
+    if(renderEncoder != nil)
     {
-        /// Final pass rendering code here
-        
-        id <MTLRenderCommandEncoder> renderEncoder =
-        [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         renderEncoder.label = @"MyRenderEncoder";
         
         [renderEncoder pushDebugGroup:@"RayMarch"];
@@ -258,10 +163,134 @@ Renderer::render()
         [renderEncoder popDebugGroup];
         
         [renderEncoder endEncoding];
-        
-        auto drawable = _delegate->currentDrawable();
-        [commandBuffer presentDrawable:drawable];
     }
+}
+
+void 
+SDFRenderPass::onCompletedCommandBuffer(float renderDuration)
+{
+    _renderStats.submitFrameRenderTime(renderDuration);
+}
+
+Renderer::Renderer(RendererDelegate::Ptr delegate)
+: _delegate(std::move(delegate)),
+_inFlightSemaphore(dispatch_semaphore_create(RenderPass::kMaxBuffersInFlight))
+{
+    _delegate->init(this);
+    
+    init();
+    updateCameraTransforms();
+}
+
+Renderer::~Renderer() = default;
+
+float2
+Renderer::renderSize() const
+{
+    return _delegate->renderSize();
+}
+
+void
+Renderer::init()
+{
+    _sdfRenderPass = std::make_unique<SDFRenderPass>();
+    _renderPasses.push_back(_sdfRenderPass.get());
+    
+    const auto device = _delegate->getMTLDevice();
+    id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
+    const auto config = _delegate->configuration();
+    
+    for (auto renderPass : _renderPasses)
+    {
+        renderPass->init(device, defaultLibrary, config);
+    }
+    
+    //_quadVertexBuffer
+    _commandQueue = [device newCommandQueue];
+}
+
+
+void
+Renderer::updateBuffersState()
+{
+    for (auto pass : _renderPasses)
+    {
+        pass->updateBuffersState();
+    }
+}
+
+void Renderer::setCamera(const Camera::Ptr& cam)
+{
+    _camera = cam;
+    
+    if (_camera != nullptr)
+    {
+        updateCameraTransforms();
+    }
+}
+
+void
+Renderer::updateUniforms()
+{
+    for (auto pass : _renderPasses)
+    {
+        pass->updateUniforms(*this);
+    }
+}
+
+void
+Renderer::setRenderCallback(const RenderCallback& cb)
+{
+    _renderCallback = cb;
+}
+
+void
+Renderer::render()
+{
+    /// Per frame updates here
+    auto now = HighResClock::now();
+    
+    dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
+    
+    id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
+    commandBuffer.label = @"MyCommand";
+    
+    __block dispatch_semaphore_t block_sema = _inFlightSemaphore;
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer)
+     {
+        auto end = HighResClock::now();
+        const auto dT = end - now;
+        
+        const float renderFrameTimeInMs = std::chrono::duration_cast<std::chrono::milliseconds>(dT).count();
+        
+        for (auto pass : _renderPasses)
+        {
+            pass->onCompletedCommandBuffer(renderFrameTimeInMs);
+        }
+        
+        dispatch_semaphore_signal(block_sema);
+    }];
+    
+    updateBuffersState();
+    updateUniforms();
+    
+    auto renderPassDescriptor =_delegate->currentRenderPassDescriptor();
+    
+    for (auto pass : _renderPasses)
+    {
+        id <MTLRenderCommandEncoder> renderEncoder = nil;
+        
+        if (renderPassDescriptor != nullptr)
+        {
+            renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        }
+        //renderEncoder.label = @"MyRenderEncoder";
+        
+        pass->render(*this, renderEncoder);
+    }
+    
+    auto drawable = _delegate->currentDrawable();
+    [commandBuffer presentDrawable:drawable];
     
     [commandBuffer commit];
     
@@ -291,7 +320,7 @@ Renderer::ray(float2 pixelPosition) const
     const auto size = renderSize();
     const auto p = pixelToNDC(size, pixelPosition);
     
-    const auto ray = Ray::make(p, uniforms());
+    const auto ray = Ray::make(p, _sdfRenderPass->uniforms());
     return ray;
 }
 
@@ -300,9 +329,9 @@ Renderer::pick(float2 pixelPosition) const
 {
     const auto pixel = renderPixel(pixelPosition);
     
-    const auto& uniforms = this->uniforms();
-    const auto& serializedWorld = this->serializedWorld();
-    const auto& materials = this->materials();
+    const auto& uniforms = _sdfRenderPass->uniforms();
+    const auto& serializedWorld = _sdfRenderPass->serializedWorld();
+    const auto& materials = _sdfRenderPass->materials();
     
     const auto size = renderSize();
     
@@ -314,9 +343,9 @@ Renderer::pick(float2 pixelPosition) const
 float4
 Renderer::renderPixel(float2 pixelPosition) const
 {
-    const auto& uniforms = this->uniforms();
-    const auto& serializedWorld = this->serializedWorld();
-    const auto& materials = this->materials();
+    const auto& uniforms = _sdfRenderPass->uniforms();
+    const auto& serializedWorld = _sdfRenderPass->serializedWorld();
+    const auto& materials = _sdfRenderPass->materials();
     
     const auto size = renderSize();
     
