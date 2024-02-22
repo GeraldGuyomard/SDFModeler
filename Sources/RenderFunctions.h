@@ -100,7 +100,7 @@ struct RenderResult final
     {}
 };
 
-template <typename TShader, typename TEnvironment>
+template <typename TShader, typename TEnvironment, bool writeToDepth = true>
 INLINE RenderResult render(float2 viewportNDC,
                      CONSTANT Uniforms& uniforms,
                      CONSTANT SerializedWorldObject& serializedWorld,
@@ -109,12 +109,19 @@ INLINE RenderResult render(float2 viewportNDC,
     const auto res = rayMarch<TShader, TEnvironment>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isValid())
     {
-        const float3 pt = res.ray.pt(res.distance);
-        
-        const float4 proj = uniforms.worldTransformToNdc * float4 { pt.x, pt.y, pt.z, 1 };
-        const float z = proj.z / proj.w;
-        
-        return { res.color, z };
+        if (writeToDepth)
+        {
+            const float3 pt = res.ray.pt(res.distance);
+            
+            const float4 proj = uniforms.worldTransformToNdc * float4 { pt.x, pt.y, pt.z, 1 };
+            const float z = proj.z / proj.w;
+            
+            return { res.color, z };
+        }
+        else
+        {
+            return { res.color, 0 };
+        }
     }
     
     // Background

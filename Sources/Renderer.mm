@@ -28,18 +28,19 @@ Vertex s_Vertices[4] = {
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
 
-id<MTLFunction>
-SDFRenderPass::vertexFunction(id<MTLLibrary> _Nonnull mtlLib) const
+SDFRenderPass::PipelineConfiguration
+SDFRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
-    return [mtlLib newFunctionWithName:@"vertexShaderSDF"];
+    PipelineConfiguration config;
+    config.pipelineName = "SDF Render";
+    
+    config.vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
+    config.fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
+    config.depthEnabled = true;
+    
+    return config;
 }
 
-id<MTLFunction>
-SDFRenderPass::fragmentFunction(id<MTLLibrary> _Nonnull mtlLib) const
-{
-    return [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
-    //return [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
-}
 
 bool
 SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config)
@@ -62,19 +63,23 @@ SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLi
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
-    id <MTLFunction> vertexFunc = vertexFunction(mtlLib);
-    id <MTLFunction> fragmentFunc = fragmentFunction(mtlLib);
+    const auto renderConfig = pipelineConfiguration(mtlLib);
+    _depthEnabled = renderConfig.depthEnabled;
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-    pipelineStateDescriptor.label = @"MyPipeline";
+    pipelineStateDescriptor.label = [NSString stringWithUTF8String:renderConfig.pipelineName.c_str()];
     pipelineStateDescriptor.rasterSampleCount = config.sampleCount;
-    pipelineStateDescriptor.vertexFunction = vertexFunc;
-    pipelineStateDescriptor.fragmentFunction = fragmentFunc;
+    pipelineStateDescriptor.vertexFunction = renderConfig.vertexFunction;
+    pipelineStateDescriptor.fragmentFunction = renderConfig.fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _mtlVertexDescriptor;
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = config.colorPixelFormat;
-    pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = config.depthStencilPixelFormat;
-
+    
+    if (_depthEnabled)
+    {
+        pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
+        pipelineStateDescriptor.stencilAttachmentPixelFormat = config.depthStencilPixelFormat;
+    }
+    
     NSError *error = NULL;
     _pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
     if (!_pipelineState)
@@ -82,10 +87,13 @@ SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLi
         NSLog(@"Failed to created pipeline state, error %@", error);
     }
 
-    MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-    depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
-    depthStateDesc.depthWriteEnabled = YES;
-    _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
+    if (_depthEnabled)
+    {
+        MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+        depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
+        depthStateDesc.depthWriteEnabled = YES;
+        _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
+    }
     
     _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
     _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
@@ -137,8 +145,23 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     }
 }
 
+id <MTLRenderCommandEncoder> _Nullable
+SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
+{
+    auto renderPassDescriptor = renderer.delegate()->currentRenderPassDescriptor();
+    
+    if (renderPassDescriptor != nullptr)
+    {
+        return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+
 void
-SDFRenderPass::render(Renderer& renderer, id <MTLRenderCommandEncoder>_Nullable renderEncoder)
+SDFRenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
     const float2 viewportSize = renderer.renderSize();
     
@@ -147,7 +170,9 @@ SDFRenderPass::render(Renderer& renderer, id <MTLRenderCommandEncoder>_Nullable 
     
     _renderStats.setViewportInfo(viewportSize, tileGridSize);
     
-    if(renderEncoder != nil)
+    auto renderEncoder = makeRenderEncoder(renderer, cmdBuffer);
+    
+    if (renderEncoder != nil)
     {
         renderEncoder.label = @"MyRenderEncoder";
         
@@ -158,7 +183,11 @@ SDFRenderPass::render(Renderer& renderer, id <MTLRenderCommandEncoder>_Nullable 
         [renderEncoder setCullMode:MTLCullModeNone];
         
         [renderEncoder setRenderPipelineState:_pipelineState];
-        [renderEncoder setDepthStencilState:_depthState];
+        
+        if (_depthEnabled)
+        {
+            [renderEncoder setDepthStencilState:_depthState];
+        }
         
         _uniformsBuffer->setFragmentBuffer(renderEncoder);
         _serializedWorldBuffer->setFragmentBuffer(renderEncoder);
@@ -211,7 +240,7 @@ Renderer::init()
     _sdfRenderPass = std::make_unique<SDFRenderPass>();
     _outlineRenderPass = std::make_unique<OutlineRenderPass>();
     
-    _renderPasses.push_back(_sdfRenderPass.get());
+    _renderPasses = { _sdfRenderPass.get(), _outlineRenderPass.get() };
     
     const auto device = _delegate->getMTLDevice();
     id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
@@ -291,19 +320,14 @@ Renderer::render()
     updateBuffersState();
     updateUniforms();
     
-    auto renderPassDescriptor =_delegate->currentRenderPassDescriptor();
+    for (auto pass : _renderPasses)
+    {
+        pass->prepareRender(*this);
+    }
     
     for (auto pass : _renderPasses)
     {
-        id <MTLRenderCommandEncoder> renderEncoder = nil;
-        
-        if (renderPassDescriptor != nullptr)
-        {
-            renderEncoder = [commandBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
-        }
-        //renderEncoder.label = @"MyRenderEncoder";
-        
-        pass->render(*this, renderEncoder);
+        pass->render(*this, commandBuffer);
     }
     
     auto drawable = _delegate->currentDrawable();
@@ -389,4 +413,10 @@ void
 Renderer::pause()
 {
     _delegate->pause();
+}
+
+id<MTLDevice>
+Renderer::mtlDevice() const
+{
+    return _commandQueue.device;
 }

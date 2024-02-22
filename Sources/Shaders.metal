@@ -50,17 +50,21 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     return out;
 }
 
-fragment FragmentShaderOut fragmentShaderMatting(VertexShaderOut in [[stage_in]],
+struct FragmentShaderOut_ColorOnly
+{
+    float4 color [[color(0)]];
+};
+
+fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
                                constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>>(in.viewportNDC, uniforms, serializedWorld, materials);
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>, false>(in.viewportNDC, uniforms, serializedWorld, materials);
     
-    FragmentShaderOut out;
+    FragmentShaderOut_ColorOnly out;
     out.color = res.color;
-    out.depth = res.depth;
     
     return out;
 }

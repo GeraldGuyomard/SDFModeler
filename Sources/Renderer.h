@@ -18,6 +18,7 @@
 #include "RenderStats.h"
 
 #include <functional>
+#include <string>
 
 template <typename TUniform, BufferIndex bufferIndex, size_t TMaxBuffersInFlight>
 class TUniformBuffer final
@@ -104,7 +105,9 @@ public:
     virtual void updateBuffersState() = 0;
     virtual void updateUniforms(Renderer&) = 0;
     
-    virtual void render(Renderer&, id <MTLRenderCommandEncoder>_Nullable renderEncoder) = 0;
+    virtual void prepareRender(Renderer&) {}
+    virtual void render(Renderer& renderer,
+                        id<MTLCommandBuffer> _Nonnull cmdBuffer) = 0;
     
     virtual void onCompletedCommandBuffer(float renderDuration) {}
     
@@ -124,7 +127,7 @@ public:
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config) override;
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
-    void render(Renderer&, id <MTLRenderCommandEncoder>_Nullable renderEncoder) override;
+    void render(Renderer&, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     void onCompletedCommandBuffer(float renderDuration) override;
     
     const Uniforms& uniforms() const
@@ -143,10 +146,20 @@ public:
     }
     
 protected:
-    virtual id<MTLFunction> vertexFunction(id<MTLLibrary> _Nonnull mtlLib) const;
-    virtual id<MTLFunction> fragmentFunction(id<MTLLibrary> _Nonnull mtlLib) const;
+    
+    struct PipelineConfiguration
+    {
+        id <MTLFunction> _Nonnull vertexFunction;
+        id <MTLFunction> _Nonnull fragmentFunction;
+        bool depthEnabled = true;
+        
+        std::string pipelineName;
+    };
+    
+    virtual PipelineConfiguration pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const;
     
     virtual void configure(EncodingContext&) const {}
+    virtual id <MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer);
     
 private:
     MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
@@ -165,6 +178,8 @@ private:
     std::unique_ptr<SerializedMaterials> _materialsBuffer;
     
     RenderStats _renderStats;
+    bool _depthEnabled = false;
+    
 };
 
 class Renderer final
@@ -189,6 +204,13 @@ public:
     float4 renderPixel(float2 pixelPosition) const;
     
     void invalidate();
+    
+    id<MTLDevice> _Nonnull mtlDevice() const;
+    
+    RendererDelegate* delegate() const
+    {
+        return _delegate.get();
+    }
     
 public:
     void render();
