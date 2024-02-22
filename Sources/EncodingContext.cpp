@@ -318,3 +318,8 @@ EncodingContext::cancelLastDrawCommand()
     --_availableDrawCommandIndex;
 }
 
+void
+EncodingContext::setOptionFlags(uint32_t flags)
+{
+    _optionsFlags = flags;
+}

@@ -7,3 +7,8 @@
 
 #import "OutlineRenderPass.h"
 
+void
+OutlineRenderPass::configure(EncodingContext& ctx) const
+{
+    ctx.setOptionFlags(EncodingContext::fRenderSelectedObjectsOnly);
+}

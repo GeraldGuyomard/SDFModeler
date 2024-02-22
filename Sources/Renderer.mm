@@ -131,6 +131,7 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
         const auto viewProjectionMatrix = renderer.projectionMatrix() * viewMatrix;
         
         EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
+        configure(context);
         
         world->encode(context, serializedMaterials);
     }

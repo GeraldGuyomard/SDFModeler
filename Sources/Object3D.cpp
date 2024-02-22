@@ -516,6 +516,14 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
     {
         assert(children().empty());
         
+        if ((context.optionsFlags() & EncodingContext::fRenderSelectedObjectsOnly) != 0)
+        {
+            if (!selected())
+            {
+                return false;
+            }
+        }
+        
         const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
         if (isCulled)
         {

@@ -14,4 +14,5 @@ class OutlineRenderPass : public SDFRenderPass
 public:
     
 private:
+    void configure(EncodingContext&) const override;
 };

@@ -146,6 +146,8 @@ protected:
     virtual id<MTLFunction> vertexFunction(id<MTLLibrary> _Nonnull mtlLib) const;
     virtual id<MTLFunction> fragmentFunction(id<MTLLibrary> _Nonnull mtlLib) const;
     
+    virtual void configure(EncodingContext&) const {}
+    
 private:
     MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
     
