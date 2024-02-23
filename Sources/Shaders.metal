@@ -99,7 +99,8 @@ fragment BlurOut fragmentShaderBlur(VertexShader_BlurOut in [[stage_in]],
                                    min_filter::linear);
     
     BlurOut out;
-    //out.color = inTexture.sample(colorSampler, in.textCoords);
-    out.color = float4 { 1, 0, 0, 1 };
+    out.color = inTexture.sample(colorSampler, in.textCoords);
+    //out.color = float4 { 1, 0, 0, 1 };
+    //out.color = float4 { in.textCoords.x, in.textCoords.y, 0, 1 };
     return out;
 }

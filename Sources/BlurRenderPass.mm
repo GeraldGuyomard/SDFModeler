@@ -8,13 +8,25 @@
 #include "BlurRenderPass.h"
 #include "Renderer.h"
 
+/*
+namespace
+{
+    Vertex s_Vertices[4] = {
+        { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
+        { {-1.f, -1.f , 0.0f, 1.f}, {-1.f, -1.f} },
+        { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
+        { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
+    };
+}
+*/
+
 namespace
 {
     Vertex s_Vertices[4] = {
         { {-1.f, +1.f , 0.0f, 1.f}, {0.f, 0.f} },
         { {-1.f, -1.f , 0.0f, 1.f}, {0.f, 1.f} },
-        { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
-        { {+1.f, -1.f , 0.0f, 1.f}, {1.f, 0.f} }
+        { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 0.f} },
+        { {+1.f, -1.f , 0.0f, 1.f}, {1.f, 1.f} }
     };
 }
 
