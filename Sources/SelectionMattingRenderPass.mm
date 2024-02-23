@@ -33,11 +33,15 @@ SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    const auto size = renderer.renderSize();
+    auto size = renderer.renderSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
         return nullptr;
     }
+    
+    // render at a lower resolution than final content
+    // to save time and get free blur
+    //size *= 0.5f;
     
     if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {

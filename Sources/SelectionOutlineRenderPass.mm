@@ -69,8 +69,8 @@ SelectionOutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mt
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
-    config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderBlur"];
-    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderBlur"];
+    config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderOutline"];
+    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderOutline"];
     
     config->blendEnabled = true;
     config->depthWriteEnabled = false;

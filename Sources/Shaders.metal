@@ -75,7 +75,7 @@ struct VertexShader_SelectionOutlineOut
     float2 textCoords;
 };
 
-vertex VertexShader_SelectionOutlineOut vertexShaderBlur(VertexShader_SelectionOutlineIn in [[stage_in]])
+vertex VertexShader_SelectionOutlineOut vertexShaderOutline(VertexShader_SelectionOutlineIn in [[stage_in]])
 {
     VertexShader_SelectionOutlineOut out;
 
@@ -90,7 +90,7 @@ struct FragmentShader_SelectionOutlineOut
     float4 color [[color(0)]];
 };
 
-fragment FragmentShader_SelectionOutlineOut fragmentShaderBlur(VertexShader_SelectionOutlineOut in [[stage_in]],
+fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
@@ -102,7 +102,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderBlur(VertexShader_Sele
     constexpr float d = 1.f / 500.f;
     
     const float c = inTexture.sample(colorSampler, in.textCoords).r;
-    if (c == 1.f)
+    if (c != 0.f)
     {
         const float c0 = inTexture.sample(colorSampler, in.textCoords - float2 { -d, -d } ).r;
         const float c1 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, -d } ).r;
@@ -117,9 +117,9 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderBlur(VertexShader_Sele
         
         color = clamp(color, 0.f, 1.f);
         
-        const float outlineLevel = c - color;
-        const float4 outlineColor { 0.5, 0.5, 1, 1 };
-        out.color = outlineLevel * outlineColor;
+        const float outlineLevel = clamp(c - color, 0.f, 1.f);
+        const float3 outlineColor { 1, 1, 1 };
+        out.color = { outlineColor.r, outlineColor.g, outlineColor.b, outlineLevel };
         
         return out;
     }

@@ -26,8 +26,17 @@ RenderPass::init(Renderer& renderer)
     pipelineStateDescriptor.vertexDescriptor = _pipelineConfiguration->vertexDescriptor;
     
     pipelineStateDescriptor.colorAttachments[0].pixelFormat = _pipelineConfiguration->colorPixelFormat;
-    pipelineStateDescriptor.colorAttachments[0].blendingEnabled = _pipelineConfiguration->blendEnabled;
     
+    if (_pipelineConfiguration->blendEnabled)
+    {
+        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = true;
+        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
+        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+    }
+    else
+    {
+        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = true;
+    }
     
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
