@@ -23,8 +23,8 @@ class Renderer;
 
 struct PipelineConfiguration final
 {
-    id <MTLFunction> _Nonnull vertexFunction;
-    id <MTLFunction> _Nonnull fragmentFunction;
+    id <MTLFunction> _Nonnull vertexFunction = nil;
+    id <MTLFunction> _Nonnull fragmentFunction = nil;
     bool depthEnabled = true;
     
     std::string pipelineName;

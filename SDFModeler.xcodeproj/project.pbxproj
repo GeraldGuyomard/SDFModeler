@@ -198,6 +198,9 @@
 		7F92342C2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
 		7F92342D2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
 		7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
+		7F9234312B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
+		7F9234322B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
+		7F9234332B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -361,6 +364,8 @@
 		7F9234262B87DFF500E6A7A6 /* RenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPass.mm; sourceTree = "<group>"; };
 		7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TUniformBuffer.mm; sourceTree = "<group>"; };
 		7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUniformBuffer.h; sourceTree = "<group>"; };
+		7F92342F2B881BC400E6A7A6 /* QuadBasedRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuadBasedRenderPass.h; sourceTree = "<group>"; };
+		7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuadBasedRenderPass.mm; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -437,6 +442,8 @@
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
 				7F9234252B87DFF500E6A7A6 /* RenderPass.h */,
 				7F9234262B87DFF500E6A7A6 /* RenderPass.mm */,
+				7F92342F2B881BC400E6A7A6 /* QuadBasedRenderPass.h */,
+				7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */,
 				7F9234212B87DF6F00E6A7A6 /* SDFRenderPass.h */,
 				7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */,
 				7F9234112B86E2D400E6A7A6 /* OutlineRenderPass.h */,
@@ -845,6 +852,7 @@
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
 				74897E9F29EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
+				7F9234312B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */,
 				7492229229E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
 				74897EA329EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
@@ -892,6 +900,7 @@
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
 				7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
+				7F9234322B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */,
 				74897EA429EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
@@ -982,6 +991,7 @@
 				7F5DE0692B7308B7003FC854 /* Command.cpp in Sources */,
 				7F74B6722B61974900262F2D /* Renderer.swift in Sources */,
 				7F5DE0942B731C25003FC854 /* VisionOSRenderer.mm in Sources */,
+				7F9234332B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */,
 				7F5DE0802B73092A003FC854 /* CameraInteraction.cpp in Sources */,
 				7F5DE06A2B7308B7003FC854 /* AddObjectCommand.cpp in Sources */,
 				7F5DE0862B730981003FC854 /* Type.cpp in Sources */,
