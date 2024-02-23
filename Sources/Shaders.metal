@@ -104,21 +104,29 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     const float c = inTexture.sample(colorSampler, in.textCoords).r;
     if (c != 0.f)
     {
-        const float c0 = inTexture.sample(colorSampler, in.textCoords - float2 { -d, -d } ).r;
-        const float c1 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, -d } ).r;
-        const float c2 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, +d } ).r;
-        const float c3 = inTexture.sample(colorSampler, in.textCoords + float2 { -d, +d } ).r;
+        float color = 0.f;
+        for (float x = -d; x <= d; x += d)
+        {
+            for (float y = -d; y <= d; y += d)
+            {
+                color += inTexture.sample(colorSampler, in.textCoords + float2 { x, y } ).r;
+            }
+        }
         
-        float color = (c0 + c1 + c2 + c3) / 4.f;
+        color /= 9.f;
+        
         if (color == 1.f)
         {
             discard_fragment();
         }
         
+        
         color = clamp(color, 0.f, 1.f);
         
         const float outlineLevel = clamp(c - color, 0.f, 1.f);
-        const float3 outlineColor { 1, 1, 1 };
+        //const float3 outlineColor { 0.5, 0.5, 1 };
+        const float3 outlineColor { 252. / 255., 202. / 255., 0. };
+        
         out.color = { outlineColor.r, outlineColor.g, outlineColor.b, outlineLevel };
         
         return out;
