@@ -41,7 +41,7 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
     
     if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {
-        const auto colorPixelFormat = renderer.delegate()->configuration()->colorPixelFormat;
+        const auto colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
         
@@ -61,7 +61,8 @@ OutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) con
     config->pipelineName = "Outline Render";
     
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
-    config->depthEnabled = false;
+    
+    config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;
 }

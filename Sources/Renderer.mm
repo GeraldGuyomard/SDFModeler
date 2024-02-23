@@ -57,8 +57,6 @@ Renderer::init()
     
     _renderPasses = { _sdfRenderPass.get(), _outlineRenderPass.get(), _blurRenderPass.get() };
     
-    const auto config = _delegate->configuration();
-    
     for (auto renderPass : _renderPasses)
     {
         renderPass->init(*this);

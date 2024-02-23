@@ -17,21 +17,17 @@ RenderPass::init(Renderer& renderer)
         return false;
     }
     
-    auto config = renderer.delegate()->configuration();
-    
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = [NSString stringWithUTF8String:_pipelineConfiguration->pipelineName.c_str()];
-    pipelineStateDescriptor.rasterSampleCount = config->sampleCount;
+    pipelineStateDescriptor.rasterSampleCount = _pipelineConfiguration->sampleCount;
     pipelineStateDescriptor.vertexFunction = _pipelineConfiguration->vertexFunction;
     pipelineStateDescriptor.fragmentFunction = _pipelineConfiguration->fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _pipelineConfiguration->vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = config->colorPixelFormat;
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = _pipelineConfiguration->colorPixelFormat;
     
-    if (_pipelineConfiguration->depthEnabled)
-    {
-        pipelineStateDescriptor.depthAttachmentPixelFormat = config->depthStencilPixelFormat;
-        pipelineStateDescriptor.stencilAttachmentPixelFormat = config->depthStencilPixelFormat;
-    }
+
+    pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     
     auto device = renderer.mtlDevice();
     
@@ -42,7 +38,7 @@ RenderPass::init(Renderer& renderer)
         NSLog(@"Failed to created pipeline state, error %@", error);
     }
 
-    if (_pipelineConfiguration->depthEnabled)
+    if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
     {
         MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
         depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
@@ -67,7 +63,7 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
         
         [renderEncoder setRenderPipelineState:_pipelineState];
         
-        if (_pipelineConfiguration->depthEnabled)
+        if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
         {
             [renderEncoder setDepthStencilState:_depthState];
         }

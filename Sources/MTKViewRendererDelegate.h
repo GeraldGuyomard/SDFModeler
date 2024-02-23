@@ -20,7 +20,7 @@ public:
     MTKViewRendererDelegate(MTKView* _Nonnull);
     ~MTKViewRendererDelegate();
     
-    RenderTargetConfiguration::CPtr configuration() const override;
+    RenderTargetConfiguration::CPtr presentConfiguration() const override;
     bool init(Renderer* _Nonnull) override;
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;

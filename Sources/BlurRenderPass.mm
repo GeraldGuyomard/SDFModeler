@@ -25,7 +25,7 @@ BlurRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonn
     
     if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {
-        const auto colorPixelFormat = renderer.delegate()->configuration()->colorPixelFormat;
+        const auto colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget;
         
@@ -65,7 +65,7 @@ BlurRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
     config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderBlur"];
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderBlur"];
     
-    config->depthEnabled = false;
+    config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;
 }

@@ -96,7 +96,7 @@ MTKViewRendererDelegate::init(Renderer* renderer)
 }
 
 RenderTargetConfiguration::CPtr
-MTKViewRendererDelegate::configuration() const
+MTKViewRendererDelegate::presentConfiguration() const
 {
     return _configuration;
 }

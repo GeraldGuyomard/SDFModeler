@@ -31,7 +31,7 @@ public:
     
     virtual bool init(Renderer*_Nonnull renderer) = 0;
     
-    virtual RenderTargetConfiguration::CPtr configuration() const = 0;
+    virtual RenderTargetConfiguration::CPtr presentConfiguration() const = 0;
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
     virtual float2 renderSize() const = 0;

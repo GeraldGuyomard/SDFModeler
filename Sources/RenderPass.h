@@ -18,12 +18,15 @@ struct PipelineConfiguration final
 {
     using Ptr = std::unique_ptr<PipelineConfiguration>;
     
+    MTLVertexDescriptor* _Nonnull vertexDescriptor = nil;
     id <MTLFunction> _Nonnull vertexFunction = nil;
+    
     id <MTLFunction> _Nonnull fragmentFunction = nil;
     
-    MTLVertexDescriptor* _Nonnull vertexDescriptor = nil;
+    MTLPixelFormat colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+    MTLPixelFormat depthPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     
-    bool depthEnabled = true;
+    size_t sampleCount = 1;
     
     std::string pipelineName;
 };
