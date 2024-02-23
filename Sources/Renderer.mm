@@ -116,11 +116,6 @@ Renderer::render()
     
     for (auto pass : _renderPasses)
     {
-        pass->prepareRender(*this);
-    }
-    
-    for (auto pass : _renderPasses)
-    {
         pass->render(*this, commandBuffer);
     }
     

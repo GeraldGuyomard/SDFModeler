@@ -16,7 +16,6 @@ public:
     using _inherited = SDFRenderPass;
     
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
-    void prepareRender(Renderer&) override;
     
 private:
     void configure(EncodingContext&) const override;

@@ -47,7 +47,6 @@ public:
     virtual void updateBuffersState() = 0;
     virtual void updateUniforms(Renderer&) = 0;
     
-    virtual void prepareRender(Renderer&) {}
     void render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer);
     
     virtual void willStartRender(Renderer&) {}

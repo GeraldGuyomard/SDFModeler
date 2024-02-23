@@ -33,9 +33,11 @@ OutlineRenderPass::configure(EncodingContext& ctx) const
     ctx.setOptionFlags(EncodingContext::fRenderSelectedObjectsOnly);
 }
 
-void
-OutlineRenderPass::prepareRender(Renderer& renderer)
+id<MTLRenderCommandEncoder>_Nullable
+OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
+    MTLRenderPassDescriptor* renderPassDescriptor = [[MTLRenderPassDescriptor alloc] init];
+    
     if (_targetTexture == nil)
     {
         const auto size = renderer.renderSize();
@@ -45,12 +47,6 @@ OutlineRenderPass::prepareRender(Renderer& renderer)
         
         _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];
     }
-}
-
-id<MTLRenderCommandEncoder>_Nullable
-OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
-{
-    MTLRenderPassDescriptor* renderPassDescriptor = [[MTLRenderPassDescriptor alloc] init];
     
     renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
     renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;

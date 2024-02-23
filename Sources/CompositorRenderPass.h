@@ -7,15 +7,14 @@
 
 #pragma once
 
-#import "Renderer.h"
+#import "QuadBasedRenderPass.h"
 
-class CompositorRenderPass : public RenderPass
+class CompositorRenderPass : public QuadBasedRenderPass
 {
 public:
-    using _inherited = RenderPass;
+    using _inherited = QuadBasedRenderPass;
     
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
-    void prepareRender(Renderer&) override;
     
 private:
     
