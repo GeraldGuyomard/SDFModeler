@@ -22,7 +22,6 @@ private:
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     
-    MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
     id<MTLTexture> _Nullable _targetTexture = nil;
     MTLPixelFormat _colorPixelFormat = MTLPixelFormatInvalid;
 };

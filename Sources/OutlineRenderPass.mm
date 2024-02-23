@@ -17,13 +17,6 @@ OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull m
     
     _colorPixelFormat = config.colorPixelFormat;
     
-    _renderPassDescriptor = [[MTLRenderPassDescriptor alloc] init];
-    
-    auto colorAttachmentDescr = [[MTLRenderPassColorAttachmentDescriptor alloc] init];
-    colorAttachmentDescr.clearColor = MTLClearColorMake(0, 0, 0, 0);
-    
-    [_renderPassDescriptor.colorAttachments setObject:colorAttachmentDescr atIndexedSubscript:0];
-    
     return true;
 }
 
