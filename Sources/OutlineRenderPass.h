@@ -15,7 +15,7 @@ class OutlineRenderPass : public SDFRenderPass
 public:
     using _inherited = SDFRenderPass;
     
-    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
+    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) override;
     
 private:
     void configure(EncodingContext&) const override;

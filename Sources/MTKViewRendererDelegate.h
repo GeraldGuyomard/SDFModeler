@@ -20,7 +20,7 @@ public:
     MTKViewRendererDelegate(MTKView* _Nonnull);
     ~MTKViewRendererDelegate();
     
-    RenderPassConfiguration configuration() const override;
+    RenderTargetConfiguration::CPtr configuration() const override;
     bool init(Renderer* _Nonnull) override;
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
@@ -38,7 +38,7 @@ private:
     const __weak MTKView* _Nullable _mtkView;
     MTKViewBridge* _Nonnull _mtkViewBridge = nil;
     
-    RenderPassConfiguration _configuration;
+    RenderTargetConfiguration::Ptr _configuration = std::make_shared<RenderTargetConfiguration>();
 };
 
 

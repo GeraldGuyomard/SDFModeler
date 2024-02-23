@@ -48,7 +48,7 @@ QuadBasedRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) c
 
 
 bool
-QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
+QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
 {
     if (!_inherited::init(device, mtlLib, config))
     {

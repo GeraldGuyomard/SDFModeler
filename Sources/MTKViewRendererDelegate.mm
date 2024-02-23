@@ -88,14 +88,14 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.delegate = _mtkViewBridge;
     _mtkView.paused = YES;
     
-    _mtkView.depthStencilPixelFormat = _configuration.depthStencilPixelFormat;
-    _mtkView.colorPixelFormat = _configuration.colorPixelFormat;
-    _mtkView.sampleCount = _configuration.sampleCount;
+    _mtkView.depthStencilPixelFormat = _configuration->depthStencilPixelFormat;
+    _mtkView.colorPixelFormat = _configuration->colorPixelFormat;
+    _mtkView.sampleCount = _configuration->sampleCount;
     
     return true;
 }
 
-RenderPassConfiguration
+RenderTargetConfiguration::CPtr
 MTKViewRendererDelegate::configuration() const
 {
     return _configuration;

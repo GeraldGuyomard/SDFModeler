@@ -345,9 +345,9 @@
             filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "184"
-            endingLineNumber = "184"
-            landmarkName = "Renderer::renderPixel(pixelPosition)"
+            startingLineNumber = "190"
+            endingLineNumber = "190"
+            landmarkName = "Renderer::setWorld(world)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -505,9 +505,9 @@
             filePath = "Sources/OutlineRenderPass.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "39"
-            endingLineNumber = "39"
-            landmarkName = "OutlineRenderPass::makeRenderEncoder(renderer, cmdBuffer)"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "OutlineRenderPass::init(device, mtlLib, config)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

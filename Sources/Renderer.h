@@ -18,9 +18,10 @@
 #include <functional>
 #include <string>
 
-#include "RenderPass.h"
+#include "RenderTargetConfiguration.h"
 
 class Renderer;
+class RenderPass;
 
 class RendererDelegate
 {
@@ -30,7 +31,7 @@ public:
     
     virtual bool init(Renderer*_Nonnull renderer) = 0;
     
-    virtual RenderPassConfiguration configuration() const = 0;
+    virtual RenderTargetConfiguration::CPtr configuration() const = 0;
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
     virtual float2 renderSize() const = 0;
@@ -98,7 +99,7 @@ private:
     std::vector<RenderPass*> _renderPasses;
     
     std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
-    RenderPass::Ptr _outlineRenderPass;
+    std::unique_ptr<RenderPass> _outlineRenderPass;
 
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;

@@ -8,7 +8,7 @@
 #include "RenderPass.h"
 
 bool
-RenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
+RenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
 {
     _pipelineConfiguration = makePipelineConfiguration(mtlLib);
     if (_pipelineConfiguration == nullptr)
@@ -18,16 +18,16 @@ RenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, 
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = [NSString stringWithUTF8String:_pipelineConfiguration->pipelineName.c_str()];
-    pipelineStateDescriptor.rasterSampleCount = config.sampleCount;
+    pipelineStateDescriptor.rasterSampleCount = config->sampleCount;
     pipelineStateDescriptor.vertexFunction = _pipelineConfiguration->vertexFunction;
     pipelineStateDescriptor.fragmentFunction = _pipelineConfiguration->fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _pipelineConfiguration->vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = config.colorPixelFormat;
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = config->colorPixelFormat;
     
     if (_pipelineConfiguration->depthEnabled)
     {
-        pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
-        pipelineStateDescriptor.stencilAttachmentPixelFormat = config.depthStencilPixelFormat;
+        pipelineStateDescriptor.depthAttachmentPixelFormat = config->depthStencilPixelFormat;
+        pipelineStateDescriptor.stencilAttachmentPixelFormat = config->depthStencilPixelFormat;
     }
     
     NSError *error = NULL;

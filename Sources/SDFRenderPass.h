@@ -19,7 +19,7 @@ class SDFRenderPass : public QuadBasedRenderPass
 public:
     using _inherited = QuadBasedRenderPass;
     
-    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
+    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) override;
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
     

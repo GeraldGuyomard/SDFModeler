@@ -8,14 +8,14 @@
 #import "OutlineRenderPass.h"
 
 bool
-OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
+OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
 {
     if (!_inherited::init(device, mtlLib, config))
     {
         return false;
     }
     
-    _colorPixelFormat = config.colorPixelFormat;
+    _colorPixelFormat = config->colorPixelFormat;
     
     return true;
 }

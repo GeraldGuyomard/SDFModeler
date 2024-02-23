@@ -201,6 +201,9 @@
 		7F9234312B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
 		7F9234322B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
 		7F9234332B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */; };
+		7F9234362B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
+		7F9234372B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
+		7F9234382B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -366,6 +369,8 @@
 		7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUniformBuffer.h; sourceTree = "<group>"; };
 		7F92342F2B881BC400E6A7A6 /* QuadBasedRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuadBasedRenderPass.h; sourceTree = "<group>"; };
 		7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuadBasedRenderPass.mm; sourceTree = "<group>"; };
+		7F9234342B882DD900E6A7A6 /* RenderTargetConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTargetConfiguration.h; sourceTree = "<group>"; };
+		7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderTargetConfiguration.mm; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -438,6 +443,8 @@
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
 				7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */,
 				7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */,
+				7F9234342B882DD900E6A7A6 /* RenderTargetConfiguration.h */,
+				7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
 				7F9234252B87DFF500E6A7A6 /* RenderPass.h */,
@@ -823,6 +830,7 @@
 				7451041729C1538200F69BC4 /* SerializedWorldObject.cpp in Sources */,
 				7431C49829DD116300DD4A74 /* Interaction.cpp in Sources */,
 				748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
+				7F9234362B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */,
 				7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
 				7F92341D2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */,
@@ -873,6 +881,7 @@
 				7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
 				7F9234142B86E2D400E6A7A6 /* OutlineRenderPass.mm in Sources */,
+				7F9234372B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */,
 				74AAF29829D7BEE900D322DB /* MainViewController.mm in Sources */,
 				74AAF28029D7BCA400D322DB /* SimpleMaterial.cpp in Sources */,
 				74A18A9429D8B7990010F1B4 /* Camera.cpp in Sources */,
@@ -962,6 +971,7 @@
 				7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */,
 				7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */,
 				7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
+				7F9234382B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */,
 				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
 				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,
 				7F92341F2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */,

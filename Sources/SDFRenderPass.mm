@@ -28,7 +28,7 @@ SDFRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 
 
 bool
-SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
+SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
 {
    if (!_inherited::init(device, mtlLib, config))
    {

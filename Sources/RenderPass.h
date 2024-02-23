@@ -10,14 +10,7 @@
 #import <Metal/Metal.h>
 #include <memory>
 #include <string>
-
-class RenderPassConfiguration final
-{
-public:
-    MTLPixelFormat depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    MTLPixelFormat colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-    NSUInteger sampleCount = 1;
-};
+#include "RenderTargetConfiguration.h"
 
 class Renderer;
 
@@ -42,7 +35,7 @@ public:
     
     virtual ~RenderPass() = default;
     
-    virtual bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) = 0;
+    virtual bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) = 0;
     
     virtual void updateBuffersState() = 0;
     virtual void updateUniforms(Renderer&) = 0;
