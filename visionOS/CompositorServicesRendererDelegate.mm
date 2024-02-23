@@ -19,7 +19,6 @@ CompositorServicesRendererDelegate::~CompositorServicesRendererDelegate()
 bool
 CompositorServicesRendererDelegate::init(Renderer* renderer)
 {
-    
     return false;
 }
 

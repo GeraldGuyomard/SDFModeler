@@ -7,19 +7,6 @@
 
 #import "OutlineRenderPass.h"
 
-bool
-OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
-{
-    if (!_inherited::init(device, mtlLib, config))
-    {
-        return false;
-    }
-    
-    _colorPixelFormat = config->colorPixelFormat;
-    
-    return true;
-}
-
 void
 OutlineRenderPass::configure(EncodingContext& ctx) const
 {
@@ -35,7 +22,8 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
     {
         const auto size = renderer.renderSize();
         
-        auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:_colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
+        const auto colorPixelFormat = renderer.delegate()->configuration()->colorPixelFormat;
+        auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget;
         
         _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];

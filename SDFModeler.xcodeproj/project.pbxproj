@@ -204,6 +204,9 @@
 		7F9234362B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
 		7F9234372B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
 		7F9234382B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */; };
+		7F92343B2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* BlurRenderPass.mm */; };
+		7F92343C2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* BlurRenderPass.mm */; };
+		7F92343D2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* BlurRenderPass.mm */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -371,6 +374,8 @@
 		7F9234302B881BC400E6A7A6 /* QuadBasedRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QuadBasedRenderPass.mm; sourceTree = "<group>"; };
 		7F9234342B882DD900E6A7A6 /* RenderTargetConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderTargetConfiguration.h; sourceTree = "<group>"; };
 		7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderTargetConfiguration.mm; sourceTree = "<group>"; };
+		7F9234392B8837BA00E6A7A6 /* BlurRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlurRenderPass.h; sourceTree = "<group>"; };
+		7F92343A2B8837BA00E6A7A6 /* BlurRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlurRenderPass.mm; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -455,6 +460,8 @@
 				7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */,
 				7F9234112B86E2D400E6A7A6 /* OutlineRenderPass.h */,
 				7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */,
+				7F9234392B8837BA00E6A7A6 /* BlurRenderPass.h */,
+				7F92343A2B8837BA00E6A7A6 /* BlurRenderPass.mm */,
 				7F92341B2B87DF2100E6A7A6 /* CompositorRenderPass.h */,
 				7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */,
 				7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */,
@@ -845,6 +852,7 @@
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				7F92342C2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
+				7F92343B2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */,
 				74087D9429F0B85E00958CD7 /* EncodingContext.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
 				7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */,
@@ -917,6 +925,7 @@
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* EncodedPrimitive.cpp in Sources */,
+				7F92343C2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */,
 				7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
 				743252C229EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
@@ -986,6 +995,7 @@
 				7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */,
 				7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
+				7F92343D2B8837BB00E6A7A6 /* BlurRenderPass.mm in Sources */,
 				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
 				7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */,

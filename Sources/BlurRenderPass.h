@@ -9,7 +9,7 @@
 
 #import "QuadBasedRenderPass.h"
 
-class BlurRenderPass : public QuadBasedRenderPass
+class CompositorRenderPass : public QuadBasedRenderPass
 {
 public:
     using _inherited = QuadBasedRenderPass;
