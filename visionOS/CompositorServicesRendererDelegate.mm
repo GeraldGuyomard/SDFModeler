@@ -23,7 +23,7 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     return false;
 }
 
-RenderPassConfiguration
+RenderTargetConfiguration::CPtr
 CompositorServicesRendererDelegate::configuration() const
 {
     return _configuration;

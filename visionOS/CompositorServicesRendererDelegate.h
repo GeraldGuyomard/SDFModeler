@@ -9,6 +9,7 @@
 
 #import "CommonDefinitions.h"
 #include "Renderer.h"
+#include "RenderTargetConfiguration.h"
 
 #import <CompositorServices/CompositorServices.h>
 
@@ -18,7 +19,7 @@ public:
     CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layer_renderer);
     ~CompositorServicesRendererDelegate();
     
-    RenderPassConfiguration configuration() const override;
+    RenderTargetConfiguration::CPtr configuration() const override;
     bool init(Renderer* _Nonnull) override;
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
@@ -34,7 +35,7 @@ public:
     
 private:
     cp_layer_renderer_t _Nonnull _layerRenderer;
-    RenderPassConfiguration _configuration;
+    RenderTargetConfiguration::CPtr _configuration = std::make_shared<RenderTargetConfiguration>();
 };
 
 
