@@ -18,7 +18,7 @@ public:
     CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layer_renderer);
     ~CompositorServicesRendererDelegate();
     
-    RendererDelegateConfiguration configuration() const override;
+    RenderPassConfiguration configuration() const override;
     bool init(Renderer* _Nonnull) override;
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
@@ -34,7 +34,7 @@ public:
     
 private:
     cp_layer_renderer_t _Nonnull _layerRenderer;
-    RendererDelegateConfiguration _configuration;
+    RenderPassConfiguration _configuration;
 };
 
 

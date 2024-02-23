@@ -95,7 +95,7 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     return true;
 }
 
-RendererDelegateConfiguration
+RenderPassConfiguration
 MTKViewRendererDelegate::configuration() const
 {
     return _configuration;

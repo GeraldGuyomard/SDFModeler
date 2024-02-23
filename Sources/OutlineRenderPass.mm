@@ -8,7 +8,7 @@
 #import "OutlineRenderPass.h"
 
 bool
-OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RendererDelegateConfiguration& config)
+OutlineRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
 {
     if (!_inherited::init(device, mtlLib, config))
     {
@@ -62,7 +62,7 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
     return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
 }
 
-SDFRenderPass::PipelineConfiguration
+PipelineConfiguration
 OutlineRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
     PipelineConfiguration config;

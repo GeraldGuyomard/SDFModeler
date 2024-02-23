@@ -186,6 +186,18 @@
 		7F9234182B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
 		7F9234192B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
 		7F92341A2B86E60D00E6A7A6 /* MattingShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */; };
+		7F92341D2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */; };
+		7F92341E2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */; };
+		7F92341F2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */; };
+		7F9234222B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */; };
+		7F9234232B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */; };
+		7F9234242B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */; };
+		7F9234272B87DFF500E6A7A6 /* RenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234262B87DFF500E6A7A6 /* RenderPass.mm */; };
+		7F9234282B87DFF500E6A7A6 /* RenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234262B87DFF500E6A7A6 /* RenderPass.mm */; };
+		7F9234292B87DFF500E6A7A6 /* RenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F9234262B87DFF500E6A7A6 /* RenderPass.mm */; };
+		7F92342C2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
+		7F92342D2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
+		7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -341,6 +353,14 @@
 		7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OutlineRenderPass.mm; sourceTree = "<group>"; };
 		7F9234162B86E60D00E6A7A6 /* MattingShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MattingShader.h; sourceTree = "<group>"; };
 		7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MattingShader.cpp; sourceTree = "<group>"; };
+		7F92341B2B87DF2100E6A7A6 /* CompositorRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompositorRenderPass.h; sourceTree = "<group>"; };
+		7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CompositorRenderPass.mm; sourceTree = "<group>"; };
+		7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SDFRenderPass.mm; sourceTree = "<group>"; };
+		7F9234212B87DF6F00E6A7A6 /* SDFRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFRenderPass.h; sourceTree = "<group>"; };
+		7F9234252B87DFF500E6A7A6 /* RenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderPass.h; sourceTree = "<group>"; };
+		7F9234262B87DFF500E6A7A6 /* RenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderPass.mm; sourceTree = "<group>"; };
+		7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TUniformBuffer.mm; sourceTree = "<group>"; };
+		7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TUniformBuffer.h; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -411,10 +431,18 @@
 				74F7647029CF95D400CD5259 /* Object3D.h */,
 				743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */,
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
+				7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */,
+				7F92342A2B8819BF00E6A7A6 /* TUniformBuffer.mm */,
 				7444A4D429A1CB63009632C3 /* Renderer.h */,
 				7444A4D529A1CB63009632C3 /* Renderer.mm */,
+				7F9234252B87DFF500E6A7A6 /* RenderPass.h */,
+				7F9234262B87DFF500E6A7A6 /* RenderPass.mm */,
+				7F9234212B87DF6F00E6A7A6 /* SDFRenderPass.h */,
+				7F9234202B87DF6F00E6A7A6 /* SDFRenderPass.mm */,
 				7F9234112B86E2D400E6A7A6 /* OutlineRenderPass.h */,
 				7F9234122B86E2D400E6A7A6 /* OutlineRenderPass.mm */,
+				7F92341B2B87DF2100E6A7A6 /* CompositorRenderPass.h */,
+				7F92341C2B87DF2100E6A7A6 /* CompositorRenderPass.mm */,
 				7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */,
 				7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */,
 				7444A4D729A1CB63009632C3 /* MainViewController.h */,
@@ -781,6 +809,7 @@
 				74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */,
+				7F9234222B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */,
 				74F7646C29CF8FC500CD5259 /* PrimitiveEvaluator.cpp in Sources */,
 				74DAA70629ADB5C100171C03 /* GridMaterial.cpp in Sources */,
 				7F5DE0892B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
@@ -789,6 +818,7 @@
 				748629C629F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
 				7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				74DAA71029AEEE7200171C03 /* RenderFunctions.cpp in Sources */,
+				7F92341D2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */,
 				74DAA70729ADB5C100171C03 /* Material.cpp in Sources */,
 				74DAA6F529ADB5A200171C03 /* SDFSphere.cpp in Sources */,
 				7456FCA929EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
@@ -798,6 +828,7 @@
 				7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */,
 				74AF133C29B442AE00F9BBA8 /* PhongShader.cpp in Sources */,
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
+				7F92342C2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
 				74087D9429F0B85E00958CD7 /* EncodingContext.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
@@ -808,6 +839,7 @@
 				74B52D082AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
 				74DAA6F629ADB5A200171C03 /* SDFGeometry.cpp in Sources */,
 				74A18A9829D903050010F1B4 /* CameraInteraction.cpp in Sources */,
+				7F9234272B87DFF500E6A7A6 /* RenderPass.mm in Sources */,
 				74897E9B29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */,
 				74DAA6FD29ADB5B900171C03 /* Transformer.cpp in Sources */,
 				7444A4D629A1CB63009632C3 /* Renderer.mm in Sources */,
@@ -845,6 +877,7 @@
 				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
 				74AAF28F29D7BCD300D322DB /* SDFObject.cpp in Sources */,
 				74AAF28C29D7BCC700D322DB /* CommonDefinitions.cpp in Sources */,
+				7F9234282B87DFF500E6A7A6 /* RenderPass.mm in Sources */,
 				74AAF29029D7BCD300D322DB /* Results.cpp in Sources */,
 				7492228629E0988A00ACCFBC /* MultiTouchCameraInteraction.mm in Sources */,
 				7456FCA629E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
@@ -862,6 +895,7 @@
 				74897EA429EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74897EA029EF8D5A007A5CFE /* SDFTorus.cpp in Sources */,
 				748629C729F62F5B002407AA /* MoveCameraAnimation.cpp in Sources */,
+				7F9234232B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */,
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* EncodedPrimitive.cpp in Sources */,
@@ -881,11 +915,13 @@
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
+				7F92342D2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				74087D9129F0B1C000958CD7 /* BoundingBox.cpp in Sources */,
 				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,
 				74AAF29929D7C1C500D322DB /* Shaders.metal in Sources */,
 				74AAF28729D7BCB100D322DB /* SDFBox.cpp in Sources */,
 				74A18A9929D903050010F1B4 /* CameraInteraction.cpp in Sources */,
+				7F92341E2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */,
 				74AAF29729D7BED200D322DB /* Object3D.cpp in Sources */,
 				748629C329F62C6C002407AA /* Animation.cpp in Sources */,
 			);
@@ -910,6 +946,7 @@
 				7F5DE08B2B731421003FC854 /* Renderer.mm in Sources */,
 				7F5DE0652B73089F003FC854 /* SDFBox.cpp in Sources */,
 				7F5DE0752B730913003FC854 /* Results.cpp in Sources */,
+				7F9234242B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */,
 				7F5DE0792B73091F003FC854 /* EncodingContext.cpp in Sources */,
 				7F5DE0832B73092A003FC854 /* Animation.cpp in Sources */,
 				7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */,
@@ -918,6 +955,7 @@
 				7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
 				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,
+				7F92341F2B87DF2100E6A7A6 /* CompositorRenderPass.mm in Sources */,
 				7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */,
 				7F5DE07B2B73091F003FC854 /* EncodedPrimitive.cpp in Sources */,
 				7F5DE0632B73089F003FC854 /* SDFRoundedBox.cpp in Sources */,
@@ -927,6 +965,7 @@
 				7F5DE0842B73092A003FC854 /* Object3DInteraction.mm in Sources */,
 				7F5DE05C2B73088D003FC854 /* Material.cpp in Sources */,
 				7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */,
+				7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
 				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
@@ -937,6 +976,7 @@
 				7F5DE0682B7308B7003FC854 /* RemoveObjectCommand.cpp in Sources */,
 				7F5DE0582B730880003FC854 /* FragmentShader.cpp in Sources */,
 				7F5DE06F2B7308FA003FC854 /* Object3D.cpp in Sources */,
+				7F9234292B87DFF500E6A7A6 /* RenderPass.mm in Sources */,
 				7F5DE0642B73089F003FC854 /* SDFSphere.cpp in Sources */,
 				7F5DE07F2B73092A003FC854 /* MoveCameraAnimation.cpp in Sources */,
 				7F5DE0692B7308B7003FC854 /* Command.cpp in Sources */,
