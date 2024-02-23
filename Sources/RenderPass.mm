@@ -56,9 +56,6 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
     
     if (renderEncoder != nil)
     {
-        renderEncoder.label = @"MyRenderEncoder";
-        
-        [renderEncoder pushDebugGroup:@"RayMarch"];
         [renderEncoder setCullMode:MTLCullModeNone];
         
         [renderEncoder setRenderPipelineState:_pipelineState];
@@ -69,8 +66,6 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
         }
         
         _render(renderer, renderEncoder);
-        
-        [renderEncoder popDebugGroup];
         
         [renderEncoder endEncoding];
     }
