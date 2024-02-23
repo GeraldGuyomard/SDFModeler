@@ -103,7 +103,7 @@ private:
     
     std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
     std::unique_ptr<class SelectionMattingRenderPass> _selectionMattingRenderPass;
-    std::unique_ptr<class BlurRenderPass> _blurRenderPass;
+    std::unique_ptr<class SelectionOutlineRenderPass> _selectionOutlineRenderPass;
 
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;

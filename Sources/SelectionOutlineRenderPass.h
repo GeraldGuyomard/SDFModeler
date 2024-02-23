@@ -10,7 +10,7 @@
 #include "RenderPass.h"
 #include <functional>
 
-class BlurRenderPass : public RenderPass
+class SelectionOutlineRenderPass : public RenderPass
 {
 public:
     using _inherited = RenderPass;

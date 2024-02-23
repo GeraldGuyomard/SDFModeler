@@ -20,7 +20,7 @@
 
 #include "SDFRenderPass.h"
 #include "SelectionMattingRenderPass.h"
-#include "BlurRenderPass.h"
+#include "SelectionOutlineRenderPass.h"
 
 #include "MainViewController.h"
 
@@ -53,16 +53,16 @@ Renderer::init()
     
     _sdfRenderPass = std::make_unique<SDFRenderPass>();
     _selectionMattingRenderPass = std::make_unique<SelectionMattingRenderPass>();
-    _blurRenderPass = std::make_unique<BlurRenderPass>();
+    _selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>();
     
-    _renderPasses = { _sdfRenderPass.get(), _selectionMattingRenderPass.get(), _blurRenderPass.get() };
+    _renderPasses = { _sdfRenderPass.get(), _selectionMattingRenderPass.get(), _selectionOutlineRenderPass.get() };
     
     for (auto renderPass : _renderPasses)
     {
         renderPass->init(*this);
     }
     
-    _blurRenderPass->setInputTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
+    _selectionOutlineRenderPass->setInputTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
     {
         return selectionMattingPass->targetTexture();
     });

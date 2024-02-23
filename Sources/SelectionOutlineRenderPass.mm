@@ -5,7 +5,7 @@
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
-#include "BlurRenderPass.h"
+#include "SelectionOutlineRenderPass.h"
 #include "Renderer.h"
 
 namespace
@@ -19,7 +19,7 @@ namespace
 }
 
 id<MTLRenderCommandEncoder>_Nullable
-BlurRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
+SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
     const auto size = renderer.renderSize();
     
@@ -38,11 +38,11 @@ BlurRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonn
 }
 
 PipelineConfiguration::Ptr
-BlurRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+SelectionOutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
     auto config = std::make_unique<PipelineConfiguration>();
     
-    config->pipelineName = "Blur";
+    config->pipelineName = "Selection Outline";
     
     config->vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
@@ -71,13 +71,13 @@ BlurRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 }
 
 void
-BlurRenderPass::setInputTextureProvider(const InputTextureProvider& provider)
+SelectionOutlineRenderPass::setInputTextureProvider(const InputTextureProvider& provider)
 {
     _inputTextureProvider = provider;
 }
 
 bool
-BlurRenderPass::init(Renderer& renderer)
+SelectionOutlineRenderPass::init(Renderer& renderer)
 {
     if (!_inherited::init(renderer))
     {
@@ -100,7 +100,7 @@ BlurRenderPass::init(Renderer& renderer)
 }
 
 void
-BlurRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
+SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
     if (_inputTextureProvider == nullptr)
     {
