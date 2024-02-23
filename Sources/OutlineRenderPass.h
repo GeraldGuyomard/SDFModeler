@@ -15,6 +15,8 @@ class OutlineRenderPass : public SDFRenderPass
 public:
     using _inherited = SDFRenderPass;
     
+    bool init(Renderer& renderer) override;
+    
     id<MTLTexture> _Nullable targetTexture() const { return _targetTexture; }
     
     
@@ -23,7 +25,6 @@ private:
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     
-    void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) override;
-    
     id<MTLTexture> _Nullable _targetTexture = nil;
+    MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
 };

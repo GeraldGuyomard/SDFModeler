@@ -112,8 +112,5 @@ fragment BlurOut fragmentShaderBlur(VertexShader_BlurOut in [[stage_in]],
     const auto color = (c + c0 + c1 + c2 + c3) / 5.f;
     out.color = color - c;
     
-    //out.color = inTexture.sample(colorSampler, in.textCoords);
-    //out.color = float4 { 1, 0, 0, 1 };
-    //out.color = float4 { in.textCoords.x, in.textCoords.y, 0, 1 };
     return out;
 }

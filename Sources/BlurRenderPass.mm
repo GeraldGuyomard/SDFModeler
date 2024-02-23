@@ -8,18 +8,6 @@
 #include "BlurRenderPass.h"
 #include "Renderer.h"
 
-/*
-namespace
-{
-    Vertex s_Vertices[4] = {
-        { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
-        { {-1.f, -1.f , 0.0f, 1.f}, {-1.f, -1.f} },
-        { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
-        { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
-    };
-}
-*/
-
 namespace
 {
     Vertex s_Vertices[4] = {
@@ -33,12 +21,10 @@ namespace
 id<MTLRenderCommandEncoder>_Nullable
 BlurRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [[MTLRenderPassDescriptor alloc] init];
+    const auto size = renderer.renderSize();
     
-    if (_targetTexture == nil)
+    if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {
-        const auto size = renderer.renderSize();
-        
         const auto colorPixelFormat = renderer.delegate()->configuration()->colorPixelFormat;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget;
@@ -46,12 +32,9 @@ BlurRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonn
         _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];
     }
     
-    renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
-    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionDontCare;
-    renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+    _renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
     
-    return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+    return [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
 }
 
 PipelineConfiguration::Ptr
@@ -100,6 +83,12 @@ BlurRenderPass::init(Renderer& renderer)
     {
         return false;
     }
+    
+    _renderPassDescriptor = [MTLRenderPassDescriptor new];
+    
+    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     
     auto device = renderer.mtlDevice();
     _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)

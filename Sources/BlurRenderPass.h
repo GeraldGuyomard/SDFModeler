@@ -31,4 +31,5 @@ private:
     
     InputTextureProvider _inputTextureProvider;
     id<MTLTexture> _Nullable _targetTexture = nil;
+    MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
 };

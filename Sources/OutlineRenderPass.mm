@@ -7,6 +7,23 @@
 
 #import "OutlineRenderPass.h"
 
+bool
+OutlineRenderPass::init(Renderer& renderer)
+{
+    if(!_inherited::init(renderer))
+    {
+        return false;
+    }
+    
+    _renderPassDescriptor = [MTLRenderPassDescriptor new];
+    
+    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
+    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+    
+    return true;
+}
+
 void
 OutlineRenderPass::configure(EncodingContext& ctx) const
 {
@@ -16,14 +33,14 @@ OutlineRenderPass::configure(EncodingContext& ctx) const
 id<MTLRenderCommandEncoder>_Nullable
 OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    if (_targetTexture == nullptr)
+    const auto size = renderer.renderSize();
+    if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
-        const auto size = renderer.renderSize();
-        if ((size.x <= 0.f) || ((size.y <= 0.f)))
-        {
-            return nullptr;
-        }
-        
+        return nullptr;
+    }
+    
+    if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
+    {
         const auto colorPixelFormat = renderer.delegate()->configuration()->colorPixelFormat;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
@@ -31,14 +48,9 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
         _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];
     }
     
-    MTLRenderPassDescriptor* renderPassDescriptor = [[MTLRenderPassDescriptor alloc] init];
+    _renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
     
-    renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
-    renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
-    
-    return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+    return [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
 }
 
 PipelineConfiguration::Ptr
@@ -52,10 +64,4 @@ OutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) con
     config->depthEnabled = false;
     
     return config;
-}
-
-void
-OutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
-{
-    _inherited::_render(renderer, encoder);
 }
