@@ -62,7 +62,7 @@ Renderer::init()
         renderPass->init(*this);
     }
     
-    _selectionOutlineRenderPass->setInputTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
+    _selectionOutlineRenderPass->setMattingTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
     {
         return selectionMattingPass->targetTexture();
     });

@@ -17,8 +17,8 @@ public:
     
     bool init(Renderer& renderer) override;
     
-    using InputTextureProvider = std::function<id<MTLTexture>()>;
-    void setInputTextureProvider(const InputTextureProvider&);
+    using MattingTextureProvider = std::function<id<MTLTexture>()>;
+    void setMattingTextureProvider(const MattingTextureProvider&);
     
 private:
     
@@ -29,7 +29,5 @@ private:
     
     id <MTLBuffer> _Nonnull _quadVertexBuffer;
     
-    InputTextureProvider _inputTextureProvider;
-    id<MTLTexture> _Nullable _targetTexture = nil;
-    MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
+    MattingTextureProvider _mattingTextureProvider;
 };

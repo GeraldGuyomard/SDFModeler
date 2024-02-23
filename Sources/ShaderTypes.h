@@ -42,7 +42,7 @@ enum TextureIndex : EnumBackingType
     TextureIndexInput = 0
 };
 
-struct VertexShader_BlurIn
+struct VertexShader_SelectionOutlineIn
 {
     simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
     float2 textCoords VB_ATTRIBUTE(VertexAttributeTexcoord);

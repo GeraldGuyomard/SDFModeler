@@ -27,6 +27,8 @@ struct PipelineConfiguration final
     MTLPixelFormat depthPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     
     size_t sampleCount = 1;
+    bool blendEnabled = false;
+    bool depthWriteEnabled = true;
     
     std::string pipelineName;
 };

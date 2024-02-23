@@ -50,7 +50,9 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     _renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
     
-    return [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+    auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+    encoder.label = @"SelectionMattingRenderPass";
+    return encoder;
 }
 
 PipelineConfiguration::Ptr

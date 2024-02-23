@@ -69,15 +69,15 @@ fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[
     return out;
 }
 
-struct VertexShader_BlurOut
+struct VertexShader_SelectionOutlineOut
 {
     float4 position [[position]];
     float2 textCoords;
 };
 
-vertex VertexShader_BlurOut vertexShaderBlur(VertexShader_BlurIn in [[stage_in]])
+vertex VertexShader_SelectionOutlineOut vertexShaderBlur(VertexShader_SelectionOutlineIn in [[stage_in]])
 {
-    VertexShader_BlurOut out;
+    VertexShader_SelectionOutlineOut out;
 
     out.position = in.position;
     out.textCoords = in.textCoords;
@@ -85,32 +85,45 @@ vertex VertexShader_BlurOut vertexShaderBlur(VertexShader_BlurIn in [[stage_in]]
     return out;
 }
 
-
-struct BlurOut
+struct FragmentShader_SelectionOutlineOut
 {
     float4 color [[color(0)]];
 };
 
-fragment BlurOut fragmentShaderBlur(VertexShader_BlurOut in [[stage_in]],
+fragment FragmentShader_SelectionOutlineOut fragmentShaderBlur(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear);
     
-    BlurOut out;
+    FragmentShader_SelectionOutlineOut out;
     
     constexpr float d = 1.f / 500.f;
     
-    const auto c = inTexture.sample(colorSampler, in.textCoords);
-    
-    const auto c0 = inTexture.sample(colorSampler, in.textCoords - float2 { -d, -d } );
-    const auto c1 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, -d } );
-    const auto c2 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, +d } );
-    const auto c3 = inTexture.sample(colorSampler, in.textCoords + float2 { -d, +d } );
-    
-    const auto color = (c + c0 + c1 + c2 + c3) / 5.f;
-    out.color = color - c;
-    
-    return out;
+    const float c = inTexture.sample(colorSampler, in.textCoords).r;
+    if (c == 1.f)
+    {
+        const float c0 = inTexture.sample(colorSampler, in.textCoords - float2 { -d, -d } ).r;
+        const float c1 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, -d } ).r;
+        const float c2 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, +d } ).r;
+        const float c3 = inTexture.sample(colorSampler, in.textCoords + float2 { -d, +d } ).r;
+        
+        float color = (c0 + c1 + c2 + c3) / 4.f;
+        if (color == 1.f)
+        {
+            discard_fragment();
+        }
+        
+        color = clamp(color, 0.f, 1.f);
+        
+        const float outlineLevel = c - color;
+        const float4 outlineColor { 0.5, 0.5, 1, 1 };
+        out.color = outlineLevel * outlineColor;
+        
+        return out;
+    }
+
+    discard_fragment();
+    return {};
 }

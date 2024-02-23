@@ -21,20 +21,27 @@ namespace
 id<MTLRenderCommandEncoder>_Nullable
 SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    const auto size = renderer.renderSize();
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->currentRenderPassDescriptor() copy];
     
-    if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
+    auto colorAttachment = renderPassDescriptor.colorAttachments[0];
+    colorAttachment.loadAction = MTLLoadActionLoad;
+    colorAttachment.storeAction = MTLStoreActionStore;
+    //colorAttachment.clearColor = MTLClearColorMake(1, 0, 0, 1);
+    
+    auto depthAttachment = renderPassDescriptor.depthAttachment;
+    depthAttachment.loadAction = MTLLoadActionDontCare;
+    depthAttachment.storeAction = MTLStoreActionDontCare;
+    
+    if (renderPassDescriptor != nullptr)
     {
-        const auto colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-        auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
-        textureDescriptor.usage = MTLTextureUsageRenderTarget;
-        
-        _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];
+        auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        encoder.label = @"SelectionOutlineRenderPass";
+        return encoder;
     }
-    
-    _renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
-    
-    return [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+    else
+    {
+        return nullptr;
+    }
 }
 
 PipelineConfiguration::Ptr
@@ -47,33 +54,34 @@ SelectionOutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mt
     config->vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
     config->vertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
-    config->vertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(VertexShader_BlurIn, position);
+    config->vertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(VertexShader_SelectionOutlineIn, position);
     config->vertexDescriptor.attributes[VertexAttributePosition].bufferIndex = BufferIndexMeshPositions;
 
     config->vertexDescriptor.attributes[VertexAttributeTexcoord].format = MTLVertexFormatFloat2;
-    config->vertexDescriptor.attributes[VertexAttributeTexcoord].offset = offsetof(VertexShader_BlurIn, textCoords);
+    config->vertexDescriptor.attributes[VertexAttributeTexcoord].offset = offsetof(VertexShader_SelectionOutlineIn, textCoords);
     config->vertexDescriptor.attributes[VertexAttributeTexcoord].bufferIndex = BufferIndexUVs;
 
-    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(VertexShader_BlurIn);
+    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(VertexShader_SelectionOutlineIn);
     config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepFunction = MTLVertexStepFunctionPerVertex;
 
-    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(VertexShader_BlurIn);
+    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(VertexShader_SelectionOutlineIn);
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
     config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderBlur"];
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderBlur"];
     
-    config->depthPixelFormat = MTLPixelFormatInvalid;
+    config->blendEnabled = true;
+    config->depthWriteEnabled = false;
     
     return config;
 }
 
 void
-SelectionOutlineRenderPass::setInputTextureProvider(const InputTextureProvider& provider)
+SelectionOutlineRenderPass::setMattingTextureProvider(const MattingTextureProvider& provider)
 {
-    _inputTextureProvider = provider;
+    _mattingTextureProvider = provider;
 }
 
 bool
@@ -83,12 +91,6 @@ SelectionOutlineRenderPass::init(Renderer& renderer)
     {
         return false;
     }
-    
-    _renderPassDescriptor = [MTLRenderPassDescriptor new];
-    
-    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     
     auto device = renderer.mtlDevice();
     _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
@@ -102,12 +104,12 @@ SelectionOutlineRenderPass::init(Renderer& renderer)
 void
 SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
-    if (_inputTextureProvider == nullptr)
+    if (_mattingTextureProvider == nullptr)
     {
         return;
     }
     
-    auto inputTexture = _inputTextureProvider();
+    auto inputTexture = _mattingTextureProvider();
     
     if (inputTexture == nullptr)
     {

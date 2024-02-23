@@ -17,15 +17,18 @@ RenderPass::init(Renderer& renderer)
         return false;
     }
     
-    MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+    MTLRenderPipelineDescriptor *pipelineStateDescriptor = [MTLRenderPipelineDescriptor new];
+    
     pipelineStateDescriptor.label = [NSString stringWithUTF8String:_pipelineConfiguration->pipelineName.c_str()];
     pipelineStateDescriptor.rasterSampleCount = _pipelineConfiguration->sampleCount;
     pipelineStateDescriptor.vertexFunction = _pipelineConfiguration->vertexFunction;
     pipelineStateDescriptor.fragmentFunction = _pipelineConfiguration->fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _pipelineConfiguration->vertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = _pipelineConfiguration->colorPixelFormat;
     
-
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = _pipelineConfiguration->colorPixelFormat;
+    pipelineStateDescriptor.colorAttachments[0].blendingEnabled = _pipelineConfiguration->blendEnabled;
+    
+    
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     
@@ -42,7 +45,7 @@ RenderPass::init(Renderer& renderer)
     {
         MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
         depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
-        depthStateDesc.depthWriteEnabled = YES;
+        depthStateDesc.depthWriteEnabled = _pipelineConfiguration->depthWriteEnabled;
         _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
     }
     

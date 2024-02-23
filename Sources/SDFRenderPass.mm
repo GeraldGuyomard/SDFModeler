@@ -20,7 +20,7 @@ SDFRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
     auto config = _inherited::makePipelineConfiguration(mtlLib);
     
-    config->pipelineName = "SDF Render";
+    config->pipelineName = "RGB Contents";
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
     
     return config;
@@ -89,7 +89,9 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
     
     if (renderPassDescriptor != nullptr)
     {
-        return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
+        encoder.label = @"SDFRenderPass";
+        return encoder;
     }
     else
     {
