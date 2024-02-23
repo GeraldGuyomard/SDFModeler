@@ -9,12 +9,12 @@
 
 #import "QuadBasedRenderPass.h"
 
-class BlurRenderPass : public QuadBasedRenderPass
+class CompositorRenderPass : public QuadBasedRenderPass
 {
 public:
     using _inherited = QuadBasedRenderPass;
     
-    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) override;
+    bool init(Renderer& renderer) override;
     
 private:
     

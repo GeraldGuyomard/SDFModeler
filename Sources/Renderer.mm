@@ -20,6 +20,7 @@
 
 #include "SDFRenderPass.h"
 #include "OutlineRenderPass.h"
+#include "BlurRenderPass.h"
 
 #include "MainViewController.h"
 
@@ -45,22 +46,28 @@ Renderer::renderSize() const
 void
 Renderer::init()
 {
+    const auto device = _delegate->getMTLDevice();
+    
+    _commandQueue = [device newCommandQueue];
+    _mtlLibrary = [device newDefaultLibrary];
+    
     _sdfRenderPass = std::make_unique<SDFRenderPass>();
     _outlineRenderPass = std::make_unique<OutlineRenderPass>();
+    _blurRenderPass = std::make_unique<BlurRenderPass>();
     
-    _renderPasses = { _sdfRenderPass.get(), _outlineRenderPass.get() };
+    _renderPasses = { _sdfRenderPass.get(), _outlineRenderPass.get(), _blurRenderPass.get() };
     
-    const auto device = _delegate->getMTLDevice();
-    id<MTLLibrary> defaultLibrary = [device newDefaultLibrary];
     const auto config = _delegate->configuration();
     
     for (auto renderPass : _renderPasses)
     {
-        renderPass->init(device, defaultLibrary, config);
+        renderPass->init(*this);
     }
     
-    //_quadVertexBuffer
-    _commandQueue = [device newCommandQueue];
+    _blurRenderPass->setInputTextureProvider([outlineRenderPass = _outlineRenderPass.get()]()
+    {
+        return outlineRenderPass->targetTexture();
+    });
 }
 
 void Renderer::setCamera(const Camera::Ptr& cam)

@@ -68,3 +68,38 @@ fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[
     
     return out;
 }
+
+struct VertexShader_BlurOut
+{
+    float4 position [[position]];
+    float2 textCoords;
+};
+
+vertex VertexShader_BlurOut vertexShaderBlur(VertexShader_BlurIn in [[stage_in]])
+{
+    VertexShader_BlurOut out;
+
+    out.position = in.position;
+    out.textCoords = in.textCoords;
+
+    return out;
+}
+
+
+struct BlurOut
+{
+    float4 color [[color(0)]];
+};
+
+fragment BlurOut fragmentShaderBlur(VertexShader_BlurOut in [[stage_in]],
+                                    texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
+{
+    constexpr sampler colorSampler(mip_filter::linear,
+                                   mag_filter::linear,
+                                   min_filter::linear);
+    
+    BlurOut out;
+    //out.color = inTexture.sample(colorSampler, in.textCoords);
+    out.color = float4 { 1, 0, 0, 1 };
+    return out;
+}

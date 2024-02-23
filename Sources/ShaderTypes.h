@@ -17,6 +17,7 @@ enum BufferIndex : EnumBackingType
 {
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
+    BufferIndexUVs = 1,
     
     BufferIndexUniforms         = 2,
     BufferIndexSerializedWorld  = 3,
@@ -27,6 +28,7 @@ enum VertexAttribute : EnumBackingType
 {
     VertexAttributePosition  = 0,
     VertexAttributeViewportNDC  = 1,
+    VertexAttributeTexcoord  = 2
 };
 
 struct Vertex final
@@ -34,3 +36,15 @@ struct Vertex final
     simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
     simd_float2 viewportNDC VB_ATTRIBUTE(VertexAttributeViewportNDC);
 };
+
+enum TextureIndex : EnumBackingType
+{
+    TextureIndexInput = 0
+};
+
+struct VertexShader_BlurIn
+{
+    simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
+    float2 textCoords VB_ATTRIBUTE(VertexAttributeTexcoord);
+};
+

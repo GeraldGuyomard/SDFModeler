@@ -28,12 +28,14 @@ SDFRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 
 
 bool
-SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
+SDFRenderPass::init(Renderer& renderer)
 {
-   if (!_inherited::init(device, mtlLib, config))
+   if (!_inherited::init(renderer))
    {
        return false;
    }
+    
+    auto device = renderer.mtlDevice();
     
     _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
     _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
@@ -107,13 +109,13 @@ SDFRenderPass::willStartRender(Renderer& renderer)
 }
 
 void
-SDFRenderPass::_render(id<MTLRenderCommandEncoder> _Nonnull encoder)
+SDFRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
     _uniformsBuffer->setFragmentBuffer(encoder);
     _serializedWorldBuffer->setFragmentBuffer(encoder);
     _materialsBuffer->setFragmentBuffer(encoder);
     
-    _inherited::_render(encoder);
+    _inherited::_render(renderer, encoder);
 }
 
 void

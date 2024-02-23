@@ -6,15 +6,18 @@
 //
 
 #include "RenderPass.h"
+#include "Renderer.h"
 
 bool
-RenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
+RenderPass::init(Renderer& renderer)
 {
-    _pipelineConfiguration = makePipelineConfiguration(mtlLib);
+    _pipelineConfiguration = makePipelineConfiguration(renderer.mtlLibrary());
     if (_pipelineConfiguration == nullptr)
     {
         return false;
     }
+    
+    auto config = renderer.delegate()->configuration();
     
     MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
     pipelineStateDescriptor.label = [NSString stringWithUTF8String:_pipelineConfiguration->pipelineName.c_str()];
@@ -29,6 +32,8 @@ RenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, 
         pipelineStateDescriptor.depthAttachmentPixelFormat = config->depthStencilPixelFormat;
         pipelineStateDescriptor.stencilAttachmentPixelFormat = config->depthStencilPixelFormat;
     }
+    
+    auto device = renderer.mtlDevice();
     
     NSError *error = NULL;
     _pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
@@ -67,7 +72,7 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
             [renderEncoder setDepthStencilState:_depthState];
         }
         
-        _render(renderEncoder);
+        _render(renderer, renderEncoder);
         
         [renderEncoder popDebugGroup];
         

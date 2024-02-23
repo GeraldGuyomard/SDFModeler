@@ -19,7 +19,7 @@ class SDFRenderPass : public QuadBasedRenderPass
 public:
     using _inherited = QuadBasedRenderPass;
     
-    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) override;
+    bool init(Renderer& renderer) override;
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
     
@@ -46,7 +46,7 @@ protected:
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     id <MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     
-    void _render(id<MTLRenderCommandEncoder> _Nonnull encoder) override;
+    void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     
     virtual void configure(EncodingContext&) const {}
     

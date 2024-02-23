@@ -68,6 +68,7 @@ public:
     void invalidate();
     
     id<MTLDevice> _Nonnull mtlDevice() const;
+    id<MTLLibrary> mtlLibrary() const { return _mtlLibrary; }
     
     RendererDelegate* _Nullable delegate() const
     {
@@ -94,12 +95,15 @@ private:
     
     dispatch_semaphore_t _Nonnull _inFlightSemaphore;
     
+    id<MTLLibrary> _mtlLibrary;
+    
     id <MTLCommandQueue> _Nonnull _commandQueue;
 
     std::vector<RenderPass*> _renderPasses;
     
     std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
-    std::unique_ptr<RenderPass> _outlineRenderPass;
+    std::unique_ptr<class OutlineRenderPass> _outlineRenderPass;
+    std::unique_ptr<class BlurRenderPass> _blurRenderPass;
 
     float4x4 _projectionMatrix;
     float4x4 _invProjectionMatrix;

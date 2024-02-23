@@ -35,10 +35,10 @@ public:
     
     virtual ~RenderPass() = default;
     
-    virtual bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) = 0;
+    virtual bool init(Renderer& renderer) = 0;
     
-    virtual void updateBuffersState() = 0;
-    virtual void updateUniforms(Renderer&) = 0;
+    virtual void updateBuffersState() {}
+    virtual void updateUniforms(Renderer&) {}
     
     void render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer);
     
@@ -51,7 +51,7 @@ protected:
     
     virtual PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const = 0;
     virtual id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) = 0;
-    virtual void _render(id<MTLRenderCommandEncoder> _Nonnull encoder) = 0;
+    virtual void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) = 0;
     
 private:
     PipelineConfiguration::Ptr _pipelineConfiguration;

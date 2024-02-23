@@ -18,13 +18,13 @@ class QuadBasedRenderPass : public RenderPass
 public:
     using _inherited = RenderPass;
     
-    bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config) override;
+    bool init(Renderer& renderer) override;
     
 protected:
     
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     
-    void _render(id<MTLRenderCommandEncoder> _Nonnull encoder) override;
+    void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     
 private:
     id <MTLBuffer> _Nonnull _quadVertexBuffer;

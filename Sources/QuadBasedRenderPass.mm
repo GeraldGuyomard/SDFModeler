@@ -48,14 +48,14 @@ QuadBasedRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) c
 
 
 bool
-QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderTargetConfiguration::CPtr& config)
+QuadBasedRenderPass::init(Renderer& renderer)
 {
-    if (!_inherited::init(device, mtlLib, config))
+    if (!_inherited::init(renderer))
     {
         return false;
     }
     
-    _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
+    _quadVertexBuffer = [renderer.mtlDevice() newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
     
     _quadVertexBuffer.label = @"QuadVertexBuffer";
@@ -64,7 +64,7 @@ QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull
 }
 
 void
-QuadBasedRenderPass::_render(id<MTLRenderCommandEncoder> _Nonnull encoder)
+QuadBasedRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
     // Draw a quad on screen
     [encoder setVertexBuffer:_quadVertexBuffer
