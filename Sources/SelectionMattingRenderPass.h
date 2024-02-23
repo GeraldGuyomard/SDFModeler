@@ -10,7 +10,7 @@
 #include "Renderer.h"
 #include "SDFRenderPass.h"
 
-class OutlineRenderPass : public SDFRenderPass
+class SelectionMattingRenderPass : public SDFRenderPass
 {
 public:
     using _inherited = SDFRenderPass;

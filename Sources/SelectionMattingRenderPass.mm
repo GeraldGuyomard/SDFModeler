@@ -5,10 +5,10 @@
 //  Created by Gérald Guyomard on 2/18/23.
 //
 
-#import "OutlineRenderPass.h"
+#import "SelectionMattingRenderPass.h"
 
 bool
-OutlineRenderPass::init(Renderer& renderer)
+SelectionMattingRenderPass::init(Renderer& renderer)
 {
     if(!_inherited::init(renderer))
     {
@@ -25,13 +25,13 @@ OutlineRenderPass::init(Renderer& renderer)
 }
 
 void
-OutlineRenderPass::configure(EncodingContext& ctx) const
+SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 {
     ctx.setOptionFlags(EncodingContext::fRenderSelectedObjectsOnly);
 }
 
 id<MTLRenderCommandEncoder>_Nullable
-OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
+SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
     const auto size = renderer.renderSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
@@ -54,11 +54,11 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
 }
 
 PipelineConfiguration::Ptr
-OutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+SelectionMattingRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
     auto config = _inherited::makePipelineConfiguration(mtlLib);
     
-    config->pipelineName = "Outline Render";
+    config->pipelineName = "Selection Matting";
     
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
