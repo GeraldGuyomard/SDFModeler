@@ -7,24 +7,24 @@
 
 #pragma once
 
-#include "RenderPass.h"
+#include "QuadBasedRenderPass.h"
 #include "SerializedWorldObject.h"
 #include "ShaderTypes.h"
-#include "TUniformBuffer.h"
 #include "RenderStats.h"
 
 class EncodingContext;
 
-class SDFRenderPass : public RenderPass
+class SDFRenderPass : public QuadBasedRenderPass
 {
 public:
-    using _inherited = RenderPass;
+    using _inherited = QuadBasedRenderPass;
     
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
-    void render(Renderer&, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
-    void onCompletedCommandBuffer(float renderDuration) override;
+    
+    void willStartRender(Renderer& renderer) override;
+    void onCompletedCommandBuffer(Renderer& renderer, float renderDuration) override;
     
     const Uniforms& uniforms() const
     {
@@ -43,17 +43,14 @@ public:
     
 protected:
     
-    PipelineConfiguration pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
+    PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     id <MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
+    
+    void _render(id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     
     virtual void configure(EncodingContext&) const {}
     
 private:
-    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
-    
-    id <MTLBuffer> _Nonnull _quadVertexBuffer;
-    id <MTLRenderPipelineState> _Nonnull _pipelineState;
-    id <MTLDepthStencilState> _Nonnull _depthState;
     
     using UniformsBuffer = TUniformBuffer<Uniforms, BufferIndex::BufferIndexUniforms, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
@@ -65,7 +62,5 @@ private:
     std::unique_ptr<SerializedMaterials> _materialsBuffer;
     
     RenderStats _renderStats;
-    bool _depthEnabled = false;
-    
 };
 

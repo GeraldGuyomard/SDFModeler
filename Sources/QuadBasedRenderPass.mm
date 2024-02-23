@@ -18,11 +18,31 @@ namespace
     };
 }
 
-PipelineConfiguration
-QuadBasedRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+PipelineConfiguration::Ptr
+QuadBasedRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
-    PipelineConfiguration config;
-    config.vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
+    auto config = std::make_unique<PipelineConfiguration>();
+    
+    config->vertexDescriptor = [[MTLVertexDescriptor alloc] init];
+
+    config->vertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
+    config->vertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(Vertex, position);
+    config->vertexDescriptor.attributes[VertexAttributePosition].bufferIndex = BufferIndexMeshPositions;
+
+    config->vertexDescriptor.attributes[VertexAttributeViewportNDC].format = MTLVertexFormatFloat2;
+    config->vertexDescriptor.attributes[VertexAttributeViewportNDC].offset = offsetof(Vertex, viewportNDC);
+    config->vertexDescriptor.attributes[VertexAttributeViewportNDC].bufferIndex = BufferIndexMeshViewportNDCs;
+
+    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(Vertex);
+    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepRate = 1;
+    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepFunction = MTLVertexStepFunctionPerVertex;
+
+    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(Vertex);
+    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
+    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
+    
+    config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
+    
     return config;
 }
 
@@ -30,23 +50,10 @@ QuadBasedRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 bool
 QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
 {
-    _mtlVertexDescriptor = [[MTLVertexDescriptor alloc] init];
-
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(Vertex, position);
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].bufferIndex = BufferIndexMeshPositions;
-
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].format = MTLVertexFormatFloat2;
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].offset = offsetof(Vertex, viewportNDC);
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].bufferIndex = BufferIndexMeshViewportNDCs;
-
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(Vertex);
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stepRate = 1;
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stepFunction = MTLVertexStepFunctionPerVertex;
-
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(Vertex);
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
+    if (!_inherited::init(device, mtlLib, config))
+    {
+        return false;
+    }
     
     _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
@@ -56,39 +63,17 @@ QuadBasedRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull
     return true;
 }
 
-
 void
-QuadBasedRenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
+QuadBasedRenderPass::_render(id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
-    auto renderEncoder = makeRenderEncoder(renderer, cmdBuffer);
+    // Draw a quad on screen
+    [encoder setVertexBuffer:_quadVertexBuffer
+                            offset:0
+                           atIndex:BufferIndexMeshPositions];
     
-    if (renderEncoder != nil)
-    {
-        renderEncoder.label = @"MyRenderEncoder";
-        
-        [renderEncoder pushDebugGroup:@"RayMarch"];
-        [renderEncoder setCullMode:MTLCullModeNone];
-        
-        [renderEncoder setRenderPipelineState:_pipelineState];
-        
-        if (_depthEnabled)
-        {
-            [renderEncoder setDepthStencilState:_depthState];
-        }
-        
-        // Draw a quad on screen
-        [renderEncoder setVertexBuffer:_quadVertexBuffer
-                                offset:0
-                               atIndex:BufferIndexMeshPositions];
-        
-        [renderEncoder setVertexBuffer:_quadVertexBuffer
-                                offset:0
-                               atIndex:BufferIndexMeshViewportNDCs];
-        
-        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
-        
-        [renderEncoder popDebugGroup];
-        
-        [renderEncoder endEncoding];
-    }
+    [encoder setVertexBuffer:_quadVertexBuffer
+                            offset:0
+                           atIndex:BufferIndexMeshViewportNDCs];
+    
+    [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }

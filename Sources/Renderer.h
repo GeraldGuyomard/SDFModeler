@@ -86,9 +86,6 @@ private:
     
     void init();
     
-    void updateBuffersState();
-    void updateUniforms();
-    
     Camera::Ptr _camera;
     WorldPtr _world;
     

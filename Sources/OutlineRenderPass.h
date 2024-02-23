@@ -17,12 +17,11 @@ public:
     
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
     void prepareRender(Renderer&) override;
-    void render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     
 private:
     void configure(EncodingContext&) const override;
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
-    PipelineConfiguration pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
+    PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     
     MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
     id<MTLTexture> _Nullable _targetTexture = nil;

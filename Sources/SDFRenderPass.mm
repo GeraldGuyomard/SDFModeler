@@ -15,15 +15,13 @@ Vertex s_Vertices[4] = {
     { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
 };
 
-PipelineConfiguration
-SDFRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+PipelineConfiguration::Ptr
+SDFRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
-    PipelineConfiguration config;
-    config.pipelineName = "SDF Render";
+    auto config = _inherited::makePipelineConfiguration(mtlLib);
     
-    config.vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
-    config.fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
-    config.depthEnabled = true;
+    config->pipelineName = "SDF Render";
+    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
     
     return config;
 }
@@ -32,65 +30,15 @@ SDFRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 bool
 SDFRenderPass::init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config)
 {
-    _mtlVertexDescriptor = [[MTLVertexDescriptor alloc] init];
-
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(Vertex, position);
-    _mtlVertexDescriptor.attributes[VertexAttributePosition].bufferIndex = BufferIndexMeshPositions;
-
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].format = MTLVertexFormatFloat2;
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].offset = offsetof(Vertex, viewportNDC);
-    _mtlVertexDescriptor.attributes[VertexAttributeViewportNDC].bufferIndex = BufferIndexMeshViewportNDCs;
-
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(Vertex);
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stepRate = 1;
-    _mtlVertexDescriptor.layouts[BufferIndexMeshPositions].stepFunction = MTLVertexStepFunctionPerVertex;
-
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(Vertex);
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
-    _mtlVertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
-    
-    const auto renderConfig = pipelineConfiguration(mtlLib);
-    _depthEnabled = renderConfig.depthEnabled;
-    
-    MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
-    pipelineStateDescriptor.label = [NSString stringWithUTF8String:renderConfig.pipelineName.c_str()];
-    pipelineStateDescriptor.rasterSampleCount = config.sampleCount;
-    pipelineStateDescriptor.vertexFunction = renderConfig.vertexFunction;
-    pipelineStateDescriptor.fragmentFunction = renderConfig.fragmentFunction;
-    pipelineStateDescriptor.vertexDescriptor = _mtlVertexDescriptor;
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = config.colorPixelFormat;
-    
-    if (_depthEnabled)
-    {
-        pipelineStateDescriptor.depthAttachmentPixelFormat = config.depthStencilPixelFormat;
-        pipelineStateDescriptor.stencilAttachmentPixelFormat = config.depthStencilPixelFormat;
-    }
-    
-    NSError *error = NULL;
-    _pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
-    if (!_pipelineState)
-    {
-        NSLog(@"Failed to created pipeline state, error %@", error);
-    }
-
-    if (_depthEnabled)
-    {
-        MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
-        depthStateDesc.depthWriteEnabled = YES;
-        _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
-    }
+   if (!_inherited::init(device, mtlLib, config))
+   {
+       return false;
+   }
     
     _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
     _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
     _materialsBuffer = std::make_unique<SerializedMaterials>(device, @"Materials");
 
-    _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
-                                             options:MTLResourceStorageModeShared];
-    
-    _quadVertexBuffer.label = @"QuadVertexBuffer";
-    
     return true;
 }
 
@@ -148,7 +96,7 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
 }
 
 void
-SDFRenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
+SDFRenderPass::willStartRender(Renderer& renderer)
 {
     const float2 viewportSize = renderer.renderSize();
     
@@ -156,49 +104,20 @@ SDFRenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffe
     const float2 tileGridSize { serialized.numTileColumns, serialized.numTileRows };
     
     _renderStats.setViewportInfo(viewportSize, tileGridSize);
-    
-    auto renderEncoder = makeRenderEncoder(renderer, cmdBuffer);
-    
-    if (renderEncoder != nil)
-    {
-        renderEncoder.label = @"MyRenderEncoder";
-        
-        [renderEncoder pushDebugGroup:@"RayMarch"];
-        
-        //[renderEncoder setFrontFacingWinding:MTLWindingCounterClockwise];
-        //[renderEncoder setCullMode:MTLCullModeBack];
-        [renderEncoder setCullMode:MTLCullModeNone];
-        
-        [renderEncoder setRenderPipelineState:_pipelineState];
-        
-        if (_depthEnabled)
-        {
-            [renderEncoder setDepthStencilState:_depthState];
-        }
-        
-        _uniformsBuffer->setFragmentBuffer(renderEncoder);
-        _serializedWorldBuffer->setFragmentBuffer(renderEncoder);
-        _materialsBuffer->setFragmentBuffer(renderEncoder);
-        
-        // Draw a quad on screen
-        [renderEncoder setVertexBuffer:_quadVertexBuffer
-                                offset:0
-                               atIndex:BufferIndexMeshPositions];
-        
-        [renderEncoder setVertexBuffer:_quadVertexBuffer
-                                offset:0
-                               atIndex:BufferIndexMeshViewportNDCs];
-        
-        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
-        
-        [renderEncoder popDebugGroup];
-        
-        [renderEncoder endEncoding];
-    }
 }
 
 void
-SDFRenderPass::onCompletedCommandBuffer(float renderDuration)
+SDFRenderPass::_render(id<MTLRenderCommandEncoder> _Nonnull encoder)
+{
+    _uniformsBuffer->setFragmentBuffer(encoder);
+    _serializedWorldBuffer->setFragmentBuffer(encoder);
+    _materialsBuffer->setFragmentBuffer(encoder);
+    
+    _inherited::_render(encoder);
+}
+
+void
+SDFRenderPass::onCompletedCommandBuffer(Renderer& renderer, float renderDuration)
 {
     _renderStats.submitFrameRenderTime(renderDuration);
 }

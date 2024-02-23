@@ -19,21 +19,14 @@ public:
     using _inherited = RenderPass;
     
     bool init(id<MTLDevice> _Nonnull device, id<MTLLibrary> _Nonnull mtlLib, const RenderPassConfiguration& config) override;
-
-    void render(Renderer&, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     
 protected:
     
-    PipelineConfiguration pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
+    PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
+    
+    void _render(id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     
 private:
-    MTLVertexDescriptor* _Nonnull _mtlVertexDescriptor;
-    
     id <MTLBuffer> _Nonnull _quadVertexBuffer;
-    id <MTLRenderPipelineState> _Nonnull _pipelineState;
-    id <MTLDepthStencilState> _Nonnull _depthState;
-    
-    bool _depthEnabled = false;
-    
 };
 

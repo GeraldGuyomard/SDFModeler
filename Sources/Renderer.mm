@@ -63,16 +63,6 @@ Renderer::init()
     _commandQueue = [device newCommandQueue];
 }
 
-
-void
-Renderer::updateBuffersState()
-{
-    for (auto pass : _renderPasses)
-    {
-        pass->updateBuffersState();
-    }
-}
-
 void Renderer::setCamera(const Camera::Ptr& cam)
 {
     _camera = cam;
@@ -80,15 +70,6 @@ void Renderer::setCamera(const Camera::Ptr& cam)
     if (_camera != nullptr)
     {
         updateCameraTransforms();
-    }
-}
-
-void
-Renderer::updateUniforms()
-{
-    for (auto pass : _renderPasses)
-    {
-        pass->updateUniforms(*this);
     }
 }
 
@@ -106,6 +87,14 @@ Renderer::render()
     
     dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
     
+    for (auto pass : _renderPasses)
+    {
+        pass->updateBuffersState();
+        pass->updateUniforms(*this);
+        
+        pass->willStartRender(*this);
+    }
+    
     id <MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
     commandBuffer.label = @"MyCommand";
     
@@ -119,14 +108,11 @@ Renderer::render()
         
         for (auto pass : _renderPasses)
         {
-            pass->onCompletedCommandBuffer(renderFrameTimeInMs);
+            pass->onCompletedCommandBuffer(*this, renderFrameTimeInMs);
         }
         
         dispatch_semaphore_signal(block_sema);
     }];
-    
-    updateBuffersState();
-    updateUniforms();
     
     for (auto pass : _renderPasses)
     {

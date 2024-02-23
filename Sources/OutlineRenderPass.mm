@@ -62,22 +62,15 @@ OutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _N
     return [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
 }
 
-PipelineConfiguration
-OutlineRenderPass::pipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+PipelineConfiguration::Ptr
+OutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
 {
-    PipelineConfiguration config;
+    auto config = _inherited::makePipelineConfiguration(mtlLib);
     
-    config.pipelineName = "Outline Render";
+    config->pipelineName = "Outline Render";
     
-    config.vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
-    config.fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
-    config.depthEnabled = false;
+    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
+    config->depthEnabled = false;
     
     return config;
-}
-
-void
-OutlineRenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
-{
-    _inherited::render(renderer, cmdBuffer);
 }
