@@ -99,7 +99,20 @@ fragment BlurOut fragmentShaderBlur(VertexShader_BlurOut in [[stage_in]],
                                    min_filter::linear);
     
     BlurOut out;
-    out.color = inTexture.sample(colorSampler, in.textCoords);
+    
+    constexpr float d = 1.f / 500.f;
+    
+    const auto c = inTexture.sample(colorSampler, in.textCoords);
+    
+    const auto c0 = inTexture.sample(colorSampler, in.textCoords - float2 { -d, -d } );
+    const auto c1 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, -d } );
+    const auto c2 = inTexture.sample(colorSampler, in.textCoords + float2 { +d, +d } );
+    const auto c3 = inTexture.sample(colorSampler, in.textCoords + float2 { -d, +d } );
+    
+    const auto color = (c0 + c1 + c2 + c3) * 0.25f;
+    out.color = color - c;
+    
+    //out.color = inTexture.sample(colorSampler, in.textCoords);
     //out.color = float4 { 1, 0, 0, 1 };
     //out.color = float4 { in.textCoords.x, in.textCoords.y, 0, 1 };
     return out;
