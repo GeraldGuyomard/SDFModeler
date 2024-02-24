@@ -225,12 +225,6 @@ public:
             RSTTransformer transformer { worldTransform() };
             
             SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
-            
-            const bool selected = this->selected();
-            if (selected)
-            {
-                object.setExtraCullingMargin(selected ? kOutlineThickness : 0.f);
-            }
          
             const auto matID = materialID();
             ASSERT(matID >= 0);
@@ -242,8 +236,8 @@ public:
                                                 matID,
                                                object.objectType(),
                                                transformer.transformerType(),
-                                                operation(),
-                                               selected);
+                                                operation()
+                                        );
         });
     }
     

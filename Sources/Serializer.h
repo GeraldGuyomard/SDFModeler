@@ -20,8 +20,7 @@ static size_t copy(ObjectID id,
                  TransformerType transformerType,
                  EncodedPrimitive* encodedPrimitive,
                  const TObject& object,
-                 SDFOperation operation,
-                 bool selected)
+                 SDFOperation operation)
 {
     assert(objectType != ObjectType::invalid);
     
@@ -31,7 +30,6 @@ static size_t copy(ObjectID id,
     encodedPrimitive->materialId = materialId;
     encodedPrimitive->objectCode = computeObjectCode(objectType, transformerType);
     encodedPrimitive->operation = uint16_t(operation);
-    encodedPrimitive->selected = selected;
     
     uint8_t* dst = &(encodedPrimitive->firstByte);
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
@@ -48,10 +46,9 @@ static size_t copy(EncodedPrimitive* primitive,
                 MaterialID materialId,
                  ObjectType objectType,
                  TransformerType transformerType,
-                 SDFOperation operation,
-                 bool selected)
+                 SDFOperation operation)
 {
-    return copy<TObject>(id, materialId, objectType, transformerType, primitive, object, operation, selected);
+    return copy<TObject>(id, materialId, objectType, transformerType, primitive, object, operation);
 }
 
 
@@ -62,8 +59,7 @@ INLINE size_t encodePrimitive(EncodedPrimitive* encodedPrimitive,
                               MaterialID materialId,
                               ObjectType objectType,
                               TransformerType transformerType,
-                              SDFOperation operation,
-                              bool selected)
+                              SDFOperation operation)
 {
-    return copy(encodedPrimitive, primitive, id, materialId, objectType, transformerType, operation, selected);
+    return copy(encodedPrimitive, primitive, id, materialId, objectType, transformerType, operation);
 }
