@@ -115,10 +115,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         }
     }
     
-    color = (color / 8.f) - c;
-    color = clamp(color, 0.f, 1.f);
-    
-    const float outlineLevel = clamp(color, 0.f, 1.f);
+    const float outlineLevel = (color / 8.f) - c;
     
     FragmentShader_SelectionOutlineOut out;
     
