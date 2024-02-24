@@ -9,7 +9,7 @@
 #include "SDFPlane.h"
 #include "Renderer.h"
 
-MultiTouchCameraInteraction::MultiTouchCameraInteraction(const Camera::Ptr& camera, const Renderer* renderer)
+MultiTouchCameraInteraction::MultiTouchCameraInteraction(const CameraRig::Ptr& camera, const Renderer* renderer)
 : CameraInteraction(camera),
 _renderer(renderer),
 _initialCameraTransform(camera->worldTransform()),
@@ -260,7 +260,7 @@ class OrbitDecelerationAnimation final : public Animation
 {
 public:
     
-    OrbitDecelerationAnimation(const Camera::Ptr& camera, float3 orbitOrigin, float2 orbitVelocity)
+    OrbitDecelerationAnimation(const CameraRig::Ptr& camera, float3 orbitOrigin, float2 orbitVelocity)
     : _camera(camera),
     _orbitOrigin(orbitOrigin),
     _orbitVelocity(orbitVelocity)
@@ -289,7 +289,7 @@ public:
     }
     
 private:
-    const Camera::Ptr _camera;
+    const CameraRig::Ptr _camera;
     const float2 _orbitVelocity;
     const float3 _orbitOrigin;
     

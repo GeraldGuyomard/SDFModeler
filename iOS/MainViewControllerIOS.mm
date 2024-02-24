@@ -122,7 +122,7 @@
     
     if (interaction == nullptr)
     {
-        auto camera = self.renderer->camera();
+        auto camera = self.renderer->cameraRig();
         
         MultiTouchCameraInteraction::Ptr interaction = std::make_shared<MultiTouchCameraInteraction>(camera, self.renderer);
 
@@ -177,7 +177,7 @@
     auto object = [self objectFromPosition:pt];
     self.world->setSelection(object);
     
-    auto camera = self.renderer->camera();
+    auto camera = self.renderer->cameraRig();
     camera->setLookAtPositionProvider(object);
     
     [self updateActionsButton];
@@ -202,7 +202,7 @@
         {
             self.world->setSelection(object);
             
-            auto camera = self.renderer->camera();
+            auto camera = self.renderer->cameraRig();
             camera->setLookAtPositionProvider(object);
         }
         

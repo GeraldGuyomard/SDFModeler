@@ -24,9 +24,11 @@ Camera::aspectRatio() const
 }
 
 float4x4
-Camera::computeProjectionMatrix() const
+Camera::computeProjectionMatrix(const float2& viewportSizeInPoints) const
 {
-    return matrix_perspective_right_hand(_fovyRadians, aspectRatio(), _nearZ, _farZ);
+    const float aspectRatio = viewportSizeInPoints.x / viewportSizeInPoints.y;
+    
+    return matrix_perspective_right_hand(_fovyRadians, aspectRatio, _nearZ, _farZ);
 }
 
 float

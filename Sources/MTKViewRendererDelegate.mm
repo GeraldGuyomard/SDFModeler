@@ -126,7 +126,7 @@ MTKViewRendererDelegate::cameraInfo(size_t index, const Camera::Ptr& camera) con
     const CGSize s = _mtkView.bounds.size;
     info.setViewportSizeInPoints({ float(s.width), float(s.height) });
     
-    info.setProjectionMatrix(camera->computeProjectionMatrix());
+    info.setProjectionMatrix(camera->computeProjectionMatrix(info.viewportSizeInPoints()));
     
     return info;
 }
