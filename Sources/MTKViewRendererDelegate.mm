@@ -49,8 +49,7 @@
 {
     if (_renderer != nullptr)
     {
-        _renderer->updateCameraTransforms();
-        _renderer->invalidate();
+        _renderer->invalidateCameraTransforms();
     }
 }
 
@@ -107,19 +106,29 @@ MTKViewRendererDelegate::getMTLDevice() const
     return _mtkView.device;
 }
 
-float2
-MTKViewRendererDelegate::renderSize() const
+size_t
+MTKViewRendererDelegate::cameraInfoCount() const
 {
-    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
-    const CGSize size = layer.drawableSize;
-    return float2 { float(size.width), float(size.height) };
+    return 1;
 }
 
-float2
-MTKViewRendererDelegate::renderSizeInPoints() const
+CameraInfo
+MTKViewRendererDelegate::cameraInfo(size_t index, const Camera::Ptr& camera) const
 {
+    ASSERT(index == 0);
+    
+    CameraInfo info;
+    
+    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
+    const CGSize size = layer.drawableSize;
+    info.setViewportSize(float2 { float(size.width), float(size.height) });
+    
     const CGSize s = _mtkView.bounds.size;
-    return { float(s.width), float(s.height) };
+    info.setViewportSizeInPoints({ float(s.width), float(s.height) });
+    
+    info.setProjectionMatrix(camera->computeProjectionMatrix());
+    
+    return info;
 }
 
 MTLRenderPassDescriptor* _Nullable

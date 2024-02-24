@@ -32,16 +32,9 @@ _inFlightSemaphore(dispatch_semaphore_create(RenderPass::kMaxBuffersInFlight))
     _delegate->init(this);
     
     init();
-    updateCameraTransforms();
 }
 
 Renderer::~Renderer() = default;
-
-float2
-Renderer::renderSize() const
-{
-    return _delegate->renderSize();
-}
 
 void
 Renderer::init()
@@ -51,31 +44,70 @@ Renderer::init()
     _commandQueue = [device newCommandQueue];
     _mtlLibrary = [device newDefaultLibrary];
     
-    _sdfRenderPass = std::make_unique<SDFRenderPass>();
-    _selectionMattingRenderPass = std::make_unique<SelectionMattingRenderPass>();
-    _selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>();
+    const size_t n = _delegate->cameraInfoCount();
+    _renderPassesPerCamera.resize(n);
     
-    _renderPasses = { _sdfRenderPass.get(), _selectionMattingRenderPass.get(), _selectionOutlineRenderPass.get() };
+    for (size_t i=0; i < n; ++i)
+    {
+        auto& rp = _renderPassesPerCamera[i];
+        
+        rp.sdfRenderPass = std::make_unique<SDFRenderPass>(i);
+        _renderPasses.push_back(rp.sdfRenderPass.get());
+        
+        rp.selectionMattingRenderPass = std::make_unique<SelectionMattingRenderPass>(i);
+        _renderPasses.push_back(rp.selectionMattingRenderPass.get());
+        
+        rp.selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>(i);
+        _renderPasses.push_back(rp.selectionOutlineRenderPass.get());
+        
+        rp.selectionOutlineRenderPass->setMattingTextureProvider([selectionMattingPass = rp.selectionMattingRenderPass.get()]()
+        {
+            return selectionMattingPass->targetTexture();
+        });
+    }
     
     for (auto renderPass : _renderPasses)
     {
         renderPass->init(*this);
     }
-    
-    _selectionOutlineRenderPass->setMattingTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
-    {
-        return selectionMattingPass->targetTexture();
-    });
 }
 
-void Renderer::setCamera(const Camera::Ptr& cam)
+bool
+CameraInfo::isValid() const
 {
-    _camera = cam;
+    return (_viewportSize.x > 0.f) && (_viewportSize.y > 0.f) && (_viewportSizeInPoints.x > 0.f) && (_viewportSizeInPoints.y > 0.f);
+}
+
+void
+CameraInfo::setViewportSize(const float2& s)
+{
+    _viewportSize = s;
+}
+
+void
+CameraInfo::setViewportSizeInPoints(const float2& s)
+{
+    _viewportSizeInPoints = s;
+}
+
+void
+CameraInfo::setProjectionMatrix(const float4x4& proj)
+{
+    _projectionMatrix = proj;
+    _invProjectionMatrix = inverse(_projectionMatrix);
+}
+
+void Renderer::installCameraRig()
+{
+    const size_t n = _delegate->cameraInfoCount();
     
-    if (_camera != nullptr)
-    {
-        updateCameraTransforms();
-    }
+    _cameraRig = CameraRig::make(_world, n);
+    _world->rootObject()->addChild(_cameraRig);
+    
+    _cameraInfos.resize(n);
+    _renderPassesPerCamera.resize(n);
+    
+    updateCameraTransforms();
 }
 
 void
@@ -87,6 +119,11 @@ Renderer::setRenderCallback(const RenderCallback& cb)
 void
 Renderer::render()
 {
+    if (!_cameraInfosValid && !updateCameraTransforms())
+    {
+        return;
+    }
+    
     /// Per frame updates here
     auto now = HighResClock::now();
     
@@ -136,39 +173,66 @@ Renderer::render()
 }
 
 void
+Renderer::invalidateCameraTransforms()
+{
+    _cameraInfosValid = false;
+    
+    invalidate();
+}
+
+bool
 Renderer::updateCameraTransforms()
 {
-    if (_camera != nullptr)
+    _cameraInfosValid = false;
+    
+    if (_cameraRig != nullptr)
     {
-        const auto s = _delegate->renderSizeInPoints();
+        size_t index = 0;
+        const auto& cameras = _cameraRig->cameras();
         
-        _camera->setViewportSize(s);
+        for (auto& info : _cameraInfos)
+        {
+            auto camera = cameras[index];
+            
+            info = _delegate->cameraInfo(index, camera);
+            if (!info.isValid())
+            {
+                return false;
+            }
+            
+            camera->setViewportSize(info.viewportSizeInPoints());
+            
+            ++index;
+        }
         
-        _projectionMatrix = _camera->computeProjectionMatrix();
-        _invProjectionMatrix = simd_inverse(_projectionMatrix);
+        _cameraInfosValid = true;
     }
+    
+    return _cameraInfosValid;
 }
 
 Ray
 Renderer::ray(float2 pixelPosition) const
 {
-    const auto size = renderSize();
+    const auto size = _cameraInfos[kLeftCameraIndex].viewportSize();
     const auto p = pixelToNDC(size, pixelPosition);
     
-    const auto ray = Ray::make(p, _sdfRenderPass->uniforms());
+    const auto ray = Ray::make(p, _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass->uniforms());
     return ray;
 }
 
 PickResult
 Renderer::pick(float2 pixelPosition) const
 {
-    const auto pixel = renderPixel(pixelPosition);
+    const auto pixel = renderPixel(kLeftCameraIndex, pixelPosition);
     
-    const auto& uniforms = _sdfRenderPass->uniforms();
-    const auto& serializedWorld = _sdfRenderPass->serializedWorld();
-    const auto& materials = _sdfRenderPass->materials();
+    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
     
-    const auto size = renderSize();
+    const auto& uniforms = sdfRenderPass->uniforms();
+    const auto& serializedWorld = sdfRenderPass->serializedWorld();
+    const auto& materials = sdfRenderPass->materials();
+    
+    const auto size = _cameraInfos[kLeftCameraIndex].viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
@@ -176,13 +240,15 @@ Renderer::pick(float2 pixelPosition) const
 }
 
 float4
-Renderer::renderPixel(float2 pixelPosition) const
+Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
 {
-    const auto& uniforms = _sdfRenderPass->uniforms();
-    const auto& serializedWorld = _sdfRenderPass->serializedWorld();
-    const auto& materials = _sdfRenderPass->materials();
+    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
     
-    const auto size = renderSize();
+    const auto& uniforms = sdfRenderPass->uniforms();
+    const auto& serializedWorld = sdfRenderPass->serializedWorld();
+    const auto& materials = sdfRenderPass->materials();
+    
+    const auto size = _cameraInfos[cameraIndex].viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     

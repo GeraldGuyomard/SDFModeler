@@ -13,7 +13,7 @@
 #import "Uniforms.h"
 #import "ShaderTypes.h"
 
-#include "Camera.h"
+#include "CameraRig.h"
 
 #include <functional>
 #include <string>
@@ -22,6 +22,31 @@
 
 class Renderer;
 class RenderPass;
+
+class CameraInfo final
+{
+public:
+    CameraInfo() = default;
+    
+    bool isValid() const;
+    
+    const float2& viewportSize() const { return _viewportSize; }
+    const float2& viewportSizeInPoints() const { return _viewportSizeInPoints; }
+    
+    const float4x4& projectionMatrix() const { return _projectionMatrix; }
+    const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
+    
+    void setViewportSize(const float2&);
+    void setViewportSizeInPoints(const float2&);
+    void setProjectionMatrix(const float4x4&);
+    
+private:
+    float2 _viewportSize = { 0.f };
+    float2 _viewportSizeInPoints = { 0.f };
+    
+    float4x4 _projectionMatrix = float4x4_identity();
+    float4x4 _invProjectionMatrix = float4x4_identity();
+};
 
 class RendererDelegate
 {
@@ -34,8 +59,8 @@ public:
     virtual RenderTargetConfiguration::CPtr presentConfiguration() const = 0;
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
-    virtual float2 renderSize() const = 0;
-    virtual float2 renderSizeInPoints() const = 0;
+    virtual size_t cameraInfoCount() const = 0;
+    virtual CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const = 0;
     
     virtual MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const = 0;
     virtual id <MTLDrawable> _Nonnull currentDrawable() const = 0;
@@ -50,10 +75,8 @@ public:
     Renderer(RendererDelegate::Ptr);
     ~Renderer();
     
-    float2 renderSize() const;
-    
-    Camera::Ptr camera() const { return _camera; }
-    void setCamera(const Camera::Ptr&);
+    CameraRig::Ptr cameraRig() const { return _cameraRig; }
+    void installCameraRig();
     
     WorldPtr world() const { return _world; }
     void setWorld(const WorldPtr&);
@@ -61,14 +84,16 @@ public:
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
     
+    const std::vector<CameraInfo>& cameraInfos() const { return _cameraInfos; }
+    
     Ray ray(float2 pixelPosition) const;
     PickResult pick(float2 pixelPosition) const;
-    float4 renderPixel(float2 pixelPosition) const;
+    float4 renderPixel(size_t cameraIndex, float2 pixelPosition) const;
     
     void invalidate();
     
     id<MTLDevice> _Nonnull mtlDevice() const;
-    id<MTLLibrary> mtlLibrary() const { return _mtlLibrary; }
+    id<MTLLibrary> _Nonnull mtlLibrary() const { return _mtlLibrary; }
     
     RendererDelegate* _Nullable delegate() const
     {
@@ -77,36 +102,37 @@ public:
     
 public:
     void render();
-    void updateCameraTransforms();
+    void invalidateCameraTransforms();
     void pause();
-    
-public:
-    const float4x4& projectionMatrix() const { return _projectionMatrix; }
-    const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
     
 private:
     
     void init();
+    bool updateCameraTransforms();
     
-    Camera::Ptr _camera;
     WorldPtr _world;
     
     RendererDelegate::Ptr _delegate;
     
     dispatch_semaphore_t _Nonnull _inFlightSemaphore;
     
-    id<MTLLibrary> _mtlLibrary;
+    id<MTLLibrary> _Nullable _mtlLibrary;
     
     id <MTLCommandQueue> _Nonnull _commandQueue;
 
     std::vector<RenderPass*> _renderPasses;
     
-    std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
-    std::unique_ptr<class SelectionMattingRenderPass> _selectionMattingRenderPass;
-    std::unique_ptr<class SelectionOutlineRenderPass> _selectionOutlineRenderPass;
-
-    float4x4 _projectionMatrix;
-    float4x4 _invProjectionMatrix;
+    struct RenderPassesPerCamera final
+    {
+        std::unique_ptr<class SDFRenderPass> sdfRenderPass;
+        std::unique_ptr<class SelectionMattingRenderPass> selectionMattingRenderPass;
+        std::unique_ptr<class SelectionOutlineRenderPass> selectionOutlineRenderPass;
+    };
+    
+    CameraRig::Ptr _cameraRig;
+    std::vector<CameraInfo> _cameraInfos;
+    std::vector<RenderPassesPerCamera> _renderPassesPerCamera;
+    bool _cameraInfosValid = false;
     
     RenderCallback _renderCallback;
 };

@@ -5,525 +5,94 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
          <BreakpointContent
-            uuid = "EEFAB1AD-C9DF-448C-915B-0A433084A8B9"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializationContext.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
-            landmarkName = "SerializationContext::encodedPrimitiveOffset(object)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Object3D.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "221"
-            endingLineNumber = "221"
-            landmarkName = "selfEncode(context)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC - aa743813357b7aa"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TObject3D&lt;SDFSphere&gt;::selfSerialize(TileDescriptor&amp;, SerializationContext&amp;) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Object3D.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "217"
-                  endingLineNumber = "217"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC - 78a947d1c102bb6b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TObject3D&lt;SDFBox&gt;::selfSerialize(TileDescriptor&amp;, SerializationContext&amp;) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Object3D.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "217"
-                  endingLineNumber = "217"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC - 99f3a7d1a06d8313"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TObject3D&lt;SDFRoundedBox&gt;::selfSerialize(TileDescriptor&amp;, SerializationContext&amp;) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Object3D.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "217"
-                  endingLineNumber = "217"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC - 583d36eb8d38cd71"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TObject3D&lt;SDFTorus&gt;::selfSerialize(TileDescriptor&amp;, SerializationContext&amp;) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Object3D.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "217"
-                  endingLineNumber = "217"
-                  offsetFromSymbolStart = "48">
-               </Location>
-               <Location
-                  uuid = "C7136CF9-DEBF-43F3-A70B-157AA916E6FC - c8f9db5c60b5e51"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "TObject3D&lt;SDFCylinder&gt;::selfSerialize(TileDescriptor&amp;, SerializationContext&amp;) const"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Object3D.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "217"
-                  endingLineNumber = "217"
-                  offsetFromSymbolStart = "48">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "801AE888-14E9-4722-A937-2214621D4033"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Object3D.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "717"
-            endingLineNumber = "717"
-            landmarkName = "World::encode(context, materials)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "9BE97632-F7A9-4C3E-857E-A2A22B39A91E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Object3D.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "625"
-            endingLineNumber = "625"
-            landmarkName = "Object3DSelection::Object3DSelection(object)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F6D8E9E4-63C9-4E97-8A9B-15F3A244994E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Object3D.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "566"
-            endingLineNumber = "566"
-            landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context, owner)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "F1300855-7928-4427-8FAF-E922A7A0E408"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "419"
-            endingLineNumber = "419"
-            landmarkName = "submitMinDistance(serialized, dist)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "F1300855-7928-4427-8FAF-E922A7A0E408 - 264edf5739202666"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Visitor::submitMinDistance(SerializedWorldObject const&amp;, float, DrawCommand const*)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "323"
-                  endingLineNumber = "323"
-                  offsetFromSymbolStart = "132">
-               </Location>
-               <Location
-                  uuid = "F1300855-7928-4427-8FAF-E922A7A0E408 - 264edf573920270b"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Visitor::submitMinDistance(SerializedWorldObject const&amp;, float, DrawCommand const*)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "328"
-                  endingLineNumber = "328"
-                  offsetFromSymbolStart = "168">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "5FE8DD22-FE35-4035-BC89-0A7479268AC7"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "421"
-            endingLineNumber = "421"
-            landmarkName = "submitMinDistance(serialized, dist)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "A223E691-8CD8-4711-9126-1C2FDA511E9D"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/SerializedWorldObject.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
-            landmarkName = "visitDrawCommandTree(pt, serialized, rootCmdIndex, visitor)"
-            landmarkType = "9">
-            <Locations>
-               <Location
-                  uuid = "A223E691-8CD8-4711-9126-1C2FDA511E9D - 33637fa5dde69b3e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void visitDrawCommandTree&lt;Visitor&gt;(float vector[3], SerializedWorldObject const&amp;, short, Visitor&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "235"
-                  endingLineNumber = "235"
-                  offsetFromSymbolStart = "36">
-               </Location>
-               <Location
-                  uuid = "A223E691-8CD8-4711-9126-1C2FDA511E9D - 33637fa5dde69426"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void visitDrawCommandTree&lt;Visitor&gt;(float vector[3], SerializedWorldObject const&amp;, short, Visitor&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "243"
-                  endingLineNumber = "243"
-                  offsetFromSymbolStart = "36">
-               </Location>
-               <Location
-                  uuid = "A223E691-8CD8-4711-9126-1C2FDA511E9D - 33637fa5dde69468"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void visitDrawCommandTree&lt;Visitor&gt;(float vector[3], SerializedWorldObject const&amp;, short, Visitor&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "245"
-                  endingLineNumber = "245"
-                  offsetFromSymbolStart = "36">
-               </Location>
-               <Location
-                  uuid = "A223E691-8CD8-4711-9126-1C2FDA511E9D - 33637fa5dde695aa"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "void visitDrawCommandTree&lt;Visitor&gt;(float vector[3], SerializedWorldObject const&amp;, short, Visitor&amp;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/SerializedWorldObject.h"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "247"
-                  endingLineNumber = "247"
-                  offsetFromSymbolStart = "36">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4A0AE420-30AD-4A99-9EB3-C16A8B034C7F"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/MainViewController.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "207"
-            endingLineNumber = "207"
-            landmarkName = "-loadWorld"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3C07FB78-11EC-438D-9F79-E1FAEE47945C"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/MainViewController.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210"
-            landmarkName = "-loadWorld"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "043B6006-C817-4B58-8F06-DEDFBBC9C5A8"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Renderer.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "197"
-            endingLineNumber = "197"
-            landmarkName = "Renderer::setWorld(world)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3F63AB8F-3F94-44C2-8F43-A5523758D761"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "visionOS/SDFModeler_visionOSApp.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "14"
-            endingLineNumber = "14"
-            landmarkName = "makeConfiguration(capabilities:configuration:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AE410C9C-13FF-44B8-987B-D43BBCF906F4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Object3D.cpp"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "553"
-            endingLineNumber = "553"
-            landmarkName = "Object3D::encodeHierarchy(tileDescriptor, context, owner)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "21FBBD71-766C-4EC2-ADA1-4397CEA7B6A4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "macOS/MainViewControllerMacOS.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
-            landmarkName = "-rightMouseDown:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E226A686-E706-44E4-B6F4-620C1F448E96"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "macOS/MainViewControllerMacOS.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "58"
-            endingLineNumber = "58"
-            landmarkName = "-mouseDown:"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "67E56665-5BC2-43D7-966B-7C684656A932"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/MTKViewRendererDelegate.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "86"
-            endingLineNumber = "86"
-            landmarkName = "MTKViewRendererDelegate::init(renderer)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Renderer.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
-            landmarkName = "Renderer::Renderer(delegate)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5 - fe4bf7496a6c25c0"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Renderer::Renderer(std::__1::unique_ptr&lt;RendererDelegate, std::__1::default_delete&lt;RendererDelegate&gt;&gt;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "36"
-                  endingLineNumber = "36"
-                  offsetFromSymbolStart = "292">
-               </Location>
-               <Location
-                  uuid = "2253BC58-6B28-4620-BE05-457F0414A4C5 - fe4bf7496a6c5613"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "Renderer::Renderer(std::__1::unique_ptr&lt;RendererDelegate, std::__1::default_delete&lt;RendererDelegate&gt;&gt;)"
-                  moduleName = "SDFModeler"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "181"
-                  endingLineNumber = "181"
-                  offsetFromSymbolStart = "216">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4BA35CFB-8022-4DB1-9EED-6B8BA0EB2938"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/RenderFunctions.h"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "109"
-            endingLineNumber = "109"
-            landmarkName = "render(viewportNDC, uniforms, serializedWorld, materials)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "936B4573-DAF5-45CF-944F-5B22060576DC"
+            uuid = "D359D95B-2FD9-4120-99DC-667AD8F6EB89"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Sources/RenderPass.mm"
+            breakpointStackSelectionBehavior = "1"
+            scope = "2"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "EB78E802-60C2-48BD-9296-B9C14089AA55"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "RenderPass::init(renderer)"
+            startingLineNumber = "110"
+            endingLineNumber = "110"
+            landmarkName = "Renderer::installCameraRig()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "EB78E802-60C2-48BD-9296-B9C14089AA55 - facca56eaba95ab"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Renderer::installCameraRig()"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "105"
+                  endingLineNumber = "105"
+                  offsetFromSymbolStart = "224">
+               </Location>
+               <Location
+                  uuid = "EB78E802-60C2-48BD-9296-B9C14089AA55 - facca56eaba9588"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "Renderer::installCameraRig()"
+                  moduleName = "SDFModeler"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/Sources/Renderer.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "104"
+                  endingLineNumber = "104"
+                  offsetFromSymbolStart = "224">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FA89D02-7638-4FC0-A653-7AFCAE307B02"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Sources/Renderer.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "128"
+            endingLineNumber = "128"
+            landmarkName = "Renderer::render()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "218BAC2A-681B-4C7F-86AD-EE6F29B8F7BE"
-            shouldBeEnabled = "No"
+            uuid = "F777CA1D-A871-4E52-AF5C-DF3DAEADBD92"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Sources/OutlineRenderPass.mm"
+            filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "19"
-            endingLineNumber = "19"
-            landmarkName = "OutlineRenderPass::makeRenderEncoder(renderer, cmdBuffer)"
+            startingLineNumber = "186"
+            endingLineNumber = "186"
+            landmarkName = "Renderer::updateCameraTransforms()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

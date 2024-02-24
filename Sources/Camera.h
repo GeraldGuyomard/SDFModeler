@@ -12,26 +12,6 @@
 #include "Object3D.h"
 #include <optional>
 
-class LookAtPositionProvider
-{
-public:
-    using Ptr = std::unique_ptr<LookAtPositionProvider>;
-    virtual ~LookAtPositionProvider() = default;
-    
-    virtual std::optional<float3> position() const = 0;
-};
-
-class LookAtObject3DProvider : public LookAtPositionProvider
-{
-public:
-    LookAtObject3DProvider(const Object3D::Ptr& object);
-    
-    std::optional<float3> position() const override;
-    
-private:
-    Object3D::WPtr _object;
-};
-
 class Camera final : public Object3D
 {
 public:
@@ -46,12 +26,6 @@ public:
     
     float aspectRatio() const;
     
-    float3 lookAtPosition();
-    void setLookAtPositionProvider(LookAtPositionProvider::Ptr);
-    void setLookAtPositionProvider(const Object3D::Ptr&);
-    
-    float3 computeOrbitOrigin();
-    
     void setViewportSize(const float2&);
     float4x4 computeProjectionMatrix() const;
     
@@ -59,8 +33,6 @@ public:
     float4x4 computeFrameTransform(const Object3D::Ptr& object) const;
     
 private:
-    LookAtPositionProvider::Ptr _lookAtPositionProvider;
-    float3 _defaultLookAtPosition = float3 { 0.f };
     
     // Intrinsics
     float _fovyRadians = 45.0f * (M_PI / 180.0f);

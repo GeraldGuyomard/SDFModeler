@@ -35,7 +35,7 @@
     //CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
     
-    const auto size = renderer->renderSize();
+    const auto size = renderer->cameraInfos()[kLeftCameraIndex].viewportSize();
     
     std::vector<uint32_t> buffer;
     buffer.resize(size.x * size.y);
@@ -47,7 +47,7 @@
             uint32_t& pixel = buffer[(y * size.x) + x];
             const float2 pixelCoordinates { x, y };
             
-            const auto fragment = renderer->renderPixel(pixelCoordinates);
+            const auto fragment = renderer->renderPixel(kLeftCameraIndex, pixelCoordinates);
             
             const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
             const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;

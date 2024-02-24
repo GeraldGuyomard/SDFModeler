@@ -21,6 +21,8 @@
 #include "Commands/GroupSelectionCommand.h"
 #include "Commands/ToggleObjectOperationCommand.h"
 
+#include "CameraRig.h"
+
 // some static initializers
 TObject3DFactoryRegistration s_SphereRegistration {"Sphere", SDFSphere { 0.5f } };
 TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.5f, 0.5} } };
@@ -256,8 +258,8 @@ void visitTypes(const Object3D::Ptr& object)
     _renderer = std::make_unique<Renderer>(std::move(delegate));
     
     _renderer->setWorld(self.world);
-    auto camera = std::make_shared<Camera>(_world);
-    _renderer->setCamera(camera);
+    
+    _renderer->installCameraRig();
     
     _baseTime = HighResClock::now();
     
@@ -276,6 +278,9 @@ void visitTypes(const Object3D::Ptr& object)
     });
     
     auto root = self.world->rootObject();
+    
+    auto camera = _renderer->cameraRig()->cameras()[kLeftCameraIndex];
+    
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
     
@@ -327,9 +332,10 @@ void visitTypes(const Object3D::Ptr& object)
         object = object->owner();
     }
     
-    auto camera = self.renderer->camera();
-    camera->setLookAtPositionProvider(object);
+    auto cameraRig = self.renderer->cameraRig();
+    cameraRig->setLookAtPositionProvider(object);
     
+    auto camera = cameraRig->cameras()[kLeftCameraIndex];
     const auto cameraPos = camera->computeFramePosition(object);
     
     auto animation = std::make_shared<MoveCameraAnimation>(camera, 0.25f, cameraPos);

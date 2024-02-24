@@ -27,7 +27,7 @@
     const auto p = [self position:[self.view convertPoint:event.locationInWindow fromView:nil]];
     
     const auto res = self.renderer->pick(p);
-    const auto pixel = self.renderer->renderPixel(p);
+    const auto pixel = self.renderer->renderPixel(kLeftCameraIndex, p);
     
     NSLog(@"ObjectID = %d\n R=%1.4f G=%1.4f B=%1.4f A=%1.4f", res.objectID, pixel.x, pixel.y, pixel.z, pixel.w);
 }
@@ -42,7 +42,7 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
-    auto camera = self.renderer->camera();
+    auto camera = self.renderer->cameraRig();
     
     const auto initialPos = [self position:event.locationInWindow];
     
@@ -122,7 +122,7 @@
 {
     float d = event.scrollingDeltaY / 1000.f;
     
-    auto camera = self.renderer->camera();
+    auto camera = self.renderer->cameraRig();
     
     auto interaction = std::make_unique<DollyCameraInteraction>(camera);
     interaction->pinch(d);

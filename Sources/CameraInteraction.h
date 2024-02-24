@@ -7,28 +7,28 @@
 
 #pragma once
 
-#include "Camera.h"
+#include "CameraRig.h"
 #include "Interaction.h"
 #include "Object3D.h"
 
 class CameraInteraction
 {
 public:
-    const Camera::Ptr& camera() const { return _camera; }
+    const CameraRig::Ptr& camera() const { return _camera; }
     
 protected:
-    CameraInteraction(const Camera::Ptr&);
+    CameraInteraction(const CameraRig::Ptr&);
     ~CameraInteraction() = default;
     
 private:
-    Camera::Ptr _camera;
+    CameraRig::Ptr _camera;
 };
 
 class OrbitCameraInteraction : public PanInteraction, public CameraInteraction
 {
 public:
     static constexpr float kDefaultSpeed = 1e-3f;
-    OrbitCameraInteraction(const Camera::Ptr&, const float2& initialPos, float speed = kDefaultSpeed);
+    OrbitCameraInteraction(const CameraRig::Ptr&, const float2& initialPos, float speed = kDefaultSpeed);
     
     void pan(const float2& pos) override;
     
@@ -45,7 +45,7 @@ class DollyCameraInteraction : public PinchInteraction, public CameraInteraction
 public:
     using Ptr = std::shared_ptr<DollyCameraInteraction>;
     
-    DollyCameraInteraction(const Camera::Ptr& camera);
+    DollyCameraInteraction(const CameraRig::Ptr& camera);
     
     void pinch(float delta) override;
     
@@ -56,7 +56,7 @@ private:
 class PanCameraInteraction : public PanInteraction, public CameraInteraction
 {
 public:
-    PanCameraInteraction(const Camera::Ptr&, const float2& initialPos);
+    PanCameraInteraction(const CameraRig::Ptr&, const float2& initialPos);
     
     void pan(const float2& pos) override;
     

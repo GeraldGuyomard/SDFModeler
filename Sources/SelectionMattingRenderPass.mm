@@ -7,6 +7,10 @@
 
 #import "SelectionMattingRenderPass.h"
 
+SelectionMattingRenderPass::SelectionMattingRenderPass(size_t cameraIndex)
+: _inherited(cameraIndex), _cameraIndex(cameraIndex)
+{}
+
 bool
 SelectionMattingRenderPass::init(Renderer& renderer)
 {
@@ -33,7 +37,7 @@ SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    auto size = renderer.renderSize();
+    auto size = renderer.cameraInfos()[_cameraIndex].viewportSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
         return nullptr;

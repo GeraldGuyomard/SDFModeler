@@ -9,6 +9,8 @@
 
 #include "CommonDefinitions.h"
 
+static CONSTANT constexpr size_t kLeftCameraIndex = 0;
+
 struct Uniforms final
 {
     float4x4 worldTransformToNdc;

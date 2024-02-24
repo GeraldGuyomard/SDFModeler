@@ -16,6 +16,8 @@ class SelectionOutlineRenderPass : public RenderPass
 public:
     using _inherited = RenderPass;
     
+    SelectionOutlineRenderPass(size_t cameraIndex);
+    
     bool init(Renderer& renderer) override;
     
     using MattingTextureProvider = std::function<id<MTLTexture>()>;
@@ -25,6 +27,8 @@ public:
     void updateUniforms(Renderer&) override;
     
 private:
+    
+    const size_t _cameraIndex;
     
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;

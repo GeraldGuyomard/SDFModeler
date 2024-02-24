@@ -19,6 +19,8 @@ class SDFRenderPass : public QuadBasedRenderPass
 public:
     using _inherited = QuadBasedRenderPass;
     
+    SDFRenderPass(size_t cameraIndex);
+    
     bool init(Renderer& renderer) override;
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
@@ -42,6 +44,8 @@ public:
     }
     
 protected:
+    
+    const size_t _cameraIndex;
     
     PipelineConfiguration::Ptr makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const override;
     id <MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) override;

@@ -7,14 +7,14 @@
 
 #include "CameraInteraction.h"
 
-CameraInteraction::CameraInteraction(const Camera::Ptr& camera)
+CameraInteraction::CameraInteraction(const CameraRig::Ptr& camera)
 : _camera(camera)
 {}
 
 
 
 
-OrbitCameraInteraction::OrbitCameraInteraction(const Camera::Ptr& camera, const float2& initialPos, float speed)
+OrbitCameraInteraction::OrbitCameraInteraction(const CameraRig::Ptr& camera, const float2& initialPos, float speed)
 : PanInteraction(initialPos),
 CameraInteraction(camera),
 _initialCameraTransform(camera->worldTransform()),
@@ -41,7 +41,7 @@ OrbitCameraInteraction::pan(const float2& pt)
     camera()->setWorldTransform(newTransform);
 }
 
-DollyCameraInteraction::DollyCameraInteraction(const Camera::Ptr& camera)
+DollyCameraInteraction::DollyCameraInteraction(const CameraRig::Ptr& camera)
 : CameraInteraction(camera), _direction(forward(camera->worldTransform()))
 {}
 
@@ -59,7 +59,7 @@ DollyCameraInteraction::pinch(float delta)
     camera->setWorldTransform(transform);
 }
 
-PanCameraInteraction::PanCameraInteraction(const Camera::Ptr& camera, const float2& initialPos)
+PanCameraInteraction::PanCameraInteraction(const CameraRig::Ptr& camera, const float2& initialPos)
 : PanInteraction(initialPos), CameraInteraction(camera), _previousPos(initialPos)
 {
     auto decomp = decompose(camera->worldTransform());

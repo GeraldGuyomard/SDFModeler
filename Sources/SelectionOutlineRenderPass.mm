@@ -18,6 +18,10 @@ namespace
     };
 }
 
+SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
+: _cameraIndex(cameraIndex)
+{}
+
 id<MTLRenderCommandEncoder>_Nullable
 SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
@@ -115,7 +119,7 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     auto& uniforms = _uniformsBuffer->uniform();
     
     constexpr float kThickness= 5.f;
-    const auto size = renderer.renderSize();
+    const auto size = renderer.cameraInfos()[_cameraIndex].viewportSize();
     
     uniforms.samplingDelta = kThickness / size;
     

@@ -207,6 +207,9 @@
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
+		7FFA5D602B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
+		7FFA5D612B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
+		7FFA5D622B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -373,6 +376,8 @@
 		7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionOutlineRenderPass.mm; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
+		7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraRig.cpp; sourceTree = "<group>"; };
+		7FFA5D5F2B8A874C0082C0A9 /* CameraRig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraRig.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -497,6 +502,8 @@
 				7444A4E229A1CB64009632C3 /* main.m */,
 				74A18A9229D8B7990010F1B4 /* Camera.cpp */,
 				74A18A9329D8B7990010F1B4 /* Camera.h */,
+				7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */,
+				7FFA5D5F2B8A874C0082C0A9 /* CameraRig.h */,
 				7431C49729DD116300DD4A74 /* Interaction.cpp */,
 				7431C49629DD116300DD4A74 /* Interaction.h */,
 				748629C029F62C6C002407AA /* Animation.cpp */,
@@ -849,6 +856,7 @@
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
 				7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */,
 				743252C129EE41A7009A44EF /* ShadedPrimitive.cpp in Sources */,
+				7FFA5D602B8A874C0082C0A9 /* CameraRig.cpp in Sources */,
 				74AF134229B4665B00F9BBA8 /* RenderCPUViewController.mm in Sources */,
 				74DAA6F429ADB5A200171C03 /* SDFPlane.cpp in Sources */,
 				74B52D082AA55B5F00EE70C4 /* SetPropertyCommand.mm in Sources */,
@@ -934,6 +942,7 @@
 				7431C49929DD116300DD4A74 /* Interaction.cpp in Sources */,
 				74AAF29329D7BCD300D322DB /* RenderFunctions.cpp in Sources */,
 				74AAF27E29D7BCA400D322DB /* Material.cpp in Sources */,
+				7FFA5D612B8A874C0082C0A9 /* CameraRig.cpp in Sources */,
 				7F92342D2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				74087D9129F0B1C000958CD7 /* BoundingBox.cpp in Sources */,
 				74AAF28829D7BCB100D322DB /* SDFRoundedBox.cpp in Sources */,
@@ -990,6 +999,7 @@
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
 				7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */,
 				7F5DE0812B73092A003FC854 /* Camera.cpp in Sources */,
+				7FFA5D622B8A874C0082C0A9 /* CameraRig.cpp in Sources */,
 				7F5DE0592B730880003FC854 /* PhongShader.cpp in Sources */,
 				7F5DE0612B73089F003FC854 /* SDFPlane.cpp in Sources */,
 				7F5DE0682B7308B7003FC854 /* RemoveObjectCommand.cpp in Sources */,

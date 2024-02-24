@@ -7,75 +7,9 @@
 
 #include "Camera.h"
 
-LookAtObject3DProvider::LookAtObject3DProvider(const Object3D::Ptr& object)
-: _object(object)
-{}
-
-std::optional<float3>
-LookAtObject3DProvider::position() const
-{
-    if (auto object = _object.lock())
-    {
-        return translation(object->worldTransform());
-    }
-    else
-    {
-        return {};
-    }
-}
-
 Camera::Camera(const WorldPtr& world)
 : _inherited(world)
 {}
-
-float3
-Camera::lookAtPosition()
-{
-    std::optional<float3> pos;
-    if (_lookAtPositionProvider != nullptr)
-    {
-        pos = _lookAtPositionProvider->position();
-    }
-    
-    if (pos.has_value())
-    {
-        _defaultLookAtPosition = pos.value();
-    }
-    
-    return _defaultLookAtPosition;
-}
-
-void
-Camera::setLookAtPositionProvider(LookAtPositionProvider::Ptr provider)
-{
-    _lookAtPositionProvider = std::move(provider);
-}
-
-void
-Camera::setLookAtPositionProvider(const Object3D::Ptr& object)
-{
-    if (object != nullptr)
-    {
-        _lookAtPositionProvider = std::make_unique<LookAtObject3DProvider>(object);
-    }
-    else
-    {
-        _lookAtPositionProvider.reset();
-    }
-}
-
-float3
-Camera::computeOrbitOrigin()
-{
-    const auto cameraTransform = worldTransform();
-    
-    const auto position = cameraTransform.columns[3].xyz;
-    const auto direction = simd_normalize(cameraTransform.columns[2].xyz);
-    
-    const float3 lookAtVector = lookAtPosition() - position;
-    const float proj = dot(direction, lookAtVector);
-    return position + (direction * proj);
-}
 
 void
 Camera::setViewportSize(const float2& size)

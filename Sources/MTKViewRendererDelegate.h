@@ -25,8 +25,8 @@ public:
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
     
-    float2 renderSize() const override;
-    float2 renderSizeInPoints() const override;
+    size_t cameraInfoCount() const override;
+    CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
     id <MTLDrawable> _Nonnull currentDrawable() const override;
