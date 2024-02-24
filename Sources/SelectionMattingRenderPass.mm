@@ -41,11 +41,11 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     // render at a lower resolution than final content
     // to save time and get free blur
-    //size *= 0.5f;
+    //size = ceil(size * 0.75f);
     
     if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {
-        const auto colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+        const auto colorPixelFormat = MTLPixelFormatR8Unorm_sRGB;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
         
@@ -68,6 +68,7 @@ SelectionMattingRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mt
     
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
+    config->colorPixelFormat = MTLPixelFormatR8Unorm_sRGB;
     config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;

@@ -93,9 +93,9 @@ struct FragmentShader_SelectionOutlineOut
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
 {
-    constexpr sampler colorSampler(mip_filter::nearest,
-                                   mag_filter::nearest,
-                                   min_filter::nearest);
+    constexpr sampler colorSampler(mip_filter::linear,
+                                   mag_filter::linear,
+                                   min_filter::linear);
     
     constexpr float d = 1.f / 500.f;
     
