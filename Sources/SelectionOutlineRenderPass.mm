@@ -113,6 +113,13 @@ void
 SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
 {
     auto& uniforms = _uniformsBuffer->uniform();
+    
+    constexpr float kThickness= 5.f;
+    const auto size = renderer.renderSize();
+    
+    uniforms.samplingDelta = kThickness / size;
+    
+    uniforms.color = float4 { 252.0 / 255.0, 202.0 / 255.0, 0.0, 1.f };
 }
 
 
@@ -130,6 +137,8 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
     {
         return;
     }
+    
+    _uniformsBuffer->setFragmentBuffer(encoder);
     
     // Draw a quad on screen
     [encoder setVertexBuffer:_quadVertexBuffer

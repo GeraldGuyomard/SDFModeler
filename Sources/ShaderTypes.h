@@ -24,7 +24,7 @@ enum BufferIndex : EnumBackingType
     
     BufferIndexUVs = 1,
     
-    BufferIndexMattingUniforms = 0
+    BufferIndexOutlineUniforms = 0
 };
 
 enum VertexAttribute : EnumBackingType

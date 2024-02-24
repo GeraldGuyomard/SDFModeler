@@ -91,23 +91,25 @@ struct FragmentShader_SelectionOutlineOut
 };
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
+                                    constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
                                     texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear);
     
-    constexpr float d = 1.f / 500.f;
-    
+   
     const float c = inTexture.sample(colorSampler, in.textCoords).r;
     
     float color = 0.f;
     
-    const float d2 = 2.f * d;
+    const auto delta = uniforms.samplingDelta;
     
-    for (float x = -d; x <= d; x += d2)
+    const float2 samplingRange = 2.f *delta;
+    
+    for (float x = -delta.x; x <= delta.x; x += samplingRange.x)
     {
-        for (float y = -d; y <= d; y += d2)
+        for (float y = -delta.y; y <= delta.y; y += samplingRange.y)
         {
             color += inTexture.sample(colorSampler, in.textCoords + float2 { x, y } ).r;
         }
@@ -117,11 +119,11 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     color = clamp(color, 0.f, 1.f);
     
     const float outlineLevel = clamp(color, 0.f, 1.f);
-    const float3 outlineColor { 252. / 255., 202. / 255., 0. };
     
     FragmentShader_SelectionOutlineOut out;
     
-    out.color = { outlineColor.r, outlineColor.g, outlineColor.b, outlineLevel };
+    out.color = uniforms.color;
+    out.color.a = outlineLevel;
     
     return out;
 }

@@ -33,7 +33,7 @@ private:
     
     id <MTLBuffer> _Nonnull _quadVertexBuffer;
     
-    using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexMattingUniforms, kMaxBuffersInFlight>;
+    using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexOutlineUniforms, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
     MattingTextureProvider _mattingTextureProvider;
