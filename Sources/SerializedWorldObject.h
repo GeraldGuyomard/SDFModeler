@@ -469,6 +469,36 @@ private:
     TDrawCommandIndex _rootCommandIndex;
 };
 
+template <typename TShader>
+RayMarchResult
+computeHitResult(const THREAD Visitor& visitor,
+                 CONSTANT SerializedWorldObject& serialized,
+                 CONSTANT Tile& tile,
+                 CullingInfo cullingInfo,
+                 THREAD const Ray& ray,
+                 float3 pt,
+                 float d,
+                 THREAD const TShader& shader)
+{
+    const auto minCmdIndex = visitor.minCmdIndex();
+    ASSERT(minCmdIndex >= 0);
+    
+    // This should be a leaf primitive
+    auto cmd = serialized.drawCommand(minCmdIndex);
+    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+    
+    const TDrawCommandIndex startCmdIndex = minCmdIndex + cmd->ownerOffset;
+    
+    auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+    const auto materialID = prim->materialId;
+    const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, startCmdIndex);
+    ShadedPrimitive primitive { serialized, startCmdIndex, materialID, subCullingInfo };
+    const auto color = shader.computeShade(primitive, ray, visitor.minDistance(), pt);
+    
+    const auto objectID = prim->objectId;
+    
+    return RayMarchResult { ray, objectID, color, d };
+}
 
 template <typename TShader>
 class WorldObject final
@@ -563,24 +593,7 @@ public:
         
         if (visitor.hit())
         {
-            const auto minCmdIndex = visitor.minCmdIndex();
-            ASSERT(minCmdIndex >= 0);
-            
-            // This should be a leaf primitive
-            auto cmd = _serialized.drawCommand(minCmdIndex);
-            ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
-            
-            const TDrawCommandIndex startCmdIndex = minCmdIndex + cmd->ownerOffset;
-            
-            auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-            const auto materialID = prim->materialId;
-            const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, startCmdIndex);
-            ShadedPrimitive primitive { _serialized, startCmdIndex, materialID, subCullingInfo };
-            const auto color = _shader.computeShade(primitive, ray, visitor.minDistance(), pt);
-            
-            const auto objectID = prim->objectId;
-            
-            return RayMarchResult { ray, objectID, color, d };
+            return computeHitResult(visitor, _serialized, tile, cullingInfo, ray, pt, d, _shader);
         }
         
         return RayMarchResult { ray };
