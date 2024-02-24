@@ -93,45 +93,35 @@ struct FragmentShader_SelectionOutlineOut
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
 {
-    constexpr sampler colorSampler(mip_filter::linear,
-                                   mag_filter::linear,
-                                   min_filter::linear);
-    
-    FragmentShader_SelectionOutlineOut out;
+    constexpr sampler colorSampler(mip_filter::nearest,
+                                   mag_filter::nearest,
+                                   min_filter::nearest);
     
     constexpr float d = 1.f / 500.f;
     
     const float c = inTexture.sample(colorSampler, in.textCoords).r;
-    if (c != 0.f)
+    
+    float color = 0.f;
+    
+    const float d2 = 2.f * d;
+    
+    for (float x = -d; x <= d; x += d2)
     {
-        float color = 0.f;
-        for (float x = -d; x <= d; x += d)
+        for (float y = -d; y <= d; y += d2)
         {
-            for (float y = -d; y <= d; y += d)
-            {
-                color += inTexture.sample(colorSampler, in.textCoords + float2 { x, y } ).r;
-            }
+            color += inTexture.sample(colorSampler, in.textCoords + float2 { x, y } ).r;
         }
-        
-        color /= 9.f;
-        
-        if (color == 1.f)
-        {
-            discard_fragment();
-        }
-        
-        
-        color = clamp(color, 0.f, 1.f);
-        
-        const float outlineLevel = clamp(c - color, 0.f, 1.f);
-        //const float3 outlineColor { 0.5, 0.5, 1 };
-        const float3 outlineColor { 252. / 255., 202. / 255., 0. };
-        
-        out.color = { outlineColor.r, outlineColor.g, outlineColor.b, outlineLevel };
-        
-        return out;
     }
-
-    discard_fragment();
-    return {};
+    
+    color = (color / 8.f) - c;
+    color = clamp(color, 0.f, 1.f);
+    
+    const float outlineLevel = clamp(color, 0.f, 1.f);
+    const float3 outlineColor { 252. / 255., 202. / 255., 0. };
+    
+    FragmentShader_SelectionOutlineOut out;
+    
+    out.color = { outlineColor.r, outlineColor.g, outlineColor.b, outlineLevel };
+    
+    return out;
 }

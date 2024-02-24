@@ -29,9 +29,24 @@ RenderPass::init(Renderer& renderer)
     
     if (_pipelineConfiguration->blendEnabled)
     {
-        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = true;
-        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorOne;
-        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        /*
+         descriptor.sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
+         descriptor.sourceAlphaBlendFactor      = MTLBlendFactorOne;
+         descriptor.destinationRGBBlendFactor   = MTLBlendFactorOne;
+         descriptor.destinationAlphaBlendFactor = MTLBlendFactorOne;
+         */
+        
+        auto colorAttachment = pipelineStateDescriptor.colorAttachments[0];
+        
+        colorAttachment.blendingEnabled = true;
+        colorAttachment.rgbBlendOperation = MTLBlendOperationAdd;
+        colorAttachment.alphaBlendOperation = MTLBlendOperationAdd;
+        
+        colorAttachment.sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+        colorAttachment.sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+        
+        colorAttachment.destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        colorAttachment.destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
     }
     else
     {
