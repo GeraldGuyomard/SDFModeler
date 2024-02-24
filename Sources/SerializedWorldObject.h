@@ -502,9 +502,12 @@ public:
         
         CullEvaluator cullEvaluator { ray };
         
-        CullingInfo cullingInfo;
+        size_t nbObjectsPerOperation[2];
+        nbObjectsPerOperation[0] = nbObjectsPerOperation[1] = 0;
         
+        CullingInfo cullingInfo;
         auto cmd = _serialized.drawCommand(tile.rootCommandIndex);
+        
         for (uint8_t i=0; i < tile.nbCommands; ++i)
         {
             if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
@@ -515,9 +518,18 @@ public:
                 {
                     cullingInfo.storeCulling(i);
                 }
+                else
+                {
+                    ++nbObjectsPerOperation[prim->operation];
+                }
             }
             
             cmd++;
+        }
+        
+        if (nbObjectsPerOperation[size_t(SDFOperation::addition)] == 0)
+        {
+            return RayMarchResult { ray };
         }
         
         constexpr size_t kNbSteps = 100;
