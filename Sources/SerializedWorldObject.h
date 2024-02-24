@@ -432,6 +432,39 @@ void visitDrawCommandTree(float3 pt,
 
 #endif
 
+INLINE void visitFlatCommandList(float3 pt,
+                    CONSTANT SerializedWorldObject& serialized,
+                    TDrawCommandIndex rootCmdIndex,
+                    size_t nbCommands,
+                    THREAD Visitor& visitor)
+{
+    auto cmd = &serialized.drawCommands[rootCmdIndex];
+    const auto end = cmd + nbCommands;
+    
+    auto cullingInfo = visitor.cullingInfo();
+    
+    DistanceEvaluator distanceEvaluator { pt };
+    
+    for (; cmd < end; ++cmd)
+    {
+        if (cullingInfo.nextCulling())
+        {
+            continue;
+        }
+        
+        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+        {
+            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
+            if (visitor.submitMinDistance(serialized, d))
+            {
+                visitor.setMinCmdIndex(serialized.drawCommandIndex(cmd));
+                break;
+            }
+        }
+    }
+}
+
 class ShadedPrimitive final
 {
 public:
@@ -563,9 +596,7 @@ public:
         constexpr size_t kNbSteps = 100;
         
         float d = 0.f;
-        
         float3 pt = ray.origin;
-        
         Visitor visitor;
         
         for (size_t i=0; i < kNbSteps; ++i)
@@ -574,7 +605,15 @@ public:
             
             visitor.reset(cullingInfo);
             
-            visitDrawCommandTree(pt, _serialized, tile.rootCommandIndex, visitor);
+            if (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0)
+            {
+                visitDrawCommandTree(pt, _serialized, tile.rootCommandIndex, visitor);
+            }
+            else
+            {
+                // only positive objects, can ignore the tree structure and iterate flat
+                visitFlatCommandList(pt, _serialized, tile.rootCommandIndex, tile.nbCommands, visitor);
+            }
             
             if (visitor.hit())
             {
