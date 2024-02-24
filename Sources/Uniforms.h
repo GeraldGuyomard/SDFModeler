@@ -24,3 +24,9 @@ INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)
     auto p = uniforms.ndcToWorldTransform * float4 { ndc.x, ndc.y, z, 1 };
     return p.xyz / p.w;
 }
+
+struct OutlineUniforms final
+{
+    float2 samplingDelta;
+    float4 color;
+};

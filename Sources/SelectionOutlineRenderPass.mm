@@ -98,8 +98,23 @@ SelectionOutlineRenderPass::init(Renderer& renderer)
     
     _quadVertexBuffer.label = @"QuadVertexBuffer";
     
+    _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"OutlineUniformsBuffer");
+    
     return true;
 }
+
+void
+SelectionOutlineRenderPass::updateBuffersState()
+{
+    _uniformsBuffer->update();
+}
+
+void
+SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
+{
+    auto& uniforms = _uniformsBuffer->uniform();
+}
+
 
 void
 SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)

@@ -9,6 +9,7 @@
 
 #include "RenderPass.h"
 #include <functional>
+#include "TUniformBuffer.h"
 
 class SelectionOutlineRenderPass : public RenderPass
 {
@@ -20,6 +21,9 @@ public:
     using MattingTextureProvider = std::function<id<MTLTexture>()>;
     void setMattingTextureProvider(const MattingTextureProvider&);
     
+    void updateBuffersState() override;
+    void updateUniforms(Renderer&) override;
+    
 private:
     
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
@@ -28,6 +32,9 @@ private:
     void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     
     id <MTLBuffer> _Nonnull _quadVertexBuffer;
+    
+    using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexMattingUniforms, kMaxBuffersInFlight>;
+    std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
     MattingTextureProvider _mattingTextureProvider;
 };
