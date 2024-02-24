@@ -197,10 +197,73 @@ private:
     uint8_t _relativeCmdIndex = 0;
 };
 
-template <typename TVisitor>
-void _computeDistIterative(
+class Visitor final
+{
+public:
+    Visitor() = default;
+    
+    void reset(CullingInfo info)
+    {
+        _cullingInfo = info;
+        _prevMinDistance = _minDistance;
+        _minDistance = 1e5f;
+        _minCmdIndex = -1;
+    }
+    
+    float minDistance() const
+    {
+        return _minDistance;
+    }
+    
+    bool hit() const
+    {
+        return _hit;
+    }
+    
+    TDrawCommandIndex minCmdIndex() const
+    {
+        return _minCmdIndex;
+    }
+    
+    void setMinCmdIndex(TDrawCommandIndex index)
+    {
+        _minCmdIndex = index;
+    }
+    
+    CullingInfo cullingInfo()
+    {
+        return _cullingInfo;
+    }
+    
+    bool submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist)
+    {
+        if (dist < _minDistance)
+        {
+            _minDistance = dist;
+            
+            if (_minDistance <= kDistanceEpsilon)
+            {
+                _hit = true;
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+private:
+    CullingInfo _cullingInfo;
+    
+    float _minDistance = 1e5f;
+    float _prevMinDistance = 1e5f;
+    TDrawCommandIndex _minCmdIndex = -1;
+    
+    bool _hit = false;
+};
+
+INLINE void _computeDistIterative(
                            DistanceEvaluator distanceEvaluator,
-                           THREAD TVisitor& visitor,
+                           THREAD Visitor& visitor,
                            CONSTANT SerializedWorldObject& serialized,
                            TDrawCommandIndex rootCommandIndex)
 {
@@ -285,7 +348,7 @@ template <typename TVisitor>
 void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCmdIndex, THREAD TVisitor& visitor)
 {
     DistanceEvaluator distanceEvaluator { pt };
-    _computeDistIterative<TVisitor>(distanceEvaluator, visitor, serialized, rootCmdIndex);
+    _computeDistIterative(distanceEvaluator, visitor, serialized, rootCmdIndex);
 }
 
 #if SHADER_ON_CPU
@@ -341,14 +404,13 @@ void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized
 
 #define CPU_ITERATIVE 1
 
-template <typename TVisitor>
-void visitDrawCommandTree(float3 pt,
+INLINE void visitDrawCommandTree(float3 pt,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
-                    THREAD TVisitor& visitor)
+                    THREAD Visitor& visitor)
 {
 #if CPU_ITERATIVE
-    return _visitDrawCommandTree<TVisitor>(pt, serialized, rootCmdIndex, visitor);
+    return _visitDrawCommandTree(pt, serialized, rootCmdIndex, visitor);
 #else
     CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
     DistanceEvaluator distanceEvaluator { pt };
@@ -369,70 +431,6 @@ void visitDrawCommandTree(float3 pt,
 }
 
 #endif
-
-class Visitor final
-{
-public:
-    Visitor() = default;
-    
-    void reset(CullingInfo info)
-    {
-        _cullingInfo = info;
-        _prevMinDistance = _minDistance;
-        _minDistance = 1e5f;
-        _minCmdIndex = -1;
-    }
-    
-    float minDistance() const
-    {
-        return _minDistance;
-    }
-    
-    bool hit() const
-    {
-        return _hit;
-    }
-    
-    TDrawCommandIndex minCmdIndex() const
-    {
-        return _minCmdIndex;
-    }
-    
-    void setMinCmdIndex(TDrawCommandIndex index)
-    {
-        _minCmdIndex = index;
-    }
-    
-    CullingInfo cullingInfo()
-    {
-        return _cullingInfo;
-    }
-    
-    bool submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist)
-    {
-        if (dist < _minDistance)
-        {
-            _minDistance = dist;
-            
-            if (_minDistance <= kDistanceEpsilon)
-            {
-                _hit = true;
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-private:
-    CullingInfo _cullingInfo;
-    
-    float _minDistance = 1e5f;
-    float _prevMinDistance = 1e5f;
-    TDrawCommandIndex _minCmdIndex = -1;
-    
-    bool _hit = false;
-};
 
 class ShadedPrimitive final
 {
@@ -576,7 +574,7 @@ public:
             
             visitor.reset(cullingInfo);
             
-            visitDrawCommandTree<Visitor>(pt, _serialized, tile.rootCommandIndex, visitor);
+            visitDrawCommandTree(pt, _serialized, tile.rootCommandIndex, visitor);
             
             if (visitor.hit())
             {
