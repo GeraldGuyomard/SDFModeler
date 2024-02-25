@@ -19,7 +19,7 @@ namespace
 }
 
 PipelineConfiguration::Ptr
-QuadBasedRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+QuadBasedRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
 {
     auto config = std::make_unique<PipelineConfiguration>();
     

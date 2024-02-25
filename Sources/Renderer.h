@@ -67,7 +67,7 @@ public:
     virtual CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const = 0;
     
     virtual MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const = 0;
-    virtual id <MTLDrawable> _Nonnull currentDrawable() const = 0;
+    virtual void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) = 0;
     
     virtual void invalidate() = 0;
     virtual void pause() = 0;    

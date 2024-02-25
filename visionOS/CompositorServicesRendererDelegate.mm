@@ -31,6 +31,12 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     
     _renderer = renderer;
     
+    _cameraInfos.resize(cameraInfoCount());
+    
+    _configuration = std::make_shared<RenderTargetConfiguration>();
+    _configuration->colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+    _configuration->depthPixelFormat = MTLPixelFormatDepth32Float;
+    
     return true;
 }
 
@@ -112,7 +118,7 @@ CompositorServicesRendererDelegate::startSubmission()
     
     auto deviceAnchor = ar_device_anchor_create();
     const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, timeStamp, deviceAnchor);
-    ASSERT(status == ar_device_anchor_query_status_success);
+    //ASSERT(status == ar_device_anchor_query_status_success);
     
     _drawable = cp_frame_query_drawable(_frame);
     if (_drawable == nullptr)
@@ -121,7 +127,7 @@ CompositorServicesRendererDelegate::startSubmission()
     }
     
     const size_t nbViews = cp_drawable_get_view_count(_drawable);
-    _cameraInfos.resize(nbViews);
+    ASSERT(nbViews == _cameraInfos.size());
     
     cp_drawable_set_device_anchor(_drawable, deviceAnchor);
     
@@ -217,10 +223,10 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     return renderPassDescriptor;
 }
 
-id <MTLDrawable> _Nonnull
-CompositorServicesRendererDelegate::currentDrawable() const
+void
+CompositorServicesRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {
-    return nil;
+    cp_drawable_encode_present(_drawable, commandBuffer);
 }
 
 void

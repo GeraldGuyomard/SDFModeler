@@ -114,20 +114,47 @@ Renderer::setRenderCallback(const RenderCallback& cb)
     _renderCallback = cb;
 }
 
+class FrameSubmission final
+{
+public:
+    FrameSubmission(RendererDelegate* delegate)
+    : _delegate(delegate)
+    {
+        _delegate->startSubmission();
+    }
+    
+    ~FrameSubmission()
+    {
+        end();
+    }
+    
+    void end()
+    {
+        if (_delegate != nullptr)
+        {
+            _delegate->endSubmission();
+            _delegate = nullptr;
+        }
+    }
+    
+private:
+    RendererDelegate* _delegate;
+};
+
 void
 Renderer::render()
 {
     /// Per frame updates here
     auto now = HighResClock::now();
     
+    dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
+    
     if (!_delegate->startRender(*this))
     {
         return;
     }
     
-    dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
-    
-    _delegate->startSubmission();
+    FrameSubmission submission { _delegate.get() };
     
     if (!_cameraInfosValid && !updateCameraTransforms())
     {
@@ -166,12 +193,11 @@ Renderer::render()
         pass->render(*this, commandBuffer);
     }
     
-    auto drawable = _delegate->currentDrawable();
-    [commandBuffer presentDrawable:drawable];
+    _delegate->presentDrawable(commandBuffer);
     
     [commandBuffer commit];
     
-    _delegate->endSubmission();
+    submission.end();
     
     if (_renderCallback != nullptr)
     {

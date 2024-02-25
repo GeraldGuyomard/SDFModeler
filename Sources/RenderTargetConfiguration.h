@@ -28,6 +28,6 @@ public:
 #endif
     
     MTLPixelFormat colorPixelFormat = kDefaultColorPixelFormat;
-    MTLPixelFormat depthPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
+    MTLPixelFormat depthPixelFormat = MTLPixelFormatDepth32Float;
     NSUInteger sampleCount = 1;
 };

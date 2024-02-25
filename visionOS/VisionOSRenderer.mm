@@ -7,9 +7,11 @@
 
 #include "VisionOSRenderer.h"
 #include "CompositorServicesRendererDelegate.h"
+#include "WorldHelpers.h"
 
 @implementation VisionOSRenderer
 {
+    WorldPtr _world;
     std::unique_ptr<Renderer> _renderer;
 }
 
@@ -19,6 +21,12 @@
     {
         auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
         _renderer = std::make_unique<Renderer>(std::move(delegate));
+        
+        _world = makeDefaultWorld();
+        
+        _renderer->setWorld(_world);
+        
+        _renderer->installCameraRig();
     }
     
     return self;

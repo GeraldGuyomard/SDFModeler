@@ -210,6 +210,12 @@
 		7FFA5D602B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
 		7FFA5D612B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
 		7FFA5D622B8A874C0082C0A9 /* CameraRig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */; };
+		7FFA5D642B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D632B8BDF9A0082C0A9 /* Object3DRegistration.cpp */; };
+		7FFA5D652B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D632B8BDF9A0082C0A9 /* Object3DRegistration.cpp */; };
+		7FFA5D662B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D632B8BDF9A0082C0A9 /* Object3DRegistration.cpp */; };
+		7FFA5D692B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D672B8BDFDF0082C0A9 /* WorldHelpers.cpp */; };
+		7FFA5D6A2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D672B8BDFDF0082C0A9 /* WorldHelpers.cpp */; };
+		7FFA5D6B2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FFA5D672B8BDFDF0082C0A9 /* WorldHelpers.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -378,6 +384,9 @@
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 		7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraRig.cpp; sourceTree = "<group>"; };
 		7FFA5D5F2B8A874C0082C0A9 /* CameraRig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CameraRig.h; sourceTree = "<group>"; };
+		7FFA5D632B8BDF9A0082C0A9 /* Object3DRegistration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3DRegistration.cpp; sourceTree = "<group>"; };
+		7FFA5D672B8BDFDF0082C0A9 /* WorldHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorldHelpers.cpp; sourceTree = "<group>"; };
+		7FFA5D682B8BDFDF0082C0A9 /* WorldHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldHelpers.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -442,8 +451,11 @@
 				7492228B29E2685F00ACCFBC /* Commands */,
 				74F7646D29CF93FD00CD5259 /* Serializer.cpp */,
 				74F7646E29CF93FD00CD5259 /* Serializer.h */,
+				7FFA5D632B8BDF9A0082C0A9 /* Object3DRegistration.cpp */,
 				74F7647129CF95D400CD5259 /* Object3D.cpp */,
 				74F7647029CF95D400CD5259 /* Object3D.h */,
+				7FFA5D672B8BDFDF0082C0A9 /* WorldHelpers.cpp */,
+				7FFA5D682B8BDFDF0082C0A9 /* WorldHelpers.h */,
 				743252C029EE41A7009A44EF /* ShadedPrimitive.cpp */,
 				743252BF29EE41A7009A44EF /* ShadedPrimitive.h */,
 				7F92342B2B8819BF00E6A7A6 /* TUniformBuffer.h */,
@@ -851,7 +863,9 @@
 				7431C49C29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				7F92342C2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				74DAA70529ADB5C100171C03 /* SimpleMaterial.cpp in Sources */,
+				7FFA5D642B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */,
 				7F92343B2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */,
+				7FFA5D692B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */,
 				74087D9429F0B85E00958CD7 /* EncodingContext.cpp in Sources */,
 				74AF133D29B442AE00F9BBA8 /* FragmentShader.cpp in Sources */,
 				7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */,
@@ -886,6 +900,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7FFA5D652B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */,
 				7431C49D29DD179D00DD4A74 /* Object3DInteraction.mm in Sources */,
 				7F5DE08A2B730B00003FC854 /* MTKViewRendererDelegate.mm in Sources */,
 				7F9234142B86E2D400E6A7A6 /* SelectionMattingRenderPass.mm in Sources */,
@@ -912,6 +927,7 @@
 				7F9234192B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,
 				743252C629EE5C70009A44EF /* ToggleObjectOperationCommand.cpp in Sources */,
 				74897E9C29EF56EC007A5CFE /* EncodedPrimitiveArray.cpp in Sources */,
+				7FFA5D6A2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */,
 				748629CE2A004350002407AA /* Type.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
@@ -994,7 +1010,9 @@
 				7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */,
 				7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
+				7FFA5D662B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */,
 				7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */,
+				7FFA5D6B2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */,
 				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
 				7F5DE07D2B73091F003FC854 /* SDFObject.cpp in Sources */,

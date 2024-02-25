@@ -11,7 +11,7 @@
 bool
 RenderPass::init(Renderer& renderer)
 {
-    _pipelineConfiguration = makePipelineConfiguration(renderer.mtlLibrary());
+    _pipelineConfiguration = makePipelineConfiguration(renderer.delegate()->presentConfiguration(), renderer.mtlLibrary());
     if (_pipelineConfiguration == nullptr)
     {
         return false;
@@ -47,7 +47,8 @@ RenderPass::init(Renderer& renderer)
     }
     
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
-    pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
+    //pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
+    pipelineStateDescriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
     
     auto device = renderer.mtlDevice();
     

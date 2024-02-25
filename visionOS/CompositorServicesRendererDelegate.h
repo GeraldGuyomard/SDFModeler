@@ -36,7 +36,7 @@ public:
     CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
-    id <MTLDrawable> _Nonnull currentDrawable() const override;
+    void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
     
     void invalidate() override;
     void pause() override;
@@ -58,7 +58,7 @@ private:
     cp_drawable_t _Nullable _drawable = nil;
     std::vector<CameraInfo> _cameraInfos;
     
-    RenderTargetConfiguration::CPtr _configuration = std::make_shared<RenderTargetConfiguration>();
+    RenderTargetConfiguration::Ptr _configuration;
 };
 
 

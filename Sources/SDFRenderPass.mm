@@ -20,9 +20,12 @@ SDFRenderPass::SDFRenderPass(size_t cameraIndex)
 {}
 
 PipelineConfiguration::Ptr
-SDFRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+SDFRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
 {
-    auto config = _inherited::makePipelineConfiguration(mtlLib);
+    auto config = _inherited::makePipelineConfiguration(presentationConfig, mtlLib);
+    
+    config->colorPixelFormat = presentationConfig->colorPixelFormat;
+    config->depthPixelFormat = presentationConfig->depthPixelFormat;
     
     config->pipelineName = "RGB Contents";
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];

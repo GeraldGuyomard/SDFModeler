@@ -49,7 +49,7 @@ SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
 }
 
 PipelineConfiguration::Ptr
-SelectionOutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+SelectionOutlineRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
 {
     auto config = std::make_unique<PipelineConfiguration>();
     
@@ -75,6 +75,8 @@ SelectionOutlineRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mt
     
     config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderOutline"];
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderOutline"];
+    
+    config->colorPixelFormat = presentationConfig->colorPixelFormat;
     
     config->blendEnabled = true;
     config->depthWriteEnabled = false;

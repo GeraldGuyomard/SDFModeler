@@ -29,7 +29,7 @@ public:
     CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
-    id <MTLDrawable> _Nonnull currentDrawable() const override;
+    void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
     
     void invalidate() override;
     void pause() override;

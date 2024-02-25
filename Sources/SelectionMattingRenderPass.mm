@@ -64,14 +64,15 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
 }
 
 PipelineConfiguration::Ptr
-SelectionMattingRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mtlLib) const
+SelectionMattingRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
 {
-    auto config = _inherited::makePipelineConfiguration(mtlLib);
+    auto config = _inherited::makePipelineConfiguration(presentationConfig, mtlLib);
     
     config->pipelineName = "Selection Matting";
     
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
+    config->colorPixelFormat = MTLPixelFormatR8Unorm;
     config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;

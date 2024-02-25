@@ -137,10 +137,10 @@ MTKViewRendererDelegate::currentRenderPassDescriptor() const
     return _mtkView.currentRenderPassDescriptor;
 }
 
-id <MTLDrawable> _Nonnull
-MTKViewRendererDelegate::currentDrawable() const
+void
+MTKViewRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {
-    return _mtkView.currentDrawable;
+    [commandBuffer presentDrawable:_mtkView.currentDrawable];
 }
 
 void
