@@ -87,7 +87,7 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.delegate = _mtkViewBridge;
     _mtkView.paused = YES;
     
-    _mtkView.depthStencilPixelFormat = _configuration->depthStencilPixelFormat;
+    _mtkView.depthStencilPixelFormat = _configuration->depthPixelFormat;
     _mtkView.colorPixelFormat = _configuration->colorPixelFormat;
     _mtkView.sampleCount = _configuration->sampleCount;
     

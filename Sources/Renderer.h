@@ -59,6 +59,10 @@ public:
     virtual RenderTargetConfiguration::CPtr presentConfiguration() const = 0;
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
+    virtual bool startRender(Renderer&) { return true; }
+    virtual void startSubmission() {}
+    virtual void endSubmission() {}
+    
     virtual size_t cameraInfoCount() const = 0;
     virtual CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const = 0;
     

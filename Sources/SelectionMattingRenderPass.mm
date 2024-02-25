@@ -49,7 +49,7 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
     {
-        const auto colorPixelFormat = MTLPixelFormatR8Unorm_sRGB;
+        const auto colorPixelFormat = pipelineConfiguration()->colorPixelFormat;
         auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
         textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
         
@@ -72,7 +72,6 @@ SelectionMattingRenderPass::makePipelineConfiguration(id<MTLLibrary> _Nonnull mt
     
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
-    config->colorPixelFormat = MTLPixelFormatR8Unorm_sRGB;
     config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;

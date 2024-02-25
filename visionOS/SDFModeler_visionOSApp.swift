@@ -16,7 +16,8 @@ struct ContentStageConfiguration: CompositorLayerConfiguration {
         let options: LayerRenderer.Capabilities.SupportedLayoutsOptions = foveationEnabled ? [.foveationEnabled] : []
         let supportedLayouts = capabilities.supportedLayouts(options: options)
         
-        configuration.layout = supportedLayouts.contains(.layered) ? .layered : .dedicated
+        //configuration.layout = supportedLayouts.contains(.layered) ? .layered : .dedicated
+        configuration.layout = .dedicated
     }
 }
 
@@ -28,14 +29,18 @@ struct TestingApp: App {
         }
 
         ImmersiveSpace(id: "ImmersiveSpace") {
+            
+            let immersiveSpace = self
+            
             CompositorLayer(configuration: ContentStageConfiguration()) { layerRenderer in
-                let renderer = Renderer(layerRenderer)
-                renderer.startRenderLoop()
+                //let renderer = Renderer(layerRenderer)
+                //renderer.startRenderLoop()
                 
-                let myRenderer = VisionOSRenderer(layerRenderer: layerRenderer)
-                myRenderer?.startRenderLoop()
+                let renderer = VisionOSRenderer(layerRenderer: layerRenderer)
+                renderer?.startRenderLoop()
             }
         }.immersionStyle(selection: .constant(.full), in: .full)
+        
     }
 }
 

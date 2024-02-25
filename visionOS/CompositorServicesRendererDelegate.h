@@ -12,20 +12,28 @@
 #include "RenderTargetConfiguration.h"
 
 #import <CompositorServices/CompositorServices.h>
+#import <ARKit/ARKit.h>
+
+#include <thread>
+#include <atomic>
 
 class CompositorServicesRendererDelegate final : public RendererDelegate
 {
 public:
-    CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layer_renderer);
+    CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layerRenderer);
     ~CompositorServicesRendererDelegate();
     
-    RenderTargetConfiguration::CPtr configuration() const override;
+    RenderTargetConfiguration::CPtr presentConfiguration() const override;
     bool init(Renderer* _Nonnull) override;
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
     
-    float2 renderSize() const override;
-    float2 renderSizeInPoints() const override;
+    bool startRender(Renderer&) override;
+    void startSubmission() override;
+    void endSubmission() override;
+    
+    size_t cameraInfoCount() const override;
+    CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
     id <MTLDrawable> _Nonnull currentDrawable() const override;
@@ -33,8 +41,23 @@ public:
     void invalidate() override;
     void pause() override;
     
+    void startRenderLoop();
+    
 private:
-    cp_layer_renderer_t _Nonnull _layerRenderer;
+    const cp_layer_renderer_t _Nonnull _layerRenderer;
+    
+    std::thread _renderThread;
+    
+    ar_session_t _Nullable _arSession = nil;
+    ar_world_tracking_provider_t _Nullable _worldTracking = nil;
+    
+    Renderer* _Nullable _renderer = nullptr;
+    std::atomic<bool> _shouldStopRendering = { false };
+    
+    cp_frame_t _Nullable _frame = nil;
+    cp_drawable_t _Nullable _drawable = nil;
+    std::vector<CameraInfo> _cameraInfos;
+    
     RenderTargetConfiguration::CPtr _configuration = std::make_shared<RenderTargetConfiguration>();
 };
 

@@ -106,8 +106,6 @@ void Renderer::installCameraRig()
     
     _cameraInfos.resize(n);
     _renderPassesPerCamera.resize(n);
-    
-    updateCameraTransforms();
 }
 
 void
@@ -119,15 +117,22 @@ Renderer::setRenderCallback(const RenderCallback& cb)
 void
 Renderer::render()
 {
-    if (!_cameraInfosValid && !updateCameraTransforms())
+    /// Per frame updates here
+    auto now = HighResClock::now();
+    
+    if (!_delegate->startRender(*this))
     {
         return;
     }
     
-    /// Per frame updates here
-    auto now = HighResClock::now();
-    
     dispatch_semaphore_wait(_inFlightSemaphore, DISPATCH_TIME_FOREVER);
+    
+    _delegate->startSubmission();
+    
+    if (!_cameraInfosValid && !updateCameraTransforms())
+    {
+        return;
+    }
     
     for (auto pass : _renderPasses)
     {
@@ -165,6 +170,8 @@ Renderer::render()
     [commandBuffer presentDrawable:drawable];
     
     [commandBuffer commit];
+    
+    _delegate->endSubmission();
     
     if (_renderCallback != nullptr)
     {

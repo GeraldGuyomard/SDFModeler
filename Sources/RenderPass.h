@@ -14,19 +14,16 @@
 
 class Renderer;
 
-struct PipelineConfiguration final
+struct PipelineConfiguration final : public RenderTargetConfiguration
 {
     using Ptr = std::unique_ptr<PipelineConfiguration>;
+    using CPtr = std::unique_ptr<const PipelineConfiguration>;
     
     MTLVertexDescriptor* _Nonnull vertexDescriptor = nil;
     id <MTLFunction> _Nonnull vertexFunction = nil;
     
     id <MTLFunction> _Nonnull fragmentFunction = nil;
     
-    MTLPixelFormat colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
-    MTLPixelFormat depthPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
-    
-    size_t sampleCount = 1;
     bool blendEnabled = false;
     bool depthWriteEnabled = true;
     
@@ -51,6 +48,8 @@ public:
     virtual void onCompletedCommandBuffer(Renderer& renderer, float renderDuration) {}
     
     static constexpr size_t kMaxBuffersInFlight = 3;
+    
+    const PipelineConfiguration* pipelineConfiguration() const { return _pipelineConfiguration.get(); }
     
 protected:
     
