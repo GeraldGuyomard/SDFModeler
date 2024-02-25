@@ -48,6 +48,9 @@ public:
     
     float3 computeOrbitOrigin();
     
+    float3 computeFramePosition(const Object3D::Ptr& object) const;
+    float4x4 computeFrameTransform(const Object3D::Ptr& object) const;
+    
 private:
     
     CameraRig(const WorldPtr& world);

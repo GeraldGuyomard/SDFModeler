@@ -93,3 +93,54 @@ CameraRig::computeOrbitOrigin()
     const float proj = dot(direction, lookAtVector);
     return position + (direction * proj);
 }
+
+float3
+CameraRig::computeFramePosition(const Object3D::Ptr& object) const
+{
+    const auto worldBox = object->worldBoundingBoxOfHierarchy();
+    const auto worldOrigin = worldBox.center();
+    
+    // Align first camera to face origin of object with arbitrary distance
+    auto worldTransform = this->worldTransform();
+    auto startPos = worldOrigin + forward(worldTransform);
+    setTranslation(worldTransform, startPos);
+    
+    auto coordinateSpace = inverse(worldTransform);
+    const auto box = object->boundingBoxOfHierarchyInCoordinateFrame(coordinateSpace);
+    
+    // assume fov is same for all cameras
+    const auto fov = _cameras.front()->fovRadians();
+    const float tanX = tanf(fov.x / 2.f);
+    const float tanY = tanf(fov.y / 2.f);
+    
+    // tan(f/2) = halfSize / d
+    // -> d = halfSize / tan(f/2)
+    
+    const float xMin = box.minPoint.x;
+    const float dXMin = fabsf(xMin) / tanX;
+    
+    const float xMax = box.maxPoint.x;
+    const float dXMax = fabsf(xMax) / tanX;
+
+    const float yMin = box.minPoint.y;
+    const float dYMin = fabsf(yMin) / tanY;
+    
+    const float yMax = box.maxPoint.y;
+    const float dYMax = fabsf(yMax) / tanY;
+    
+    const float d = max(dXMin, max(dXMax, max(dYMin, dYMax)));
+    
+    const float4 pt { 0, 0, d + box.maxPoint.z, 1.f };
+    
+    const auto pos = worldTransform * pt;
+    
+    return pos.xyz;
+}
+
+float4x4
+CameraRig::computeFrameTransform(const Object3D::Ptr& object) const
+{
+    auto transform = worldTransform();
+    setTranslation(transform, computeFramePosition(object));
+    return transform;
+}

@@ -29,9 +29,6 @@ public:
     void setViewportSize(const float2&);
     float4x4 computeProjectionMatrix(const float2& viewportSizeInPoints) const;
     
-    float3 computeFramePosition(const Object3D::Ptr& object) const;
-    float4x4 computeFrameTransform(const Object3D::Ptr& object) const;
-    
 private:
     
     // Intrinsics

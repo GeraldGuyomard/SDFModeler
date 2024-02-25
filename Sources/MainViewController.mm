@@ -279,8 +279,8 @@ void visitTypes(const Object3D::Ptr& object)
     
     auto root = self.world->rootObject();
     
-    auto camera = _renderer->cameraRig()->cameras()[kLeftCameraIndex];
-    
+    auto camera = _renderer->cameraRig();
+
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
     
@@ -335,10 +335,9 @@ void visitTypes(const Object3D::Ptr& object)
     auto cameraRig = self.renderer->cameraRig();
     cameraRig->setLookAtPositionProvider(object);
     
-    auto camera = cameraRig->cameras()[kLeftCameraIndex];
-    const auto cameraPos = camera->computeFramePosition(object);
+    const auto cameraPos = cameraRig->computeFramePosition(object);
     
-    auto animation = std::make_shared<MoveCameraAnimation>(camera, 0.25f, cameraPos);
+    auto animation = std::make_shared<MoveCameraAnimation>(cameraRig, 0.25f, cameraPos);
     [self setCameraAnimation:animation];
 }
 

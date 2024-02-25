@@ -7,19 +7,19 @@
 #pragma once
 
 #include "Animation.h"
-#include "Camera.h"
+#include "CameraRig.h"
 
 class MoveCameraAnimation : public Animation
 {
 public:
-    MoveCameraAnimation(const Camera::Ptr& camera, float duration, const float3& finalPos);
+    MoveCameraAnimation(const CameraRig::Ptr& camera, float duration, const float3& finalPos);
     
     bool isFinished() const override;
     void start(float t) override;
     void update(float t) override;
     
 private:
-    const Camera::Ptr _camera;
+    const CameraRig::Ptr _camera;
     const float _duration;
     const float3 _finalPos;
     float3 _startPos;

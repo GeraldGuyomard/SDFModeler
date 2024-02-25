@@ -25,19 +25,12 @@ RenderPass::init(Renderer& renderer)
     pipelineStateDescriptor.fragmentFunction = _pipelineConfiguration->fragmentFunction;
     pipelineStateDescriptor.vertexDescriptor = _pipelineConfiguration->vertexDescriptor;
     
-    pipelineStateDescriptor.colorAttachments[0].pixelFormat = _pipelineConfiguration->colorPixelFormat;
+    auto colorAttachment = pipelineStateDescriptor.colorAttachments[0];
+    
+    colorAttachment.pixelFormat = _pipelineConfiguration->colorPixelFormat;
     
     if (_pipelineConfiguration->blendEnabled)
     {
-        /*
-         descriptor.sourceRGBBlendFactor        = MTLBlendFactorSourceAlpha;
-         descriptor.sourceAlphaBlendFactor      = MTLBlendFactorOne;
-         descriptor.destinationRGBBlendFactor   = MTLBlendFactorOne;
-         descriptor.destinationAlphaBlendFactor = MTLBlendFactorOne;
-         */
-        
-        auto colorAttachment = pipelineStateDescriptor.colorAttachments[0];
-        
         colorAttachment.blendingEnabled = true;
         colorAttachment.rgbBlendOperation = MTLBlendOperationAdd;
         colorAttachment.alphaBlendOperation = MTLBlendOperationAdd;
@@ -50,7 +43,7 @@ RenderPass::init(Renderer& renderer)
     }
     else
     {
-        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = true;
+        colorAttachment.blendingEnabled = false;
     }
     
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;

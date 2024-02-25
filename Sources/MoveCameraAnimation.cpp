@@ -6,7 +6,7 @@
 
 #include "MoveCameraAnimation.h"
 
-MoveCameraAnimation::MoveCameraAnimation(const Camera::Ptr& camera, float duration, const float3& finalPos)
+MoveCameraAnimation::MoveCameraAnimation(const CameraRig::Ptr& camera, float duration, const float3& finalPos)
 : _camera(camera), _duration(duration), _finalPos(finalPos), _startPos(translation(camera->worldTransform()))
 {}
 
