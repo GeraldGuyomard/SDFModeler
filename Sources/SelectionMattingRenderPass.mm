@@ -37,7 +37,8 @@ SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    auto size = renderer.cameraInfos()[_cameraIndex].viewportSize();
+    auto cameraRig = renderer.cameraRig();
+    auto size = cameraRig->cameras()[_cameraIndex]->viewportSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
         return nullptr;

@@ -38,4 +38,6 @@
 
 - (void) onSelectionChange;
 
+- (void)reframeAllImmediately;
+
 @end

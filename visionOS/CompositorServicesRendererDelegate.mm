@@ -31,7 +31,13 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     
     _renderer = renderer;
     
-    _cameraInfos.resize(cameraInfoCount());
+    #if TARGET_OS_SIMULATOR
+        constexpr size_t nbCameras = 1;
+    #else
+    constexpr size_t nbCameras = 2;
+    #endif
+    
+    _cameraRig = CameraRig::make(renderer->world(), nbCameras, false);
     
     _configuration = std::make_shared<RenderTargetConfiguration>();
     _configuration->colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
@@ -40,6 +46,12 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
    _deviceAnchor = ar_device_anchor_create();
     
     return true;
+}
+
+CameraRig::Ptr
+CompositorServicesRendererDelegate::cameraRig() const
+{
+    return _cameraRig;
 }
 
 void
@@ -148,26 +160,24 @@ CompositorServicesRendererDelegate::startSubmission()
         return false;
     }
     
+    const auto& cameras = _cameraRig->cameras();
     const size_t nbViews = cp_drawable_get_view_count(_drawable);
-    ASSERT(nbViews == _cameraInfos.size());
+    ASSERT(nbViews == cameras.size());
     
     cp_drawable_set_device_anchor(_drawable, _deviceAnchor);
     
     const float4x4 deviceAnchorTransform =  ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
     
-    // hack
-    const auto& cameras = _renderer->cameraRig()->cameras();
-    
-    const size_t n = _cameraInfos.size();
-    for (size_t i=0; i < n; ++i)
+    for (size_t i=0; i < nbViews; ++i)
     {
+        auto camera = cameras[i];
         const cp_view_t view = cp_drawable_get_view(_drawable, i);
         
         const float4x4 cameraTransformInAnchorSpace = cp_view_get_transform(view);
         const float4x4 worldCameraTransform = deviceAnchorTransform * cameraTransformInAnchorSpace;
         
         //const auto viewMatrix = inverse(worldCameraTransform);
-        cameras[i]->setWorldTransform(worldCameraTransform);
+        camera->setWorldTransform(worldCameraTransform);
         
         const float4 tangents = cp_view_get_tangents(view);
         
@@ -181,16 +191,14 @@ CompositorServicesRendererDelegate::startSubmission()
                                                                         depthRange.x,
                                                                         true);
         
-        auto& cameraInfo = _cameraInfos[i];
-        cameraInfo.setProjectionMatrix(convert(projection.matrix));
+        camera->setProjectionMatrix(convert(projection.matrix));
         
         const auto textureMap = cp_view_get_view_texture_map(view);
         const MTLViewport viewport =  cp_view_texture_map_get_viewport(textureMap);
         
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         
-        cameraInfo.setViewportSize(viewportSize);
-        cameraInfo.setViewportSizeInPoints(viewportSize);
+        camera->setViewportSize(viewportSize);
     }
         
     return true;
@@ -203,22 +211,6 @@ CompositorServicesRendererDelegate::endSubmission()
     
     _frame = nil;
     _drawable = nil;
-}
-
-size_t
-CompositorServicesRendererDelegate::cameraInfoCount() const
-{
-#if TARGET_OS_SIMULATOR
-    return 1;
-#else
-    return 2;
-#endif
-}
-
-CameraInfo
-CompositorServicesRendererDelegate::cameraInfo(size_t index, const Camera::Ptr& camera) const
-{
-    return _cameraInfos[index];
 }
 
 MTLRenderPassDescriptor* _Nullable

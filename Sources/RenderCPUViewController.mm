@@ -35,7 +35,7 @@
     //CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
     auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
     
-    const auto size = renderer->cameraInfos()[kLeftCameraIndex].viewportSize();
+    const auto size = renderer->cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     std::vector<uint32_t> buffer;
     buffer.resize(size.x * size.y);

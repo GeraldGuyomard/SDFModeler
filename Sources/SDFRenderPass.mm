@@ -58,12 +58,11 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     auto& uniforms = _uniformsBuffer->uniform();
 
     const auto camera = renderer.cameraRig()->cameras()[_cameraIndex];
-    const auto& cameraInfo = renderer.cameraInfos()[_cameraIndex];
     
     const float4x4 cameraMatrix = (camera != nullptr) ? camera->worldTransform() : float4x4_identity();
     
-    uniforms.viewportSize = cameraInfo.viewportSize();
-    uniforms.ndcToWorldTransform = cameraMatrix * cameraInfo.invProjectionMatrix();
+    uniforms.viewportSize = camera->viewportSize();
+    uniforms.ndcToWorldTransform = cameraMatrix * camera->invProjectionMatrix();
     uniforms.worldTransformToNdc = inverse(uniforms.ndcToWorldTransform);
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
@@ -74,7 +73,7 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
         auto& serializedMaterials = _materialsBuffer->uniform();
         
         const auto viewMatrix = inverse(cameraMatrix);
-        const auto viewProjectionMatrix = cameraInfo.projectionMatrix() * viewMatrix;
+        const auto viewProjectionMatrix = camera->projectionMatrix() * viewMatrix;
         
         EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
         configure(context);
@@ -105,7 +104,7 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
 void
 SDFRenderPass::willStartRender(Renderer& renderer)
 {
-    const float2 viewportSize = renderer.cameraInfos()[_cameraIndex].viewportSize();
+    const float2 viewportSize = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
     
     const auto& serialized = _serializedWorldBuffer->uniform();
     const float2 tileGridSize { serialized.numTileColumns, serialized.numTileRows };
@@ -122,9 +121,9 @@ SDFRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull 
     
     MTLViewport vp;
     vp.originX = vp.originY = 0;
-    const auto& camInfo = renderer.cameraInfos()[_cameraIndex];
+    auto camera = renderer.cameraRig()->cameras()[_cameraIndex];
     
-    const auto& vpSize = camInfo.viewportSize();
+    const auto& vpSize = camera->viewportSize();
     vp.width = vpSize.x;
     vp.height = vpSize.y;
     vp.znear = 0;

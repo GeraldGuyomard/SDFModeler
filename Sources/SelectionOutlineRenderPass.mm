@@ -121,7 +121,7 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     auto& uniforms = _uniformsBuffer->uniform();
     
     constexpr float kThickness= 5.f;
-    const auto size = renderer.cameraInfos()[_cameraIndex].viewportSize();
+    const auto size = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
     
     uniforms.samplingDelta = kThickness / size;
     

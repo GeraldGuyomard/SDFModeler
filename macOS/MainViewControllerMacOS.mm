@@ -20,6 +20,8 @@
     [super viewDidAppear];
  
     [self.view.window makeFirstResponder:self];
+    
+    [self reframeAllImmediately];
 }
 
 - (void)rightMouseDown:(NSEvent *)event

@@ -49,7 +49,7 @@
 {
     if (_renderer != nullptr)
     {
-        _renderer->invalidateCameraTransforms();
+        _renderer->invalidate();
     }
 }
 
@@ -91,6 +91,8 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.colorPixelFormat = _configuration->colorPixelFormat;
     _mtkView.sampleCount = _configuration->sampleCount;
     
+    _cameraRig = CameraRig::make(renderer->world(), 1, true);
+    
     return true;
 }
 
@@ -106,29 +108,23 @@ MTKViewRendererDelegate::getMTLDevice() const
     return _mtkView.device;
 }
 
-size_t
-MTKViewRendererDelegate::cameraInfoCount() const
+CameraRig::Ptr
+MTKViewRendererDelegate::cameraRig() const
 {
-    return 1;
-}
-
-CameraInfo
-MTKViewRendererDelegate::cameraInfo(size_t index, const Camera::Ptr& camera) const
-{
-    ASSERT(index == 0);
-    
-    CameraInfo info;
-    
+    // hack: update here
     CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
-    const CGSize size = layer.drawableSize;
-    info.setViewportSize(float2 { float(size.width), float(size.height) });
+    const CGSize drawableSize = layer.drawableSize;
+    const float2 viewportSize { float(drawableSize.width), float(drawableSize.height) };
+
+    for (const auto& camera : _cameraRig->cameras())
+    {
+        camera->setViewportSize(viewportSize);
+        const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize);
+        
+        camera->setProjectionMatrix(projMatrix);
+    }
     
-    const CGSize s = _mtkView.bounds.size;
-    info.setViewportSizeInPoints({ float(s.width), float(s.height) });
-    
-    info.setProjectionMatrix(camera->computeProjectionMatrix(info.viewportSizeInPoints()));
-    
-    return info;
+    return _cameraRig;
 }
 
 MTLRenderPassDescriptor* _Nullable

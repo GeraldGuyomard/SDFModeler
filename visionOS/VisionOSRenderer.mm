@@ -19,14 +19,10 @@
 {
     if (self = [self init])
     {
-        auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
-        _renderer = std::make_unique<Renderer>(std::move(delegate));
-        
         _world = makeDefaultWorld();
         
-        _renderer->setWorld(_world);
-        
-        _renderer->installCameraRig();
+        auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
+        _renderer = std::make_unique<Renderer>(_world, std::move(delegate));
     }
     
     return self;

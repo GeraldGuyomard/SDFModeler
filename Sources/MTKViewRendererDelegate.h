@@ -25,8 +25,7 @@ public:
     
     id<MTLDevice> _Nonnull getMTLDevice() const override;
     
-    size_t cameraInfoCount() const override;
-    CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
+    CameraRig::Ptr cameraRig() const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
@@ -39,6 +38,7 @@ private:
     MTKViewBridge* _Nonnull _mtkViewBridge = nil;
     
     RenderTargetConfiguration::Ptr _configuration = std::make_shared<RenderTargetConfiguration>();
+    CameraRig::Ptr _cameraRig;
 };
 
 

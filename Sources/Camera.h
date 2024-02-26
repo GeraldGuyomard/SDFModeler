@@ -12,6 +12,27 @@
 #include "Object3D.h"
 #include <optional>
 
+class CameraIntrinsics final
+{
+public:
+    using Ptr = std::unique_ptr<CameraIntrinsics>;
+    
+    CameraIntrinsics() = default;
+    
+    float fovyRadians() const { return _fovyRadians; }
+    float fovxRadians(const float2& viewportSize) const;
+    float2 fovRadians(const float2& viewportSize) const { return { fovxRadians(viewportSize), fovyRadians() }; }
+    
+    float4x4 computeProjectionMatrix(const float2& viewportSize) const;
+
+private:
+    
+    // Intrinsics
+    float _fovyRadians = 45.0f * (M_PI / 180.0f);
+    float _nearZ = 0.1f;
+    float _farZ = 40.f;
+};
+
 class Camera final : public Object3D
 {
 public:
@@ -20,20 +41,21 @@ public:
     
     Camera(const WorldPtr&);
     
-    float fovyRadians() const { return _fovyRadians; }
-    float fovxRadians() const;
-    float2 fovRadians() const { return { fovxRadians(), fovyRadians() }; }
+    const CameraIntrinsics* intrinsics() const { return _intrinsics.get(); }
+    void setIntrinsics(CameraIntrinsics::Ptr);
     
+    const float2& viewportSize() const { return _viewportSize; }
+    void setViewportSize(const float2&);
     float aspectRatio() const;
     
-    void setViewportSize(const float2&);
-    float4x4 computeProjectionMatrix(const float2& viewportSizeInPoints) const;
+    const float4x4& projectionMatrix() const { return _projectionMatrix; }
+    const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
+    void setProjectionMatrix(const float4x4&);
     
 private:
+    CameraIntrinsics::Ptr _intrinsics;
+    float2 _viewportSize = { 0.f, 0.f };
     
-    // Intrinsics
-    float _fovyRadians = 45.0f * (M_PI / 180.0f);
-    float2 _viewportSize = { 1.f, 1.f };
-    float _nearZ = 0.1f;
-    float _farZ = 40.f;
+    float4x4 _projectionMatrix = float4x4_identity();
+    float4x4 _invProjectionMatrix = float4x4_identity();
 };

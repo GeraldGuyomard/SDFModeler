@@ -335,6 +335,8 @@ struct ObjectDragInfo
     [super viewDidAppear:animated];
     
     [self adjustContentScale];
+    
+    [self reframeAllImmediately];
 }
 
 - (void) viewDidLayoutSubviews

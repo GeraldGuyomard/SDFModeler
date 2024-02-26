@@ -162,11 +162,7 @@ void visitTypes(const Object3D::Ptr& object)
     }
 
     auto delegate = std::make_unique<MTKViewRendererDelegate>(_view);
-    _renderer = std::make_unique<Renderer>(std::move(delegate));
-    
-    _renderer->setWorld(self.world);
-    
-    _renderer->installCameraRig();
+    _renderer = std::make_unique<Renderer>(self.world, std::move(delegate));
     
     _baseTime = HighResClock::now();
     
@@ -184,15 +180,20 @@ void visitTypes(const Object3D::Ptr& object)
         }
     });
     
+    _delegate = std::make_shared<Delegate>(self);
+    self.world->setDelegate(_delegate);
+    
+    _renderer->invalidate();
+}
+
+- (void)reframeAllImmediately
+{
     auto root = self.world->rootObject();
     
     auto camera = _renderer->cameraRig();
 
     const auto transform = camera->computeFrameTransform(root);
     camera->setWorldTransform(transform);
-    
-    _delegate = std::make_shared<Delegate>(self);
-    self.world->setDelegate(_delegate);
 }
 
 - (IBAction)undo:(id)source

@@ -17,22 +17,37 @@ Camera::setViewportSize(const float2& size)
     _viewportSize = size;
 }
 
+float4x4
+CameraIntrinsics::computeProjectionMatrix(const float2& viewportSize) const
+{
+    const float aspectRatio = viewportSize.x / viewportSize.y;
+    
+    return matrix_perspective_right_hand(_fovyRadians, aspectRatio, _nearZ, _farZ);
+}
+
+float
+CameraIntrinsics::fovxRadians(const float2& viewportSize) const
+{
+    const float aspectRatio = viewportSize.x / viewportSize.y;
+    
+    return 2.f * atanf(tanf(_fovyRadians / 2.f)) * aspectRatio;
+}
+
+void
+Camera::setIntrinsics(CameraIntrinsics::Ptr intrinsics)
+{
+    _intrinsics = std::move(intrinsics);
+}
+
 float
 Camera::aspectRatio() const
 {
     return _viewportSize.x / _viewportSize.y;
 }
 
-float4x4
-Camera::computeProjectionMatrix(const float2& viewportSizeInPoints) const
+void
+Camera::setProjectionMatrix(const float4x4& projMatrix)
 {
-    const float aspectRatio = viewportSizeInPoints.x / viewportSizeInPoints.y;
-    
-    return matrix_perspective_right_hand(_fovyRadians, aspectRatio, _nearZ, _farZ);
-}
-
-float
-Camera::fovxRadians() const
-{
-    return 2.f * atanf(tanf(_fovyRadians / 2.f)) * aspectRatio();
+    _projectionMatrix = projMatrix;
+    _invProjectionMatrix = inverse(_projectionMatrix);
 }

@@ -30,7 +30,7 @@ CameraRig::CameraRig(const WorldPtr& world)
 }
 
 CameraRig::Ptr
-CameraRig::make(const WorldPtr& world, size_t nbCameras)
+CameraRig::make(const WorldPtr& world, size_t nbCameras, bool installIntrinsics)
 {
     Ptr ptr { new CameraRig(world) };
     
@@ -39,6 +39,11 @@ CameraRig::make(const WorldPtr& world, size_t nbCameras)
     for (auto& camera : ptr->_cameras)
     {
         camera = std::make_shared<Camera>(world);
+        if (installIntrinsics)
+        {
+            camera->setIntrinsics(std::make_unique<CameraIntrinsics>());
+        }
+        
         ptr->addChild(camera);
     }
     
@@ -97,6 +102,15 @@ CameraRig::computeOrbitOrigin()
 float3
 CameraRig::computeFramePosition(const Object3D::Ptr& object) const
 {
+    // work with left eye
+    const auto& camera = _cameras.front();
+    const auto intrinsics = camera->intrinsics();
+    if (intrinsics == nullptr)
+    {
+        ASSERT(false);
+        return 0.f;
+    }
+    
     const auto worldBox = object->worldBoundingBoxOfHierarchy();
     const auto worldOrigin = worldBox.center();
     
@@ -109,7 +123,7 @@ CameraRig::computeFramePosition(const Object3D::Ptr& object) const
     const auto box = object->boundingBoxOfHierarchyInCoordinateFrame(coordinateSpace);
     
     // assume fov is same for all cameras
-    const auto fov = _cameras.front()->fovRadians();
+    const auto fov = intrinsics->fovRadians(camera->viewportSize());
     const float tanX = tanf(fov.x / 2.f);
     const float tanY = tanf(fov.y / 2.f);
     

@@ -19,22 +19,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "68E9BD99-02E2-41F2-A8B4-7AAE2E0E87E2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Sources/Renderer.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241"
-            landmarkName = "Renderer::updateCameraTransforms()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "1C1ED81A-89F1-4075-BB8C-71D93C4B15ED"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -170,8 +154,8 @@
             filePath = "visionOS/VisionOSRenderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "39"
-            endingLineNumber = "39"
+            startingLineNumber = "35"
+            endingLineNumber = "35"
             landmarkName = "-startRenderLoop"
             landmarkType = "7">
             <Locations>
@@ -266,8 +250,8 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
+            startingLineNumber = "115"
+            endingLineNumber = "115"
             landmarkName = "CompositorServicesRendererDelegate::startRender(renderer)"
             landmarkType = "7">
             <Locations>
@@ -376,6 +360,21 @@
                   endingLineNumber = "103"
                   offsetFromSymbolStart = "152">
                </Location>
+               <Location
+                  uuid = "2C5BF3AE-F13E-4429-B3E1-CDD61C4929F1 - e69554e9ec98e23a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CompositorServicesRendererDelegate::startRender(Renderer&amp;)"
+                  moduleName = "SDFModeler visionOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/visionOS/CompositorServicesRendererDelegate.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "115"
+                  endingLineNumber = "115"
+                  offsetFromSymbolStart = "152">
+               </Location>
             </Locations>
          </BreakpointContent>
       </BreakpointProxy>
@@ -437,8 +436,8 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "190"
-            endingLineNumber = "190"
+            startingLineNumber = "199"
+            endingLineNumber = "199"
             landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
             landmarkType = "7">
          </BreakpointContent>
@@ -453,8 +452,8 @@
             filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "134"
+            endingLineNumber = "134"
             landmarkName = "Renderer::render()"
             landmarkType = "7">
             <Locations>
@@ -501,8 +500,8 @@
             filePath = "Sources/Renderer.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
             landmarkName = "Renderer::render()"
             landmarkType = "7">
          </BreakpointContent>

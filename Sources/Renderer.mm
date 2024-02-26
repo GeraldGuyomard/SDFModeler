@@ -25,8 +25,8 @@
 #include "MainViewController.h"
 
 
-Renderer::Renderer(RendererDelegate::Ptr delegate)
-: _delegate(std::move(delegate)),
+Renderer::Renderer(const WorldPtr& world, RendererDelegate::Ptr delegate)
+: _world(world), _delegate(std::move(delegate)),
 _inFlightSemaphore(dispatch_semaphore_create(RenderPass::kMaxBuffersInFlight))
 {
     _delegate->init(this);
@@ -44,7 +44,7 @@ Renderer::init()
     _commandQueue = [device newCommandQueue];
     _mtlLibrary = [device newDefaultLibrary];
     
-    const size_t n = _delegate->cameraInfoCount();
+    const size_t n = _delegate->cameraRig()->cameras().size();
     _renderPassesPerCamera.resize(n);
     
     for (size_t i=0; i < n; ++i)
@@ -70,42 +70,6 @@ Renderer::init()
     {
         renderPass->init(*this);
     }
-}
-
-bool
-CameraInfo::isValid() const
-{
-    return (_viewportSize.x > 0.f) && (_viewportSize.y > 0.f) && (_viewportSizeInPoints.x > 0.f) && (_viewportSizeInPoints.y > 0.f);
-}
-
-void
-CameraInfo::setViewportSize(const float2& s)
-{
-    _viewportSize = s;
-}
-
-void
-CameraInfo::setViewportSizeInPoints(const float2& s)
-{
-    _viewportSizeInPoints = s;
-}
-
-void
-CameraInfo::setProjectionMatrix(const float4x4& proj)
-{
-    _projectionMatrix = proj;
-    _invProjectionMatrix = inverse(_projectionMatrix);
-}
-
-void Renderer::installCameraRig()
-{
-    const size_t n = _delegate->cameraInfoCount();
-    
-    _cameraRig = CameraRig::make(_world, n);
-    _world->rootObject()->addChild(_cameraRig);
-    
-    _cameraInfos.resize(n);
-    _renderPassesPerCamera.resize(n);
 }
 
 void
@@ -167,11 +131,6 @@ Renderer::render()
         return;
     }
     
-    if (!_cameraInfosValid && !updateCameraTransforms())
-    {
-        return;
-    }
-    
     for (auto pass : _renderPasses)
     {
         pass->updateBuffersState();
@@ -216,49 +175,10 @@ Renderer::render()
     }
 }
 
-void
-Renderer::invalidateCameraTransforms()
-{
-    _cameraInfosValid = false;
-    
-    invalidate();
-}
-
-bool
-Renderer::updateCameraTransforms()
-{
-    _cameraInfosValid = false;
-    
-    if (_cameraRig != nullptr)
-    {
-        size_t index = 0;
-        const auto& cameras = _cameraRig->cameras();
-        
-        for (auto& info : _cameraInfos)
-        {
-            auto camera = cameras[index];
-            
-            info = _delegate->cameraInfo(index, camera);
-            if (!info.isValid())
-            {
-                return false;
-            }
-            
-            camera->setViewportSize(info.viewportSizeInPoints());
-            
-            ++index;
-        }
-        
-        _cameraInfosValid = true;
-    }
-    
-    return _cameraInfosValid;
-}
-
 Ray
 Renderer::ray(float2 pixelPosition) const
 {
-    const auto size = _cameraInfos[kLeftCameraIndex].viewportSize();
+    const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     const auto p = pixelToNDC(size, pixelPosition);
     
     const auto ray = Ray::make(p, _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass->uniforms());
@@ -276,7 +196,7 @@ Renderer::pick(float2 pixelPosition) const
     const auto& serializedWorld = sdfRenderPass->serializedWorld();
     const auto& materials = sdfRenderPass->materials();
     
-    const auto size = _cameraInfos[kLeftCameraIndex].viewportSize();
+    const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
@@ -292,19 +212,11 @@ Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
     const auto& serializedWorld = sdfRenderPass->serializedWorld();
     const auto& materials = sdfRenderPass->materials();
     
-    const auto size = _cameraInfos[cameraIndex].viewportSize();
+    const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
     return renderDefault(p, uniforms, serializedWorld, materials).color;
-}
-
-void
-Renderer::setWorld(const WorldPtr& world)
-{
-    _world = world;
-    
-    invalidate();
 }
 
 void

@@ -32,8 +32,7 @@ public:
     bool startSubmission() override;
     void endSubmission() override;
     
-    size_t cameraInfoCount() const override;
-    CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const override;
+    CameraRig::Ptr cameraRig() const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
@@ -56,9 +55,9 @@ private:
     
     cp_frame_t _Nullable _frame = nil;
     cp_drawable_t _Nullable _drawable = nil;
-    ar_device_anchor_t _deviceAnchor = nil;
+    ar_device_anchor_t _Nullable _deviceAnchor = nil;
     
-    std::vector<CameraInfo> _cameraInfos;
+    CameraRig::Ptr _cameraRig;
     
     RenderTargetConfiguration::Ptr _configuration;
 };

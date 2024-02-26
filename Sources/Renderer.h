@@ -23,31 +23,6 @@
 class Renderer;
 class RenderPass;
 
-class CameraInfo final
-{
-public:
-    CameraInfo() = default;
-    
-    bool isValid() const;
-    
-    const float2& viewportSize() const { return _viewportSize; }
-    const float2& viewportSizeInPoints() const { return _viewportSizeInPoints; }
-    
-    const float4x4& projectionMatrix() const { return _projectionMatrix; }
-    const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
-    
-    void setViewportSize(const float2&);
-    void setViewportSizeInPoints(const float2&);
-    void setProjectionMatrix(const float4x4&);
-    
-private:
-    float2 _viewportSize = { 0.f };
-    float2 _viewportSizeInPoints = { 0.f };
-    
-    float4x4 _projectionMatrix = float4x4_identity();
-    float4x4 _invProjectionMatrix = float4x4_identity();
-};
-
 class RendererDelegate
 {
 public:
@@ -63,8 +38,7 @@ public:
     virtual bool startSubmission() { return true; }
     virtual void endSubmission() {}
     
-    virtual size_t cameraInfoCount() const = 0;
-    virtual CameraInfo cameraInfo(size_t index, const Camera::Ptr& camera) const = 0;
+    virtual CameraRig::Ptr cameraRig() const = 0;
     
     virtual MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const = 0;
     virtual void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) = 0;
@@ -76,19 +50,15 @@ public:
 class Renderer final
 {
 public:
-    Renderer(RendererDelegate::Ptr);
+    Renderer(const WorldPtr& world, RendererDelegate::Ptr);
     ~Renderer();
     
-    CameraRig::Ptr cameraRig() const { return _cameraRig; }
-    void installCameraRig();
+    CameraRig::Ptr cameraRig() const { return _delegate->cameraRig(); }
     
     WorldPtr world() const { return _world; }
-    void setWorld(const WorldPtr&);
     
     using RenderCallback = std::function<void(Renderer&)>;
     void setRenderCallback(const RenderCallback&);
-    
-    const std::vector<CameraInfo>& cameraInfos() const { return _cameraInfos; }
     
     Ray ray(float2 pixelPosition) const;
     PickResult pick(float2 pixelPosition) const;
@@ -106,13 +76,11 @@ public:
     
 public:
     void render();
-    void invalidateCameraTransforms();
     void pause();
     
 private:
     
     void init();
-    bool updateCameraTransforms();
     
     WorldPtr _world;
     
@@ -133,10 +101,7 @@ private:
         std::unique_ptr<class SelectionOutlineRenderPass> selectionOutlineRenderPass;
     };
     
-    CameraRig::Ptr _cameraRig;
-    std::vector<CameraInfo> _cameraInfos;
     std::vector<RenderPassesPerCamera> _renderPassesPerCamera;
-    bool _cameraInfosValid = false;
     
     RenderCallback _renderCallback;
 };
