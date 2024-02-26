@@ -37,12 +37,19 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     _configuration->colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
     _configuration->depthPixelFormat = MTLPixelFormatDepth32Float;
     
+   _deviceAnchor = ar_device_anchor_create();
+    
     return true;
 }
 
 void
 CompositorServicesRendererDelegate::startRenderLoop()
 {
+    auto providers = ar_data_providers_create();
+    ar_data_providers_add_data_provider(providers, _worldTracking);
+    
+    ar_session_run(_arSession, providers);
+    
     _renderThread = std::thread { [this]()
     {
         while (!_shouldStopRendering)
@@ -116,9 +123,8 @@ CompositorServicesRendererDelegate::startSubmission()
     const cp_time_t t = cp_frame_timing_get_presentation_time(timing);
     const CFTimeInterval timeStamp = cp_time_to_cf_time_interval(t);
     
-    auto deviceAnchor = ar_device_anchor_create();
-    const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, timeStamp, deviceAnchor);
-    //ASSERT(status == ar_device_anchor_query_status_success);
+    const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, timeStamp, _deviceAnchor);
+    ASSERT(status == ar_device_anchor_query_status_success);
     
     _drawable = cp_frame_query_drawable(_frame);
     if (_drawable == nullptr)
@@ -129,9 +135,9 @@ CompositorServicesRendererDelegate::startSubmission()
     const size_t nbViews = cp_drawable_get_view_count(_drawable);
     ASSERT(nbViews == _cameraInfos.size());
     
-    cp_drawable_set_device_anchor(_drawable, deviceAnchor);
+    cp_drawable_set_device_anchor(_drawable, _deviceAnchor);
     
-    const float4x4 deviceAnchorTransform =  ar_anchor_get_origin_from_anchor_transform(deviceAnchor);
+    const float4x4 deviceAnchorTransform =  ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
     
     const size_t n = _cameraInfos.size();
     for (size_t i=0; i < n; ++i)

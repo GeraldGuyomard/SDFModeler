@@ -56,6 +56,8 @@ private:
     
     cp_frame_t _Nullable _frame = nil;
     cp_drawable_t _Nullable _drawable = nil;
+    ar_device_anchor_t _deviceAnchor = nil;
+    
     std::vector<CameraInfo> _cameraInfos;
     
     RenderTargetConfiguration::Ptr _configuration;
