@@ -19,7 +19,7 @@
 {
     if (self = [self init])
     {
-        _world = makeDefaultWorld();
+        _world = makeDefaultWorld(float3 {0, 0, -5});
         
         auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
         _renderer = std::make_unique<Renderer>(_world, std::move(delegate));
