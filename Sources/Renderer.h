@@ -60,7 +60,7 @@ public:
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
     virtual bool startRender(Renderer&) { return true; }
-    virtual void startSubmission() {}
+    virtual bool startSubmission() { return true; }
     virtual void endSubmission() {}
     
     virtual size_t cameraInfoCount() const = 0;

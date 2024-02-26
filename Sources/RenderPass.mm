@@ -47,7 +47,6 @@ RenderPass::init(Renderer& renderer)
     }
     
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
-    //pipelineStateDescriptor.stencilAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     pipelineStateDescriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
     
     auto device = renderer.mtlDevice();
@@ -62,8 +61,11 @@ RenderPass::init(Renderer& renderer)
     if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
     {
         MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+        
         depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
+        //depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
         depthStateDesc.depthWriteEnabled = _pipelineConfiguration->depthWriteEnabled;
+        
         _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
     }
     

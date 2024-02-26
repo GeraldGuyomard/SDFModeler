@@ -8,13 +8,6 @@
 #include "SDFRenderPass.h"
 #include "Renderer.h"
 
-Vertex s_Vertices[4] = {
-    { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
-    { {-1.f, -1.f , 0.0f, 1.f}, {-1.f, -1.f} },
-    { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
-    { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
-};
-
 SDFRenderPass::SDFRenderPass(size_t cameraIndex)
 : _cameraIndex(cameraIndex)
 {}
@@ -93,10 +86,12 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
 id <MTLRenderCommandEncoder> _Nullable
 SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    auto renderPassDescriptor = renderer.delegate()->currentRenderPassDescriptor();
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->currentRenderPassDescriptor() copy];
     
     if (renderPassDescriptor != nullptr)
     {
+        //renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 0);
+        
         auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         encoder.label = @"SDFRenderPass";
         return encoder;
@@ -124,6 +119,18 @@ SDFRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull 
     _uniformsBuffer->setFragmentBuffer(encoder);
     _serializedWorldBuffer->setFragmentBuffer(encoder);
     _materialsBuffer->setFragmentBuffer(encoder);
+    
+    MTLViewport vp;
+    vp.originX = vp.originY = 0;
+    const auto& camInfo = renderer.cameraInfos()[_cameraIndex];
+    
+    const auto& vpSize = camInfo.viewportSize();
+    vp.width = vpSize.x;
+    vp.height = vpSize.y;
+    vp.znear = 0;
+    vp.zfar = 1;
+    
+    [encoder setViewport:vp];
     
     _inherited::_render(renderer, encoder);
 }

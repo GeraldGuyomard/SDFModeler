@@ -43,8 +43,10 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
                          serializedWorld,
                          materials);
     
+    
     FragmentShaderOut out;
     out.color = res.color;
+    //out.color = float4 { 1, 1, 1, 1 };
     out.depth = res.depth;
     
     return out;

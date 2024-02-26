@@ -30,14 +30,18 @@ struct TestingApp: App {
 
         ImmersiveSpace(id: "ImmersiveSpace") {
             
-            let immersiveSpace = self
-            
             CompositorLayer(configuration: ContentStageConfiguration()) { layerRenderer in
-                //let renderer = Renderer(layerRenderer)
-                //renderer.startRenderLoop()
                 
-                let renderer = VisionOSRenderer(layerRenderer: layerRenderer)
-                renderer?.startRenderLoop()
+                //let runExample = true
+                let runExample = false
+                
+                if runExample {
+                    let renderer = Renderer(layerRenderer)
+                    renderer.startRenderLoop()
+                } else {
+                    let renderer = VisionOSRenderer(layerRenderer: layerRenderer)
+                    renderer?.startRenderLoop()
+                }
             }
         }.immersionStyle(selection: .constant(.full), in: .full)
         

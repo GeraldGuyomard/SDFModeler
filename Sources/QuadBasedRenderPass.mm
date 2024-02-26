@@ -10,11 +10,14 @@
 
 namespace
 {
+    constexpr float kDepth = 1.f;
+    //constexpr float kDepth = 0.5f;
+
     Vertex s_Vertices[4] = {
-        { {-1.f, +1.f , 0.0f, 1.f}, {-1.f, 1.f} },
-        { {-1.f, -1.f , 0.0f, 1.f}, {-1.f, -1.f} },
-        { {+1.f, +1.f , 0.0f, 1.f}, {1.f, 1.f} },
-        { {+1.f, -1.f , 0.0f, 1.f}, {1.f, -1.f} }
+        { {-1.f, +1.f , 0.0f, kDepth}, {-1.f, 1.f} },
+        { {-1.f, -1.f , 0.0f, kDepth}, {-1.f, -1.f} },
+        { {+1.f, +1.f , 0.0f, kDepth}, {1.f, 1.f} },
+        { {+1.f, -1.f , 0.0f, kDepth}, {1.f, -1.f} }
     };
 }
 

@@ -120,12 +120,20 @@ public:
     FrameSubmission(RendererDelegate* delegate)
     : _delegate(delegate)
     {
-        _delegate->startSubmission();
+        if (!_delegate->startSubmission())
+        {
+            _delegate = nullptr;
+        }
     }
     
     ~FrameSubmission()
     {
         end();
+    }
+    
+    bool isValid() const
+    {
+        return _delegate != nullptr;
     }
     
     void end()
@@ -155,6 +163,9 @@ Renderer::render()
     }
     
     FrameSubmission submission { _delegate.get() };
+    if (!submission.isValid()) {
+        return;
+    }
     
     if (!_cameraInfosValid && !updateCameraTransforms())
     {

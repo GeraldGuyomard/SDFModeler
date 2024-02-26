@@ -29,7 +29,7 @@ public:
     id<MTLDevice> _Nonnull getMTLDevice() const override;
     
     bool startRender(Renderer&) override;
-    void startSubmission() override;
+    bool startSubmission() override;
     void endSubmission() override;
     
     size_t cameraInfoCount() const override;

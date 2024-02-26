@@ -54,7 +54,20 @@ CompositorServicesRendererDelegate::startRenderLoop()
     {
         while (!_shouldStopRendering)
         {
-            _renderer->render();
+            const auto state = cp_layer_renderer_get_state(_layerRenderer);
+            if (state == cp_layer_renderer_state_invalidated)
+            {
+                _shouldStopRendering = true;
+            }
+            else if (state == cp_layer_renderer_state_paused)
+            {
+                cp_layer_renderer_wait_until_running(_layerRenderer);
+            }
+            else
+            {
+                ASSERT(state == cp_layer_renderer_state_running);
+                _renderer->render();
+            }
         }
     }};
 }
@@ -114,7 +127,7 @@ namespace
     }
 }
 
-void
+bool
 CompositorServicesRendererDelegate::startSubmission()
 {
     cp_frame_start_submission(_frame);
@@ -124,12 +137,15 @@ CompositorServicesRendererDelegate::startSubmission()
     const CFTimeInterval timeStamp = cp_time_to_cf_time_interval(t);
     
     const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, timeStamp, _deviceAnchor);
-    ASSERT(status == ar_device_anchor_query_status_success);
+    if (status != ar_device_anchor_query_status_success)
+    {
+        return false;
+    }
     
     _drawable = cp_frame_query_drawable(_frame);
     if (_drawable == nullptr)
     {
-        return;
+        return false;
     }
     
     const size_t nbViews = cp_drawable_get_view_count(_drawable);
@@ -177,6 +193,7 @@ CompositorServicesRendererDelegate::startSubmission()
         cameraInfo.setViewportSizeInPoints(viewportSize);
     }
         
+    return true;
 }
 
 void
@@ -207,15 +224,21 @@ CompositorServicesRendererDelegate::cameraInfo(size_t index, const Camera::Ptr& 
 MTLRenderPassDescriptor* _Nullable
 CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
 {
+    if (_drawable == nil)
+    {
+        return nil;
+    }
+    
     auto renderPassDescriptor = [MTLRenderPassDescriptor new];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     
-    colorAttachment.texture = cp_drawable_get_color_texture(_drawable, 0);;
+    colorAttachment.texture = cp_drawable_get_color_texture(_drawable, 0);
     
     colorAttachment.loadAction = MTLLoadActionClear;
     colorAttachment.storeAction = MTLStoreActionStore;
     colorAttachment.clearColor = MTLClearColorMake(0, 0, 0, 0);
+    //colorAttachment.clearColor = MTLClearColorMake(1, 0, 0, 0);
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     
@@ -224,19 +247,16 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;
     
-    /*
-    renderPassDescriptor.rasterizationRateMap = drawable.rasterizationRateMaps.first
-    if layerRenderer.configuration.layout == .layered {
-        renderPassDescriptor.renderTargetArrayLength = drawable.views.count
-    }*/
-    
     return renderPassDescriptor;
 }
 
 void
 CompositorServicesRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {
-    cp_drawable_encode_present(_drawable, commandBuffer);
+    if (_drawable != nullptr)
+    {
+        cp_drawable_encode_present(_drawable, commandBuffer);
+    }
 }
 
 void
