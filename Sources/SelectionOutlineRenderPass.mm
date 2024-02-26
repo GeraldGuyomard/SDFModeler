@@ -77,9 +77,9 @@ SelectionOutlineRenderPass::makePipelineConfiguration(const RenderTargetConfigur
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderOutline"];
     
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
-    
     config->blendEnabled = true;
-    config->depthWriteEnabled = false;
+    
+    config->depthCompareFunction = MTLCompareFunctionAlways;
     
     return config;
 }

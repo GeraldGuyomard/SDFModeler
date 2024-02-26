@@ -46,8 +46,10 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     
     FragmentShaderOut out;
     out.color = res.color;
+    out.depth = 1.f - res.depth;
+    
     //out.color = float4 { 1, 1, 1, 1 };
-    out.depth = res.depth;
+    //out.depth = 0;
     
     return out;
 }

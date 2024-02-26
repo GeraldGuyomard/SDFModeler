@@ -62,9 +62,8 @@ RenderPass::init(Renderer& renderer)
     {
         MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
         
-        depthStateDesc.depthCompareFunction = MTLCompareFunctionLess;
-        //depthStateDesc.depthCompareFunction = MTLCompareFunctionAlways;
-        depthStateDesc.depthWriteEnabled = _pipelineConfiguration->depthWriteEnabled;
+        depthStateDesc.depthCompareFunction = _pipelineConfiguration->depthCompareFunction;
+        depthStateDesc.depthWriteEnabled = true;
         
         _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
     }

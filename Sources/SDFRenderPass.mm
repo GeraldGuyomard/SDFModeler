@@ -90,7 +90,7 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
     
     if (renderPassDescriptor != nullptr)
     {
-        //renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 0);
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 0);
         
         auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         encoder.label = @"SDFRenderPass";

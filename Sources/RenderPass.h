@@ -25,7 +25,8 @@ struct PipelineConfiguration final : public RenderTargetConfiguration
     id <MTLFunction> _Nonnull fragmentFunction = nil;
     
     bool blendEnabled = false;
-    bool depthWriteEnabled = true;
+    
+    MTLCompareFunction depthCompareFunction = MTLCompareFunctionLessEqual;
     
     std::string pipelineName;
 };
