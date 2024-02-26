@@ -32,61 +32,13 @@
         return;
     }
     
-    //CGColorSpaceRef rgbColorSpace = CGColorSpaceCreateDeviceRGB();
-    auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
-    
-    const auto size = renderer->cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
-    
-    std::vector<uint32_t> buffer;
-    buffer.resize(size.x * size.y);
-    
-    for (float y=0; y < size.y; ++y)
-    {
-        for (float x=0; x < size.x; ++x)
-        {
-            uint32_t& pixel = buffer[(y * size.x) + x];
-            const float2 pixelCoordinates { x, y };
-            
-            const auto fragment = renderer->renderPixel(kLeftCameraIndex, pixelCoordinates);
-            
-            const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
-            const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;
-            const uint8_t b = clamp(fragment.b, 0.f, 1.f) * 255.f;
-            
-            uint32_t v = r | (g << 8) | (b << 16) | 0xFF000000;
-            pixel = v;
-        }
-    }
-    
-    /*for (uint32_t& pixel : buffer)
-    {
-        // ABGR
-        pixel = 0x4000FF00;
-    }*/
-    
-    const size_t bytesPerRow = size.x * sizeof(uint32_t);
-    CGContextRef context = CGBitmapContextCreateWithData(buffer.data(),
-                                  size.x,
-                                  size.y,
-                                  8,
-                                  bytesPerRow,
-                                  rgbColorSpace,
-                                    kCGImageAlphaPremultipliedLast,
-                                  nullptr,
-                                  nullptr
-                                  );
-    
-    CGColorSpaceRelease(rgbColorSpace);
-
-    CGImageRef cgImage = CGBitmapContextCreateImage(context);
-    
-    NSImage* img = [[NSImage alloc] initWithCGImage:cgImage size:CGSizeMake(size.x, size.y)];
-    CGImageRelease(cgImage);
+    auto img = renderer->renderImage();
+    const CGSize size = img.size;
     
     [self.renderView setImage:img];
     
     // label
-    NSString* title = [NSString stringWithFormat:@"Resolution %d x %d", int(size.x), int(size.y)];
+    NSString* title = [NSString stringWithFormat:@"Resolution %d x %d", int(size.width), int(size.height)];
     [self.resolutionLabel setStringValue:title];
 }
 

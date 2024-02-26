@@ -27,6 +27,11 @@ struct ContentView: View {
             Toggle("Show Immersive Space", isOn: $showImmersiveSpace)
                 .toggleStyle(.button)
                 .padding(.top, 50)
+            
+            Button("Render on CPU") {
+                VisionOSRenderer.renderOnCPU()
+            }
+        
         }
         .padding()
         .onChange(of: showImmersiveSpace) { _, newValue in

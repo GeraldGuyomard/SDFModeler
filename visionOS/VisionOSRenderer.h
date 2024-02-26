@@ -15,6 +15,10 @@
 - (instancetype) initWithLayerRenderer:(cp_layer_renderer_t)renderer;
 
 - (void)startRenderLoop;
+- (void)renderImage;
+
++(void) renderOnCPU;
+
 
 @end
 

@@ -236,3 +236,60 @@ Renderer::mtlDevice() const
 {
     return _commandQueue.device;
 }
+
+AppleImage*
+Renderer::renderImage() const
+{
+    auto rgbColorSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGBLinear);
+    
+    const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
+    
+    std::vector<uint32_t> buffer;
+    buffer.resize(size.x * size.y);
+    
+    for (float y=0; y < size.y; ++y)
+    {
+        for (float x=0; x < size.x; ++x)
+        {
+            uint32_t& pixel = buffer[(y * size.x) + x];
+            const float2 pixelCoordinates { x, y };
+            
+            const auto fragment = renderPixel(kLeftCameraIndex, pixelCoordinates);
+            
+            const uint8_t r = clamp(fragment.r, 0.f, 1.f) * 255.f;
+            const uint8_t g = clamp(fragment.g, 0.f, 1.f) * 255.f;
+            const uint8_t b = clamp(fragment.b, 0.f, 1.f) * 255.f;
+            
+            uint32_t v = r | (g << 8) | (b << 16) | 0xFF000000;
+            pixel = v;
+        }
+    }
+    
+    const size_t bytesPerRow = size.x * sizeof(uint32_t);
+    CGContextRef context = CGBitmapContextCreateWithData(buffer.data(),
+                                  size.x,
+                                  size.y,
+                                  8,
+                                  bytesPerRow,
+                                  rgbColorSpace,
+                                    kCGImageAlphaPremultipliedLast,
+                                  nullptr,
+                                  nullptr
+                                  );
+    
+    CGColorSpaceRelease(rgbColorSpace);
+
+    CGImageRef cgImage = CGBitmapContextCreateImage(context);
+    
+    
+    
+#if TARGET_OS_OSX
+    AppleImage* img = [[AppleImage alloc] initWithCGImage:cgImage size:CGSizeMake(size.x, size.y)];
+#else
+    AppleImage* img = [[UIImage alloc] initWithCGImage:cgImage];
+#endif
+    
+    CGImageRelease(cgImage);
+    
+    return img;
+}

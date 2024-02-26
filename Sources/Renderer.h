@@ -19,6 +19,7 @@
 #include <string>
 
 #include "RenderTargetConfiguration.h"
+#include <TargetConditionals.h>
 
 class Renderer;
 class RenderPass;
@@ -47,6 +48,12 @@ public:
     virtual void pause() = 0;    
 };
 
+#if TARGET_OS_OSX
+    typedef NSImage AppleImage;
+#else
+    typedef UIImage AppleImage;
+#endif
+
 class Renderer final
 {
 public:
@@ -73,6 +80,8 @@ public:
     {
         return _delegate.get();
     }
+    
+    AppleImage* _Nonnull renderImage() const;
     
 public:
     void render();

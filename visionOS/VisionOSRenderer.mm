@@ -38,4 +38,19 @@ static VisionOSRenderer* s_Instance = nil;
     delegate->startRenderLoop();
 }
 
+- (void)renderImage
+{
+    auto image = _renderer->renderImage();
+    int a;
+    a = 1;
+}
+
++(void) renderOnCPU
+{
+    if (s_Instance != nil)
+    {
+        [s_Instance renderImage];
+    }
+}
+
 @end
