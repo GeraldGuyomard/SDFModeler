@@ -111,17 +111,21 @@ MTKViewRendererDelegate::getMTLDevice() const
 CameraRig::Ptr
 MTKViewRendererDelegate::cameraRig() const
 {
-    // hack: update here
     CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
     const CGSize drawableSize = layer.drawableSize;
     const float2 viewportSize { float(drawableSize.width), float(drawableSize.height) };
 
-    for (const auto& camera : _cameraRig->cameras())
+    if (!_lastUpdatedViewportSize.has_value() || (_lastUpdatedViewportSize.value().x != viewportSize.x) || (_lastUpdatedViewportSize.value().y != viewportSize.y))
     {
-        camera->setViewportSize(viewportSize);
-        const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize);
+        _lastUpdatedViewportSize = viewportSize;
         
-        camera->setProjectionMatrix(projMatrix);
+        for (const auto& camera : _cameraRig->cameras())
+        {
+            camera->setViewportSize(viewportSize);
+            const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize);
+            
+            camera->setProjectionMatrix(projMatrix);
+        }
     }
     
     return _cameraRig;

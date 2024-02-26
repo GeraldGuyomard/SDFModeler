@@ -11,6 +11,7 @@
 
 #import "CommonDefinitions.h"
 #include "Renderer.h"
+#include <optional>
 
 @class MTKViewBridge;
 
@@ -39,6 +40,7 @@ private:
     
     RenderTargetConfiguration::Ptr _configuration = std::make_shared<RenderTargetConfiguration>();
     CameraRig::Ptr _cameraRig;
+    mutable std::optional<float2> _lastUpdatedViewportSize;
 };
 
 
