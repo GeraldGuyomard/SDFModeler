@@ -139,6 +139,9 @@ CompositorServicesRendererDelegate::startSubmission()
     
     const float4x4 deviceAnchorTransform =  ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
     
+    // hack
+    const auto& cameras = _renderer->cameraRig()->cameras();
+    
     const size_t n = _cameraInfos.size();
     for (size_t i=0; i < n; ++i)
     {
@@ -147,7 +150,8 @@ CompositorServicesRendererDelegate::startSubmission()
         const float4x4 cameraTransformInAnchorSpace = cp_view_get_transform(view);
         const float4x4 worldCameraTransform = deviceAnchorTransform * cameraTransformInAnchorSpace;
         
-        const auto viewMatrix = inverse(worldCameraTransform);
+        //const auto viewMatrix = inverse(worldCameraTransform);
+        cameras[i]->setWorldTransform(worldCameraTransform);
         
         const float4 tangents = cp_view_get_tangents(view);
         
