@@ -24,7 +24,11 @@ struct Uniforms final
 INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)
 {
     auto p = uniforms.ndcToWorldTransform * float4 { ndc.x, ndc.y, z, 1 };
-    return (p.w != 0.f) ?  (p.xyz / p.w) : p.xyz;
+    if (p.w != 0.f) {
+        return p.xyz / p.w;
+    } else {
+        return float3 { p.x, p.y, -100.f };
+    }
 }
 
 struct OutlineUniforms final

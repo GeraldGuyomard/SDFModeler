@@ -24,6 +24,18 @@
 
 #include "MainViewController.h"
 
+float2
+RendererDelegate::tileSize() const
+{
+    const float2 kDefaultTileSize { 64, 64 };
+    //const float2 kDefaultTileSize { 128, 128 };
+    //const float2 kDefaultTileSize { 256, 256 };
+    //const float2 kDefaultTileSize { 1024, 1024 };
+    //const float2 kDefaultTileSize { 2048, 2048 };
+    //const float2 kDefaultTileSize { 4096, 4096 };
+    
+    return kDefaultTileSize;
+}
 
 Renderer::Renderer(const WorldPtr& world, RendererDelegate::Ptr delegate)
 : _world(world), _delegate(std::move(delegate)),

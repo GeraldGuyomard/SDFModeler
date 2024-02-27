@@ -75,7 +75,7 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
         const auto viewMatrix = inverse(cameraMatrix);
         const auto viewProjectionMatrix = camera->projectionMatrix() * viewMatrix;
         
-        EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, serializedWorld };
+        EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, renderer.delegate()->tileSize(), serializedWorld };
         configure(context);
         
         world->encode(context, serializedMaterials);

@@ -9,4 +9,4 @@
 #include "CommonDefinitions.h"
 #include "Object3D.h"
 
-WorldPtr makeDefaultWorld(const float3& worldOrigin = float3 { 0.f, 0.f, 0.f });
+WorldPtr makeDefaultWorld(const float4x4& worldTransform = float4x4_identity());

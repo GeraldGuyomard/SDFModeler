@@ -54,6 +54,12 @@ CompositorServicesRendererDelegate::cameraRig() const
     return _cameraRig;
 }
 
+float2
+CompositorServicesRendererDelegate::tileSize() const
+{
+    return float2 { 4096, 4096 };
+}
+
 void
 CompositorServicesRendererDelegate::startRenderLoop()
 {
@@ -166,15 +172,16 @@ CompositorServicesRendererDelegate::startSubmission()
     
     cp_drawable_set_device_anchor(_drawable, _deviceAnchor);
     
-    const float4x4 deviceAnchorTransform =  ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
+    const float4x4 worldHeadTransform = ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
     
     for (size_t i=0; i < nbViews; ++i)
     {
         auto camera = cameras[i];
         const cp_view_t view = cp_drawable_get_view(_drawable, i);
         
-        const float4x4 cameraTransformInAnchorSpace = cp_view_get_transform(view);
-        const float4x4 worldCameraTransform = deviceAnchorTransform * cameraTransformInAnchorSpace;
+        const float4x4 localEyeTransform = cp_view_get_transform(view);
+        
+        const float4x4 worldCameraTransform = worldHeadTransform * localEyeTransform;
         
         //const auto viewMatrix = inverse(worldCameraTransform);
         camera->setWorldTransform(worldCameraTransform);
@@ -189,7 +196,7 @@ CompositorServicesRendererDelegate::startSubmission()
                                                                         tangents[3],
                                                                         depthRange.y,
                                                                         depthRange.x,
-                                                                        true);
+                                                                        false);
         
         camera->setProjectionMatrix(convert(projection.matrix));
         

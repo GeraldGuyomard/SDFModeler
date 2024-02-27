@@ -33,6 +33,7 @@ public:
     void endSubmission() override;
     
     CameraRig::Ptr cameraRig() const override;
+    float2 tileSize() const override;
     
     MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;

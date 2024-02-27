@@ -91,6 +91,7 @@ public:
                          const std::shared_ptr<const World>& world,
                          const float4x4& viewProjectionMatrix,
                          const float2& viewportSize,
+                         const float2& tileSize,
                          SerializedWorldObject& serializedWorldObject);
     
     const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
@@ -127,6 +128,7 @@ public:
 private:
     const float4x4 _viewProjectionMatrix;
     const RectF _viewportRect;
+    
     SerializedWorldObject& _serializedWorldObject;
     
     TPrimitiveOffset _availableHeaderOffset = 0;

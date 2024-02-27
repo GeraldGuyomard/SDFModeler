@@ -19,7 +19,11 @@
 {
     if (self = [self init])
     {
-        _world = makeDefaultWorld(float3 {0, 0, -5});
+        constexpr float s = 0.05f;
+        float4x4 transform = matrix4x4_scale(s);
+        setTranslation(transform, float3 {0, 0, -5.f});
+        
+        _world = makeDefaultWorld(transform);
         
         auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
         _renderer = std::make_unique<Renderer>(_world, std::move(delegate));

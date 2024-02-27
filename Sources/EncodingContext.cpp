@@ -171,19 +171,14 @@ EncodingContext::projectedBB(const Object3D& object) const
 EncodingContext::EncodingContext(const std::shared_ptr<const World>& world,
                                            const float4x4& viewProjectionMatrix,
                                            const float2& viewportSize,
+                                            const float2& tileSize,
                                            SerializedWorldObject& serializedWorldObject)
 :
 _viewProjectionMatrix(viewProjectionMatrix),
 _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
-    const float2 kDefaultTileSize { 64, 64 };
-    //const float2 kDefaultTileSize { 128, 128 };
-    //const float2 kDefaultTileSize { 256, 256 };
-    //const float2 kDefaultTileSize { 1024, 1024 };
-    //const float2 kDefaultTileSize { 2048, 2048 };
-    
-    _serializedWorldObject.tileSize = kDefaultTileSize;
+    _serializedWorldObject.tileSize = tileSize;
     
     const auto& vpSize = this->viewportSize();
     

@@ -6,15 +6,12 @@
 
 #include "WorldHelpers.h"
 
-WorldPtr makeDefaultWorld(const float3& worldOrigin)
+WorldPtr makeDefaultWorld(const float4x4& worldTransform)
 {
     auto world = World::make();
     auto rootObject = world->rootObject();
     
-    float4x4 transform = float4x4_identity();
-    setTranslation(transform, worldOrigin);
-    
-    rootObject->setWorldTransform(transform);
+    rootObject->setWorldTransform(worldTransform);
     
     auto white = world->addMaterial(float4 { 1, 1, 1, 1 });
     
