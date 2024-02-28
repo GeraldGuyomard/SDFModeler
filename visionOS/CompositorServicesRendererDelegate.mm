@@ -57,7 +57,8 @@ CompositorServicesRendererDelegate::cameraRig() const
 float2
 CompositorServicesRendererDelegate::tileSize() const
 {
-    return float2 { 4096, 4096 };
+    //return float2 { 4096, 4096 };
+    return float2 { 64, 64 };
 }
 
 void
@@ -193,15 +194,16 @@ CompositorServicesRendererDelegate::startSubmission()
         
         const auto depthRange = cp_drawable_get_depth_range(_drawable);
         
-        const auto width = tangents[1] - tangents[0];
-        const auto height = tangents[3] - tangents[2];
+        const float nearPlane = depthRange.y;
+        //const float farPlane = depthRange.x;
+        const float farPlane = 100.f;
         
         const auto projection = SPProjectiveTransform3DMakeFromTangents(tangents[0],
                                                                         tangents[1],
                                                                         tangents[2],
                                                                         tangents[3],
-                                                                        depthRange.y,
-                                                                        depthRange.x,
+                                                                        nearPlane,
+                                                                        farPlane,
                                                                         false);
         
         camera->setProjectionMatrix(convert(projection.matrix));

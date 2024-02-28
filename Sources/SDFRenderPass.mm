@@ -62,8 +62,14 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     const float4x4 cameraMatrix = (camera != nullptr) ? camera->worldTransform() : float4x4_identity();
     
     uniforms.viewportSize = camera->viewportSize();
+    
+#if 1
+    uniforms.worldTransformToNdc = camera->projectionMatrix() * inverse(cameraMatrix);
+    uniforms.ndcToWorldTransform = inverse(uniforms.worldTransformToNdc);
+#else
     uniforms.ndcToWorldTransform = cameraMatrix * camera->invProjectionMatrix();
     uniforms.worldTransformToNdc = inverse(uniforms.ndcToWorldTransform);
+#endif
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
