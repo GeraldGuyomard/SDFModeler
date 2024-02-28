@@ -241,6 +241,11 @@ public:
         });
     }
     
+    const TGeometry& typedGeometry() const
+    {
+        return _geometry;
+    }
+    
 private:
     TGeometry _geometry;
 };
@@ -304,6 +309,9 @@ public:
     
 };
 
+using Environment3D = TObject3D<SDFPlane>;
+using Environment3DPtr = std::shared_ptr<Environment3D>;
+
 class World final : public std::enable_shared_from_this<World>
 {
 public:
@@ -329,12 +337,16 @@ public:
     
     void invalidate();
     
+    // environment
+    Environment3DPtr environment() const { return _environment; }
+    
 private:
     World() = default;
     
     void init();
     
     Object3D::Ptr _rootObject;
+    Environment3DPtr _environment;
     
     ObjectID _nextAvailableObjectID = 1;
     std::vector<Material3D::Ptr> _materials;

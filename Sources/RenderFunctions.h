@@ -33,7 +33,7 @@ class GridEnvironment final
 public:
     RayMarchResult rayMarch(TShader shader, Ray ray, CONSTANT SerializedWorldObject& serializedWorld) const
     {
-        SDFObject<SDFPlane> grid({}, { float3(-0.5f) });
+       const auto grid = serializedWorld.grid;
         
         RayMarchResult res { ray };
         res.distance = grid.raycast(ray);

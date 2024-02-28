@@ -46,7 +46,10 @@ _inFlightSemaphore(dispatch_semaphore_create(RenderPass::kMaxBuffersInFlight))
     init();
 }
 
-Renderer::~Renderer() = default;
+Renderer::~Renderer()
+{
+    _delegate.reset();
+}
 
 void
 Renderer::init()

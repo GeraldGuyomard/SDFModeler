@@ -30,6 +30,10 @@ static CONSTANT constexpr TDrawCommandIndex kInvalidCommandIndex(-1);
 
 struct SerializedWorldObject final
 {
+    // environment
+    SDFObject<SDFPlane> grid = { SDFPlane{} };
+
+    //
     float2 tileSize = { 0.f, 0.f };
     float  numTileColumns = 0;
     float  numTileRows = 0;

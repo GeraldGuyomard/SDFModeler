@@ -706,6 +706,13 @@ World::init()
     _rootObject->setId(generateNewObjectID());
     
     addMaterial(float4 {1, 0, 0, 1});
+    
+    _environment = std::make_shared<Environment3D>(shared_from_this(), SDFPlane {});
+    
+    auto t = float4x4_identity();
+    setTranslation(t, float3 { 0.f, -0.5f, 0.f });
+    
+    _environment->setWorldTransform(t);
 }
 
 void

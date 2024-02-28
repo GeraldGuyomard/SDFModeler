@@ -178,6 +178,12 @@ _viewProjectionMatrix(viewProjectionMatrix),
 _viewportRect(float2 { 0, 0 }, viewportSize),
 _serializedWorldObject(serializedWorldObject)
 {
+    auto env = world->environment();
+    _serializedWorldObject.grid = env->typedGeometry();
+    
+    const auto envTransform = world->rootObject()->worldTransform() * env->worldTransform();
+    _serializedWorldObject.grid.setTransform(envTransform);
+    
     _serializedWorldObject.tileSize = tileSize;
     
     const auto& vpSize = this->viewportSize();

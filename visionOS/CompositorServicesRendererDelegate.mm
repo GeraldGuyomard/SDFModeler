@@ -34,7 +34,7 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     #if TARGET_OS_SIMULATOR
         constexpr size_t nbCameras = 1;
     #else
-    constexpr size_t nbCameras = 2;
+        constexpr size_t nbCameras = 2;
     #endif
     
     _cameraRig = CameraRig::make(renderer->world(), nbCameras, false);
@@ -151,6 +151,11 @@ CompositorServicesRendererDelegate::startSubmission()
     cp_frame_start_submission(_frame);
     
     cp_frame_timing_t timing = cp_frame_predict_timing(_frame);
+    if (timing == nullptr)
+    {
+        return false;
+    }
+    
     const cp_time_t t = cp_frame_timing_get_presentation_time(timing);
     const CFTimeInterval timeStamp = cp_time_to_cf_time_interval(t);
     
@@ -180,15 +185,16 @@ CompositorServicesRendererDelegate::startSubmission()
         const cp_view_t view = cp_drawable_get_view(_drawable, i);
         
         const float4x4 localEyeTransform = cp_view_get_transform(view);
-        
         const float4x4 worldCameraTransform = worldHeadTransform * localEyeTransform;
         
-        //const auto viewMatrix = inverse(worldCameraTransform);
         camera->setWorldTransform(worldCameraTransform);
         
         const float4 tangents = cp_view_get_tangents(view);
         
         const auto depthRange = cp_drawable_get_depth_range(_drawable);
+        
+        const auto width = tangents[1] - tangents[0];
+        const auto height = tangents[3] - tangents[2];
         
         const auto projection = SPProjectiveTransform3DMakeFromTangents(tangents[0],
                                                                         tangents[1],
