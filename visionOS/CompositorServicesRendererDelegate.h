@@ -10,6 +10,7 @@
 #import "CommonDefinitions.h"
 #include "Renderer.h"
 #include "RenderTargetConfiguration.h"
+#include "XRService.h"
 
 #import <CompositorServices/CompositorServices.h>
 #import <ARKit/ARKit.h>
@@ -20,7 +21,7 @@
 class CompositorServicesRendererDelegate final : public RendererDelegate
 {
 public:
-    CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layerRenderer);
+    CompositorServicesRendererDelegate(cp_layer_renderer_t _Nonnull layerRenderer, const XRService::Ptr& xrService);
     ~CompositorServicesRendererDelegate();
     
     RenderTargetConfiguration::CPtr presentConfiguration() const override;
@@ -45,18 +46,15 @@ public:
     
 private:
     const cp_layer_renderer_t _Nonnull _layerRenderer;
+    const XRService::Ptr _xrService;
     
     std::thread _renderThread;
-    
-    ar_session_t _Nullable _arSession = nil;
-    ar_world_tracking_provider_t _Nullable _worldTracking = nil;
     
     Renderer* _Nullable _renderer = nullptr;
     std::atomic<bool> _shouldStopRendering = { false };
     
     cp_frame_t _Nullable _frame = nil;
     cp_drawable_t _Nullable _drawable = nil;
-    ar_device_anchor_t _Nullable _deviceAnchor = nil;
     
     CameraRig::Ptr _cameraRig;
     

@@ -115,6 +115,7 @@
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
+		7F26CFFF2B91113D00C1A5C5 /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F26CFFD2B91113D00C1A5C5 /* XRService.mm */; };
 		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5DE0572B730880003FC854 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
@@ -343,6 +344,8 @@
 		74F7647129CF95D400CD5259 /* Object3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3D.cpp; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
+		7F26CFFD2B91113D00C1A5C5 /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
+		7F26CFFE2B91113D00C1A5C5 /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
 		7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderStats.mm; sourceTree = "<group>"; };
 		7F5CCD402B685A2C00BC6A69 /* RenderStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderStats.h; sourceTree = "<group>"; };
 		7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MTKViewRendererDelegate.mm; sourceTree = "<group>"; };
@@ -660,6 +663,8 @@
 		7F74B6682B61974900262F2D /* visionOS */ = {
 			isa = PBXGroup;
 			children = (
+				7F26CFFE2B91113D00C1A5C5 /* XRService.h */,
+				7F26CFFD2B91113D00C1A5C5 /* XRService.mm */,
 				7F5DE08E2B731697003FC854 /* CompositorServicesRendererDelegate.h */,
 				7F5DE08F2B731697003FC854 /* CompositorServicesRendererDelegate.mm */,
 				7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */,
@@ -1012,6 +1017,7 @@
 				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
 				7FFA5D662B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */,
 				7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */,
+				7F26CFFF2B91113D00C1A5C5 /* XRService.mm in Sources */,
 				7FFA5D6B2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */,
 				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,

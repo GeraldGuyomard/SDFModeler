@@ -8,8 +8,8 @@
 #include "CompositorServicesRendererDelegate.h"
 #import <Spatial/Spatial.h>
 
-CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_renderer_t layerRenderer)
-: _layerRenderer(layerRenderer)
+CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_renderer_t layerRenderer, const XRService::Ptr& xrService)
+: _layerRenderer(layerRenderer), _xrService(xrService)
 {}
 
 CompositorServicesRendererDelegate::~CompositorServicesRendererDelegate()
@@ -24,11 +24,6 @@ CompositorServicesRendererDelegate::~CompositorServicesRendererDelegate()
 bool
 CompositorServicesRendererDelegate::init(Renderer* renderer)
 {
-    _arSession = ar_session_create();
-    
-    auto config = ar_world_tracking_configuration_create();
-    _worldTracking = ar_world_tracking_provider_create(config);
-    
     _renderer = renderer;
     
     #if TARGET_OS_SIMULATOR
@@ -42,8 +37,6 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     _configuration = std::make_shared<RenderTargetConfiguration>();
     _configuration->colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
     _configuration->depthPixelFormat = MTLPixelFormatDepth32Float;
-    
-   _deviceAnchor = ar_device_anchor_create();
     
     return true;
 }
@@ -64,11 +57,6 @@ CompositorServicesRendererDelegate::tileSize() const
 void
 CompositorServicesRendererDelegate::startRenderLoop()
 {
-    auto providers = ar_data_providers_create();
-    ar_data_providers_add_data_provider(providers, _worldTracking);
-    
-    ar_session_run(_arSession, providers);
-    
     _renderThread = std::thread { [this]()
     {
         while (!_shouldStopRendering)
@@ -160,8 +148,8 @@ CompositorServicesRendererDelegate::startSubmission()
     const cp_time_t t = cp_frame_timing_get_presentation_time(timing);
     const CFTimeInterval timeStamp = cp_time_to_cf_time_interval(t);
     
-    const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, timeStamp, _deviceAnchor);
-    if (status != ar_device_anchor_query_status_success)
+    const auto deviceAnchor = _xrService->queryDeviceAnchor(timeStamp);
+    if (deviceAnchor == nullptr)
     {
         return false;
     }
@@ -176,9 +164,9 @@ CompositorServicesRendererDelegate::startSubmission()
     const size_t nbViews = cp_drawable_get_view_count(_drawable);
     ASSERT(nbViews == cameras.size());
     
-    cp_drawable_set_device_anchor(_drawable, _deviceAnchor);
+    cp_drawable_set_device_anchor(_drawable, deviceAnchor);
     
-    const float4x4 worldHeadTransform = ar_anchor_get_origin_from_anchor_transform(_deviceAnchor);
+    const float4x4 worldHeadTransform = ar_anchor_get_origin_from_anchor_transform(deviceAnchor);
     
     for (size_t i=0; i < nbViews; ++i)
     {

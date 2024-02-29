@@ -8,10 +8,13 @@
 #include "VisionOSRenderer.h"
 #include "CompositorServicesRendererDelegate.h"
 #include "WorldHelpers.h"
+#include "XRService.h"
 
 @implementation VisionOSRenderer
 {
     WorldPtr _world;
+    
+    XRService::Ptr _xrService;
     std::unique_ptr<Renderer> _renderer;
 }
 
@@ -25,7 +28,9 @@
         
         _world = makeDefaultWorld(transform);
         
-        auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer);
+        _xrService = XRService::make();
+        
+        auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer, _xrService);
         _renderer = std::make_unique<Renderer>(_world, std::move(delegate));
     }
     
@@ -37,6 +42,8 @@ static VisionOSRenderer* s_Instance = nil;
 - (void)startRenderLoop
 {
     s_Instance = self;
+    
+    _xrService->start();
     
     auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
     delegate->startRenderLoop();
