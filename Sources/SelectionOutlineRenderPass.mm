@@ -25,7 +25,7 @@ SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
 id<MTLRenderCommandEncoder>_Nullable
 SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->currentRenderPassDescriptor() copy];
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(_cameraIndex) copy];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     colorAttachment.loadAction = MTLLoadActionLoad;

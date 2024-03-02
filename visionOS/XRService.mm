@@ -81,15 +81,15 @@ XRDrawable::depthRange() const
 }
 
 id<MTLTexture>
-XRDrawable::colorTexture() const
+XRDrawable::colorTexture(size_t index) const
 {
-    return [_impl colorTexture];
+    return [_impl colorTexture:index];
 }
 
 id<MTLTexture>
-XRDrawable::depthTexture() const
+XRDrawable::depthTexture(size_t index) const
 {
-    return [_impl depthTexture];
+    return [_impl depthTexture:index];
 }
 
 void

@@ -209,7 +209,6 @@ public:
     void reset(CullingInfo info)
     {
         _cullingInfo = info;
-        _prevMinDistance = _minDistance;
         _minDistance = 1e5f;
         _minCmdIndex = -1;
     }
@@ -259,7 +258,6 @@ private:
     CullingInfo _cullingInfo;
     
     float _minDistance = 1e5f;
-    float _prevMinDistance = 1e5f;
     TDrawCommandIndex _minCmdIndex = -1;
     
     bool _hit = false;

@@ -42,7 +42,7 @@ public:
     virtual CameraRig::Ptr cameraRig() const = 0;
     virtual float2 tileSize() const;
     
-    virtual MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const = 0;
+    virtual MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const = 0;
     virtual void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) = 0;
     
     virtual void invalidate() = 0;

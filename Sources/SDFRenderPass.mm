@@ -91,7 +91,7 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
 id <MTLRenderCommandEncoder> _Nullable
 SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->currentRenderPassDescriptor() copy];
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(_cameraIndex) copy];
     
     if (renderPassDescriptor != nullptr)
     {

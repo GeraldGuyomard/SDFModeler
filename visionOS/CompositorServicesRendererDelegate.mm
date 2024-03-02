@@ -194,7 +194,7 @@ CompositorServicesRendererDelegate::endSubmission()
 }
 
 MTLRenderPassDescriptor* _Nullable
-CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
+CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
 {
     if (!_xrDrawable.isValid())
     {
@@ -205,7 +205,7 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     
-    colorAttachment.texture = _xrDrawable.colorTexture();
+    colorAttachment.texture = _xrDrawable.colorTexture(cameraIndex);
     
     colorAttachment.loadAction = MTLLoadActionClear;
     colorAttachment.storeAction = MTLStoreActionStore;
@@ -214,7 +214,7 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     
-    depthAttachment.texture = _xrDrawable.depthTexture();
+    depthAttachment.texture = _xrDrawable.depthTexture(cameraIndex);
     depthAttachment.loadAction = MTLLoadActionClear;
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;

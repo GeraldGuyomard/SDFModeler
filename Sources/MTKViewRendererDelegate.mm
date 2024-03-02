@@ -132,8 +132,9 @@ MTKViewRendererDelegate::cameraRig() const
 }
 
 MTLRenderPassDescriptor* _Nullable
-MTKViewRendererDelegate::currentRenderPassDescriptor() const
+MTKViewRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
 {
+    ASSERT(cameraIndex == 0);
     return _mtkView.currentRenderPassDescriptor;
 }
 

@@ -28,7 +28,7 @@ public:
     
     CameraRig::Ptr cameraRig() const override;
     
-    MTLRenderPassDescriptor* _Nullable currentRenderPassDescriptor() const override;
+    MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
     
     void invalidate() override;

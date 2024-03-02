@@ -42,14 +42,14 @@ import Spatial
         return _drawable.views[index].textureMap.viewport
     }
     
-    @objc func colorTexture() -> MTLTexture
+    @objc func colorTexture(_ index: Int) -> MTLTexture
     {
-        return _drawable.colorTextures[0]
+        return _drawable.colorTextures[index]
     }
     
-    @objc func depthTexture() -> MTLTexture
+    @objc func depthTexture(_ index: Int) -> MTLTexture
     {
-        return _drawable.depthTextures[0]
+        return _drawable.depthTextures[index]
     }
     
     @objc func present(_ cmdBuffer:MTLCommandBuffer)

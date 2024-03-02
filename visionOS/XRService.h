@@ -74,11 +74,11 @@ public:
     float4x4 localEyeTransform(size_t index) const;
     float4 tangents(size_t index) const;
     MTLViewport viewport(size_t index) const;
+    id<MTLTexture> colorTexture(size_t index) const;
+    id<MTLTexture> depthTexture(size_t index) const;
     
     float2 depthRange() const;
     
-    id<MTLTexture> colorTexture() const;
-    id<MTLTexture> depthTexture() const;
     
     void present(id<MTLCommandBuffer> cmdBuffer);
     
