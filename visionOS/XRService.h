@@ -22,6 +22,7 @@ public:
 
     void start();
     
+    bool canQueryDeviceAnchor() const;
     ar_device_anchor_t _Nonnull queryDeviceAnchor(CFTimeInterval time);
     
 private:

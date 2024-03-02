@@ -54,6 +54,13 @@ XRService::start()
     ar_session_run(_arSession, providers);
 }
 
+bool
+XRService::canQueryDeviceAnchor() const
+{
+    const auto state = ar_data_provider_get_state(_worldTracking);
+    return state == ar_data_provider_state_running;
+}
+
 ar_device_anchor_t
 XRService::queryDeviceAnchor(CFTimeInterval time)
 {

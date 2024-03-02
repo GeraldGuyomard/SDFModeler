@@ -137,6 +137,11 @@ namespace
 bool
 CompositorServicesRendererDelegate::startSubmission()
 {
+    if (!_xrService->canQueryDeviceAnchor())
+    {
+        return false;
+    }
+    
     cp_frame_start_submission(_frame);
     
     cp_frame_timing_t timing = cp_frame_predict_timing(_frame);
