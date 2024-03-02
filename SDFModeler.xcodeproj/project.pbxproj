@@ -205,6 +205,7 @@
 		7F92343B2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7F92343C2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
+		7FA764AF2B93A5190011BEA8 /* XRServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -383,6 +384,7 @@
 		7F9234352B882DD900E6A7A6 /* RenderTargetConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderTargetConfiguration.mm; sourceTree = "<group>"; };
 		7F9234392B8837BA00E6A7A6 /* SelectionOutlineRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionOutlineRenderPass.h; sourceTree = "<group>"; };
 		7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionOutlineRenderPass.mm; sourceTree = "<group>"; };
+		7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XRServiceImpl.swift; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 		7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraRig.cpp; sourceTree = "<group>"; };
@@ -665,6 +667,7 @@
 			children = (
 				7F26CFFE2B91113D00C1A5C5 /* XRService.h */,
 				7F26CFFD2B91113D00C1A5C5 /* XRService.mm */,
+				7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */,
 				7F5DE08E2B731697003FC854 /* CompositorServicesRendererDelegate.h */,
 				7F5DE08F2B731697003FC854 /* CompositorServicesRendererDelegate.mm */,
 				7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */,
@@ -988,6 +991,7 @@
 				7F5DE0782B73091F003FC854 /* RenderFunctions.cpp in Sources */,
 				7F5DE05A2B73088D003FC854 /* SimpleMaterial.cpp in Sources */,
 				7F5DE07C2B73091F003FC854 /* EncodedPrimitiveArray.cpp in Sources */,
+				7FA764AF2B93A5190011BEA8 /* XRServiceImpl.swift in Sources */,
 				7F9234152B86E2D400E6A7A6 /* SelectionMattingRenderPass.mm in Sources */,
 				7F74B6702B61974900262F2D /* ContentView.swift in Sources */,
 				7F5DE0902B731697003FC854 /* CompositorServicesRendererDelegate.mm in Sources */,

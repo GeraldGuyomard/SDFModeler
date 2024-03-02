@@ -6,6 +6,97 @@
 //
 
 #include "XRService.h"
+#import "SDFModeler_visionOS-Swift.h"
+
+XRFrame::XRFrame(XRFrameImpl* impl)
+: _impl(impl)
+{}
+
+XRFrame::~XRFrame() = default;
+
+void
+XRFrame::startUpdate()
+{
+    [_impl startUpdate];
+}
+
+void
+XRFrame::endUpdate()
+{
+    [_impl endUpdate];
+}
+
+bool
+XRFrame::waitUntilOptimalTime()
+{
+    return [_impl waitUntilOptimalTime];
+}
+
+void
+XRFrame::startSubmission()
+{
+    [_impl startSubmission];
+}
+
+void
+XRFrame::endSubmission()
+{
+    [_impl endSubmission];
+}
+
+XRDrawable::XRDrawable(XRDrawableImpl* impl)
+: _impl(impl)
+{}
+
+XRDrawable::~XRDrawable() = default;
+
+size_t
+XRDrawable::viewCount() const
+{
+    return [_impl viewCount];
+}
+
+float4x4
+XRDrawable::localEyeTransform(size_t index) const
+{
+    return [_impl localEyeTransform:index];
+}
+
+float4
+XRDrawable::tangents(size_t index) const
+{
+    return [_impl tangents:index];
+}
+
+MTLViewport
+XRDrawable::viewport(size_t index) const
+{
+    return [_impl viewport:index];
+}
+
+float2
+XRDrawable::depthRange() const
+{
+    return [_impl depthRange];
+}
+
+id<MTLTexture>
+XRDrawable::colorTexture() const
+{
+    return [_impl colorTexture];
+}
+
+id<MTLTexture>
+XRDrawable::depthTexture() const
+{
+    return [_impl depthTexture];
+}
+
+void
+XRDrawable::present(id<MTLCommandBuffer> cmdBuffer)
+{
+    [_impl present:cmdBuffer];
+}
 
 XRService::XRService()
 {}
@@ -29,47 +120,41 @@ XRService::make()
 bool
 XRService::_init()
 {
-    _arSession = ar_session_create();
-    if (_arSession == nullptr)
-    {
-        return false;
-    }
-    
-    auto config = ar_world_tracking_configuration_create();
-    _worldTracking = ar_world_tracking_provider_create(config);
-    if (_worldTracking == nullptr)
-    {
-        return false;
-    }
+    _impl = [XRServiceImpl new];
     
     return true;
 }
 
 void
-XRService::start()
+XRService::start(const Completion& completion)
 {
-    auto providers = ar_data_providers_create();
-    ar_data_providers_add_data_provider(providers, _worldTracking);
+    const auto completionCopy = completion;
     
-    ar_session_run(_arSession, providers);
+    [_impl startWithCompletion:^{
+        completionCopy();
+    }];
 }
 
-bool
-XRService::canQueryDeviceAnchor() const
+XRFrame
+XRService::queryNextFrame(cp_layer_renderer_t layerRenderer)
 {
-    const auto state = ar_data_provider_get_state(_worldTracking);
-    return state == ar_data_provider_state_running;
-}
-
-ar_device_anchor_t
-XRService::queryDeviceAnchor(CFTimeInterval time)
-{
-    auto deviceAnchor = ar_device_anchor_create();
-    const auto status = ar_world_tracking_provider_query_device_anchor_at_timestamp(_worldTracking, time, deviceAnchor);
-    if (status != ar_device_anchor_query_status_success)
+    auto impl = [_impl queryNextFrameWithLayerRenderer:layerRenderer];
+    if (impl == nil)
     {
-        return nullptr;
+        return {};
     }
     
-    return deviceAnchor;
+    return {impl};
+}
+
+XRDrawable
+XRService::queryDrawable(const XRFrame& frame)
+{
+    return { [_impl queryDrawableWithFrame:frame.impl()] };
+}
+
+float4x4
+XRService::worldHeadTransform(const XRDrawable& d) const
+{
+    return [_impl worldHeadTransform:d.impl()];
 }

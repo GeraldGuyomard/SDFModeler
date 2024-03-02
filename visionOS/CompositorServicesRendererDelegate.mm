@@ -94,24 +94,20 @@ CompositorServicesRendererDelegate::getMTLDevice() const
 bool
 CompositorServicesRendererDelegate::startRender(Renderer& renderer)
 {
-     _frame = cp_layer_renderer_query_next_frame(_layerRenderer);
-    if (_frame == nullptr)
+    _xrFrame = _xrService->queryNextFrame(_layerRenderer);
+    if (!_xrFrame.isValid())
     {
         return false;
     }
     
     // ????
-    cp_frame_start_update(_frame);
-    cp_frame_end_update(_frame);
+    _xrFrame.startUpdate();
+    _xrFrame.endUpdate();
     
-    cp_frame_timing_t timing = cp_frame_predict_timing(_frame);
-    if (timing == nullptr)
+    if (!_xrFrame.waitUntilOptimalTime())
     {
         return false;
     }
-    
-    const cp_time_t time = cp_frame_timing_get_optimal_input_time(timing);
-    cp_time_wait_until(time);
     
     return true;
 }
@@ -137,55 +133,32 @@ namespace
 bool
 CompositorServicesRendererDelegate::startSubmission()
 {
-    if (!_xrService->canQueryDeviceAnchor())
-    {
-        return false;
-    }
+    _xrFrame.startSubmission();
     
-    cp_frame_start_submission(_frame);
-    
-    cp_frame_timing_t timing = cp_frame_predict_timing(_frame);
-    if (timing == nullptr)
-    {
-        return false;
-    }
-    
-    const cp_time_t t = cp_frame_timing_get_presentation_time(timing);
-    const CFTimeInterval timeStamp = cp_time_to_cf_time_interval(t);
-    
-    const auto deviceAnchor = _xrService->queryDeviceAnchor(timeStamp);
-    if (deviceAnchor == nullptr)
-    {
-        return false;
-    }
-    
-    _drawable = cp_frame_query_drawable(_frame);
-    if (_drawable == nullptr)
+    _xrDrawable = _xrService->queryDrawable(_xrFrame);
+    if (!_xrDrawable.isValid())
     {
         return false;
     }
     
     const auto& cameras = _cameraRig->cameras();
-    const size_t nbViews = cp_drawable_get_view_count(_drawable);
+    const size_t nbViews = _xrDrawable.viewCount();
     ASSERT(nbViews == cameras.size());
     
-    cp_drawable_set_device_anchor(_drawable, deviceAnchor);
-    
-    const float4x4 worldHeadTransform = ar_anchor_get_origin_from_anchor_transform(deviceAnchor);
+    const float4x4 worldHeadTransform = _xrService->worldHeadTransform(_xrDrawable);
     
     for (size_t i=0; i < nbViews; ++i)
     {
         auto camera = cameras[i];
-        const cp_view_t view = cp_drawable_get_view(_drawable, i);
         
-        const float4x4 localEyeTransform = cp_view_get_transform(view);
+        const float4x4 localEyeTransform = _xrDrawable.localEyeTransform(i);
         const float4x4 worldCameraTransform = worldHeadTransform * localEyeTransform;
         
         camera->setWorldTransform(worldCameraTransform);
         
-        const float4 tangents = cp_view_get_tangents(view);
+        const float4 tangents = _xrDrawable.tangents(i);
         
-        const auto depthRange = cp_drawable_get_depth_range(_drawable);
+        const auto depthRange = _xrDrawable.depthRange();
         
         const float nearPlane = depthRange.y;
         //const float farPlane = depthRange.x;
@@ -201,8 +174,7 @@ CompositorServicesRendererDelegate::startSubmission()
         
         camera->setProjectionMatrix(convert(projection.matrix));
         
-        const auto textureMap = cp_view_get_view_texture_map(view);
-        const MTLViewport viewport =  cp_view_texture_map_get_viewport(textureMap);
+        const MTLViewport viewport =  _xrDrawable.viewport(i);
         
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         
@@ -215,16 +187,16 @@ CompositorServicesRendererDelegate::startSubmission()
 void
 CompositorServicesRendererDelegate::endSubmission()
 {
-    cp_frame_end_submission(_frame);
+    _xrFrame.endSubmission();
     
-    _frame = nil;
-    _drawable = nil;
+    _xrFrame.invalidate();
+    _xrDrawable.invalidate();
 }
 
 MTLRenderPassDescriptor* _Nullable
 CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
 {
-    if (_drawable == nil)
+    if (!_xrDrawable.isValid())
     {
         return nil;
     }
@@ -233,7 +205,7 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     
-    colorAttachment.texture = cp_drawable_get_color_texture(_drawable, 0);
+    colorAttachment.texture = _xrDrawable.colorTexture();
     
     colorAttachment.loadAction = MTLLoadActionClear;
     colorAttachment.storeAction = MTLStoreActionStore;
@@ -242,7 +214,7 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     
-    depthAttachment.texture = cp_drawable_get_depth_texture(_drawable, 0);
+    depthAttachment.texture = _xrDrawable.depthTexture();
     depthAttachment.loadAction = MTLLoadActionClear;
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;
@@ -253,9 +225,9 @@ CompositorServicesRendererDelegate::currentRenderPassDescriptor() const
 void
 CompositorServicesRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {
-    if (_drawable != nullptr)
+    if (_xrDrawable.isValid())
     {
-        cp_drawable_encode_present(_drawable, commandBuffer);
+        _xrDrawable.present(commandBuffer);
     }
 }
 

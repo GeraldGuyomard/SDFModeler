@@ -43,10 +43,13 @@ static VisionOSRenderer* s_Instance = nil;
 {
     s_Instance = self;
     
-    _xrService->start();
-    
     auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
-    delegate->startRenderLoop();
+    
+    _xrService->start([delegate]{
+        
+        delegate->startRenderLoop();
+    });
+    
 }
 
 - (void)renderImage
