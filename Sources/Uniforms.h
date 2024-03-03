@@ -15,6 +15,9 @@ struct Uniforms final
 {
     float4x4 worldTransformToNdc;
     float4x4 ndcToWorldTransform;
+    float nearZInNDC = 0.f;
+    float farZInNDC = 0.5f;
+    float rayLength = 100.f;
     
     float3 lightDirection;
     
@@ -27,7 +30,7 @@ INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT Uniforms& uniforms)
     if (p.w != 0.f) {
         return p.xyz / p.w;
     } else {
-        return float3 { p.x, p.y, -100.f };
+        return float3 { p.x, p.y, p.z };
     }
 }
 

@@ -30,7 +30,7 @@ private:
     // Intrinsics
     float _fovyRadians = 45.0f * (M_PI / 180.0f);
     float _nearZ = 0.1f;
-    float _farZ = 40.f;
+    float _farZ = std::numeric_limits<float>::infinity();
 };
 
 class Camera final : public Object3D

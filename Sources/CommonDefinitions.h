@@ -232,7 +232,7 @@ INLINE float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, f
 {
     float ys = 1 / tan(fovyRadians * 0.5);
     float xs = ys / aspect;
-    float zs = farZ / (nearZ - farZ);
+    float zs = isinf(farZ) ? -1.f : (farZ / (nearZ - farZ));
 
     float4x4 m;
     m.columns[0] = { xs,   0,          0,  0 };

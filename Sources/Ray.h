@@ -34,14 +34,13 @@ struct Ray final
     
     static Ray make(float2 ndcPosition, CONSTANT Uniforms& uniforms)
     {
-        float3 origin = viewToWorld(ndcPosition, 0, uniforms);
-        float3 end = viewToWorld(ndcPosition, 1, uniforms);
+        float3 origin = viewToWorld(ndcPosition, uniforms.nearZInNDC, uniforms);
+        float3 end = viewToWorld(ndcPosition, uniforms.farZInNDC, uniforms);
         
         float3 direction = (end - origin);
-        float maxDist = length(direction);
-        direction /= maxDist;
+        direction = normalize(direction);
         
-        Ray ray { origin, direction, maxDist };
+        Ray ray { origin, direction, uniforms.rayLength };
         
         return ray;
     }

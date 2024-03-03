@@ -49,12 +49,11 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
 #if 1
     out.color = res.color;
     out.depth = 1.f - res.depth;
+    //out.depth = res.depth;
 #else
     const float2 uv = (in.viewportNDC + float2 { 1.f, 1.f }) * 0.5f;
     out.color = float4 { uv.x, uv.y, 0, 1 };
 #endif
-    
-    out.depth = 0;
     
     return out;
 }

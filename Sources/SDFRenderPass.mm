@@ -63,13 +63,12 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     
     uniforms.viewportSize = camera->viewportSize();
     
-#if 1
     uniforms.worldTransformToNdc = camera->projectionMatrix() * inverse(cameraMatrix);
     uniforms.ndcToWorldTransform = inverse(uniforms.worldTransformToNdc);
-#else
-    uniforms.ndcToWorldTransform = cameraMatrix * camera->invProjectionMatrix();
-    uniforms.worldTransformToNdc = inverse(uniforms.ndcToWorldTransform);
-#endif
+
+    uniforms.nearZInNDC = 0.f;
+    uniforms.farZInNDC = 0.5f;
+    uniforms.rayLength = 100.f;
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
@@ -95,7 +94,7 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
     
     if (renderPassDescriptor != nullptr)
     {
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 0);
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 0, 1, 0);
         
         auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         encoder.label = @"SDFRenderPass";
