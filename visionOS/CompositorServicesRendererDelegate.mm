@@ -161,8 +161,7 @@ CompositorServicesRendererDelegate::startSubmission()
         const auto depthRange = _xrDrawable.depthRange();
         
         const float nearPlane = depthRange.y;
-        //const float farPlane = depthRange.x;
-        const float farPlane = 100.f;
+        const float farPlane = depthRange.x;
         
         const auto projection = SPProjectiveTransform3DMakeFromTangents(tangents[0],
                                                                         tangents[1],
