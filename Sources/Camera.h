@@ -20,6 +20,7 @@ public:
     CameraIntrinsics() = default;
     virtual ~CameraIntrinsics() = default;
     
+    virtual float2 fovRadians(const float2& viewportSize) const = 0;
     virtual float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const = 0;
 
     float nearZ() const { return _nearZ; }
@@ -41,7 +42,7 @@ public:
     
     float fovyRadians() const { return _fovyRadians; }
     float fovxRadians(const float2& viewportSize) const;
-    float2 fovRadians(const float2& viewportSize) const { return { fovxRadians(viewportSize), fovyRadians() }; }
+    float2 fovRadians(const float2& viewportSize) const override { return { fovxRadians(viewportSize), fovyRadians() }; }
     
     float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override;
 
@@ -53,6 +54,7 @@ private:
 class TangentsCameraIntrinsics final : public CameraIntrinsics
 {
 public:
+    float2 fovRadians(const float2& viewportSize) const override;
     float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override;
     
     float4 tangents() const { return _tangents; }

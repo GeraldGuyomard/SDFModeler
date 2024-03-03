@@ -99,7 +99,7 @@ CameraRig::computeFramePosition(const Object3D::Ptr& object) const
 {
     // work with left eye
     const auto& camera = _cameras.front();
-    const auto intrinsics = dynamic_cast<const FOVCameraIntrinsics*>(camera->intrinsics());
+    const auto intrinsics = camera->intrinsics();
     if (intrinsics == nullptr)
     {
         ASSERT(false);

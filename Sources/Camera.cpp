@@ -33,6 +33,23 @@ FOVCameraIntrinsics::fovxRadians(const float2& viewportSize) const
     return 2.f * atanf(tanf(_fovyRadians / 2.f)) * aspectRatio;
 }
 
+float2
+TangentsCameraIntrinsics::fovRadians(const float2&) const
+{
+    const float width = _tangents[0] + _tangents[1];
+    const float height = _tangents[2] + _tangents[3];
+    
+    const float nearZ = this->nearZ();
+    
+    const float tanX = (width * 0.5f) / nearZ;
+    const float tanY = (height * 0.5f) / nearZ;
+    
+    const float fovX = atanf(tanX);
+    const float fovY = atanf(tanY);
+    
+    return { fovX, fovY };
+}
+
 float4x4
 TangentsCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const
 {
