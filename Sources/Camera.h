@@ -88,6 +88,8 @@ public:
     float farZInNDC() const { return _farZInNDC; }
     float rayLength() const { return _rayLength; }
     
+    bool inverseZ() const { return _inverseZ; }
+    
 private:
     CameraIntrinsics::Ptr _intrinsics;
     float2 _viewportSize = { 0.f, 0.f };
@@ -97,5 +99,7 @@ private:
     float _nearZInNDC = 0.f;
     float _farZInNDC = 0.5f;
     float _rayLength = 25.f;
+    
+    bool _inverseZ = false;
     
 };

@@ -158,7 +158,7 @@ CompositorServicesRendererDelegate::startSubmission()
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         camera->setViewportSize(viewportSize);
         
-        camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, false));
+        camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, camera->inverseZ()));
         
         {
             // debug for info

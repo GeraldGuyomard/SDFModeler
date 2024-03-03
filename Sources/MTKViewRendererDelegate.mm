@@ -123,7 +123,7 @@ MTKViewRendererDelegate::cameraRig() const
         for (const auto& camera : _cameraRig->cameras())
         {
             camera->setViewportSize(viewportSize);
-            const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize, false);
+            const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize, camera->inverseZ());
             
             camera->setProjectionMatrix(projMatrix);
         }
