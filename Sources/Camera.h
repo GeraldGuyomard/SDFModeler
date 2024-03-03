@@ -85,10 +85,15 @@ public:
     void setProjectionMatrix(const float4x4&);
     
     float nearZInNDC() const { return _nearZInNDC; }
+    void setNearZInNDC(float z) { _nearZInNDC = z; }
+    
     float farZInNDC() const { return _farZInNDC; }
+    void setFarZInNDC(float z) { _farZInNDC = z;  }
+    
     float rayLength() const { return _rayLength; }
     
     bool inverseZ() const { return _inverseZ; }
+    void setInverseZ(bool i) { _inverseZ = i; }
     
 private:
     CameraIntrinsics::Ptr _intrinsics;
