@@ -37,7 +37,7 @@
     _renderer = nullptr;
 }
 
-//#define CONTINUOUS_RENDER 1
+#define CONTINUOUS_RENDER 1
 
 - (void)drawInMTKView:(nonnull MTKView *)view
 {
@@ -142,15 +142,16 @@ MTKViewRendererDelegate::updateViewportSize()
         {
             camera->setViewportSize(viewportSize);
             
-#if 0
-            camera->setInverseZ(true);
+#if 1
+            camera->setInverseZ(false);
             
             auto intrinsics = std::make_unique<TangentsCameraIntrinsics>();
             
-            const float halfWidth = viewportSize.x * 0.5f;
-            const float halfHeight = viewportSize.y * 0.5f;
+            const float ratio = viewportSize.y / viewportSize.x;
+            constexpr float tangentX = 1.f;
+            const float tangentY = ratio;
             
-            intrinsics->setTangents(float4 { halfWidth, halfWidth, halfHeight, halfHeight });
+            intrinsics->setTangents(float4 { tangentX, tangentX, tangentY, tangentY });
             
             camera->setIntrinsics(std::move(intrinsics));
 #else

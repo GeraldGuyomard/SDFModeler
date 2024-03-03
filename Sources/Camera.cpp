@@ -60,8 +60,6 @@ TangentsCameraIntrinsics::fovRadians(const float2&) const
 float4x4
 TangentsCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const
 {
-    /*const auto tmpProj = SPProjectiveTransform3DMakeFromTangents(_tangents[0], _tangents[1], _tangents[2], _tangents[3], nearZ(), farZ(), inverseZ);*/
-    
     const auto proj = matrix_perspective(_tangents[0],
                               _tangents[1],
                               _tangents[2],
