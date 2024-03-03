@@ -91,7 +91,8 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.colorPixelFormat = _configuration->colorPixelFormat;
     _mtkView.sampleCount = _configuration->sampleCount;
     
-    _cameraRig = CameraRig::make(renderer->world(), 1, true);
+    _cameraRig = CameraRig::make(renderer->world(), 1);
+    _cameraRig->cameras().front()->setIntrinsics(std::make_unique<FOVCameraIntrinsics>());
     
     return true;
 }

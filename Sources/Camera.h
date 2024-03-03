@@ -12,25 +12,42 @@
 #include "Object3D.h"
 #include <optional>
 
-class CameraIntrinsics final
+class CameraIntrinsics
 {
 public:
     using Ptr = std::unique_ptr<CameraIntrinsics>;
     
     CameraIntrinsics() = default;
+    virtual ~CameraIntrinsics() = default;
+    
+    virtual float4x4 computeProjectionMatrix(const float2& viewportSize) const = 0;
+
+    float nearZ() const { return _nearZ; }
+    void setNearZ(float z) { _nearZ = z; }
+    
+    float farZ() const { return _farZ; }
+    void setFarZ(float z) { _farZ = z; }
+    
+private:
+
+    float _nearZ = 0.1f;
+    float _farZ = std::numeric_limits<float>::infinity();
+};
+
+class FOVCameraIntrinsics final : public CameraIntrinsics
+{
+public:
+    using Ptr = std::unique_ptr<CameraIntrinsics>;
     
     float fovyRadians() const { return _fovyRadians; }
     float fovxRadians(const float2& viewportSize) const;
     float2 fovRadians(const float2& viewportSize) const { return { fovxRadians(viewportSize), fovyRadians() }; }
     
-    float4x4 computeProjectionMatrix(const float2& viewportSize) const;
+    float4x4 computeProjectionMatrix(const float2& viewportSize) const override;
 
 private:
     
-    // Intrinsics
     float _fovyRadians = 45.0f * (M_PI / 180.0f);
-    float _nearZ = 0.1f;
-    float _farZ = std::numeric_limits<float>::infinity();
 };
 
 class Camera final : public Object3D
@@ -42,6 +59,7 @@ public:
     Camera(const WorldPtr&);
     
     const CameraIntrinsics* intrinsics() const { return _intrinsics.get(); }
+    CameraIntrinsics* intrinsics() { return _intrinsics.get(); }
     void setIntrinsics(CameraIntrinsics::Ptr);
     
     const float2& viewportSize() const { return _viewportSize; }

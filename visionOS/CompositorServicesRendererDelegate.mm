@@ -8,6 +8,48 @@
 #include "CompositorServicesRendererDelegate.h"
 #import <Spatial/Spatial.h>
 
+namespace
+{
+    float4x4 convert(const simd_double4x4& in)
+    {
+        float4x4 m;
+        
+        for (size_t x = 0; x < 4; ++x)
+        {
+            for (size_t y = 0; y < 4; ++y)
+            {
+                m.columns[x][y] = (float) in.columns[x][y];
+            }
+        }
+        
+        return m;
+    }
+}
+
+class TangentsCameraIntrinsics final : public CameraIntrinsics
+{
+public:
+    float4x4 computeProjectionMatrix(const float2& viewportSize) const override
+    {
+        const auto projection = SPProjectiveTransform3DMakeFromTangents(_tangents[0],
+                                                                        _tangents[1],
+                                                                        _tangents[2],
+                                                                        _tangents[3],
+                                                                        nearZ(),
+                                                                        farZ(),
+                                                                        _inverseZ);
+        
+        return convert(projection.matrix);
+    }
+    
+    float4 tangents() const { return _tangents; }
+    void setTangents(float4 t) { _tangents = t; }
+    
+private:
+    float4 _tangents = { 0.f };
+    bool _inverseZ = false;
+};
+
 CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_renderer_t layerRenderer, const XRService::Ptr& xrService)
 : _layerRenderer(layerRenderer), _xrService(xrService)
 {}
@@ -32,7 +74,11 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
         constexpr size_t nbCameras = 2;
     #endif
     
-    _cameraRig = CameraRig::make(renderer->world(), nbCameras, false);
+    _cameraRig = CameraRig::make(renderer->world(), nbCameras);
+    for (const auto& camera : _cameraRig->cameras())
+    {
+        camera->setIntrinsics(std::make_unique<TangentsCameraIntrinsics>());
+    }
     
     _configuration = std::make_shared<RenderTargetConfiguration>();
     _configuration->colorPixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
@@ -112,24 +158,6 @@ CompositorServicesRendererDelegate::startRender(Renderer& renderer)
     return true;
 }
 
-namespace
-{
-    float4x4 convert(const simd_double4x4& in)
-    {
-        float4x4 m;
-        
-        for (size_t x = 0; x < 4; ++x)
-        {
-            for (size_t y = 0; y < 4; ++y)
-            {
-                m.columns[x][y] = (float) in.columns[x][y];
-            }
-        }
-        
-        return m;
-    }
-}
-
 bool
 CompositorServicesRendererDelegate::startSubmission()
 {
@@ -156,28 +184,23 @@ CompositorServicesRendererDelegate::startSubmission()
         
         camera->setWorldTransform(worldCameraTransform);
         
-        const float4 tangents = _xrDrawable.tangents(i);
+        auto* intrinsics = static_cast<TangentsCameraIntrinsics*>(camera->intrinsics());
+        
+        intrinsics->setTangents(_xrDrawable.tangents(i));
         
         const auto depthRange = _xrDrawable.depthRange();
         
         const float nearPlane = depthRange.y;
+        intrinsics->setNearZ(nearPlane);
+        
         const float farPlane = depthRange.x;
-        
-        const auto projection = SPProjectiveTransform3DMakeFromTangents(tangents[0],
-                                                                        tangents[1],
-                                                                        tangents[2],
-                                                                        tangents[3],
-                                                                        nearPlane,
-                                                                        farPlane,
-                                                                        false);
-        
-        camera->setProjectionMatrix(convert(projection.matrix));
+        intrinsics->setFarZ(farPlane);
         
         const MTLViewport viewport =  _xrDrawable.viewport(i);
-        
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
-        
         camera->setViewportSize(viewportSize);
+        
+        camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize));
     }
         
     return true;

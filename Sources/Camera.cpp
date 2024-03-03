@@ -18,15 +18,15 @@ Camera::setViewportSize(const float2& size)
 }
 
 float4x4
-CameraIntrinsics::computeProjectionMatrix(const float2& viewportSize) const
+FOVCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize) const
 {
     const float aspectRatio = viewportSize.x / viewportSize.y;
     
-    return matrix_perspective_right_hand(_fovyRadians, aspectRatio, _nearZ, _farZ);
+    return matrix_perspective_right_hand(_fovyRadians, aspectRatio, nearZ(), farZ());
 }
 
 float
-CameraIntrinsics::fovxRadians(const float2& viewportSize) const
+FOVCameraIntrinsics::fovxRadians(const float2& viewportSize) const
 {
     const float aspectRatio = viewportSize.x / viewportSize.y;
     

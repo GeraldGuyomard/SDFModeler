@@ -38,7 +38,7 @@ public:
     using Ptr = std::shared_ptr<CameraRig>;
     using _inherited = Object3D;
     
-    static Ptr make(const WorldPtr& world, size_t nbCameras, bool installIntrinsics);
+    static Ptr make(const WorldPtr& world, size_t nbCameras);
     
     const std::vector<Camera::Ptr>& cameras() const { return _cameras; }
     

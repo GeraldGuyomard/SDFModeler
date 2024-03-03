@@ -30,7 +30,7 @@ CameraRig::CameraRig(const WorldPtr& world)
 }
 
 CameraRig::Ptr
-CameraRig::make(const WorldPtr& world, size_t nbCameras, bool installIntrinsics)
+CameraRig::make(const WorldPtr& world, size_t nbCameras)
 {
     Ptr ptr { new CameraRig(world) };
     
@@ -39,11 +39,6 @@ CameraRig::make(const WorldPtr& world, size_t nbCameras, bool installIntrinsics)
     for (auto& camera : ptr->_cameras)
     {
         camera = std::make_shared<Camera>(world);
-        if (installIntrinsics)
-        {
-            camera->setIntrinsics(std::make_unique<CameraIntrinsics>());
-        }
-        
         ptr->addChild(camera);
     }
     
@@ -104,7 +99,7 @@ CameraRig::computeFramePosition(const Object3D::Ptr& object) const
 {
     // work with left eye
     const auto& camera = _cameras.front();
-    const auto intrinsics = camera->intrinsics();
+    const auto intrinsics = dynamic_cast<const FOVCameraIntrinsics*>(camera->intrinsics());
     if (intrinsics == nullptr)
     {
         ASSERT(false);
