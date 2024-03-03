@@ -37,13 +37,17 @@
     _renderer = nullptr;
 }
 
+//#define CONTINUOUS_RENDER 1
+
 - (void)drawInMTKView:(nonnull MTKView *)view
 {
     if (_renderer != nullptr)
     {
         _renderer->render();
         
+#if CONTINUOUS_RENDER
         _renderer->invalidate();
+#endif
     }
 }
 
