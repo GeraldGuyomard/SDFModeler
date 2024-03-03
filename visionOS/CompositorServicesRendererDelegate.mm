@@ -6,48 +6,7 @@
 //
 
 #include "CompositorServicesRendererDelegate.h"
-#import <Spatial/Spatial.h>
 
-namespace
-{
-    float4x4 convert(const simd_double4x4& in)
-    {
-        float4x4 m;
-        
-        for (size_t x = 0; x < 4; ++x)
-        {
-            for (size_t y = 0; y < 4; ++y)
-            {
-                m.columns[x][y] = (float) in.columns[x][y];
-            }
-        }
-        
-        return m;
-    }
-}
-
-class TangentsCameraIntrinsics final : public CameraIntrinsics
-{
-public:
-    float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override
-    {
-        const auto projection = SPProjectiveTransform3DMakeFromTangents(_tangents[0],
-                                                                        _tangents[1],
-                                                                        _tangents[2],
-                                                                        _tangents[3],
-                                                                        nearZ(),
-                                                                        farZ(),
-                                                                        inverseZ);
-        
-        return convert(projection.matrix);
-    }
-    
-    float4 tangents() const { return _tangents; }
-    void setTangents(float4 t) { _tangents = t; }
-    
-private:
-    float4 _tangents = { 0.f };
-};
 
 CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_renderer_t layerRenderer, const XRService::Ptr& xrService)
 : _layerRenderer(layerRenderer), _xrService(xrService)

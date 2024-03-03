@@ -243,6 +243,46 @@ INLINE float4x4 matrix_perspective_right_hand(float fovyRadians, float aspect, f
     return m;
 }
 
+INLINE float4x4 matrix_perspective(float leftTangent,
+                                   float rightTangent,
+                                   float topTangent,
+                                   float bottomTangent,
+                                   float nearZ,
+                                   float farZ,
+                                   bool reverseZ){
+    
+    leftTangent = -leftTangent * nearZ;
+    rightTangent = rightTangent * nearZ;
+    topTangent = topTangent * nearZ;
+    bottomTangent = -bottomTangent * nearZ;
+    
+    simd_float4x4 matrix = (simd_float4x4) {
+        (simd_float4) { 2 * nearZ / (rightTangent - leftTangent), 0, 0, 0 },
+        (simd_float4) { 0, 2 * nearZ / (topTangent - bottomTangent), 0, 0 },
+        (simd_float4) { (rightTangent + leftTangent) / (rightTangent - leftTangent),
+            (topTangent + bottomTangent) / (topTangent - bottomTangent), farZ / (nearZ - farZ), -1 },
+        (simd_float4) { 0, 0, (farZ * nearZ) / (nearZ - farZ), 0}
+    };
+    
+    if (reverseZ) {
+        if (isinf(farZ)) {
+            
+            matrix.columns[2].z = 0;
+            
+            matrix.columns[2].z = 0;
+            matrix.columns[3].z = nearZ;
+        } else {
+            matrix.columns[2].z = -matrix.columns[2].z - 1;
+            matrix.columns[3].z = -matrix.columns[3].z;
+        }
+    } else if (isinf(farZ)) {
+        matrix.columns[2].z = -1;
+        matrix.columns[3].z = -nearZ;
+    }
+    
+    return matrix;
+}
+
 INLINE float4x4 matrix4x4_translation(float3 t)
 {
     float4x4 m;

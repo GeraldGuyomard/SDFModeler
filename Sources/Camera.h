@@ -50,6 +50,18 @@ private:
     float _fovyRadians = 45.0f * (M_PI / 180.0f);
 };
 
+class TangentsCameraIntrinsics final : public CameraIntrinsics
+{
+public:
+    float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override;
+    
+    float4 tangents() const { return _tangents; }
+    void setTangents(float4 t) { _tangents = t; }
+    
+private:
+    float4 _tangents = { 0.f };
+};
+
 class Camera final : public Object3D
 {
 public:

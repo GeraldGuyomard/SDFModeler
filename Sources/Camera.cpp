@@ -33,6 +33,18 @@ FOVCameraIntrinsics::fovxRadians(const float2& viewportSize) const
     return 2.f * atanf(tanf(_fovyRadians / 2.f)) * aspectRatio;
 }
 
+float4x4
+TangentsCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const
+{
+    return matrix_perspective(_tangents[0],
+                              _tangents[1],
+                              _tangents[2],
+                              _tangents[3],
+                              nearZ(),
+                              farZ(),
+                              inverseZ);
+}
+
 void
 Camera::setIntrinsics(CameraIntrinsics::Ptr intrinsics)
 {
