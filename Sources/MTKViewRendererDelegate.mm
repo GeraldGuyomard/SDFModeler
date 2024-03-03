@@ -140,8 +140,6 @@ MTKViewRendererDelegate::updateViewportSize()
             
 #if 0
             camera->setInverseZ(true);
-            camera->setNearZInNDC(1.f);
-            camera->setFarZInNDC(0.f);
             
             auto intrinsics = std::make_unique<TangentsCameraIntrinsics>();
             
@@ -153,13 +151,22 @@ MTKViewRendererDelegate::updateViewportSize()
             camera->setIntrinsics(std::move(intrinsics));
 #else
             camera->setInverseZ(false);
-            camera->setNearZInNDC(0.f);
-            camera->setFarZInNDC(0.5f);
             
             auto intrinsics = std::make_unique<FOVCameraIntrinsics>();
             
             camera->setIntrinsics(std::move(intrinsics));
 #endif
+            
+            float nearZNDC = 0.f;
+            float farZNDC = 0.5f;
+            
+            if (camera->inverseZ())
+            {
+                std::swap(nearZNDC, farZNDC);
+            }
+            
+            camera->setNearZInNDC(nearZNDC);
+            camera->setFarZInNDC(farZNDC);
             
             const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize, camera->inverseZ());
             
