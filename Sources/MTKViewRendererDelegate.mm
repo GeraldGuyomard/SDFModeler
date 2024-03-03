@@ -120,7 +120,10 @@ MTKViewRendererDelegate::cameraRig() const
 void
 MTKViewRendererDelegate::updateViewportSize()
 {
-    CGSize drawableSize = _mtkView.drawableSize;
+    CGSize drawableSize = _mtkView.bounds.size;
+    const float s = _mtkView.layer.contentsScale;
+    drawableSize.width *= s;
+    drawableSize.height *= s;
     
     ASSERT(drawableSize.width > 0.f);
     ASSERT(drawableSize.height > 0.f);
