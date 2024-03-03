@@ -34,8 +34,8 @@ struct Ray final
     
     static Ray make(float2 ndcPosition, CONSTANT Uniforms& uniforms)
     {
-        float3 origin = viewToWorld(ndcPosition, uniforms.nearZInNDC, uniforms);
-        float3 end = viewToWorld(ndcPosition, uniforms.farZInNDC, uniforms);
+        float3 origin = viewToWorld(ndcPosition, uniforms.nearZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
+        float3 end = viewToWorld(ndcPosition, uniforms.farZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
         
         float3 direction = (end - origin);
         direction = normalize(direction);

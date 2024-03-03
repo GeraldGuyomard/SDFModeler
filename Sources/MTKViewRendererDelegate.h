@@ -27,6 +27,7 @@ public:
     id<MTLDevice> _Nonnull getMTLDevice() const override;
     
     CameraRig::Ptr cameraRig() const override;
+    void updateViewportSize() override;
     
     MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;

@@ -113,7 +113,7 @@ INLINE RenderResult render(float2 viewportNDC,
         {
             const float3 pt = res.ray.pt(res.distance);
             
-            const float4 proj = uniforms.worldTransformToNdc * float4 { pt.x, pt.y, pt.z, 1 };
+            const float4 proj = uniforms.worldTransformToNdc() * float4 { pt.x, pt.y, pt.z, 1 };
             const float z = proj.z / proj.w;
             
             return { res.color, z };

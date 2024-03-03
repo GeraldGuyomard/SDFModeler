@@ -17,7 +17,7 @@ class CameraIntrinsics
 public:
     using Ptr = std::unique_ptr<CameraIntrinsics>;
     
-    CameraIntrinsics() = default;
+    CameraIntrinsics();
     virtual ~CameraIntrinsics() = default;
     
     virtual float2 fovRadians(const float2& viewportSize) const = 0;
@@ -31,8 +31,8 @@ public:
     
 private:
 
-    float _nearZ = 0.1f;
-    float _farZ = std::numeric_limits<float>::infinity();
+    float _nearZ;
+    float _farZ;
 };
 
 class FOVCameraIntrinsics final : public CameraIntrinsics

@@ -21,6 +21,8 @@
  
     [self.view.window makeFirstResponder:self];
     
+    self.renderer->delegate()->updateViewportSize();
+    
     [self reframeAllImmediately];
 }
 

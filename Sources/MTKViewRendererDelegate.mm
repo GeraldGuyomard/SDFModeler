@@ -42,6 +42,8 @@
     if (_renderer != nullptr)
     {
         _renderer->render();
+        
+        _renderer->invalidate();
     }
 }
 
@@ -49,6 +51,7 @@
 {
     if (_renderer != nullptr)
     {
+        _renderer->delegate()->updateViewportSize();
         _renderer->invalidate();
     }
 }
@@ -92,7 +95,6 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.sampleCount = _configuration->sampleCount;
     
     _cameraRig = CameraRig::make(renderer->world(), 1);
-    _cameraRig->cameras().front()->setIntrinsics(std::make_unique<FOVCameraIntrinsics>());
     
     return true;
 }
@@ -112,8 +114,17 @@ MTKViewRendererDelegate::getMTLDevice() const
 CameraRig::Ptr
 MTKViewRendererDelegate::cameraRig() const
 {
-    CAMetalLayer* layer = (CAMetalLayer*) _mtkView.layer;
-    const CGSize drawableSize = layer.drawableSize;
+    return _cameraRig;
+}
+
+void
+MTKViewRendererDelegate::updateViewportSize()
+{
+    CGSize drawableSize = _mtkView.drawableSize;
+    
+    ASSERT(drawableSize.width > 0.f);
+    ASSERT(drawableSize.height > 0.f);
+    
     const float2 viewportSize { float(drawableSize.width), float(drawableSize.height) };
 
     if (!_lastUpdatedViewportSize.has_value() || (_lastUpdatedViewportSize.value().x != viewportSize.x) || (_lastUpdatedViewportSize.value().y != viewportSize.y))
@@ -124,17 +135,34 @@ MTKViewRendererDelegate::cameraRig() const
         {
             camera->setViewportSize(viewportSize);
             
+#if 0
             camera->setInverseZ(true);
+            camera->setNearZInNDC(1.f);
+            camera->setFarZInNDC(0.f);
+            
+            auto intrinsics = std::make_unique<TangentsCameraIntrinsics>();
+            
+            const float halfWidth = viewportSize.x * 0.5f;
+            const float halfHeight = viewportSize.y * 0.5f;
+            
+            intrinsics->setTangents(float4 { halfWidth, halfWidth, halfHeight, halfHeight });
+            
+            camera->setIntrinsics(std::move(intrinsics));
+#else
+            camera->setInverseZ(false);
             camera->setNearZInNDC(0.f);
             camera->setFarZInNDC(0.5f);
+            
+            auto intrinsics = std::make_unique<FOVCameraIntrinsics>();
+            
+            camera->setIntrinsics(std::move(intrinsics));
+#endif
             
             const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize, camera->inverseZ());
             
             camera->setProjectionMatrix(projMatrix);
         }
     }
-    
-    return _cameraRig;
 }
 
 MTLRenderPassDescriptor* _Nullable

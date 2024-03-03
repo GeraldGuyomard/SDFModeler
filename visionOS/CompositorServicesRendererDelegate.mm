@@ -158,15 +158,19 @@ CompositorServicesRendererDelegate::startSubmission()
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         camera->setViewportSize(viewportSize);
         
+        camera->setInverseZ(true);
+        camera->setNearZInNDC(0.f);
+        camera->setFarZInNDC(0.5f);
+        
         camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, camera->inverseZ()));
         
-        {
+        /*{
             // debug for info
             const auto fovs = camera->intrinsics()->fovRadians(viewportSize);
             const float fovX = fovs.x * (180.f / M_PI);
             const float fovY = fovs.y * (180.f / M_PI);
             int a = 1;
-        }
+        }*/
     }
         
     return true;

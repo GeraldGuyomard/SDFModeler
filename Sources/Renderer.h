@@ -35,6 +35,8 @@ public:
     virtual RenderTargetConfiguration::CPtr presentConfiguration() const = 0;
     virtual id<MTLDevice> _Nonnull getMTLDevice() const = 0;
     
+    virtual void updateViewportSize() {}
+    
     virtual bool startRender(Renderer&) { return true; }
     virtual bool startSubmission() { return true; }
     virtual void endSubmission() {}

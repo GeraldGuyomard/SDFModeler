@@ -63,12 +63,23 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     
     uniforms.viewportSize = camera->viewportSize();
     
-    uniforms.worldTransformToNdc = camera->projectionMatrix() * inverse(cameraMatrix);
-    uniforms.ndcToWorldTransform = inverse(uniforms.worldTransformToNdc);
+    uniforms.cameraMatrix = cameraMatrix;
+    uniforms.projectionMatrix = camera->projectionMatrix();
+    
+    uniforms.viewMatrix = inverse(cameraMatrix);
+    uniforms.invProjectionMatrix = camera->invProjectionMatrix();
     
     uniforms.nearZInNDC = camera->nearZInNDC();
     uniforms.farZInNDC = camera->farZInNDC();
     uniforms.rayLength = camera->rayLength();
+    
+    {
+        // debug
+        Ray ray = Ray::make({0.01f, 0.f}, uniforms);
+        
+        int a;
+        a = 1;
+    }
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
