@@ -29,7 +29,7 @@ namespace
 class TangentsCameraIntrinsics final : public CameraIntrinsics
 {
 public:
-    float4x4 computeProjectionMatrix(const float2& viewportSize) const override
+    float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override
     {
         const auto projection = SPProjectiveTransform3DMakeFromTangents(_tangents[0],
                                                                         _tangents[1],
@@ -37,7 +37,7 @@ public:
                                                                         _tangents[3],
                                                                         nearZ(),
                                                                         farZ(),
-                                                                        _inverseZ);
+                                                                        inverseZ);
         
         return convert(projection.matrix);
     }
@@ -47,7 +47,6 @@ public:
     
 private:
     float4 _tangents = { 0.f };
-    bool _inverseZ = false;
 };
 
 CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_renderer_t layerRenderer, const XRService::Ptr& xrService)
@@ -200,7 +199,7 @@ CompositorServicesRendererDelegate::startSubmission()
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         camera->setViewportSize(viewportSize);
         
-        camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize));
+        camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, false));
     }
         
     return true;

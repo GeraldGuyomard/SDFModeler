@@ -20,7 +20,7 @@ public:
     CameraIntrinsics() = default;
     virtual ~CameraIntrinsics() = default;
     
-    virtual float4x4 computeProjectionMatrix(const float2& viewportSize) const = 0;
+    virtual float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const = 0;
 
     float nearZ() const { return _nearZ; }
     void setNearZ(float z) { _nearZ = z; }
@@ -43,7 +43,7 @@ public:
     float fovxRadians(const float2& viewportSize) const;
     float2 fovRadians(const float2& viewportSize) const { return { fovxRadians(viewportSize), fovyRadians() }; }
     
-    float4x4 computeProjectionMatrix(const float2& viewportSize) const override;
+    float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override;
 
 private:
     

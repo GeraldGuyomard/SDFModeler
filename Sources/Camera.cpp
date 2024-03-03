@@ -18,7 +18,7 @@ Camera::setViewportSize(const float2& size)
 }
 
 float4x4
-FOVCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize) const
+FOVCameraIntrinsics::computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const
 {
     const float aspectRatio = viewportSize.x / viewportSize.y;
     
