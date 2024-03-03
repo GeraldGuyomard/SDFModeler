@@ -84,10 +84,18 @@ public:
     const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
     void setProjectionMatrix(const float4x4&);
     
+    float nearZInNDC() const { return _nearZInNDC; }
+    float farZInNDC() const { return _farZInNDC; }
+    float rayLength() const { return _rayLength; }
+    
 private:
     CameraIntrinsics::Ptr _intrinsics;
     float2 _viewportSize = { 0.f, 0.f };
     
     float4x4 _projectionMatrix = float4x4_identity();
     float4x4 _invProjectionMatrix = float4x4_identity();
+    float _nearZInNDC = 0.f;
+    float _farZInNDC = 0.5f;
+    float _rayLength = 25.f;
+    
 };

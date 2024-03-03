@@ -65,10 +65,10 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     
     uniforms.worldTransformToNdc = camera->projectionMatrix() * inverse(cameraMatrix);
     uniforms.ndcToWorldTransform = inverse(uniforms.worldTransformToNdc);
-
-    uniforms.nearZInNDC = 0.f;
-    uniforms.farZInNDC = 0.5f;
-    uniforms.rayLength = 100.f;
+    
+    uniforms.nearZInNDC = camera->nearZInNDC();
+    uniforms.farZInNDC = camera->farZInNDC();
+    uniforms.rayLength = camera->rayLength();
     
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
