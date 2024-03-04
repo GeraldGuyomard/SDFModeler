@@ -252,7 +252,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "20"
             endingLineNumber = "20"
-            landmarkName = "SDFRenderPass::makePipelineConfiguration(presentationConfig, mtlLib)"
+            landmarkName = "SDFRenderPass::makePipelineConfiguration(renderer)"
             landmarkType = "7">
             <Locations>
                <Location
@@ -291,22 +291,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "441CFDBF-319D-462F-A591-91D63D59798E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "visionOS/CompositorServicesRendererDelegate.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
-            landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "14288265-E20A-40CB-95D3-FE1B9830BD18"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -334,54 +318,6 @@
             endingLineNumber = "141"
             landmarkName = "EncodingContext::_addBBox(object, worldViewProjMatrix, localBBox)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "06BF14C1-C876-472C-B9B6-82F18E549214"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "visionOS/CompositorServicesRendererDelegate.mm"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "06BF14C1-C876-472C-B9B6-82F18E549214 - e47f0352c6530eec"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CompositorServicesRendererDelegate::startSubmission()"
-                  moduleName = "SDFModeler visionOS"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/visionOS/CompositorServicesRendererDelegate.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "211"
-                  endingLineNumber = "211"
-                  offsetFromSymbolStart = "1804">
-               </Location>
-               <Location
-                  uuid = "06BF14C1-C876-472C-B9B6-82F18E549214 - e47f0352c6530f41"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "CompositorServicesRendererDelegate::startSubmission()"
-                  moduleName = "SDFModeler visionOS"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/guyomard/Sources/SDFModeler/visionOS/CompositorServicesRendererDelegate.mm"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "214"
-                  endingLineNumber = "214"
-                  offsetFromSymbolStart = "1860">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -520,8 +456,8 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "155"
-            endingLineNumber = "155"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
             landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
             landmarkType = "7">
          </BreakpointContent>
@@ -536,8 +472,8 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "150"
-            endingLineNumber = "150"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
             landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
             landmarkType = "7">
             <Locations>
@@ -584,8 +520,8 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "174"
+            endingLineNumber = "174"
             landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
             landmarkType = "7">
          </BreakpointContent>
@@ -632,10 +568,58 @@
             filePath = "visionOS/CompositorServicesRendererDelegate.mm"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "CompositorServicesRendererDelegate::startRenderLoop()"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "64A78607-0F5C-47F6-9856-71F44119EF9F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "visionOS/CompositorServicesRendererDelegate.mm"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "CompositorServicesRendererDelegate::startSubmission()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "64A78607-0F5C-47F6-9856-71F44119EF9F - e47f0352c65306e2"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CompositorServicesRendererDelegate::startSubmission()"
+                  moduleName = "SDFModeler visionOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/visionOS/CompositorServicesRendererDelegate.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "149"
+                  endingLineNumber = "149"
+                  offsetFromSymbolStart = "1220">
+               </Location>
+               <Location
+                  uuid = "64A78607-0F5C-47F6-9856-71F44119EF9F - e47f0352c65306c3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CompositorServicesRendererDelegate::startSubmission()"
+                  moduleName = "SDFModeler visionOS"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/guyomard/Sources/SDFModeler/visionOS/CompositorServicesRendererDelegate.mm"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "148"
+                  endingLineNumber = "148"
+                  offsetFromSymbolStart = "1184">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -22,9 +22,9 @@
 {
     if (self = [self init])
     {
-        constexpr float s = 1.f;
+        constexpr float s = 0.25f;
         float4x4 transform = matrix4x4_scale(s);
-        setTranslation(transform, float3 {0, 0, -5.f});
+        setTranslation(transform, float3 {0, 1.f, -1.5f});
         
         _world = makeDefaultWorld(transform);
         
