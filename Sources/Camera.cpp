@@ -90,31 +90,9 @@ Camera::aspectRatio() const
     return _viewportSize.x / _viewportSize.y;
 }
 
-template <typename TOut, typename TIn> TOut convert(TIn in)
-{
-    TOut out;
-    
-    for (size_t y=0; y < 4; ++y)
-    {
-        for (size_t x=0; x < 4; ++x)
-        {
-            out.columns[x][y] = in.columns[x][y];
-        }
-    }
-    
-    return out;
-}
-
 void
 Camera::setProjectionMatrix(const float4x4& projMatrix)
 {
     _projectionMatrix = projMatrix;
-    
-    //
-    double4x4 p = convert<double4x4, float4x4>(projMatrix);
-    const double d = determinant(p);
-    p = inverse(p);
-    const double d2 = determinant(p);
-    
-    _invProjectionMatrix = convert<float4x4, double4x4>(p);
+    _invProjectionMatrix = inverse(_projectionMatrix);
 }
