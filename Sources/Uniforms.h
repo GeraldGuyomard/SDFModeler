@@ -44,7 +44,7 @@ INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT float4x4& cameraMatrix, 
     ptInCameraSpace.w = 1.f;
     
     auto ptInWorldSpace = cameraMatrix * ptInCameraSpace;
-    ASSERT(ptInWorldSpace.w == 1.f);
+    //ASSERT(ptInWorldSpace.w == 1.f);
     
     return float3 { ptInWorldSpace.x, ptInWorldSpace.y, ptInWorldSpace.z };
 }

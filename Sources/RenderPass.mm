@@ -78,6 +78,11 @@ RenderPass::init(Renderer& renderer)
 void
 RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
+    if (!enabled())
+    {
+        return;
+    }
+    
     auto renderEncoder = makeRenderEncoder(renderer, cmdBuffer);
     
     if (renderEncoder != nil)
@@ -95,4 +100,10 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
         
         [renderEncoder endEncoding];
     }
+}
+
+void
+RenderPass::enable(bool e)
+{
+    _enabled = e;
 }

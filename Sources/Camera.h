@@ -42,7 +42,7 @@ public:
     
     float fovyRadians() const { return _fovyRadians; }
     float fovxRadians(const float2& viewportSize) const;
-    float2 fovRadians(const float2& viewportSize) const override { return { fovxRadians(viewportSize), fovyRadians() }; }
+    float2 fovRadians(const float2& viewportSize) const override;
     
     float4x4 computeProjectionMatrix(const float2& viewportSize, bool inverseZ) const override;
 

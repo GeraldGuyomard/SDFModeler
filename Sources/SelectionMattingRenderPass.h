@@ -19,6 +19,7 @@ public:
     
     bool init(Renderer& renderer) override;
     
+    void updateUniforms(Renderer&) override;
     id<MTLTexture> _Nullable targetTexture() const { return _targetTexture; }
     
     

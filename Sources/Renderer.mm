@@ -60,6 +60,7 @@ Renderer::init()
     _mtlLibrary = [device newDefaultLibrary];
     
     const size_t n = _delegate->cameraRig()->cameras().size();
+    
     _renderPassesPerCamera.resize(n);
     
     for (size_t i=0; i < n; ++i)

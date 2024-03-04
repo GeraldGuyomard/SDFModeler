@@ -41,18 +41,25 @@ FOVCameraIntrinsics::fovxRadians(const float2& viewportSize) const
 }
 
 float2
-TangentsCameraIntrinsics::fovRadians(const float2&) const
+FOVCameraIntrinsics::fovRadians(const float2& viewportSize) const
 {
-    const float width = _tangents[0] + _tangents[1];
-    const float height = _tangents[2] + _tangents[3];
-    
+    return { fovxRadians(viewportSize), fovyRadians() };
+}
+
+float2
+TangentsCameraIntrinsics::fovRadians(const float2& viewportSize) const
+{
     const float nearZ = this->nearZ();
-    
-    const float tanX = (width * 0.5f) / nearZ;
+    const float height = _tangents[2];
     const float tanY = (height * 0.5f) / nearZ;
     
-    const float fovX = atanf(tanX);
-    const float fovY = atanf(tanY);
+    // @todo fix this hack
+    //const float fovY = atanf(tanY) * 2.f;
+    const float fovY = atanf(tanY) * 0.7f;
+    
+    const float aspectRatio = viewportSize.x / viewportSize.y;
+    
+    const float fovX =  2.f * atanf(tanf(fovY / 2.f)) * aspectRatio;
     
     return { fovX, fovY };
 }

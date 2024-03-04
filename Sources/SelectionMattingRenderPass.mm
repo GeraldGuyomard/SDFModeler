@@ -29,6 +29,17 @@ SelectionMattingRenderPass::init(Renderer& renderer)
 }
 
 void
+SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
+{
+    enable(!renderer.world()->selection().empty());
+    
+    if (enabled())
+    {
+        _inherited::updateUniforms(renderer);
+    }
+}
+
+void
 SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 {
     ctx.setOptionFlags(EncodingContext::fRenderSelectedObjectsOnly);

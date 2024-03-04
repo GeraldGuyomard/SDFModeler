@@ -52,6 +52,9 @@ public:
     
     const PipelineConfiguration* pipelineConfiguration() const { return _pipelineConfiguration.get(); }
     
+    bool enabled() const { return _enabled; }
+    void enable(bool);
+    
 protected:
     
     virtual PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const = 0;
@@ -63,4 +66,6 @@ private:
     
     id <MTLRenderPipelineState> _Nonnull _pipelineState;
     id <MTLDepthStencilState> _Nullable _depthState;
+    
+    bool _enabled = true;
 };

@@ -78,14 +78,6 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
     uniforms.farZInNDC = camera->farZInNDC();
     uniforms.rayLength = camera->rayLength();
     
-    {
-        // debug
-        Ray ray = Ray::make({0.01f, 0.f}, uniforms);
-        
-        int a;
-        a = 1;
-    }
-    
     uniforms.lightDirection = float3 { -1, -1, -1 };
     
     if (auto world = renderer.world())
