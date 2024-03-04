@@ -6,6 +6,7 @@
 //
 
 #include "MTKViewRendererDelegate.h"
+#import <TargetConditionals.h>
 
 @interface MTKViewBridge : NSObject<MTKViewDelegate>
 
@@ -125,9 +126,15 @@ void
 MTKViewRendererDelegate::updateViewportSize()
 {
     CGSize drawableSize = _mtkView.bounds.size;
+    
+#if TARGET_OS_OSX
+    drawableSize = [_mtkView convertSizeToBacking:drawableSize];
+#else
+    // iOS
     const float s = _mtkView.layer.contentsScale;
     drawableSize.width *= s;
     drawableSize.height *= s;
+#endif
     
     ASSERT(drawableSize.width > 0.f);
     ASSERT(drawableSize.height > 0.f);
