@@ -183,6 +183,18 @@ CompositorServicesRendererDelegate::startSubmission()
             int a = 1;
         }*/
     }
+    
+    if (nbViews == 2)
+    {
+        const auto leftEyeTransform = cameras[0]->worldTransform();
+        const auto rightEyeTransform = cameras[1]->worldTransform();
+        
+        const auto leftPos = translation(leftEyeTransform);
+        const auto rightPos = translation(rightEyeTransform);
+        
+        const auto ipd = length(leftPos - rightPos);
+        NSLog(@"IPD=%5.5f", ipd);
+    }
         
     return true;
 }
@@ -227,6 +239,8 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     depthAttachment.loadAction = MTLLoadActionClear;
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;
+    
+    renderPassDescriptor.rasterizationRateMap = _xrDrawable.rasterizationRateMaps(cameraIndex);
     
     return renderPassDescriptor;
 }

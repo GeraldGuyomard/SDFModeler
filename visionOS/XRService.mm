@@ -92,6 +92,12 @@ XRDrawable::depthTexture(size_t index) const
     return [_impl depthTexture:index];
 }
 
+id<MTLRasterizationRateMap> _Nullable
+XRDrawable::rasterizationRateMaps(size_t index) const
+{
+    return [_impl rasterizationRateMap:index];
+}
+
 void
 XRDrawable::present(id<MTLCommandBuffer> cmdBuffer)
 {

@@ -52,6 +52,18 @@ import Spatial
         return _drawable.depthTextures[index]
     }
     
+    @objc func rasterizationRateMap(_ index: Int) -> MTLRasterizationRateMap?
+    {
+        if (index < _drawable.rasterizationRateMaps.count)
+        {
+            return _drawable.rasterizationRateMaps[index]
+        }
+        else
+        {
+            return nil
+        }
+    }
+    
     @objc func present(_ cmdBuffer:MTLCommandBuffer)
     {
         _drawable.encodePresent(commandBuffer: cmdBuffer)
