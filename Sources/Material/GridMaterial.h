@@ -57,7 +57,7 @@ private:
         float fogRatio = dist / 10.f;
         fogRatio = pow(fogRatio, 1.5f);
         
-        //c = mix(c, fogColor, fogRatio);
+        c = mix(c, fogColor, fogRatio);
         
         return c;
     }
