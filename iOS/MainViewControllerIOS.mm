@@ -336,6 +336,7 @@ struct ObjectDragInfo
     
     [self adjustContentScale];
     
+    self.renderer->delegate()->updateViewportSize();
     [self reframeAllImmediately];
 }
 
