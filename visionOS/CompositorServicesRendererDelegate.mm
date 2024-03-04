@@ -184,6 +184,7 @@ CompositorServicesRendererDelegate::startSubmission()
         }*/
     }
     
+    /*
     if (nbViews == 2)
     {
         const auto leftEyeTransform = cameras[0]->worldTransform();
@@ -194,7 +195,7 @@ CompositorServicesRendererDelegate::startSubmission()
         
         const auto ipd = length(leftPos - rightPos);
         NSLog(@"IPD=%5.5f", ipd);
-    }
+    }*/
         
     return true;
 }

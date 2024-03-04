@@ -181,7 +181,11 @@ _serializedWorldObject(serializedWorldObject)
     auto env = world->environment();
     _serializedWorldObject.grid = env->typedGeometry();
     
-    const auto envTransform = world->rootObject()->worldTransform() * env->worldTransform();
+    auto envTransform = world->rootObject()->worldTransform() * env->worldTransform();
+    auto gridPos = translation(envTransform);
+    gridPos.y -= 0.5f;
+    setTranslation(envTransform, gridPos);
+    
     _serializedWorldObject.grid.setTransform(envTransform);
     
     _serializedWorldObject.tileSize = tileSize;

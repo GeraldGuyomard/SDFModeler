@@ -24,7 +24,7 @@
     {
         constexpr float s = 0.25f;
         float4x4 transform = matrix4x4_scale(s);
-        setTranslation(transform, float3 {0, 1.f, -1.5f});
+        setTranslation(transform, float3 {0, 1.f, -1.f});
         
         _world = makeDefaultWorld(transform);
         
