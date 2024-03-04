@@ -32,9 +32,24 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
         constexpr size_t nbCameras = 2;
     #endif
     
+    constexpr bool inverseZ = true;
+    
     _cameraRig = CameraRig::make(renderer->world(), nbCameras);
     for (const auto& camera : _cameraRig->cameras())
     {
+        camera->setInverseZ(inverseZ);
+        
+        float nearZNDC = 0.f;
+        float farZNDC = 0.5f;
+        
+        if (camera->inverseZ())
+        {
+            std::swap(nearZNDC, farZNDC);
+        }
+        
+        camera->setNearZInNDC(nearZNDC);
+        camera->setFarZInNDC(farZNDC);
+        
         camera->setIntrinsics(std::make_unique<TangentsCameraIntrinsics>());
     }
     
@@ -157,19 +172,6 @@ CompositorServicesRendererDelegate::startSubmission()
         const MTLViewport viewport =  _xrDrawable.viewport(i);
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         camera->setViewportSize(viewportSize);
-        
-        camera->setInverseZ(true);
-        
-        float nearZNDC = 0.f;
-        float farZNDC = 0.5f;
-        
-        if (camera->inverseZ())
-        {
-            std::swap(nearZNDC, farZNDC);
-        }
-        
-        camera->setNearZInNDC(nearZNDC);
-        camera->setFarZInNDC(farZNDC);
         
         camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, camera->inverseZ()));
         
