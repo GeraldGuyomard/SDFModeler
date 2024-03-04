@@ -20,8 +20,8 @@ Camera::setViewportSize(const float2& size)
 
 CameraIntrinsics::CameraIntrinsics():
 _nearZ(0.1f),
-//_farZ(std::numeric_limits<float>::infinity())
-_farZ(100.f)
+_farZ(std::numeric_limits<float>::infinity())
+//_farZ(100.f)
 {}
 
 float4x4

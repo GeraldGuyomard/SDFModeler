@@ -29,7 +29,7 @@ struct Uniforms final
     
     float4x4 worldTransformToNdc() CONSTANT
     {
-        return viewMatrix * projectionMatrix;
+        return projectionMatrix * viewMatrix;
     }
 };
 

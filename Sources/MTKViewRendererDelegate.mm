@@ -143,13 +143,13 @@ MTKViewRendererDelegate::updateViewportSize()
             camera->setViewportSize(viewportSize);
             
 #if 1
-            camera->setInverseZ(false);
+            camera->setInverseZ(true);
             
             auto intrinsics = std::make_unique<TangentsCameraIntrinsics>();
             
             const float ratio = viewportSize.y / viewportSize.x;
             constexpr float tangentX = 1.f;
-            const float tangentY = ratio;
+            const float tangentY = tangentX * ratio;
             
             intrinsics->setTangents(float4 { tangentX, tangentX, tangentY, tangentY });
             
