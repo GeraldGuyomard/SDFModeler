@@ -11,7 +11,7 @@
 bool
 RenderPass::init(Renderer& renderer)
 {
-    _pipelineConfiguration = makePipelineConfiguration(renderer.delegate()->presentConfiguration(), renderer.mtlLibrary());
+    _pipelineConfiguration = makePipelineConfiguration(renderer);
     if (_pipelineConfiguration == nullptr)
     {
         return false;
@@ -60,12 +60,16 @@ RenderPass::init(Renderer& renderer)
 
     if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
     {
-        MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
-        
-        depthStateDesc.depthCompareFunction = _pipelineConfiguration->depthCompareFunction;
-        depthStateDesc.depthWriteEnabled = true;
-        
-        _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
+        ASSERT(_pipelineConfiguration->depthCompareFunction.has_value());
+        if (_pipelineConfiguration->depthCompareFunction.has_value())
+        {
+            MTLDepthStencilDescriptor *depthStateDesc = [[MTLDepthStencilDescriptor alloc] init];
+            
+            depthStateDesc.depthCompareFunction = _pipelineConfiguration->depthCompareFunction.value();
+            depthStateDesc.depthWriteEnabled = true;
+            
+            _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
+        }
     }
     
     return true;

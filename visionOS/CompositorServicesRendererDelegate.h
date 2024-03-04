@@ -36,6 +36,8 @@ public:
     CameraRig::Ptr cameraRig() const override;
     float2 tileSize() const override;
     
+    MTLCompareFunction depthCompareFunction() const override;
+    
     MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
     

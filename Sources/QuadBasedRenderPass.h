@@ -22,7 +22,7 @@ public:
     
 protected:
     
-    PipelineConfiguration::Ptr makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const override;
+    PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;
     
     void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) override;
     

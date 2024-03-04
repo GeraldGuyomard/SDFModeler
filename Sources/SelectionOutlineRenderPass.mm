@@ -49,7 +49,7 @@ SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
 }
 
 PipelineConfiguration::Ptr
-SelectionOutlineRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
+SelectionOutlineRenderPass::makePipelineConfiguration(Renderer& renderer) const
 {
     auto config = std::make_unique<PipelineConfiguration>();
     
@@ -73,9 +73,11 @@ SelectionOutlineRenderPass::makePipelineConfiguration(const RenderTargetConfigur
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
+    auto mtlLib = renderer.mtlLibrary();
     config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderOutline"];
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderOutline"];
     
+    auto presentationConfig = renderer.delegate()->presentConfiguration();
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->blendEnabled = true;
     

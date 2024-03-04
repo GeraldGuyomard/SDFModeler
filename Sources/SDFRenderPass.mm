@@ -13,14 +13,19 @@ SDFRenderPass::SDFRenderPass(size_t cameraIndex)
 {}
 
 PipelineConfiguration::Ptr
-SDFRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
+SDFRenderPass::makePipelineConfiguration(Renderer& renderer) const
 {
-    auto config = _inherited::makePipelineConfiguration(presentationConfig, mtlLib);
+    auto config = _inherited::makePipelineConfiguration(renderer);
     
+    auto presentationConfig = renderer.delegate()->presentConfiguration();
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->depthPixelFormat = presentationConfig->depthPixelFormat;
     
+    config->depthCompareFunction = renderer.delegate()->depthCompareFunction();
+    
     config->pipelineName = "RGB Contents";
+    
+    auto mtlLib = renderer.mtlLibrary();
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
     
     return config;
@@ -105,7 +110,7 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
     
     if (renderPassDescriptor != nullptr)
     {
-        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(1, 0, 1, 0);
+        renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 0);
         
         auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
         encoder.label = @"SDFRenderPass";

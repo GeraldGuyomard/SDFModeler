@@ -159,8 +159,17 @@ CompositorServicesRendererDelegate::startSubmission()
         camera->setViewportSize(viewportSize);
         
         camera->setInverseZ(true);
-        camera->setNearZInNDC(0.f);
-        camera->setFarZInNDC(0.5f);
+        
+        float nearZNDC = 0.f;
+        float farZNDC = 0.5f;
+        
+        if (camera->inverseZ())
+        {
+            std::swap(nearZNDC, farZNDC);
+        }
+        
+        camera->setNearZInNDC(nearZNDC);
+        camera->setFarZInNDC(farZNDC);
         
         camera->setProjectionMatrix(intrinsics->computeProjectionMatrix(viewportSize, camera->inverseZ()));
         
@@ -183,6 +192,12 @@ CompositorServicesRendererDelegate::endSubmission()
     
     _xrFrame.invalidate();
     _xrDrawable.invalidate();
+}
+
+MTLCompareFunction
+CompositorServicesRendererDelegate::depthCompareFunction() const
+{
+    return MTLCompareFunctionGreater;
 }
 
 MTLRenderPassDescriptor* _Nullable

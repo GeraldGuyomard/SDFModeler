@@ -26,7 +26,7 @@ struct PipelineConfiguration final : public RenderTargetConfiguration
     
     bool blendEnabled = false;
     
-    MTLCompareFunction depthCompareFunction = MTLCompareFunctionLessEqual;
+    std::optional<MTLCompareFunction> depthCompareFunction; //MTLCompareFunctionLessEqual;
     
     std::string pipelineName;
 };
@@ -54,7 +54,7 @@ public:
     
 protected:
     
-    virtual PipelineConfiguration::Ptr makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const = 0;
+    virtual PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const = 0;
     virtual id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) = 0;
     virtual void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) = 0;
     

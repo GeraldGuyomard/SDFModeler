@@ -29,6 +29,8 @@ public:
     CameraRig::Ptr cameraRig() const override;
     void updateViewportSize() override;
     
+    MTLCompareFunction depthCompareFunction() const override;
+    
     MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const override;
     void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) override;
     

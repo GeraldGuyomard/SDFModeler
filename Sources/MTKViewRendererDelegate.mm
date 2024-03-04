@@ -187,6 +187,12 @@ MTKViewRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
     return _mtkView.currentRenderPassDescriptor;
 }
 
+MTLCompareFunction
+MTKViewRendererDelegate::depthCompareFunction() const
+{
+    return MTLCompareFunctionLessEqual;
+}
+
 void
 MTKViewRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {

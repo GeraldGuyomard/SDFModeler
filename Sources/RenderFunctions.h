@@ -109,12 +109,12 @@ INLINE RenderResult render(float2 viewportNDC,
     const auto res = rayMarch<TShader, TEnvironment>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isValid())
     {
-        if (writeToDepth)
+        if constexpr (writeToDepth)
         {
             const float3 pt = res.ray.pt(res.distance);
             
             const float4 proj = uniforms.worldTransformToNdc() * float4 { pt.x, pt.y, pt.z, 1 };
-            const float z = proj.z / proj.w;
+            const float z = 1.f - (proj.z / proj.w);
             
             return { res.color, z };
         }

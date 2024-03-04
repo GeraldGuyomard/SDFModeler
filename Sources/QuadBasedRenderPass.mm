@@ -22,7 +22,7 @@ namespace
 }
 
 PipelineConfiguration::Ptr
-QuadBasedRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::CPtr& presentationConfig, id<MTLLibrary> _Nonnull mtlLib) const
+QuadBasedRenderPass::makePipelineConfiguration(Renderer& renderer) const
 {
     auto config = std::make_unique<PipelineConfiguration>();
     
@@ -43,6 +43,8 @@ QuadBasedRenderPass::makePipelineConfiguration(const RenderTargetConfiguration::
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(Vertex);
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
+    
+    auto mtlLib = renderer.mtlLibrary();
     
     config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderSDF"];
     
