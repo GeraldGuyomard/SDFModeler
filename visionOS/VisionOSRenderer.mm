@@ -10,6 +10,27 @@
 #include "WorldHelpers.h"
 #include "XRService.h"
 
+namespace
+{
+    std::pair<Object3D::Ptr, float /*distance*/> findClosestObject(const Object3D::Ptr& object, const float3& pos)
+    {
+        const float d = object->computeDistance(pos);
+        
+        std::pair<Object3D::Ptr, float> pair { object, d };
+        
+        for (const auto& child : object->children())
+        {
+            const auto childPair = findClosestObject(child, pos);
+            if (childPair.second < pair.second)
+            {
+                pair = childPair;
+            }
+        }
+        
+        return pair;
+    }
+}
+
 class App final
 {
 public:
@@ -37,28 +58,40 @@ public:
             auto leftHand = handTracking->leftHand();
             if (leftHand != nullptr)
             {
-                const auto pos = translation(leftHand->worldTransform());
-                NSLog(@"Left Hand pos x=%5.2f, y=%5.2f, z=%5.2f", pos.x, pos.y, pos.z);
+                onHandUpdate(*leftHand);
             }
-            else
-            {
-                NSLog(@"Left Hand not tracked");
-            }
-            
+
             auto rightHand = handTracking->rightHand();
             if (rightHand != nullptr)
             {
-                const auto pos = translation(rightHand->worldTransform());
-                NSLog(@"Right Hand pos x=%5.2f, y=%5.2f, z=%5.2f", pos.x, pos.y, pos.z);
-            }
-            else
-            {
-                NSLog(@"Right Hand not tracked");
+                onHandUpdate(*rightHand);
             }
         }
     }
     
+    void onHandUpdate(const XRHandAnchor& handAnchor)
+    {
+        const auto pos = translation(handAnchor.worldTransform());
+        NSLog(@"Hand pos x=%5.2f, y=%5.2f, z=%5.2f", pos.x, pos.y, pos.z);
+        
+        // find if close to to an object
+        const auto pair = findClosestObject(_world->rootObject(), pos);
+        const float d = pair.second;
+        
+        if (d <= 0.2f)
+        {
+            auto object = pair.first;
+            NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), d);
+            _world->setSelection(object);
+        }
+        else
+        {
+            _world->setSelection({});
+        }
+    }
+    
 private:
+    
     WorldPtr _world;
 };
 

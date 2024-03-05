@@ -126,6 +126,7 @@ public:
     void removeFromParent();
     
     virtual BoundingBox localBoundingBox() const { return {}; }
+    virtual float computeDistance(const float3& pt) { return 1e7f; }
     
     BoundingBox boundingBoxInCoordinateFrame(const float4x4& coordinateFrame) const;
     BoundingBox boundingBoxOfHierarchyInCoordinateFrame(const float4x4& coordinateFrame) const;
@@ -216,6 +217,15 @@ public:
     BoundingBox localBoundingBox() const override
     {
         return _geometry.boundingBox();
+    }
+    
+    float computeDistance(const float3& pt) override
+    {
+        RSTTransformer transformer { worldTransform() };
+        
+        SDFObject<TGeometry, RSTTransformer> object { _geometry, transformer };
+     
+        return object.computeDistance(pt);
     }
     
     void selfEncode(EncodingContext& context) const override final
