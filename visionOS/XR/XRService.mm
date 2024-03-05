@@ -57,10 +57,15 @@ XRService::queryNextFrame(cp_layer_renderer_t layerRenderer)
     return {impl};
 }
 
-XRDrawable
+XRDrawable::Ptr
 XRService::queryDrawable(const XRFrame& frame)
 {
-    return { [_impl queryDrawableWithFrame:frame.impl()] };
+    XRDrawableImpl* impl =  [_impl queryDrawableWithFrame:frame.impl()];
+    if (impl == nullptr)
+    {
+        return nullptr;
+    }
+    return std::make_unique<XRDrawable>(impl);
 }
 
 float4x4

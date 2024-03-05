@@ -154,31 +154,31 @@ CompositorServicesRendererDelegate::startSubmission()
     _xrFrame.startSubmission();
     
     _xrDrawable = _xrService->queryDrawable(_xrFrame);
-    if (!_xrDrawable.isValid())
+    if (_xrDrawable == nullptr)
     {
         return false;
     }
     
     const auto& cameras = _cameraRig->cameras();
-    const size_t nbViews = _xrDrawable.viewCount();
+    const size_t nbViews = _xrDrawable->viewCount();
     ASSERT(nbViews == cameras.size());
     
-    const float4x4 worldHeadTransform = _xrService->worldHeadTransform(_xrDrawable);
+    const float4x4 worldHeadTransform = _xrService->worldHeadTransform(*_xrDrawable);
     
     for (size_t i=0; i < nbViews; ++i)
     {
         auto camera = cameras[i];
         
-        const float4x4 localEyeTransform = _xrDrawable.localEyeTransform(i);
+        const float4x4 localEyeTransform = _xrDrawable->localEyeTransform(i);
         const float4x4 worldCameraTransform = worldHeadTransform * localEyeTransform;
         
         camera->setWorldTransform(worldCameraTransform);
         
         auto* intrinsics = static_cast<TangentsCameraIntrinsics*>(camera->intrinsics());
         
-        intrinsics->setTangents(_xrDrawable.tangents(i));
+        intrinsics->setTangents(_xrDrawable->tangents(i));
         
-        const auto depthRange = _xrDrawable.depthRange();
+        const auto depthRange = _xrDrawable->depthRange();
         
         const float nearPlane = depthRange.y;
         intrinsics->setNearZ(nearPlane);
@@ -186,7 +186,7 @@ CompositorServicesRendererDelegate::startSubmission()
         const float farPlane = depthRange.x;
         intrinsics->setFarZ(farPlane);
         
-        const MTLViewport viewport =  _xrDrawable.viewport(i);
+        const MTLViewport viewport =  _xrDrawable->viewport(i);
         const float2 viewportSize { float(viewport.width), float(viewport.height) };
         camera->setViewportSize(viewportSize);
         
@@ -223,7 +223,7 @@ CompositorServicesRendererDelegate::endSubmission()
     _xrFrame.endSubmission();
     
     _xrFrame.invalidate();
-    _xrDrawable.invalidate();
+    _xrDrawable.reset();
 }
 
 MTLCompareFunction
@@ -235,7 +235,7 @@ CompositorServicesRendererDelegate::depthCompareFunction() const
 MTLRenderPassDescriptor* _Nullable
 CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
 {
-    if (!_xrDrawable.isValid())
+    if (_xrDrawable == nullptr)
     {
         return nil;
     }
@@ -244,7 +244,7 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     
-    colorAttachment.texture = _xrDrawable.colorTexture(cameraIndex);
+    colorAttachment.texture = _xrDrawable->colorTexture(cameraIndex);
     
     colorAttachment.loadAction = MTLLoadActionClear;
     colorAttachment.storeAction = MTLStoreActionStore;
@@ -253,12 +253,12 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     
-    depthAttachment.texture = _xrDrawable.depthTexture(cameraIndex);
+    depthAttachment.texture = _xrDrawable->depthTexture(cameraIndex);
     depthAttachment.loadAction = MTLLoadActionClear;
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;
     
-    auto map = _xrDrawable.rasterizationRateMaps(cameraIndex);
+    auto map = _xrDrawable->rasterizationRateMaps(cameraIndex);
     if (map != nil)
     {
         const MTLSize mtlSize = [map physicalGranularity];
@@ -273,9 +273,9 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
 void
 CompositorServicesRendererDelegate::presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer)
 {
-    if (_xrDrawable.isValid())
+    if (_xrDrawable != nullptr)
     {
-        _xrDrawable.present(commandBuffer);
+        _xrDrawable->present(commandBuffer);
     }
 }
 

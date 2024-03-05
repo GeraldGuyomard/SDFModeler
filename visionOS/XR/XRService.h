@@ -30,7 +30,7 @@ public:
     
     XRFrame queryNextFrame(cp_layer_renderer_t _Nonnull layerRenderer);
     
-    XRDrawable queryDrawable(const XRFrame& frame);
+    XRDrawable::Ptr queryDrawable(const XRFrame& frame);
     
     // tracking
     float4x4 worldHeadTransform(const XRDrawable&) const;

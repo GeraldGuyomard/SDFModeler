@@ -21,14 +21,8 @@ class XRDrawable final
 public:
     using Ptr = std::unique_ptr<XRDrawable>;
     
-    XRDrawable() = default;
-    XRDrawable(XRDrawableImpl*_Nullable);
+    XRDrawable(XRDrawableImpl*_Nonnull);
     ~XRDrawable();
-    
-    bool isValid() const
-    {
-        return _impl != nullptr;
-    }
     
     XRDrawableImpl* _Nullable impl() const
     {
@@ -47,11 +41,6 @@ public:
     
     void present(id<MTLCommandBuffer> _Nonnull cmdBuffer);
     
-    void invalidate()
-    {
-        _impl = nil;
-    }
-    
 private:
-    XRDrawableImpl* _Nonnull _impl = nil;
+    XRDrawableImpl* const _Nonnull _impl;
 };

@@ -62,7 +62,7 @@ private:
     std::atomic<bool> _shouldStopRendering = { false };
     
     XRFrame _xrFrame;
-    XRDrawable _xrDrawable;
+    XRDrawable::Ptr _xrDrawable;
     CameraRig::Ptr _cameraRig;
     
     RenderTargetConfiguration::Ptr _configuration;
