@@ -28,6 +28,11 @@
         
         _world = makeDefaultWorld(transform);
         
+        /*if (auto object = _world->rootObject()->objectByID(ObjectID {6}))
+        {
+            _world->setSelection(object);
+        }*/
+        
         _xrService = XRService::make();
         
         auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer, _xrService);
