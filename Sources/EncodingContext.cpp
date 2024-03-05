@@ -183,7 +183,7 @@ _serializedWorldObject(serializedWorldObject)
     
     auto envTransform = world->rootObject()->worldTransform() * env->worldTransform();
     auto gridPos = translation(envTransform);
-    gridPos.y -= 0.5f;
+    gridPos.y -= 0.35f;
     setTranslation(envTransform, gridPos);
     
     _serializedWorldObject.grid.setTransform(envTransform);

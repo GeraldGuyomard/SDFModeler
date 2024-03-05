@@ -70,6 +70,7 @@ INLINE RayMarchResult rayMarch(float2 ndcPosition,
     
     TEnvironment environment;
     const auto envRes = environment.rayMarch(shader, ray, serializedWorld);
+    //const RayMarchResult envRes { ray };
     
     if (worldRes.isValid())
     {
