@@ -115,7 +115,6 @@
 		74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7646D29CF93FD00CD5259 /* Serializer.cpp */; };
 		74F7647229CF95D400CD5259 /* Object3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74F7647129CF95D400CD5259 /* Object3D.cpp */; };
 		74FB546629B433CD00A20E26 /* SDFBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74FB546529B433CD00A20E26 /* SDFBox.cpp */; };
-		7F26CFFF2B91113D00C1A5C5 /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F26CFFD2B91113D00C1A5C5 /* XRService.mm */; };
 		7F5CCD412B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */; };
 		7F5DE0572B730880003FC854 /* CellShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 74AF133F29B4466B00F9BBA8 /* CellShader.cpp */; };
@@ -205,6 +204,10 @@
 		7F92343C2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7FA764AF2B93A5190011BEA8 /* XRServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */; };
+		7FF5B9E52B97A4E3008DE57C /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9DF2B97A4E3008DE57C /* XRService.mm */; };
+		7FF5B9E62B97A4E3008DE57C /* XRDrawable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */; };
+		7FF5B9E72B97A4E3008DE57C /* XRFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */; };
+		7FF5B9E82B97A4E3008DE57C /* XRHandAnchor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E42B97A4E3008DE57C /* XRHandAnchor.mm */; };
 		7FF7D0082B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D0092B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
 		7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF7D0062B7073D600D107CF /* RectF.cpp */; };
@@ -344,8 +347,6 @@
 		74F7647129CF95D400CD5259 /* Object3D.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Object3D.cpp; sourceTree = "<group>"; };
 		74FB546429B433CD00A20E26 /* SDFBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDFBox.h; sourceTree = "<group>"; };
 		74FB546529B433CD00A20E26 /* SDFBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDFBox.cpp; sourceTree = "<group>"; };
-		7F26CFFD2B91113D00C1A5C5 /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
-		7F26CFFE2B91113D00C1A5C5 /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
 		7F5CCD3F2B685A2C00BC6A69 /* RenderStats.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderStats.mm; sourceTree = "<group>"; };
 		7F5CCD402B685A2C00BC6A69 /* RenderStats.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RenderStats.h; sourceTree = "<group>"; };
 		7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MTKViewRendererDelegate.mm; sourceTree = "<group>"; };
@@ -383,6 +384,14 @@
 		7F9234392B8837BA00E6A7A6 /* SelectionOutlineRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionOutlineRenderPass.h; sourceTree = "<group>"; };
 		7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionOutlineRenderPass.mm; sourceTree = "<group>"; };
 		7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XRServiceImpl.swift; sourceTree = "<group>"; };
+		7FF5B9DD2B97A4E3008DE57C /* XRFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRFrame.h; sourceTree = "<group>"; };
+		7FF5B9DE2B97A4E3008DE57C /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
+		7FF5B9DF2B97A4E3008DE57C /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
+		7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRDrawable.mm; sourceTree = "<group>"; };
+		7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRFrame.mm; sourceTree = "<group>"; };
+		7FF5B9E22B97A4E3008DE57C /* XRHandAnchor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRHandAnchor.h; sourceTree = "<group>"; };
+		7FF5B9E32B97A4E3008DE57C /* XRDrawable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRDrawable.h; sourceTree = "<group>"; };
+		7FF5B9E42B97A4E3008DE57C /* XRHandAnchor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRHandAnchor.mm; sourceTree = "<group>"; };
 		7FF7D0062B7073D600D107CF /* RectF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RectF.cpp; sourceTree = "<group>"; };
 		7FF7D0072B7073D700D107CF /* RectF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RectF.h; sourceTree = "<group>"; };
 		7FFA5D5E2B8A874C0082C0A9 /* CameraRig.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CameraRig.cpp; sourceTree = "<group>"; };
@@ -663,8 +672,7 @@
 		7F74B6682B61974900262F2D /* visionOS */ = {
 			isa = PBXGroup;
 			children = (
-				7F26CFFE2B91113D00C1A5C5 /* XRService.h */,
-				7F26CFFD2B91113D00C1A5C5 /* XRService.mm */,
+				7FF5B9DC2B97A4E3008DE57C /* XR */,
 				7FA764AE2B93A5190011BEA8 /* XRServiceImpl.swift */,
 				7F5DE08E2B731697003FC854 /* CompositorServicesRendererDelegate.h */,
 				7F5DE08F2B731697003FC854 /* CompositorServicesRendererDelegate.mm */,
@@ -696,6 +704,21 @@
 				7F74B6772B61974900262F2D /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		7FF5B9DC2B97A4E3008DE57C /* XR */ = {
+			isa = PBXGroup;
+			children = (
+				7FF5B9DE2B97A4E3008DE57C /* XRService.h */,
+				7FF5B9DF2B97A4E3008DE57C /* XRService.mm */,
+				7FF5B9E32B97A4E3008DE57C /* XRDrawable.h */,
+				7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */,
+				7FF5B9DD2B97A4E3008DE57C /* XRFrame.h */,
+				7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */,
+				7FF5B9E22B97A4E3008DE57C /* XRHandAnchor.h */,
+				7FF5B9E42B97A4E3008DE57C /* XRHandAnchor.mm */,
+			);
+			path = XR;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -982,6 +1005,7 @@
 				7F5DE07E2B73091F003FC854 /* Culling.cpp in Sources */,
 				7F5DE07A2B73091F003FC854 /* SerializedWorldObject.cpp in Sources */,
 				7F5DE0572B730880003FC854 /* CellShader.cpp in Sources */,
+				7FF5B9E82B97A4E3008DE57C /* XRHandAnchor.mm in Sources */,
 				7F5DE0662B7308B7003FC854 /* SetPropertyCommand.mm in Sources */,
 				7F74B6742B61974900262F2D /* VisionOS_Shaders.metal in Sources */,
 				7F5DE05E2B730895003FC854 /* Transformer.cpp in Sources */,
@@ -1017,8 +1041,8 @@
 				7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,
 				7F5DE0732B730913003FC854 /* Ray.cpp in Sources */,
 				7FFA5D662B8BDF9A0082C0A9 /* Object3DRegistration.cpp in Sources */,
+				7FF5B9E52B97A4E3008DE57C /* XRService.mm in Sources */,
 				7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */,
-				7F26CFFF2B91113D00C1A5C5 /* XRService.mm in Sources */,
 				7FFA5D6B2B8BDFDF0082C0A9 /* WorldHelpers.cpp in Sources */,
 				7F5DE0742B730913003FC854 /* BoundingBox.cpp in Sources */,
 				7F5DE0702B7308FA003FC854 /* ShadedPrimitive.cpp in Sources */,
@@ -1028,6 +1052,7 @@
 				7F5DE0592B730880003FC854 /* PhongShader.cpp in Sources */,
 				7F5DE0612B73089F003FC854 /* SDFPlane.cpp in Sources */,
 				7F5DE0682B7308B7003FC854 /* RemoveObjectCommand.cpp in Sources */,
+				7FF5B9E72B97A4E3008DE57C /* XRFrame.mm in Sources */,
 				7F5DE0582B730880003FC854 /* FragmentShader.cpp in Sources */,
 				7F5DE06F2B7308FA003FC854 /* Object3D.cpp in Sources */,
 				7F9234292B87DFF500E6A7A6 /* RenderPass.mm in Sources */,
@@ -1044,6 +1069,7 @@
 				7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */,
 				7F92341A2B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,
 				7FF7D00A2B7073D700D107CF /* RectF.cpp in Sources */,
+				7FF5B9E62B97A4E3008DE57C /* XRDrawable.mm in Sources */,
 				7F5DE08D2B7314A3003FC854 /* Shaders.metal in Sources */,
 				7F5DE06B2B7308B7003FC854 /* TransformObjectCommand.cpp in Sources */,
 			);
