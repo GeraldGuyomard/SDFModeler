@@ -6,8 +6,10 @@
 //
 
 #include "XRHandAnchor.h"
-#import "SDFModeler_visionOS-Swift.h"
+#import <ARKit/ARKit.h>
+#import <Metal/Metal.h>
 
+#import "SDFModeler_visionOS-Swift.h"
 
 XRHandTracking::XRHandTracking(XRHandTrackingImpl* impl)
 {

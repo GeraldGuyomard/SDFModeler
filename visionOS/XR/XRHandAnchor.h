@@ -8,11 +8,8 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#import <ARKit/ARKit.h>
-#import <CompositorServices/CompositorServices.h>
 
 #include <memory>
-#include <functional>
 
 @class XRHandTrackingImpl, XRHandAnchorImpl;
 
@@ -28,7 +25,7 @@ public:
     float4x4 worldTransform() const;
     
 private:
-    XRHandAnchorImpl* _Nonnull _impl;
+    XRHandAnchorImpl* const _Nonnull _impl;
 };
 
 class XRHandTracking final
@@ -39,8 +36,8 @@ public:
     XRHandTracking(XRHandTrackingImpl*_Nonnull);
     ~XRHandTracking();
     
-    const XRHandAnchor* leftHand() const { return _leftHand.get(); }
-    const XRHandAnchor* rightHand() const { return _rightHand.get(); }
+    const XRHandAnchor* _Nullable leftHand() const { return _leftHand.get(); }
+    const XRHandAnchor* _Nullable rightHand() const { return _rightHand.get(); }
     
 private:
     XRHandAnchor::Ptr _leftHand;
