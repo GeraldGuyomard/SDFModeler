@@ -78,21 +78,24 @@ CompositorServicesRendererDelegate::startRenderLoop()
 {
     _renderThread = std::thread { [this]()
     {
-        while (!_shouldStopRendering)
+        @autoreleasepool
         {
-            const auto state = cp_layer_renderer_get_state(_layerRenderer);
-            if (state == cp_layer_renderer_state_invalidated)
+            while (!_shouldStopRendering)
             {
-                _shouldStopRendering = true;
-            }
-            else if (state == cp_layer_renderer_state_paused)
-            {
-                cp_layer_renderer_wait_until_running(_layerRenderer);
-            }
-            else
-            {
-                ASSERT(state == cp_layer_renderer_state_running);
-                _renderer->render();
+                const auto state = cp_layer_renderer_get_state(_layerRenderer);
+                if (state == cp_layer_renderer_state_invalidated)
+                {
+                    _shouldStopRendering = true;
+                }
+                else if (state == cp_layer_renderer_state_paused)
+                {
+                    cp_layer_renderer_wait_until_running(_layerRenderer);
+                }
+                else
+                {
+                    ASSERT(state == cp_layer_renderer_state_running);
+                    _renderer->render();
+                }
             }
         }
     }};
@@ -241,7 +244,14 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     depthAttachment.storeAction = MTLStoreActionStore;
     depthAttachment.clearDepth = 0.0;
     
-    renderPassDescriptor.rasterizationRateMap = _xrDrawable.rasterizationRateMaps(cameraIndex);
+    auto map = _xrDrawable.rasterizationRateMaps(cameraIndex);
+    if (map != nil)
+    {
+        const MTLSize mtlSize = [map physicalGranularity];
+        //NSLog(@"mtlSize %df, %d", mtlSize.width, mtlSize.height);
+        
+        renderPassDescriptor.rasterizationRateMap = map;
+    }
     
     return renderPassDescriptor;
 }
