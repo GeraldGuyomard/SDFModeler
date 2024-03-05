@@ -115,13 +115,37 @@ extension LayerRenderer.Clock.Instant.Duration {
     }
 }
 
+@objc enum ChiralityImpl : Int
+{
+    case left
+    case right
+};
+
+@objc enum JointIDImpl : Int
+{
+    case thumbTip
+    case indexFingerTip
+    case middleFingerTip
+    case ringFingerTip
+    case littleFingerTip
+};
+
 @objc class XRHandAnchorImpl : NSObject
 {
     let _handAnchor: HandAnchor
     
     init(_ handAnchor: HandAnchor)
     {
-        self._handAnchor = handAnchor
+        _handAnchor = handAnchor
+    }
+    
+    @objc var chirality: ChiralityImpl
+    {
+        switch _handAnchor.chirality
+        {
+            case .left: return .left
+            case .right: return .right
+        }
     }
     
     @objc var isTracked: Bool
@@ -133,6 +157,29 @@ extension LayerRenderer.Clock.Instant.Duration {
     {
         return _handAnchor.originFromAnchorTransform
     }
+    
+    // skeleton
+    @objc func jointTransform(_ jointID : JointIDImpl) -> simd_float4x4
+    {
+        guard let skeleton = _handAnchor.handSkeleton else {
+            return matrix_identity_float4x4
+        }
+        
+        let jointName: HandSkeleton.JointName
+        switch jointID
+        {
+            case .thumbTip: jointName = .thumbTip
+            case .indexFingerTip: jointName = .indexFingerTip
+            case .middleFingerTip: jointName = .middleFingerTip
+            case .ringFingerTip: jointName = .ringFingerTip
+            case .littleFingerTip: jointName = .littleFingerTip
+        }
+        
+        let joint = skeleton.joint(jointName)
+        
+        return joint.anchorFromJointTransform
+    }
+    
 }
 
 @objc class XRHandTrackingImpl : NSObject

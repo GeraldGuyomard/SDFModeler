@@ -13,6 +13,21 @@
 
 @class XRHandTrackingImpl, XRHandAnchorImpl;
 
+enum class Chirality
+{
+    left,
+    right
+};
+
+enum class JointID
+{
+    thumbTip,
+    indexFingerTip,
+    middleFingerTip,
+    ringFingerTip,
+    littleFingerTip,
+};
+
 class XRHandAnchor final
 {
 public:
@@ -21,8 +36,11 @@ public:
     XRHandAnchor(XRHandAnchorImpl* _Nonnull impl);
     ~XRHandAnchor();
     
+    Chirality chirality() const;
     bool isTracked() const;
     float4x4 worldTransform() const;
+    
+    float4x4 jointTransform(JointID) const;
     
 private:
     XRHandAnchorImpl* const _Nonnull _impl;
