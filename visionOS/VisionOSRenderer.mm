@@ -71,14 +71,18 @@ public:
     
     void onHandUpdate(const XRHandAnchor& handAnchor)
     {
-        const auto pos = translation(handAnchor.worldTransform());
+        const auto handTransform = handAnchor.worldTransform();
+        const auto tipTransform = handAnchor.jointTransformInHandSpace(JointID::indexFingerTip);
+        const auto worldTipTransform = handTransform * tipTransform;
+        
+        const auto pos = translation(worldTipTransform);
         NSLog(@"Hand pos x=%5.2f, y=%5.2f, z=%5.2f", pos.x, pos.y, pos.z);
         
         // find if close to to an object
         const auto pair = findClosestObject(_world->rootObject(), pos);
         const float d = pair.second;
         
-        if (d <= 0.2f)
+        if (d <= 0.05f)
         {
             auto object = pair.first;
             NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), d);

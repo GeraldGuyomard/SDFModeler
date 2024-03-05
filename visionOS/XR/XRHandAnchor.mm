@@ -57,7 +57,7 @@ XRHandAnchor::worldTransform() const
 }
 
 float4x4
-XRHandAnchor::jointTransform(JointID id) const
+XRHandAnchor::jointTransformInHandSpace(JointID id) const
 {
     JointIDImpl idImpl;
     
@@ -70,6 +70,6 @@ XRHandAnchor::jointTransform(JointID id) const
         case JointID::littleFingerTip: idImpl = JointIDImplLittleFingerTip; break;
     }
     
-    return [_impl jointTransform:idImpl];
+    return [_impl jointTransformInHandSpace:idImpl];
 }
 

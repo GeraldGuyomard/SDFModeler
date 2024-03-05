@@ -40,7 +40,7 @@ public:
     bool isTracked() const;
     float4x4 worldTransform() const;
     
-    float4x4 jointTransform(JointID) const;
+    float4x4 jointTransformInHandSpace(JointID) const;
     
 private:
     XRHandAnchorImpl* const _Nonnull _impl;

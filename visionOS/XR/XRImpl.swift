@@ -159,7 +159,7 @@ extension LayerRenderer.Clock.Instant.Duration {
     }
     
     // skeleton
-    @objc func jointTransform(_ jointID : JointIDImpl) -> simd_float4x4
+    @objc func jointTransformInHandSpace(_ jointID : JointIDImpl) -> simd_float4x4
     {
         guard let skeleton = _handAnchor.handSkeleton else {
             return matrix_identity_float4x4
