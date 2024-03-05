@@ -125,22 +125,22 @@ bool
 CompositorServicesRendererDelegate::startRender(Renderer& renderer)
 {
     _xrFrame = _xrService->queryNextFrame(_layerRenderer);
-    if (!_xrFrame.isValid())
+    if (_xrFrame == nullptr)
     {
         return false;
     }
     
     // Update logic
-    _xrFrame.startUpdate();
+    _xrFrame->startUpdate();
     
     if (_updateLogicCallback != nullptr)
     {
         _updateLogicCallback(renderer, *_xrService);
     }
     
-    _xrFrame.endUpdate();
+    _xrFrame->endUpdate();
     
-    if (!_xrFrame.waitUntilOptimalTime())
+    if (!_xrFrame->waitUntilOptimalTime())
     {
         return false;
     }
@@ -151,9 +151,11 @@ CompositorServicesRendererDelegate::startRender(Renderer& renderer)
 bool
 CompositorServicesRendererDelegate::startSubmission()
 {
-    _xrFrame.startSubmission();
+    ASSERT(_xrFrame != nullptr);
     
-    _xrDrawable = _xrService->queryDrawable(_xrFrame);
+    _xrFrame->startSubmission();
+    
+    _xrDrawable = _xrService->queryDrawable(*_xrFrame);
     if (_xrDrawable == nullptr)
     {
         return false;
@@ -220,9 +222,11 @@ CompositorServicesRendererDelegate::startSubmission()
 void
 CompositorServicesRendererDelegate::endSubmission()
 {
-    _xrFrame.endSubmission();
+    ASSERT(_xrFrame != nullptr);
     
-    _xrFrame.invalidate();
+    _xrFrame->endSubmission();
+    
+    _xrFrame.reset();
     _xrDrawable.reset();
 }
 
@@ -261,7 +265,7 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     auto map = _xrDrawable->rasterizationRateMaps(cameraIndex);
     if (map != nil)
     {
-        const MTLSize mtlSize = [map physicalGranularity];
+        //const MTLSize mtlSize = [map physicalGranularity];
         //NSLog(@"mtlSize %df, %d", mtlSize.width, mtlSize.height);
         
         renderPassDescriptor.rasterizationRateMap = map;

@@ -45,16 +45,16 @@ XRService::start(const Completion& completion)
     }];
 }
 
-XRFrame
+XRFrame::Ptr
 XRService::queryNextFrame(cp_layer_renderer_t layerRenderer)
 {
     auto impl = [_impl queryNextFrameWithLayerRenderer:layerRenderer];
     if (impl == nil)
     {
-        return {};
+        return nullptr;
     }
     
-    return {impl};
+    return std::make_unique<XRFrame>(impl);
 }
 
 XRDrawable::Ptr

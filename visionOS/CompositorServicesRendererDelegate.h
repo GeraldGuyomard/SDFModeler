@@ -61,7 +61,7 @@ private:
     Renderer* _Nullable _renderer = nullptr;
     std::atomic<bool> _shouldStopRendering = { false };
     
-    XRFrame _xrFrame;
+    XRFrame::Ptr _xrFrame;
     XRDrawable::Ptr _xrDrawable;
     CameraRig::Ptr _cameraRig;
     

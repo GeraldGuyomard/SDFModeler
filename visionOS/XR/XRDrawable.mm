@@ -7,6 +7,8 @@
 
 #include "XRDrawable.h"
 #import "SDFModeler_visionOS-Swift.h"
+#import <ARKit/ARKit.h>
+#import <CompositorServices/CompositorServices.h>
 
 XRDrawable::XRDrawable(XRDrawableImpl* impl)
 : _impl(impl)

@@ -6,6 +6,9 @@
 //
 
 #include "XRFrame.h"
+#import <ARKit/ARKit.h>
+#import <CompositorServices/CompositorServices.h>
+
 #import "SDFModeler_visionOS-Swift.h"
 
 XRFrame::XRFrame(XRFrameImpl* impl)

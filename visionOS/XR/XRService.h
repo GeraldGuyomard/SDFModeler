@@ -28,7 +28,7 @@ public:
     using Completion = std::function<void()>;
     void start(const Completion&);
     
-    XRFrame queryNextFrame(cp_layer_renderer_t _Nonnull layerRenderer);
+    XRFrame::Ptr queryNextFrame(cp_layer_renderer_t _Nonnull layerRenderer);
     
     XRDrawable::Ptr queryDrawable(const XRFrame& frame);
     

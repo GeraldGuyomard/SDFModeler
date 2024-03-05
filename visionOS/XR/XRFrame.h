@@ -8,8 +8,6 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#import <ARKit/ARKit.h>
-#import <CompositorServices/CompositorServices.h>
 
 #include <memory>
 
@@ -19,8 +17,9 @@ class XRFrame final
 {
 public:
     
-    XRFrame() = default;
-    XRFrame(XRFrameImpl*_Nullable);
+    using Ptr = std::unique_ptr<XRFrame>;
+    
+    XRFrame(XRFrameImpl* _Nonnull impl);
     ~XRFrame();
     
     void startUpdate();
@@ -41,11 +40,6 @@ public:
         return _impl;
     }
     
-    void invalidate()
-    {
-        _impl = nil;
-    }
-    
 private:
-    XRFrameImpl* _Nonnull _impl = nil;
+    XRFrameImpl* const _Nonnull _impl;
 };

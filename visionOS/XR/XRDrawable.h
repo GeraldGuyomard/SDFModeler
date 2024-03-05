@@ -7,9 +7,9 @@
 
 #pragma once
 
+#import <Metal/Metal.h>
+
 #include "CommonDefinitions.h"
-#import <ARKit/ARKit.h>
-#import <CompositorServices/CompositorServices.h>
 
 #include <memory>
 #include <functional>
