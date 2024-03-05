@@ -42,7 +42,10 @@ SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
 void
 SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 {
-    ctx.setOptionFlags(EncodingContext::fRenderSelectedObjectsOnly);
+    ctx.setEncodingFilter([](const Object3D& object) -> bool
+    {
+        return object.selected();
+    });
 }
 
 id<MTLRenderCommandEncoder>_Nullable

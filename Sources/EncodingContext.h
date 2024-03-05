@@ -117,13 +117,10 @@ public:
     
     ChildReorderingArray& childOrderingArray() { return _childOrderingArray; }
     
-    enum OptionsFlags : uint32_t
-    {
-        fRenderSelectedObjectsOnly = 1 << 0
-    };
+    using EncodingFilter = std::function<bool(const Object3D&)>;
+    void setEncodingFilter(const EncodingFilter& filter);
     
-    uint32_t optionsFlags() const { return _optionsFlags; }
-    void setOptionFlags(uint32_t flags);
+    bool shouldEncode(const Object3D&) const;
     
 private:
     const float4x4 _viewProjectionMatrix;
@@ -142,5 +139,5 @@ private:
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
     
     ChildReorderingArray _childOrderingArray;
-    uint32_t _optionsFlags = 0;
+    EncodingFilter _encodingFilter;
 };

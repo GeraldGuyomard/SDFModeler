@@ -324,7 +324,13 @@ EncodingContext::cancelLastDrawCommand()
 }
 
 void
-EncodingContext::setOptionFlags(uint32_t flags)
+EncodingContext::setEncodingFilter(const EncodingFilter& filter)
 {
-    _optionsFlags = flags;
+    _encodingFilter = filter;
+}
+
+bool
+EncodingContext::shouldEncode(const Object3D& object) const
+{
+    return (_encodingFilter == nullptr) || _encodingFilter(object);
 }
