@@ -14,11 +14,13 @@ CompositorServicesRendererDelegate::CompositorServicesRendererDelegate(cp_layer_
 
 CompositorServicesRendererDelegate::~CompositorServicesRendererDelegate()
 {
-    if (_renderThread.joinable())
-    {
-        _shouldStopRendering = true;
-        _renderThread.join();
-    }
+}
+
+void
+CompositorServicesRendererDelegate::shutdown()
+{
+    _shouldStopRendering = true;
+    _renderThread.detach();
 }
 
 bool
@@ -74,18 +76,21 @@ CompositorServicesRendererDelegate::tileSize() const
 }
 
 void
-CompositorServicesRendererDelegate::startRenderLoop()
+CompositorServicesRendererDelegate::startRenderLoop(const RenderLoopTermination& termination)
 {
-    _renderThread = std::thread { [this]()
+    _renderThread = std::thread { [this, termination]()
     {
         @autoreleasepool
         {
+            auto semaphore = _renderer->inFlightSemaphore();
+            
             while (!_shouldStopRendering)
             {
                 const auto state = cp_layer_renderer_get_state(_layerRenderer);
                 if (state == cp_layer_renderer_state_invalidated)
                 {
                     _shouldStopRendering = true;
+                    dispatch_semaphore_signal(semaphore);
                 }
                 else if (state == cp_layer_renderer_state_paused)
                 {
@@ -97,6 +102,8 @@ CompositorServicesRendererDelegate::startRenderLoop()
                     _renderer->render();
                 }
             }
+            
+            termination();
         }
     }};
 }

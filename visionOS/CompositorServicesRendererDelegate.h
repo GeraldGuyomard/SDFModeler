@@ -44,7 +44,10 @@ public:
     void invalidate() override;
     void pause() override;
     
-    void startRenderLoop();
+    using RenderLoopTermination = std::function<void()>;
+    
+    void startRenderLoop(const RenderLoopTermination& termination);
+    void shutdown();
     
 private:
     const cp_layer_renderer_t _Nonnull _layerRenderer;

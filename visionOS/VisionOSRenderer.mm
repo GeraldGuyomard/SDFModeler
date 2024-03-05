@@ -18,10 +18,15 @@
     std::unique_ptr<Renderer> _renderer;
 }
 
+static __weak VisionOSRenderer* s_Instance = nil;
+
 - (instancetype) initWithLayerRenderer:(cp_layer_renderer_t)layerRenderer
 {
     if (self = [self init])
     {
+        ASSERT(s_Instance == nil);
+        s_Instance = self;
+        
         constexpr float s = 0.25f;
         float4x4 transform = matrix4x4_scale(s);
         setTranslation(transform, float3 {0, 1.f, -1.f});
@@ -42,17 +47,35 @@
     return self;
 }
 
-static VisionOSRenderer* s_Instance = nil;
+- (void)dealloc
+{
+    
+}
+
+- (void)shutdown
+{
+    auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
+    delegate->shutdown();
+    _renderer.reset();
+}
 
 - (void)startRenderLoop
 {
-    s_Instance = self;
+    __strong auto myself = self;
     
     auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
     
-    _xrService->start([delegate]{
+    _xrService->start([myself, delegate]{
         
-        delegate->startRenderLoop();
+        delegate->startRenderLoop([myself]
+        {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // normally myself will be destroyed
+                // by the end of this completion
+                [myself shutdown];
+            });
+            
+        });
     });
     
 }

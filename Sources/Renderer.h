@@ -88,6 +88,8 @@ public:
     
     AppleImage* _Nonnull renderImage() const;
     
+    dispatch_semaphore_t inFlightSemaphore() const { return _inFlightSemaphore; }
+    
 public:
     void render();
     void pause();
