@@ -104,6 +104,41 @@ XRDrawable::present(id<MTLCommandBuffer> cmdBuffer)
     [_impl present:cmdBuffer];
 }
 
+XRHandTracking::XRHandTracking(XRHandTrackingImpl* impl)
+{
+    auto leftHandImpl = [impl leftHand];
+    if (leftHandImpl != nil)
+    {
+        _leftHand = std::make_unique<XRHandAnchor>(leftHandImpl);
+    }
+    
+    auto rightHandImpl = [impl rightHand];
+    if (rightHandImpl != nil)
+    {
+        _rightHand = std::make_unique<XRHandAnchor>(rightHandImpl);
+    }
+}
+
+XRHandTracking::~XRHandTracking() = default;
+
+XRHandAnchor::XRHandAnchor(XRHandAnchorImpl* impl)
+: _impl(impl)
+{}
+
+XRHandAnchor::~XRHandAnchor() = default;
+
+bool
+XRHandAnchor::isTracked() const
+{
+    return _impl.isTracked;
+}
+
+float4x4
+XRHandAnchor::worldTransform() const
+{
+    return [_impl worldTransform];
+}
+
 XRService::XRService()
 {}
 
@@ -163,4 +198,16 @@ float4x4
 XRService::worldHeadTransform(const XRDrawable& d) const
 {
     return [_impl worldHeadTransform:d.impl()];
+}
+
+XRHandTracking::Ptr
+XRService::latestHandTracking() const
+{
+    const auto impl = [_impl latestHandTracking];
+    if (impl == nil)
+    {
+        return nullptr;
+    }
+    
+    return std::make_unique<XRHandTracking>(impl);
 }

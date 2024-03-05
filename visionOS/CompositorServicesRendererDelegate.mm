@@ -130,8 +130,14 @@ CompositorServicesRendererDelegate::startRender(Renderer& renderer)
         return false;
     }
     
-    // ????
+    // Update logic
     _xrFrame.startUpdate();
+    
+    if (_updateLogicCallback != nullptr)
+    {
+        _updateLogicCallback(renderer, *_xrService);
+    }
+    
     _xrFrame.endUpdate();
     
     if (!_xrFrame.waitUntilOptimalTime())
@@ -283,4 +289,10 @@ void
 CompositorServicesRendererDelegate::pause()
 {
     
+}
+
+void
+CompositorServicesRendererDelegate::setUpdateLogicCallback(const UpdateLogicCallback& cb)
+{
+    _updateLogicCallback = cb;
 }

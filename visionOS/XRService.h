@@ -14,7 +14,7 @@
 #include <memory>
 #include <functional>
 
-@class XRServiceImpl, XRFrameImpl, XRDrawableImpl;
+@class XRServiceImpl, XRFrameImpl, XRDrawableImpl, XRHandTrackingImpl, XRHandAnchorImpl;
 
 class XRFrame final
 {
@@ -49,6 +49,37 @@ public:
     
 private:
     XRFrameImpl* _Nonnull _impl = nil;
+};
+
+class XRHandAnchor final
+{
+public:
+    using Ptr = std::unique_ptr<XRHandAnchor>;
+    
+    XRHandAnchor(XRHandAnchorImpl* _Nonnull impl);
+    ~XRHandAnchor();
+    
+    bool isTracked() const;
+    float4x4 worldTransform() const;
+    
+private:
+    XRHandAnchorImpl* _Nonnull _impl;
+};
+
+class XRHandTracking final
+{
+public:
+    using Ptr = std::unique_ptr<XRHandTracking>;
+    
+    XRHandTracking(XRHandTrackingImpl*_Nonnull);
+    ~XRHandTracking();
+    
+    const XRHandAnchor* leftHand() const { return _leftHand.get(); }
+    const XRHandAnchor* rightHand() const { return _rightHand.get(); }
+    
+private:
+    XRHandAnchor::Ptr _leftHand;
+    XRHandAnchor::Ptr _rightHand;
 };
 
 class XRDrawable final
@@ -106,7 +137,9 @@ public:
     
     XRDrawable queryDrawable(const XRFrame& frame);
     
+    // tracking
     float4x4 worldHeadTransform(const XRDrawable&) const;
+    XRHandTracking::Ptr latestHandTracking() const;
     
 private:
     XRService();

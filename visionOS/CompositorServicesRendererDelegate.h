@@ -49,6 +49,9 @@ public:
     void startRenderLoop(const RenderLoopTermination& termination);
     void shutdown();
     
+    using UpdateLogicCallback = std::function<void(Renderer& render, const XRService& service)>;
+    void setUpdateLogicCallback(const UpdateLogicCallback&);
+    
 private:
     const cp_layer_renderer_t _Nonnull _layerRenderer;
     const XRService::Ptr _xrService;
@@ -63,6 +66,8 @@ private:
     CameraRig::Ptr _cameraRig;
     
     RenderTargetConfiguration::Ptr _configuration;
+    
+    UpdateLogicCallback _updateLogicCallback;
 };
 
 

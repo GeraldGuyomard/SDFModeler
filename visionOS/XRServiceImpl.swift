@@ -115,19 +115,61 @@ extension LayerRenderer.Clock.Instant.Duration {
     }
 }
 
+@objc class XRHandAnchorImpl : NSObject
+{
+    let _handAnchor: HandAnchor
+    
+    init(_ handAnchor: HandAnchor)
+    {
+        self._handAnchor = handAnchor
+    }
+    
+    @objc var isTracked: Bool
+    {
+        return _handAnchor.isTracked
+    }
+    
+    @objc var worldTransform: simd_float4x4
+    {
+        return _handAnchor.originFromAnchorTransform
+    }
+}
+
+@objc class XRHandTrackingImpl : NSObject
+{
+    @objc let leftHand: XRHandAnchorImpl?
+    @objc let rightHand: XRHandAnchorImpl?
+    
+    init(leftHand: XRHandAnchorImpl?, rightHand: XRHandAnchorImpl?) {
+        self.leftHand = leftHand
+        self.rightHand = rightHand
+    }
+}
+
+
 @objc class XRServiceImpl : NSObject
 {
     override init()
     {
         _session = ARKitSession()
         _worldTrackingProvider = WorldTrackingProvider()
+        if HandTrackingProvider.isSupported {
+            _handTrackingProvider = HandTrackingProvider()
+        }
     }
     
     @objc public func start(completion: @escaping ()->Void)
     {
         Task {
             do {
-                try await _session.run([_worldTrackingProvider])
+                var providers = [DataProvider]()
+                providers.append(_worldTrackingProvider)
+                if let handTrackingProvider = _handTrackingProvider
+                {
+                    providers.append(handTrackingProvider)
+                }
+                
+                try await _session.run(providers)
             } catch {
                 fatalError("Failed to initialize ARSession")
             }
@@ -169,6 +211,34 @@ extension LayerRenderer.Clock.Instant.Duration {
         return deviceAnchor.originFromAnchorTransform
     }
     
+    @objc func latestHandTracking() -> XRHandTrackingImpl?
+    {
+        guard let handTrackingProvider = _handTrackingProvider else {
+            return nil
+        }
+        
+        let anchors = handTrackingProvider.latestAnchors
+        if (anchors.leftHand == nil) && (anchors.rightHand == nil)
+        {
+            return nil
+        }
+        
+        var leftHandImpl: XRHandAnchorImpl?
+        if let leftHand = anchors.leftHand
+        {
+            leftHandImpl = XRHandAnchorImpl(leftHand)
+        }
+        
+        var rightHandImpl: XRHandAnchorImpl?
+        if let rightHand = anchors.rightHand
+        {
+            rightHandImpl = XRHandAnchorImpl(rightHand)
+        }
+        
+        return XRHandTrackingImpl(leftHand: leftHandImpl, rightHand: rightHandImpl)
+    }
+    
     private let _session: ARKitSession
     private let _worldTrackingProvider: WorldTrackingProvider
+    private var _handTrackingProvider: HandTrackingProvider?
 }
