@@ -74,14 +74,21 @@ XRService::worldHeadTransform(const XRDrawable& d) const
     return [_impl worldHeadTransform:d.impl()];
 }
 
-XRHandTracking::Ptr
-XRService::latestHandTracking() const
+std::vector<XRHandAnchor::Ptr>
+XRService::handAnchors() const
 {
-    const auto impl = [_impl latestHandTracking];
-    if (impl == nil)
+    const auto array = [_impl handAnchors];
+    
+    std::vector<XRHandAnchor::Ptr> anchors;
+    
+    const size_t n = array.count;
+    anchors.resize(array.count);
+    
+    for (size_t i=0; i < n; ++i)
     {
-        return nullptr;
+        anchors[i] = std::make_unique<XRHandAnchor>([array objectAtIndex:i]);
     }
     
-    return std::make_unique<XRHandTracking>(impl);
+    return anchors;
 }
+

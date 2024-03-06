@@ -42,22 +42,9 @@ public:
     
     float4x4 jointTransformInHandSpace(JointID) const;
     
+    bool isPinching() const;
+    
 private:
     XRHandAnchorImpl* const _Nonnull _impl;
 };
 
-class XRHandTracking final
-{
-public:
-    using Ptr = std::unique_ptr<XRHandTracking>;
-    
-    XRHandTracking(XRHandTrackingImpl*_Nonnull);
-    ~XRHandTracking();
-    
-    const XRHandAnchor* _Nullable leftHand() const { return _leftHand.get(); }
-    const XRHandAnchor* _Nullable rightHand() const { return _rightHand.get(); }
-    
-private:
-    XRHandAnchor::Ptr _leftHand;
-    XRHandAnchor::Ptr _rightHand;
-};

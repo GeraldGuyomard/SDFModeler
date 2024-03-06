@@ -11,23 +11,6 @@
 
 #import "SDFModeler_visionOS-Swift.h"
 
-XRHandTracking::XRHandTracking(XRHandTrackingImpl* impl)
-{
-    auto leftHandImpl = [impl leftHand];
-    if (leftHandImpl != nil)
-    {
-        _leftHand = std::make_unique<XRHandAnchor>(leftHandImpl);
-    }
-    
-    auto rightHandImpl = [impl rightHand];
-    if (rightHandImpl != nil)
-    {
-        _rightHand = std::make_unique<XRHandAnchor>(rightHandImpl);
-    }
-}
-
-XRHandTracking::~XRHandTracking() = default;
-
 XRHandAnchor::XRHandAnchor(XRHandAnchorImpl* impl)
 : _impl(impl)
 {}
@@ -73,3 +56,13 @@ XRHandAnchor::jointTransformInHandSpace(JointID id) const
     return [_impl jointTransformInHandSpace:idImpl];
 }
 
+bool
+XRHandAnchor::isPinching() const
+{
+    const auto indexTipPos = translation(jointTransformInHandSpace(JointID::indexFingerTip));
+    const auto thumbTipPos = translation(jointTransformInHandSpace(JointID::thumbTip));
+    
+    const float d = length(indexTipPos - thumbTipPos);
+    
+    return d <= 0.01f;
+}

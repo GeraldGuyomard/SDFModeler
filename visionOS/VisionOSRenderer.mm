@@ -12,22 +12,56 @@
 
 namespace
 {
-    std::pair<Object3D::Ptr, float /*distance*/> findClosestObject(const Object3D::Ptr& object, const float3& pos)
+    std::optional<float3> worldTipPosition(const XRHandAnchor* anchor)
     {
-        const float d = object->computeDistance(pos);
+        if (anchor == nullptr)
+        {
+            return std::nullopt;
+        }
         
-        std::pair<Object3D::Ptr, float> pair { object, d };
+        const auto handTransform = anchor->worldTransform();
+        const auto tipTransform = anchor->jointTransformInHandSpace(JointID::indexFingerTip);
+        const auto worldTransform = handTransform * tipTransform;
+        return translation(worldTransform);
+    }
+
+    struct Hand
+    {
+        const XRHandAnchor* const anchor;
+        const std::optional<float3> position;
+        
+        Object3D::Ptr object;
+        float distance = 1e10f;
+        
+        Hand(const XRHandAnchor* anchor)
+        : anchor(anchor), position(worldTipPosition(anchor))
+        {}
+        
+        void updateDistance(const Object3D::Ptr& o)
+        {
+            if (!position.has_value())
+            {
+                return;
+            }
+            
+            const float d = o->computeDistance(position.value());
+            if (d < distance)
+            {
+                distance = d;
+                object = o;
+            }
+        }
+    };
+
+    void findClosestObject(const Object3D::Ptr& object, Hand& leftHand, Hand& rightHand)
+    {
+        leftHand.updateDistance(object);
+        rightHand.updateDistance(object);
         
         for (const auto& child : object->children())
         {
-            const auto childPair = findClosestObject(child, pos);
-            if (childPair.second < pair.second)
-            {
-                pair = childPair;
-            }
+            findClosestObject(child, leftHand, rightHand);
         }
-        
-        return pair;
     }
 }
 
@@ -52,41 +86,77 @@ public:
     
     void updateLogic(Renderer& renderer, const XRService& xrService)
     {
-        auto handTracking = xrService.latestHandTracking();
-        if (handTracking != nullptr)
+        auto handAnchors = xrService.handAnchors();
+        const XRHandAnchor* leftHand = nullptr;
+        const XRHandAnchor* rightHand = nullptr;
+        
+        for (const auto& anchor : handAnchors)
         {
-            auto leftHand = handTracking->leftHand();
-            if (leftHand != nullptr)
+            if (anchor->chirality() == Chirality::left)
             {
-                onHandUpdate(*leftHand);
+                leftHand = anchor.get();
             }
-
-            auto rightHand = handTracking->rightHand();
-            if (rightHand != nullptr)
+            else
             {
-                onHandUpdate(*rightHand);
+                rightHand = anchor.get();
             }
         }
+        
+        onHandUpdate(leftHand, rightHand);
     }
     
-    void onHandUpdate(const XRHandAnchor& handAnchor)
+    void onHandUpdate(const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
     {
-        const auto handTransform = handAnchor.worldTransform();
-        const auto tipTransform = handAnchor.jointTransformInHandSpace(JointID::indexFingerTip);
-        const auto worldTipTransform = handTransform * tipTransform;
+        const bool leftHere = leftHandAnchor != nullptr;
+        const bool rightHere = rightHandAnchor != nullptr;
+        NSLog(@"left:%d right:%d", leftHere, rightHere);
         
-        const auto pos = translation(worldTipTransform);
-        NSLog(@"Hand pos x=%5.2f, y=%5.2f, z=%5.2f", pos.x, pos.y, pos.z);
+        Hand leftHand { leftHandAnchor };
+        Hand rightHand { rightHandAnchor };
+        
+        if (!leftHand.position.has_value() && !rightHand.position.has_value())
+        {
+            return;
+        }
         
         // find if close to to an object
-        const auto pair = findClosestObject(_world->rootObject(), pos);
-        const float d = pair.second;
+        findClosestObject(_world->rootObject(), leftHand, rightHand);
         
-        if (d <= 0.05f)
+        const Hand* closestHand = nullptr;
+        
+        if (leftHand.position.has_value())
         {
-            auto object = pair.first;
-            NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), d);
+            if (rightHand.position.has_value())
+            {
+                if (leftHand.distance < rightHand.distance)
+                {
+                    closestHand = &leftHand;
+                }
+                else
+                {
+                    closestHand = &rightHand;
+                }
+            }
+            else
+            {
+                closestHand = &leftHand;
+            }
+        }
+        else if (rightHand.position.has_value())
+        {
+            closestHand = &rightHand;
+        }
+        
+        if (closestHand->distance <= 0.05f)
+        {
+            auto object = closestHand->object;
+            NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), closestHand->distance);
             _world->setSelection(object);
+            
+            if (closestHand->anchor->isPinching())
+            {
+                NSLog(@"Hand pinched, chirality:%d", int(closestHand->anchor->chirality()));
+            }
         }
         else
         {
