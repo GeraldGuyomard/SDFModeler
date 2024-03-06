@@ -16,7 +16,7 @@
 class XRDragInteraction final
 {
 public:
-    using Ptr = std::unique_ptr<XRDragInteraction>;
+    using Ptr = std::shared_ptr<XRDragInteraction>;
     
     XRDragInteraction(Chirality handChirality,
                       float3 initialDraggingPosInWorld,

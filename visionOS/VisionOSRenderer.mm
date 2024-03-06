@@ -10,7 +10,9 @@
 #include "WorldHelpers.h"
 #include "XRService.h"
 #include "SelectionOutlineRenderPass.h"
+
 #include "XRDragInteraction.h"
+#include "XRUndoInteraction.h"
 
 namespace
 {
@@ -117,6 +119,11 @@ public:
     
     void onHandUpdate(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
     {
+        if (_undoInteraction == nullptr)
+        {
+            _undoInteraction = std::make_shared<XRUndoInteraction>(*_world);
+        }
+        
         if (_interaction != nullptr)
         {
             if (!_interaction->update(leftHandAnchor, rightHandAnchor))
@@ -127,9 +134,10 @@ public:
         }
         else
         {
+            _undoInteraction->update(leftHandAnchor, rightHandAnchor);
+            
             onUpdateSelection(renderer, leftHandAnchor, rightHandAnchor);
         }
-        
     }
     
     void onUpdateSelection(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
@@ -183,10 +191,11 @@ public:
                 const auto chirality = closestHand->anchor->chirality();
                 NSLog(@"Hand pinched, chirality:%d", int(chirality));
                 color = float4 { 0.f, 1.f, 0.f, 1.f };
-                _interaction = std::make_unique<XRDragInteraction>(chirality,
+                _interaction = std::make_shared<XRDragInteraction>(chirality,
                                                                    closestHand->position.value(),
                                                                    JointID::indexFingerTip,
                                                                    closestHand->object);
+                
             }
             
             
@@ -208,6 +217,7 @@ private:
     float4 _defaultOutlineColor;
     
     XRDragInteraction::Ptr _interaction;
+    XRUndoInteraction::Ptr _undoInteraction;
 };
 
 @implementation VisionOSRenderer
