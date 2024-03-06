@@ -56,13 +56,19 @@ XRHandAnchor::jointTransformInHandSpace(JointID id) const
     return [_impl jointTransformInHandSpace:idImpl];
 }
 
+float4x4
+XRHandAnchor::jointTransformInWorldSpace(JointID id) const
+{
+    return worldTransform() * jointTransformInHandSpace(id);
+}
+
 bool
-XRHandAnchor::isPinching() const
+XRHandAnchor::isPinching(float minDistance) const
 {
     const auto indexTipPos = translation(jointTransformInHandSpace(JointID::indexFingerTip));
     const auto thumbTipPos = translation(jointTransformInHandSpace(JointID::thumbTip));
     
     const float d = length(indexTipPos - thumbTipPos);
     
-    return d <= 0.01f;
+    return d <= minDistance;
 }

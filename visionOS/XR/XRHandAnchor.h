@@ -41,8 +41,10 @@ public:
     float4x4 worldTransform() const;
     
     float4x4 jointTransformInHandSpace(JointID) const;
+    float4x4 jointTransformInWorldSpace(JointID) const;
     
-    bool isPinching() const;
+    static constexpr float kDefaultFingerDistance = 0.01f;
+    bool isPinching(float minDistance = kDefaultFingerDistance) const;
     
 private:
     XRHandAnchorImpl* const _Nonnull _impl;

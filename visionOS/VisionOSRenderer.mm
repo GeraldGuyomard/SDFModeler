@@ -10,6 +10,7 @@
 #include "WorldHelpers.h"
 #include "XRService.h"
 #include "SelectionOutlineRenderPass.h"
+#include "XRDragInteraction.h"
 
 namespace
 {
@@ -20,10 +21,9 @@ namespace
             return std::nullopt;
         }
         
-        const auto handTransform = anchor->worldTransform();
-        const auto tipTransform = anchor->jointTransformInHandSpace(JointID::indexFingerTip);
-        const auto worldTransform = handTransform * tipTransform;
-        return translation(worldTransform);
+        const auto tipTransform = anchor->jointTransformInWorldSpace(JointID::indexFingerTip);
+        
+        return translation(tipTransform);
     }
 
     struct Hand
@@ -76,11 +76,6 @@ public:
         setTranslation(transform, float3 {0, 1.f, -1.f});
         
         _world = makeDefaultWorld(transform);
-        
-        /*if (auto object = _world->rootObject()->objectByID(ObjectID {6}))
-        {
-            _world->setSelection(object);
-        }*/
     }
     
     const WorldPtr& world() const { return _world; }
@@ -122,10 +117,22 @@ public:
     
     void onHandUpdate(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
     {
-        const bool leftHere = leftHandAnchor != nullptr;
-        const bool rightHere = rightHandAnchor != nullptr;
-        NSLog(@"left:%d right:%d", leftHere, rightHere);
+        if (_interaction != nullptr)
+        {
+            if (!_interaction->update(leftHandAnchor, rightHandAnchor))
+            {
+                _interaction.reset();
+            }
+        }
+        else
+        {
+            onUpdateSelection(renderer, leftHandAnchor, rightHandAnchor);
+        }
         
+    }
+    
+    void onUpdateSelection(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
+    {
         Hand leftHand { leftHandAnchor };
         Hand rightHand { rightHandAnchor };
         
@@ -172,8 +179,13 @@ public:
             
             if (closestHand->anchor->isPinching())
             {
-                NSLog(@"Hand pinched, chirality:%d", int(closestHand->anchor->chirality()));
+                const auto chirality = closestHand->anchor->chirality();
+                NSLog(@"Hand pinched, chirality:%d", int(chirality));
                 color = float4 { 0.f, 1.f, 0.f, 1.f };
+                _interaction = std::make_unique<XRDragInteraction>(chirality,
+                                                                   closestHand->position.value(),
+                                                                   JointID::indexFingerTip,
+                                                                   closestHand->object);
             }
             
             
@@ -193,6 +205,8 @@ private:
     WorldPtr _world;
     std::vector<SelectionOutlineRenderPass*> _outlinePasses;
     float4 _defaultOutlineColor;
+    
+    XRDragInteraction::Ptr _interaction;
 };
 
 @implementation VisionOSRenderer
