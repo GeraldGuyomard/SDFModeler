@@ -121,6 +121,7 @@ public:
         {
             if (!_interaction->update(leftHandAnchor, rightHandAnchor))
             {
+                _interaction->commit();
                 _interaction.reset();
             }
         }

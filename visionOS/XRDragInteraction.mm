@@ -14,9 +14,10 @@ XRDragInteraction::XRDragInteraction(Chirality handChirality,
 : _handChirality(handChirality),
 _jointID(jointID),
 _initialDraggingPosInWorld(initialDraggingPosInWorld),
-_object(object),
-_initialObjectWorldTransform(object->worldTransform())
-{}
+_entry(object)
+{
+    object->world()->commandHistory().enable(false);
+}
 
 
 bool
@@ -39,11 +40,21 @@ XRDragInteraction::update(const XRHandAnchor* left, const XRHandAnchor* right)
     const auto newDragPos = translation(hand->jointTransformInWorldSpace(_jointID));
     const auto delta = newDragPos - _initialDraggingPosInWorld;
     
-    auto transform = _initialObjectWorldTransform;
+    auto transform = _entry.transform;
     const auto newWorldPos = translation(transform) + delta;
     setTranslation(transform, newWorldPos);
     
-    _object->setWorldTransform(transform);
+    _entry.object->setWorldTransform(transform);
     
     return true;
+}
+
+void
+XRDragInteraction::commit()
+{
+    auto command = std::make_shared<TransformObjectCommand>(std::vector<TransformObjectCommand::Entry>{ _entry });
+    
+    auto world = _entry.object->world();
+    world->commandHistory().run(command);
+    world->commandHistory().enable(true);
 }

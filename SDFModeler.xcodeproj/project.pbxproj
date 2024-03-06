@@ -204,6 +204,7 @@
 		7F92343C2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7F92343D2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */; };
 		7FA764AF2B93A5190011BEA8 /* XRImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA764AE2B93A5190011BEA8 /* XRImpl.swift */; };
+		7FC279382B97F3C50031FE0A /* XRDragInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FC279362B97F3C50031FE0A /* XRDragInteraction.mm */; };
 		7FF5B9E52B97A4E3008DE57C /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9DF2B97A4E3008DE57C /* XRService.mm */; };
 		7FF5B9E62B97A4E3008DE57C /* XRDrawable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */; };
 		7FF5B9E72B97A4E3008DE57C /* XRFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */; };
@@ -384,6 +385,8 @@
 		7F9234392B8837BA00E6A7A6 /* SelectionOutlineRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionOutlineRenderPass.h; sourceTree = "<group>"; };
 		7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = SelectionOutlineRenderPass.mm; sourceTree = "<group>"; };
 		7FA764AE2B93A5190011BEA8 /* XRImpl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XRImpl.swift; sourceTree = "<group>"; };
+		7FC279362B97F3C50031FE0A /* XRDragInteraction.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XRDragInteraction.mm; sourceTree = "<group>"; };
+		7FC279372B97F3C50031FE0A /* XRDragInteraction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDragInteraction.h; sourceTree = "<group>"; };
 		7FF5B9DD2B97A4E3008DE57C /* XRFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRFrame.h; sourceTree = "<group>"; };
 		7FF5B9DE2B97A4E3008DE57C /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
 		7FF5B9DF2B97A4E3008DE57C /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
@@ -682,6 +685,8 @@
 				7F74B6752B61974900262F2D /* VisionOS_ShaderTypes.h */,
 				7F5DE0922B731C25003FC854 /* VisionOSRenderer.h */,
 				7F5DE0932B731C25003FC854 /* VisionOSRenderer.mm */,
+				7FC279362B97F3C50031FE0A /* XRDragInteraction.mm */,
+				7FC279372B97F3C50031FE0A /* XRDragInteraction.h */,
 				7F74B6792B61974A00262F2D /* Assets.xcassets */,
 				7F74B67B2B61974A00262F2D /* Info.plist */,
 				7F74B6762B61974900262F2D /* Preview Content */,
@@ -1026,6 +1031,7 @@
 				7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */,
 				7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */,
 				7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
+				7FC279382B97F3C50031FE0A /* XRDragInteraction.mm in Sources */,
 				7F9234382B882DD900E6A7A6 /* RenderTargetConfiguration.mm in Sources */,
 				7F5DE0672B7308B7003FC854 /* ToggleObjectOperationCommand.cpp in Sources */,
 				7F5DE0722B730913003FC854 /* CommonDefinitions.cpp in Sources */,

@@ -9,6 +9,8 @@
 
 #include "XR/XRHandAnchor.h"
 #include "Object3D.h"
+#include "TransformObjectCommand.h"
+
 #include <memory>
 
 class XRDragInteraction final
@@ -22,12 +24,13 @@ public:
                       const Object3D::Ptr& object);
     
     bool update(const XRHandAnchor* left, const XRHandAnchor* right);
+    void commit();
     
 private:
     const Chirality _handChirality;
     const JointID _jointID;
     const float3 _initialDraggingPosInWorld;
-    const Object3D::Ptr _object;
-    const float4x4 _initialObjectWorldTransform;
+    
+    const TransformObjectCommand::Entry _entry;
 };
 
