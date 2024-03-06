@@ -12,7 +12,7 @@
 #include "SelectionOutlineRenderPass.h"
 
 #include "XRDragInteraction.h"
-#include "XRUndoInteraction.h"
+#include "XRUndoRedoInteraction.h"
 
 namespace
 {
@@ -121,7 +121,12 @@ public:
     {
         if (_undoInteraction == nullptr)
         {
-            _undoInteraction = std::make_shared<XRUndoInteraction>(*_world);
+            _undoInteraction = std::make_shared<XRUndoRedoInteraction>(*_world, XRUndoRedoInteraction::Type::undo);
+        }
+        
+        if (_redoInteraction == nullptr)
+        {
+            _redoInteraction = std::make_shared<XRUndoRedoInteraction>(*_world, XRUndoRedoInteraction::Type::redo);
         }
         
         if (_interaction != nullptr)
@@ -135,6 +140,7 @@ public:
         else
         {
             _undoInteraction->update(leftHandAnchor, rightHandAnchor);
+            _redoInteraction->update(leftHandAnchor, rightHandAnchor);
             
             onUpdateSelection(renderer, leftHandAnchor, rightHandAnchor);
         }
@@ -217,7 +223,8 @@ private:
     float4 _defaultOutlineColor;
     
     XRDragInteraction::Ptr _interaction;
-    XRUndoInteraction::Ptr _undoInteraction;
+    XRUndoRedoInteraction::Ptr _undoInteraction;
+    XRUndoRedoInteraction::Ptr _redoInteraction;
 };
 
 @implementation VisionOSRenderer

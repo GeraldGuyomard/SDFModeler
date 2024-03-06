@@ -15,17 +15,26 @@
 #include <optional>
 #include <chrono>
 
-class XRUndoInteraction final
+class XRUndoRedoInteraction final
 {
 public:
-    using Ptr = std::shared_ptr<XRUndoInteraction>;
+    using Ptr = std::shared_ptr<XRUndoRedoInteraction>;
     
-    XRUndoInteraction(World&);
+    enum class Type
+    {
+        undo,
+        redo
+    };
+    
+    XRUndoRedoInteraction(World& world, Type);
     
     void update(const XRHandAnchor* left, const XRHandAnchor* right);
 
 private:
     World& _world;
+    const Type _type;
+    
+    bool _isGestureDetected(const XRHandAnchor* anchor) const;
     
     class Tracking final
     {
@@ -35,6 +44,7 @@ private:
         Chirality chirality() const { return _chirality; }
         
         bool enoughTimeElapsed() const;
+        void resetTime();
         
     private:
         Chirality _chirality;
