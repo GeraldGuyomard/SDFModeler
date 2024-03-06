@@ -19,7 +19,9 @@ namespace
 }
 
 SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
-: _cameraIndex(cameraIndex)
+: _cameraIndex(cameraIndex),
+_color { 252.0f / 255.0f, 202.0f / 255.0f, 0.0f, 1.f },
+_thickness(10.f)
 {}
 
 id<MTLRenderCommandEncoder>_Nullable
@@ -129,12 +131,11 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     
     auto& uniforms = _uniformsBuffer->uniform();
     
-    constexpr float kThickness= 10.f;
     const auto size = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
     
-    uniforms.samplingDelta = kThickness / size;
+    uniforms.samplingDelta = float2 { _thickness, _thickness } / size;
     
-    uniforms.color = float4 { 252.0 / 255.0, 202.0 / 255.0, 0.0, 1.f };
+    uniforms.color = _color;
 }
 
 
@@ -167,4 +168,16 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
     [encoder setFragmentTexture:inputTexture atIndex:TextureIndexInput];
     
     [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
+}
+
+void 
+SelectionOutlineRenderPass::setThickness(float t)
+{
+    _thickness = t;
+}
+
+void
+SelectionOutlineRenderPass::setColor(float4 c)
+{
+    _color = c;
 }

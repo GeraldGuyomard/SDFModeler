@@ -9,6 +9,8 @@
 
 #include "Renderer.h"
 #include "SDFRenderPass.h"
+#include "Object3D.h"
+#include <unordered_set>
 
 class SelectionMattingRenderPass : public SDFRenderPass
 {
@@ -22,6 +24,7 @@ public:
     void updateUniforms(Renderer&) override;
     id<MTLTexture> _Nullable targetTexture() const { return _targetTexture; }
     
+    void setObjectsToRender(const Object3DSelection&);
     
 private:
     void configure(EncodingContext&) const override;
@@ -32,4 +35,6 @@ private:
     
     id<MTLTexture> _Nullable _targetTexture = nil;
     MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
+    
+    std::unordered_set<ObjectID> _objectIDsToRender;
 };

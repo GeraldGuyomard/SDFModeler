@@ -142,6 +142,11 @@ Renderer::render()
         return;
     }
     
+    for (auto& rpPerCamera : _renderPassesPerCamera)
+    {
+        rpPerCamera.selectionMattingRenderPass->setObjectsToRender(_world->selection());
+    }
+    
     FrameSubmission submission { _delegate.get() };
     if (!submission.isValid()) {
         return;

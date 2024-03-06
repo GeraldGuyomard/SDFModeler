@@ -86,9 +86,11 @@ public:
         return _delegate.get();
     }
     
+    const std::vector<RenderPass*>& renderPasses() const { return _renderPasses; }
+    
     AppleImage* _Nonnull renderImage() const;
     
-    dispatch_semaphore_t inFlightSemaphore() const { return _inFlightSemaphore; }
+    dispatch_semaphore_t _Nonnull inFlightSemaphore() const { return _inFlightSemaphore; }
     
 public:
     void render();

@@ -9,6 +9,7 @@
 #include "CompositorServicesRendererDelegate.h"
 #include "WorldHelpers.h"
 #include "XRService.h"
+#include "SelectionOutlineRenderPass.h"
 
 namespace
 {
@@ -84,6 +85,20 @@ public:
     
     const WorldPtr& world() const { return _world; }
     
+    void prepare(Renderer& renderer)
+    {
+        for (auto* pass : renderer.renderPasses())
+        {
+            if (auto* outlinePass = dynamic_cast<SelectionOutlineRenderPass*>(pass))
+            {
+                _outlinePasses.push_back(outlinePass);
+            }
+        }
+        
+        ASSERT(!_outlinePasses.empty());
+        _defaultOutlineColor = _outlinePasses.front()->color();
+    }
+    
     void updateLogic(Renderer& renderer, const XRService& xrService)
     {
         auto handAnchors = xrService.handAnchors();
@@ -102,10 +117,10 @@ public:
             }
         }
         
-        onHandUpdate(leftHand, rightHand);
+        onHandUpdate(renderer, leftHand, rightHand);
     }
     
-    void onHandUpdate(const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
+    void onHandUpdate(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
     {
         const bool leftHere = leftHandAnchor != nullptr;
         const bool rightHere = rightHandAnchor != nullptr;
@@ -153,9 +168,18 @@ public:
             NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), closestHand->distance);
             _world->setSelection(object);
             
+            float4 color = _defaultOutlineColor;
+            
             if (closestHand->anchor->isPinching())
             {
                 NSLog(@"Hand pinched, chirality:%d", int(closestHand->anchor->chirality()));
+                color = float4 { 0.f, 1.f, 0.f, 1.f };
+            }
+            
+            
+            for (auto pass: _outlinePasses)
+            {
+                pass->setColor(color);
             }
         }
         else
@@ -167,6 +191,8 @@ public:
 private:
     
     WorldPtr _world;
+    std::vector<SelectionOutlineRenderPass*> _outlinePasses;
+    float4 _defaultOutlineColor;
 };
 
 @implementation VisionOSRenderer
@@ -192,6 +218,8 @@ static __weak VisionOSRenderer* s_Instance = nil;
         
         auto delegate = std::make_unique<CompositorServicesRendererDelegate>(layerRenderer, _xrService);
         _renderer = std::make_unique<Renderer>(_app->world(), std::move(delegate));
+        
+        _app->prepare(*_renderer);
     }
     
     return self;

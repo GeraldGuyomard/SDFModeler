@@ -31,7 +31,7 @@ SelectionMattingRenderPass::init(Renderer& renderer)
 void
 SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
 {
-    enable(!renderer.world()->selection().empty());
+    enable(!_objectIDsToRender.empty());
     
     if (enabled())
     {
@@ -42,7 +42,7 @@ SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
 void
 SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 {
-    ctx.setEncodingFilter([](const Object3D& object) -> bool
+    ctx.setEncodingFilter([this](const Object3D& object) -> bool
     {
         return object.selected();
     });
@@ -92,4 +92,15 @@ SelectionMattingRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;
+}
+
+void
+SelectionMattingRenderPass::setObjectsToRender(const Object3DSelection& sel)
+{
+    _objectIDsToRender.clear();
+    
+    for (const auto& object : sel.objects())
+    {
+        _objectIDsToRender.insert(object->id());
+    }
 }

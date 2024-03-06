@@ -26,6 +26,12 @@ public:
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
     
+    float thickness() const { return _thickness; }
+    void setThickness(float);
+    
+    float4 color() const { return _color; }
+    void setColor(float4);
+    
 private:
     
     const size_t _cameraIndex;
@@ -41,4 +47,7 @@ private:
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
     MattingTextureProvider _mattingTextureProvider;
+    
+    float4 _color;
+    float _thickness;
 };
