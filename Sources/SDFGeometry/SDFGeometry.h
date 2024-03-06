@@ -32,7 +32,8 @@ float3 computeNormal(TSDFGeometry geometry, float dist, float3 position)
 {
 #if 1
     
-    constexpr float h = 0.0001; // replace by an appropriate value
+    constexpr float h = 1e-5f; // replace by an appropriate value
+    
     const float2 k { h, -h };
     return normalize(   k.xyy * geometry.computeDistance( position + k.xyy ) +
                         k.yyx * geometry.computeDistance( position + k.yyx ) +

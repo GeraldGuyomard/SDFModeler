@@ -128,6 +128,7 @@ extension LayerRenderer.Clock.Instant.Duration {
     case middleFingerTip
     case ringFingerTip
     case littleFingerTip
+    case wrist
 };
 
 @objc class XRHandAnchorImpl : NSObject
@@ -173,6 +174,7 @@ extension LayerRenderer.Clock.Instant.Duration {
             case .middleFingerTip: jointName = .middleFingerTip
             case .ringFingerTip: jointName = .ringFingerTip
             case .littleFingerTip: jointName = .littleFingerTip
+            case .wrist: jointName = .wrist
         }
         
         let joint = skeleton.joint(jointName)

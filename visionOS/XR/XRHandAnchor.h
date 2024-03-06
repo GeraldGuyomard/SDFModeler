@@ -26,6 +26,7 @@ enum class JointID
     middleFingerTip,
     ringFingerTip,
     littleFingerTip,
+    wrist
 };
 
 class XRHandAnchor final

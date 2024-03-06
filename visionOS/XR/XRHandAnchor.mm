@@ -36,7 +36,18 @@ XRHandAnchor::isTracked() const
 float4x4
 XRHandAnchor::worldTransform() const
 {
-    return [_impl worldTransform];
+    const float4x4 m = [_impl worldTransform];
+    
+    /*
+    const auto r = right(m);
+    const auto u = up(m);
+    const auto f = forward(m);
+    
+    NSLog(@"chirality:%d Hand's rt %5.2f, %5.2f, %5.2f", int(chirality()), r.x, r.y, r.z );
+    NSLog(@"                    up %5.2f, %5.2f, %5.2f", u.x, u.y, u.z );
+    NSLog(@"                    fw %5.2f, %5.2f, %5.2f", f.x, f.y, f.z );*/
+    
+    return m;
 }
 
 float4x4
@@ -51,6 +62,7 @@ XRHandAnchor::jointTransformInHandSpace(JointID id) const
         case JointID::middleFingerTip: idImpl = JointIDImplIndexFingerTip; break;
         case JointID::ringFingerTip: idImpl = JointIDImplRingFingerTip; break;
         case JointID::littleFingerTip: idImpl = JointIDImplLittleFingerTip; break;
+        case JointID::wrist: idImpl = JointIDImplWrist; break;
     }
     
     return [_impl jointTransformInHandSpace:idImpl];

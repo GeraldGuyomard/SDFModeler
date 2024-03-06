@@ -10,8 +10,13 @@
 #include "CommonDefinitions.h"
 #include "SDFGeometry/SDFGeometry.h"
 #include "Ray.h"
+#include <TargetConditionals.h>
 
-constexpr static CONSTANT float kDistanceEpsilon = 1e-3f;
+#if TARGET_OS_VISION
+    constexpr static CONSTANT float kDistanceEpsilon = 0.5 * 1e-3f;
+#else
+    constexpr static CONSTANT float kDistanceEpsilon = 1e-3f;
+#endif
 
 class RayMarchResult final
 {

@@ -16,42 +16,54 @@ namespace
 {
     bool isThumbDown(const XRHandAnchor* anchor)
     {
-        // @ to fix
-        return false;
-        
         if (anchor == nullptr)
         {
             return false;
         }
         
-        // Up should be horizontal
-        // left for right hand
-        // right for left hand
-        const float aimedDirection = anchor->chirality() == Chirality::left ? 1.f : -1.f;
-        const float3 dir { aimedDirection, 0.f, 0.f };
-        
-        const auto worldTransform = anchor->worldTransform();
-        const auto u = up(worldTransform);
-        
-        const float dot = simd_dot(u, dir);
-        if (dot <= 0.8f)
-        {
-            return false;
-        }
+        // thumbs down -> direction from wrist to thumb tip is vertical
         
         // The thumb should point down
-        const auto thumbWorldTransform = anchor->jointTransformInWorldSpace(JointID::thumbTip);
-        const auto thumbUp = up(thumbWorldTransform);
+        const auto wristPosition = translation(anchor->jointTransformInWorldSpace(JointID::wrist));
+        const auto thumbPosition = translation(anchor->jointTransformInWorldSpace(JointID::thumbTip));
         
-        const float3 downDir { 0.f, -1.f, 0.f };
-        const float dotThumb = simd_dot(downDir, thumbUp);
-        if (dotThumb < 0.8f)
+        const auto dir = normalize(thumbPosition - wristPosition);
+        
+        const float3 idealDir { 0.f, -1.f, 0.f };
+        const float dotThumb = simd_dot(dir, idealDir);
+        if (dotThumb < 0.9f)
         {
             return false;
         }
         
-        // The 4 remaining fingers should be close to the origin of the hand
+        // The 4 remaining fingers should be aligned vertically
+        // and all not distant from the the axis
+        const auto indexPosition = translation(anchor->jointTransformInWorldSpace(JointID::indexFingerTip));
+        const auto middlePosition = translation(anchor->jointTransformInWorldSpace(JointID::middleFingerTip));
+        const auto ringPosition = translation(anchor->jointTransformInWorldSpace(JointID::ringFingerTip));
+        const auto littlePosition = translation(anchor->jointTransformInWorldSpace(JointID::littleFingerTip));
         
+        const auto averageSecondaryPosition = (indexPosition + middlePosition + ringPosition + littlePosition) / 4.f;
+        
+        // distance point to line
+        // https://mathworld.wolfram.com/Point-LineDistance3-Dimensional.html
+        const auto averageSecondaryDir = averageSecondaryPosition - wristPosition;
+        const float distSecToMainLine = length(cross(averageSecondaryDir, wristPosition - indexPosition)) / length(averageSecondaryDir);
+        if (distSecToMainLine > 0.04f)
+        {
+            return false;
+        }
+        
+        const auto secondaryDir = normalize(indexPosition - littlePosition);
+        
+        // Eliminate gesture if other fingers are not aligned, like hellfest gesture
+        const auto thirdDir = normalize(middlePosition - ringPosition);
+        
+        const float dotSecondary = dot(secondaryDir, thirdDir);
+        if (dotSecondary <= 0.5f)
+        {
+            return false;
+        }
         
         return true;
     }
