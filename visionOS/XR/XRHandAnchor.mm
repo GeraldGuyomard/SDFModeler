@@ -84,3 +84,34 @@ XRHandAnchor::isPinching(float minDistance) const
     
     return d <= minDistance;
 }
+
+const XRHandAnchor::Ptr&
+XRHandAnchors::anchor(Chirality c) const
+{
+    return anchors[size_t(c)];
+}
+XRHandAnchor::Ptr&
+XRHandAnchors::anchor(Chirality c)
+{
+    return anchors[size_t(c)];
+}
+
+const XRHandAnchor::Ptr&
+XRHandAnchors::otherAnchor(Chirality c) const
+{
+    size_t i = 1 - size_t(c);
+    return anchors[i];
+}
+
+XRHandAnchor::Ptr&
+XRHandAnchors::otherAnchor(Chirality c)
+{
+    size_t i = 1 - size_t(c);
+    return anchors[i];
+}
+
+bool
+XRHandAnchors::none() const
+{
+    return (anchors[0] == nullptr) && (anchors[1] == nullptr);
+}

@@ -170,6 +170,8 @@
 		7F5DE08D2B7314A3003FC854 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7444A4DA29A1CB63009632C3 /* Shaders.metal */; };
 		7F5DE0902B731697003FC854 /* CompositorServicesRendererDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE08F2B731697003FC854 /* CompositorServicesRendererDelegate.mm */; };
 		7F5DE0942B731C25003FC854 /* VisionOSRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F5DE0932B731C25003FC854 /* VisionOSRenderer.mm */; };
+		7F6CF7712B993AF300F98456 /* XRDualPinchInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F6CF7702B993AF300F98456 /* XRDualPinchInteraction.mm */; };
+		7F6CF7742B994CED00F98456 /* XRInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7F6CF7732B994CED00F98456 /* XRInteraction.mm */; };
 		7F74B66C2B61974900262F2D /* RealityKitContent in Frameworks */ = {isa = PBXBuildFile; productRef = 7F74B66B2B61974900262F2D /* RealityKitContent */; };
 		7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */; };
 		7F74B6702B61974900262F2D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B66F2B61974900262F2D /* ContentView.swift */; };
@@ -358,6 +360,10 @@
 		7F5DE0912B731B76003FC854 /* VisionOS_ObjcBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionOS_ObjcBridge.h; sourceTree = "<group>"; };
 		7F5DE0922B731C25003FC854 /* VisionOSRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisionOSRenderer.h; sourceTree = "<group>"; };
 		7F5DE0932B731C25003FC854 /* VisionOSRenderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VisionOSRenderer.mm; sourceTree = "<group>"; };
+		7F6CF76F2B993AF300F98456 /* XRDualPinchInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRDualPinchInteraction.h; sourceTree = "<group>"; };
+		7F6CF7702B993AF300F98456 /* XRDualPinchInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRDualPinchInteraction.mm; sourceTree = "<group>"; };
+		7F6CF7722B994CED00F98456 /* XRInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRInteraction.h; sourceTree = "<group>"; };
+		7F6CF7732B994CED00F98456 /* XRInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRInteraction.mm; sourceTree = "<group>"; };
 		7F74B6672B61974900262F2D /* SDFModeler visionOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SDFModeler visionOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F74B66A2B61974900262F2D /* RealityKitContent */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = RealityKitContent; sourceTree = "<group>"; };
 		7F74B66D2B61974900262F2D /* SDFModeler_visionOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDFModeler_visionOSApp.swift; sourceTree = "<group>"; };
@@ -688,8 +694,12 @@
 				7F74B6752B61974900262F2D /* VisionOS_ShaderTypes.h */,
 				7F5DE0922B731C25003FC854 /* VisionOSRenderer.h */,
 				7F5DE0932B731C25003FC854 /* VisionOSRenderer.mm */,
+				7F6CF7732B994CED00F98456 /* XRInteraction.mm */,
+				7F6CF7722B994CED00F98456 /* XRInteraction.h */,
 				7FC279362B97F3C50031FE0A /* XRDragInteraction.mm */,
 				7FC279372B97F3C50031FE0A /* XRDragInteraction.h */,
+				7F6CF76F2B993AF300F98456 /* XRDualPinchInteraction.h */,
+				7F6CF7702B993AF300F98456 /* XRDualPinchInteraction.mm */,
 				7FC279392B97FF820031FE0A /* XRUndoRedoInteraction.h */,
 				7FC2793A2B97FF820031FE0A /* XRUndoRedoInteraction.mm */,
 				7F74B6792B61974A00262F2D /* Assets.xcassets */,
@@ -1032,6 +1042,7 @@
 				7F9234242B87DF6F00E6A7A6 /* SDFRenderPass.mm in Sources */,
 				7F5DE0792B73091F003FC854 /* EncodingContext.cpp in Sources */,
 				7F5DE0832B73092A003FC854 /* Animation.cpp in Sources */,
+				7F6CF7712B993AF300F98456 /* XRDualPinchInteraction.mm in Sources */,
 				7F5DE0622B73089F003FC854 /* SDFGeometry.cpp in Sources */,
 				7F5DE0712B730913003FC854 /* ObjectType.cpp in Sources */,
 				7F5DE0852B73092A003FC854 /* RenderStats.mm in Sources */,
@@ -1043,6 +1054,7 @@
 				7F5DE05F2B73089F003FC854 /* SDFTorus.cpp in Sources */,
 				7F5DE07B2B73091F003FC854 /* EncodedPrimitive.cpp in Sources */,
 				7F5DE0632B73089F003FC854 /* SDFRoundedBox.cpp in Sources */,
+				7F6CF7742B994CED00F98456 /* XRInteraction.mm in Sources */,
 				7F5DE0772B73091F003FC854 /* PrimitiveEvaluator.cpp in Sources */,
 				7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */,
 				7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */,

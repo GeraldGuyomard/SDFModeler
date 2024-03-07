@@ -35,7 +35,7 @@ public:
     // tracking
     float4x4 worldHeadTransform(const XRDrawable&) const;
     
-    std::vector<XRHandAnchor::Ptr> handAnchors() const;
+    XRHandAnchors handAnchors() const;
     
 private:
     XRService();

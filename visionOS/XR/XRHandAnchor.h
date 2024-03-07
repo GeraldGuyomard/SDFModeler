@@ -13,11 +13,13 @@
 
 @class XRHandTrackingImpl, XRHandAnchorImpl;
 
-enum class Chirality
+enum class Chirality : size_t
 {
-    left,
-    right
+    left = 0,
+    right = 1
 };
+
+static constexpr size_t kMaxChirality = 2;
 
 enum class JointID
 {
@@ -32,7 +34,7 @@ enum class JointID
 class XRHandAnchor final
 {
 public:
-    using Ptr = std::unique_ptr<XRHandAnchor>;
+    using Ptr = std::shared_ptr<XRHandAnchor>;
     
     XRHandAnchor(XRHandAnchorImpl* _Nonnull impl);
     ~XRHandAnchor();
@@ -51,3 +53,16 @@ private:
     XRHandAnchorImpl* const _Nonnull _impl;
 };
 
+class XRHandAnchors
+{
+public:
+    std::array<XRHandAnchor::Ptr, kMaxChirality> anchors;
+    
+    const XRHandAnchor::Ptr& anchor(Chirality) const;
+    XRHandAnchor::Ptr& anchor(Chirality);
+    
+    const XRHandAnchor::Ptr& otherAnchor(Chirality) const;
+    XRHandAnchor::Ptr& otherAnchor(Chirality);
+    
+    bool none() const;
+};

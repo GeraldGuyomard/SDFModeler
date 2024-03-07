@@ -184,6 +184,18 @@ extension LayerRenderer.Clock.Instant.Duration {
     
 }
 
+@objc class HandAnchors : NSObject
+{
+    @objc let left: XRHandAnchorImpl?
+    @objc let right: XRHandAnchorImpl?
+    
+    init(left: XRHandAnchorImpl?, right:XRHandAnchorImpl?)
+    {
+        self.left = left
+        self.right = right
+    }
+}
+
 @objc class XRServiceImpl : NSObject
 {
     override init()
@@ -248,23 +260,28 @@ extension LayerRenderer.Clock.Instant.Duration {
         return deviceAnchor.originFromAnchorTransform
     }
     
-    @objc func handAnchors() -> [XRHandAnchorImpl]
+    @objc func handAnchors() -> HandAnchors?
     {
-        var anchors = [XRHandAnchorImpl]()
-        
         guard let latestAnchors = _handTrackingProvider?.latestAnchors else {
-            return anchors
+            return nil
         }
         
-        if let leftHandAnchorImpl = latestAnchors.leftHand {
-            anchors.append(XRHandAnchorImpl(leftHandAnchorImpl))
+        var leftImpl : XRHandAnchorImpl?
+        if let leftHand = latestAnchors.leftHand {
+            leftImpl = XRHandAnchorImpl(leftHand)
         }
         
-        if let rightHandAnchorImpl = latestAnchors.rightHand {
-            anchors.append(XRHandAnchorImpl(rightHandAnchorImpl))
+        var rightImpl : XRHandAnchorImpl?
+        if let rightHand = latestAnchors.rightHand {
+            rightImpl = XRHandAnchorImpl(rightHand)
         }
         
-        return anchors
+        if (leftImpl == nil) && (rightImpl == nil)
+        {
+            return nil
+        }
+        
+        return HandAnchors(left: leftImpl, right: rightImpl)
     }
     
     private let _session: ARKitSession

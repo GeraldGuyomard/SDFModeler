@@ -8,16 +8,20 @@
 #pragma once
 
 #include "XR/XRHandAnchor.h"
+
+#include "XRInteraction.h"
 #include "Object3D.h"
 #include "TransformObjectCommand.h"
-#include "XRInteraction.h"
 
-class XRDragInteraction final : public XRInteraction
+#include <memory>
+#include <array>
+
+class XRDualPinchInteraction final : public XRInteraction
 {
 public:
-    using Ptr = std::shared_ptr<XRDragInteraction>;
-    
-    XRDragInteraction(const WorldPtr& world);
+    using Ptr = std::shared_ptr<XRDualPinchInteraction>;
+
+    XRDualPinchInteraction(const WorldPtr& world);
     
     void update(const XRHandAnchors&) override;
     void commit() override;
@@ -28,16 +32,15 @@ private:
     
     struct ActiveState final
     {
-        const Chirality chirality;
-        float3 initialPosInWorld;
+        const float initialDistance;
+        const TransformObjectCommand::Entry entry;
         
-        TransformObjectCommand::Entry entry;
-        
-        ActiveState(Chirality c, float3 pos, const Object3D::Ptr& object )
-        : chirality(c), initialPosInWorld(pos), entry { object }
+        ActiveState(float dist, const Object3D::Ptr& object)
+        : initialDistance(dist), entry { object }
         {}
     };
     
     std::unique_ptr<ActiveState> _activeState;
+    
 };
 

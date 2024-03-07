@@ -7,11 +7,9 @@
 
 #include "XRUndoRedoInteraction.h"
 
-XRUndoRedoInteraction::XRUndoRedoInteraction(World& world, Type type)
+XRUndoRedoInteraction::XRUndoRedoInteraction(const WorldPtr& world, Type type)
 : _world(world), _type(type)
-{
-}
-
+{}
 
 bool
 XRUndoRedoInteraction::_isGestureDetected(const XRHandAnchor* anchor) const
@@ -70,7 +68,8 @@ XRUndoRedoInteraction::_isGestureDetected(const XRHandAnchor* anchor) const
 
 XRUndoRedoInteraction::Tracking::Tracking(Chirality c)
 : _chirality(c), _startTime(Clock::now())
-{}
+{
+}
 
 bool
 XRUndoRedoInteraction::Tracking::enoughTimeElapsed() const
@@ -89,25 +88,24 @@ XRUndoRedoInteraction::Tracking::resetTime()
 }
 
 void
-XRUndoRedoInteraction::update(const XRHandAnchor* left, const XRHandAnchor* right)
+XRUndoRedoInteraction::update(const XRHandAnchors& anchors)
 {
     // Undo is thumb down for a while
-
     if (_tracking.has_value())
     {
         auto& tracking = _tracking.value();
-        const XRHandAnchor* anchor = (tracking.chirality() == Chirality::left) ? left : right;
+        const XRHandAnchor* anchor = anchors.anchor(tracking.chirality()).get();
         if (_isGestureDetected(anchor))
         {
             if (tracking.enoughTimeElapsed())
             {
                 if (_type == Type::undo)
                 {
-                    _world.commandHistory().undo();
+                    _world->commandHistory().undo();
                 }
                 else
                 {
-                    _world.commandHistory().redo();
+                    _world->commandHistory().redo();
                 }
                 
                 _tracking.reset();
@@ -116,16 +114,26 @@ XRUndoRedoInteraction::update(const XRHandAnchor* left, const XRHandAnchor* righ
         else
         {
             // keep tracking a still pose
+            _setState(State::inactive);
             //tracking.resetTime();
         }
     }
-    else if (_isGestureDetected(left))
+    else
     {
-        _tracking = Tracking { Chirality::left };
-    }
-    else if (_isGestureDetected(right))
-    {
-        _tracking = Tracking { Chirality::right };
+        for (const auto& anchor : anchors.anchors)
+        {
+            if (_isGestureDetected(anchor.get()))
+            {
+                _tracking = Tracking { anchor->chirality() };
+                _setState(State::active);
+                break;
+            }
+        }
     }
 }
 
+void
+XRUndoRedoInteraction::commit()
+{
+    
+}

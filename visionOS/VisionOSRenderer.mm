@@ -13,220 +13,133 @@
 
 #include "XRDragInteraction.h"
 #include "XRUndoRedoInteraction.h"
-
-namespace
-{
-    std::optional<float3> worldTipPosition(const XRHandAnchor* anchor)
-    {
-        if (anchor == nullptr)
-        {
-            return std::nullopt;
-        }
-        
-        const auto tipTransform = anchor->jointTransformInWorldSpace(JointID::indexFingerTip);
-        
-        return translation(tipTransform);
-    }
-
-    struct Hand
-    {
-        const XRHandAnchor* const anchor;
-        const std::optional<float3> position;
-        
-        Object3D::Ptr object;
-        float distance = 1e10f;
-        
-        Hand(const XRHandAnchor* anchor)
-        : anchor(anchor), position(worldTipPosition(anchor))
-        {}
-        
-        void updateDistance(const Object3D::Ptr& o)
-        {
-            if (!position.has_value())
-            {
-                return;
-            }
-            
-            const float d = o->computeDistance(position.value());
-            if (d < distance)
-            {
-                distance = d;
-                object = o;
-            }
-        }
-    };
-
-    void findClosestObject(const Object3D::Ptr& object, Hand& leftHand, Hand& rightHand)
-    {
-        leftHand.updateDistance(object);
-        rightHand.updateDistance(object);
-        
-        for (const auto& child : object->children())
-        {
-            findClosestObject(child, leftHand, rightHand);
-        }
-    }
-}
+#include "XRDualPinchInteraction.h"
 
 class App final
 {
 public:
-    App()
-    {
-        constexpr float s = 0.25f;
-        float4x4 transform = matrix4x4_scale(s);
-        setTranslation(transform, float3 {0, 1.f, -1.f});
-        
-        _world = makeDefaultWorld(transform);
-    }
+    App();
     
     const WorldPtr& world() const { return _world; }
     
-    void prepare(Renderer& renderer)
-    {
-        for (auto* pass : renderer.renderPasses())
-        {
-            if (auto* outlinePass = dynamic_cast<SelectionOutlineRenderPass*>(pass))
-            {
-                _outlinePasses.push_back(outlinePass);
-            }
-        }
-        
-        ASSERT(!_outlinePasses.empty());
-        _defaultOutlineColor = _outlinePasses.front()->color();
-    }
+    void prepare(Renderer& renderer);
     
-    void updateLogic(Renderer& renderer, const XRService& xrService)
-    {
-        auto handAnchors = xrService.handAnchors();
-        const XRHandAnchor* leftHand = nullptr;
-        const XRHandAnchor* rightHand = nullptr;
-        
-        for (const auto& anchor : handAnchors)
-        {
-            if (anchor->chirality() == Chirality::left)
-            {
-                leftHand = anchor.get();
-            }
-            else
-            {
-                rightHand = anchor.get();
-            }
-        }
-        
-        onHandUpdate(renderer, leftHand, rightHand);
-    }
-    
-    void onHandUpdate(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
-    {
-        if (_undoInteraction == nullptr)
-        {
-            _undoInteraction = std::make_shared<XRUndoRedoInteraction>(*_world, XRUndoRedoInteraction::Type::undo);
-        }
-        
-        if (_redoInteraction == nullptr)
-        {
-            _redoInteraction = std::make_shared<XRUndoRedoInteraction>(*_world, XRUndoRedoInteraction::Type::redo);
-        }
-        
-        if (_interaction != nullptr)
-        {
-            if (!_interaction->update(leftHandAnchor, rightHandAnchor))
-            {
-                _interaction->commit();
-                _interaction.reset();
-            }
-        }
-        else
-        {
-            _undoInteraction->update(leftHandAnchor, rightHandAnchor);
-            _redoInteraction->update(leftHandAnchor, rightHandAnchor);
-            
-            onUpdateSelection(renderer, leftHandAnchor, rightHandAnchor);
-        }
-    }
-    
-    void onUpdateSelection(Renderer& renderer, const XRHandAnchor* leftHandAnchor, const XRHandAnchor* rightHandAnchor)
-    {
-        Hand leftHand { leftHandAnchor };
-        Hand rightHand { rightHandAnchor };
-        
-        if (!leftHand.position.has_value() && !rightHand.position.has_value())
-        {
-            return;
-        }
-        
-        // find if close to to an object
-        findClosestObject(_world->rootObject(), leftHand, rightHand);
-        
-        const Hand* closestHand = nullptr;
-        
-        if (leftHand.position.has_value())
-        {
-            if (rightHand.position.has_value())
-            {
-                if (leftHand.distance < rightHand.distance)
-                {
-                    closestHand = &leftHand;
-                }
-                else
-                {
-                    closestHand = &rightHand;
-                }
-            }
-            else
-            {
-                closestHand = &leftHand;
-            }
-        }
-        else if (rightHand.position.has_value())
-        {
-            closestHand = &rightHand;
-        }
-        
-        if (closestHand->distance <= 0.05f)
-        {
-            auto object = closestHand->object;
-            NSLog(@"Close to object %d at distance %5.3fm", int(object->id()), closestHand->distance);
-            _world->setSelection(object);
-            
-            float4 color = _defaultOutlineColor;
-            
-            if (closestHand->anchor->isPinching())
-            {
-                const auto chirality = closestHand->anchor->chirality();
-                NSLog(@"Hand pinched, chirality:%d", int(chirality));
-                color = float4 { 0.f, 1.f, 0.f, 1.f };
-                _interaction = std::make_shared<XRDragInteraction>(chirality,
-                                                                   closestHand->position.value(),
-                                                                   JointID::indexFingerTip,
-                                                                   closestHand->object);
-                
-            }
-            
-            
-            for (auto pass: _outlinePasses)
-            {
-                pass->setColor(color);
-            }
-        }
-        else
-        {
-            _world->setSelection({});
-        }
-    }
-    
+    void updateLogic(Renderer& renderer, const XRService& xrService);
+    void onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors);
+
 private:
+    
+    void updateSelection(Renderer& renderer, const XRHandAnchors& anchors);
     
     WorldPtr _world;
     std::vector<SelectionOutlineRenderPass*> _outlinePasses;
     float4 _defaultOutlineColor;
     
-    XRDragInteraction::Ptr _interaction;
-    XRUndoRedoInteraction::Ptr _undoInteraction;
-    XRUndoRedoInteraction::Ptr _redoInteraction;
+    std::vector<XRInteraction::Ptr> _interactions;
 };
 
+App::App()
+{
+    constexpr float s = 0.25f;
+    float4x4 transform = matrix4x4_scale(s);
+    setTranslation(transform, float3 {0, 1.f, -1.f});
+    
+    _world = makeDefaultWorld(transform);
+    
+    _interactions.push_back(std::make_shared<XRUndoRedoInteraction>(_world, XRUndoRedoInteraction::Type::undo));
+    _interactions.push_back(std::make_shared<XRUndoRedoInteraction>(_world, XRUndoRedoInteraction::Type::redo));
+    _interactions.push_back(std::make_shared<XRDragInteraction>(_world));
+    _interactions.push_back(std::make_shared<XRDualPinchInteraction>(_world));
+}
+    
+    
+    
+void
+App::prepare(Renderer& renderer)
+{
+    for (auto* pass : renderer.renderPasses())
+    {
+        if (auto* outlinePass = dynamic_cast<SelectionOutlineRenderPass*>(pass))
+        {
+            _outlinePasses.push_back(outlinePass);
+        }
+    }
+    
+    ASSERT(!_outlinePasses.empty());
+    _defaultOutlineColor = _outlinePasses.front()->color();
+}
+    
+void
+App::updateLogic(Renderer& renderer, const XRService& xrService)
+{
+    auto handAnchors = xrService.handAnchors();
+    onHandUpdate(renderer, handAnchors);
+}
+    
+void
+App::onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors)
+{
+    for (const auto& interaction : _interactions)
+    {
+        const auto previousState = interaction->state();
+        interaction->update(anchors);
+        
+        const auto newState = interaction->state();
+        
+        if (previousState != newState)
+        {
+            if ((previousState == XRInteraction::State::active) && (newState == XRInteraction::State::inactive))
+            {
+                interaction->commit();
+            }
+            else if (newState == XRInteraction::State::active)
+            {
+                
+            }
+        }
+    }
+    
+    updateSelection(renderer, anchors);
+}
+    
+void
+App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
+{
+    // find if close to to an object
+    XRHandAnchorsWithDistance anchorsWithDist { anchors };
+    findClosestObject(_world->rootObject(), anchorsWithDist);
+    const auto closestChiralityOpt = anchorsWithDist.closestAnchorChirality();
+    
+    if (closestChiralityOpt.has_value() && (anchorsWithDist.distance(closestChiralityOpt.value()).distance <= 0.05f))
+    {
+        const auto closestChirality = closestChiralityOpt.value();
+        const auto& closestAnchor = anchorsWithDist.anchor(closestChirality);
+        
+        auto object = anchorsWithDist.distance(closestChiralityOpt.value()).object;
+        
+        _world->setSelection(object);
+        
+        float4 color;
+        if (closestAnchor->isPinching())
+        {
+            color = float4 { 0.f, 1.f, 0.f, 1.f };
+        }
+        else
+        {
+            color = _defaultOutlineColor;
+        }
+        
+        for (auto pass: _outlinePasses)
+        {
+            pass->setColor(color);
+        }
+    }
+    else
+    {
+        _world->setSelection({});
+    }
+}
+        
 @implementation VisionOSRenderer
 {
     std::unique_ptr<App> _app;

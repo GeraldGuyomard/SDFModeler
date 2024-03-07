@@ -10,12 +10,13 @@
 #include "XR/XRHandAnchor.h"
 #include "Object3D.h"
 #include "TransformObjectCommand.h"
+#include "XRInteraction.h"
 
 #include <memory>
 #include <optional>
 #include <chrono>
 
-class XRUndoRedoInteraction final
+class XRUndoRedoInteraction final : public XRInteraction
 {
 public:
     using Ptr = std::shared_ptr<XRUndoRedoInteraction>;
@@ -26,12 +27,13 @@ public:
         redo
     };
     
-    XRUndoRedoInteraction(World& world, Type);
+    XRUndoRedoInteraction(const WorldPtr& world, Type);
     
-    void update(const XRHandAnchor* left, const XRHandAnchor* right);
+    void update(const XRHandAnchors&) override;
+    void commit() override;
 
 private:
-    World& _world;
+    WorldPtr _world;
     const Type _type;
     
     bool _isGestureDetected(const XRHandAnchor* anchor) const;
