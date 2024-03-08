@@ -94,7 +94,7 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
     const auto& left = anchors.anchor(Chirality::left);
     const auto& right = anchors.anchor(Chirality::right);
     
-    if ((left == nullptr) || (right != nullptr))
+    if ((left == nullptr) || (right == nullptr))
     {
         // lost tracking
         return State::active;

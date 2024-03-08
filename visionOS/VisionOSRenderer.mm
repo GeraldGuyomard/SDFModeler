@@ -32,10 +32,12 @@ private:
     void onInteractionStateChanged(const XRInteraction::Ptr&);
     
     void setOutlineColor(float4 c);
+    void setOutlineThickness(float thickness);
     
     WorldPtr _world;
     std::vector<SelectionOutlineRenderPass*> _outlinePasses;
     float4 _defaultOutlineColor;
+    float _defaultOutlineThickness;
     
     XRInteractionManager _interactionManager;
     XRDragInteraction::Ptr _dragInteraction;
@@ -52,6 +54,11 @@ App::App()
     
     _scaleInteraction = std::make_shared<XRDualPinchInteraction>(_world);
     _scaleInteraction->setName("scale");
+    _scaleInteraction->setStateChangedCallback([this](const XRInteraction::Ptr& interaction, XRInteraction::State oldState, XRInteraction::State newState)
+    {
+        onInteractionStateChanged(interaction);
+    });
+    
     _interactionManager.add(_scaleInteraction);
     
     _dragInteraction = std::make_shared<XRDragInteraction>(_world);
@@ -60,6 +67,7 @@ App::App()
     {
         onInteractionStateChanged(interaction);
     });
+    
     _interactionManager.add(_dragInteraction);
     
     auto undoInteraction = std::make_shared<XRDragInteraction>(_world);
@@ -86,6 +94,7 @@ App::prepare(Renderer& renderer)
     
     ASSERT(!_outlinePasses.empty());
     _defaultOutlineColor = _outlinePasses.front()->color();
+    _defaultOutlineThickness = _outlinePasses.front()->thickness();
 }
     
 void
@@ -116,6 +125,8 @@ App::onInteractionStateChanged(const XRInteraction::Ptr& interaction)
     }
     else if ((state == XRInteraction::State::active) || (state == XRInteraction::State::possible))
     {
+        const float thickness = (state == XRInteraction::State::active) ? 2.f * _defaultOutlineThickness : _defaultOutlineThickness;
+        
         if (interaction == _dragInteraction)
         {
             const auto* payload = _dragInteraction->statePayload();
@@ -123,6 +134,7 @@ App::onInteractionStateChanged(const XRInteraction::Ptr& interaction)
             _world->setSelection(payload->entry.object);
             
             setOutlineColor({ 0.f, 1.f, 0.f, 1.f });
+            setOutlineThickness(thickness);
         }
         else if (interaction == _scaleInteraction)
         {
@@ -131,6 +143,7 @@ App::onInteractionStateChanged(const XRInteraction::Ptr& interaction)
             _world->setSelection(payload->entry.object);
             
             setOutlineColor({ 1.f, 0.f, 0.f, 1.f });
+            setOutlineThickness(thickness);
         }
     }
 }
@@ -141,6 +154,15 @@ App::setOutlineColor(float4 c)
     for (auto pass: _outlinePasses)
     {
         pass->setColor(c);
+    }
+}
+
+void
+App::setOutlineThickness(float thickness)
+{
+    for (auto pass: _outlinePasses)
+    {
+        pass->setThickness(thickness);
     }
 }
 
@@ -173,6 +195,7 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
         
         _world->setSelection(object);
         setOutlineColor(_defaultOutlineColor);
+        setOutlineThickness(_defaultOutlineThickness);
     }
     else
     {
