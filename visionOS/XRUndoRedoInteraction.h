@@ -29,14 +29,20 @@ public:
     
     XRUndoRedoInteraction(const WorldPtr& world, Type);
     
-    void update(const XRHandAnchors&) override;
-    void commit() override;
+    State update(const XRHandAnchors&) override;
 
+protected:
+    void _onStateChanged(State oldState, State newState) override;
+                           
 private:
     WorldPtr _world;
     const Type _type;
     
-    bool _isGestureDetected(const XRHandAnchor* anchor) const;
+    State _updateWhenInactive(const XRHandAnchors&);
+    State _updateWhenPossible(const XRHandAnchors&);
+    State _updateWhenActive(const XRHandAnchors&);
+    
+    bool _isGestureDetected(const XRHandAnchor& anchor) const;
     
     class Tracking final
     {

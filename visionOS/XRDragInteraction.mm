@@ -24,117 +24,151 @@ XRDragInteraction::XRDragInteraction(const WorldPtr& world)
 
 
 void
-XRDragInteraction::update(const XRHandAnchors& anchors)
+XRDragInteraction::_onStateChanged(State oldState, State newState)
 {
-    if (_activeState != nullptr)
+    switch (newState)
     {
-        ASSERT(state() == State::active);
-        constexpr float kPinchingReleaseDist = XRHandAnchor::kDefaultFingerDistance * 2.f;
-        
-        const auto& anchor = anchors.anchor(_activeState->chirality);
-        
-        if ((anchor != nullptr) && !anchor->isPinching(kPinchingReleaseDist))
+        case State::inactive:
         {
-            _setState(State::inactive);
-        }
-        else
-        {
-            const auto& otherAnchor = anchors.otherAnchor(_activeState->chirality);
-            if ((otherAnchor != nullptr) && otherAnchor->isPinching())
+            ASSERT(_statePayload != nullptr);
+            
+            if (oldState == State::active)
             {
-                _setState(State::inactive);
+                auto command = std::make_shared<TransformObjectCommand>(std::vector<TransformObjectCommand::Entry>{ _statePayload->entry });
+                _world->commandHistory().run(command);
+                _world->commandHistory().enable(true);
             }
+            
+            _statePayload.reset();
+            break;
         }
-    }
-    else
-    {
-        const XRHandAnchor* activeAnchor = nullptr;
-        for (const auto& anchor : anchors.anchors)
+            
+        case State::possible: break;
+            
+        case State::active:
         {
-            if ((anchor != nullptr) && anchor->isPinching())
-            {
-                if (activeAnchor != nullptr)
-                {
-                    // more than one -> discard
-                    _setState(State::inactive);
-                }
-                else
-                {
-                    activeAnchor = anchor.get();
-                }
-                
-                break;
-            }
+            auto object = _statePayload->entry.object;
+            object->world()->commandHistory().enable(false);
+            break;
         }
-        
-        XRHandAnchorsWithDistance anchorsWithDist { anchors };
-        
-        findClosestObject(_world->rootObject(), anchorsWithDist);
-        
-        if (activeAnchor != nullptr)
-        {
-            const auto& distances = anchorsWithDist.distances[size_t(activeAnchor->chirality())];
-            if (distances.position.has_value()) {
-                _activeState = std::make_unique<ActiveState>(
-                    activeAnchor->chirality(),
-                    distances.position.value(),
-                    distances.object
-                );
-                
-                _setState(State::possible);
-                
-                const auto minChirality = anchorsWithDist.closestAnchorChirality();
-                if (minChirality.has_value())
-                {
-                    auto object = anchorsWithDist.distances[size_t(minChirality.value())].object;
-                    object->world()->commandHistory().enable(false);
-                }
-            }
-        }
-    }
-    
-    const auto& activeAnchor = anchors.anchor(_activeState->chirality);
-    
-    const auto newPos = translation(activeAnchor->jointTransformInWorldSpace(JointID::indexFingerTip));
-    
-    if (state() == State::inactive)
-    {
-        _setState(State::possible);
-    }
-    else if (state() == State::possible)
-    {
-        const auto delta = newPos - _activeState->initialPosInWorld;
-        const float d = length(delta);
-        if (d >= 0.05f)
-        {
-            _activeState->initialPosInWorld = newPos;
-            _setState(State::active);
-        }
-    }
-    else
-    {
-        const auto delta = newPos - _activeState->initialPosInWorld;
-        
-        auto transform = _activeState->entry.transform;
-        const auto newWorldPos = translation(transform) + delta;
-        setTranslation(transform, newWorldPos);
-        
-        _activeState->entry.object->setWorldTransform(transform);
-        
-        _setState(State::active);
     }
 }
 
-void
-XRDragInteraction::commit()
+XRInteraction::State
+XRDragInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
-    if (_activeState != nullptr)
+    ASSERT(_statePayload == nullptr);
+    
+    const XRHandAnchor* activeAnchor = nullptr;
+    for (const auto& anchor : anchors.anchors)
     {
-        auto command = std::make_shared<TransformObjectCommand>(std::vector<TransformObjectCommand::Entry>{ _activeState->entry });
-        
-        _world->commandHistory().run(command);
-        _world->commandHistory().enable(true);
-        
-        _activeState.reset();
+        if ((anchor != nullptr) && anchor->isPinching())
+        {
+            if (activeAnchor != nullptr)
+            {
+                // more than one -> discard
+                return State::inactive;
+            }
+            else
+            {
+                activeAnchor = anchor.get();
+            }
+            
+            break;
+        }
+    }
+    
+    if (activeAnchor == nullptr)
+    {
+        return State::inactive;
+    }
+    
+    XRHandAnchorsWithDistance anchorsWithDist { anchors };
+    
+    findClosestObject(_world->rootObject(), anchorsWithDist);
+
+    const auto& distances = anchorsWithDist.distances[size_t(activeAnchor->chirality())];
+    if (!distances.position.has_value()) {
+        return State::inactive;
+    }
+    
+    if (distances.distance > 0.02f)
+    {
+        return State::inactive;
+    }
+    
+    _statePayload = std::make_unique<StatePayload>(
+        activeAnchor->chirality(),
+        distances.position.value(),
+        distances.object
+    );
+    
+    return State::possible;
+}
+
+XRInteraction::State
+XRDragInteraction::_updateWhenPossible(const XRHandAnchors& anchors)
+{
+    ASSERT(_statePayload != nullptr);
+    
+    const auto& activeAnchor = anchors.anchor(_statePayload->chirality);
+    if (activeAnchor == nullptr)
+    {
+        // tracking lost
+        return State::possible;
+    }
+    
+    const auto newPos = translation(activeAnchor->jointTransformInWorldSpace(JointID::indexFingerTip));
+    
+    const auto delta = newPos - _statePayload->initialPosInWorld;
+    const float d = length(delta);
+    if (d >= 0.05f)
+    {
+        _statePayload->initialPosInWorld = newPos;
+        return State::active;
+    }
+    
+    return State::possible;
+}
+
+XRInteraction::State
+XRDragInteraction::_updateWhenActive(const XRHandAnchors& anchors)
+{
+    ASSERT(_statePayload != nullptr);
+    
+    const auto& activeAnchor = anchors.anchor(_statePayload->chirality);
+    if (activeAnchor == nullptr)
+    {
+        // lost track
+        return State::active;
+    }
+    
+    constexpr float kPinchingReleaseDist = XRHandAnchor::kDefaultFingerDistance * 2.f;
+    if (!activeAnchor->isPinching(kPinchingReleaseDist))
+    {
+        return State::inactive;
+    }
+    
+    const auto anchorPos = translation(activeAnchor->jointTransformInWorldSpace(JointID::indexFingerTip));
+    const auto delta = anchorPos - _statePayload->initialPosInWorld;
+    
+    auto m = _statePayload->entry.transform;
+    auto pos = translation(m);
+    pos += delta;
+    setTranslation(m, pos);
+    
+    _statePayload->entry.object->setWorldTransform(m);
+    
+    return State::active;
+}
+
+XRInteraction::State
+XRDragInteraction::update(const XRHandAnchors& anchors)
+{
+    switch (state())
+    {
+        case State::inactive: return _updateWhenInactive(anchors);
+        case State::possible: return _updateWhenPossible(anchors);
+        case State::active: return _updateWhenActive(anchors);
     }
 }

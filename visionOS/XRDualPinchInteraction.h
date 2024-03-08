@@ -23,24 +23,29 @@ public:
 
     XRDualPinchInteraction(const WorldPtr& world);
     
-    void update(const XRHandAnchors&) override;
-    void commit() override;
+    State update(const XRHandAnchors&) override;
     
-private:
-    
-    WorldPtr _world;
-    
-    struct ActiveState final
+    struct ActivePayload final
     {
         const float initialDistance;
         const TransformObjectCommand::Entry entry;
         
-        ActiveState(float dist, const Object3D::Ptr& object)
+        ActivePayload(float dist, const Object3D::Ptr& object)
         : initialDistance(dist), entry { object }
         {}
     };
     
-    std::unique_ptr<ActiveState> _activeState;
+    const ActivePayload* activePayload() const { return _activePayload.get(); }
+    
+protected:
+    void _onStateChanged(State oldState, State newState) override;
+    
+private:
+    State _updateWhenInactive(const XRHandAnchors&);
+    State _updateWhenActive(const XRHandAnchors&);
+    
+    WorldPtr _world;
+    std::unique_ptr<ActivePayload> _activePayload;
     
 };
 

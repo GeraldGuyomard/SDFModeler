@@ -12,18 +12,13 @@ XRUndoRedoInteraction::XRUndoRedoInteraction(const WorldPtr& world, Type type)
 {}
 
 bool
-XRUndoRedoInteraction::_isGestureDetected(const XRHandAnchor* anchor) const
+XRUndoRedoInteraction::_isGestureDetected(const XRHandAnchor& anchor) const
 {
-    if (anchor == nullptr)
-    {
-        return false;
-    }
-    
     // thumbs down -> direction from wrist to thumb tip is vertical
     
     // The thumb should point down
-    const auto wristPosition = translation(anchor->jointTransformInWorldSpace(JointID::wrist));
-    const auto thumbPosition = translation(anchor->jointTransformInWorldSpace(JointID::thumbTip));
+    const auto wristPosition = translation(anchor.jointTransformInWorldSpace(JointID::wrist));
+    const auto thumbPosition = translation(anchor.jointTransformInWorldSpace(JointID::thumbTip));
     
     const auto dir = normalize(thumbPosition - wristPosition);
     
@@ -36,10 +31,10 @@ XRUndoRedoInteraction::_isGestureDetected(const XRHandAnchor* anchor) const
     
     // The 4 remaining fingers should be aligned vertically
     // and all not distant from the the axis
-    const auto indexPosition = translation(anchor->jointTransformInWorldSpace(JointID::indexFingerTip));
-    const auto middlePosition = translation(anchor->jointTransformInWorldSpace(JointID::middleFingerTip));
-    const auto ringPosition = translation(anchor->jointTransformInWorldSpace(JointID::ringFingerTip));
-    const auto littlePosition = translation(anchor->jointTransformInWorldSpace(JointID::littleFingerTip));
+    const auto indexPosition = translation(anchor.jointTransformInWorldSpace(JointID::indexFingerTip));
+    const auto middlePosition = translation(anchor.jointTransformInWorldSpace(JointID::middleFingerTip));
+    const auto ringPosition = translation(anchor.jointTransformInWorldSpace(JointID::ringFingerTip));
+    const auto littlePosition = translation(anchor.jointTransformInWorldSpace(JointID::littleFingerTip));
     
     const auto averageSecondaryPosition = (indexPosition + middlePosition + ringPosition + littlePosition) / 4.f;
     
@@ -88,52 +83,81 @@ XRUndoRedoInteraction::Tracking::resetTime()
 }
 
 void
-XRUndoRedoInteraction::update(const XRHandAnchors& anchors)
+XRUndoRedoInteraction::_onStateChanged(State oldState, State newState)
 {
-    // Undo is thumb down for a while
-    if (_tracking.has_value())
+    switch(newState)
     {
-        auto& tracking = _tracking.value();
-        const XRHandAnchor* anchor = anchors.anchor(tracking.chirality()).get();
-        if (_isGestureDetected(anchor))
-        {
-            if (tracking.enoughTimeElapsed())
-            {
-                if (_type == Type::undo)
-                {
-                    _world->commandHistory().undo();
-                }
-                else
-                {
-                    _world->commandHistory().redo();
-                }
-                
-                _tracking.reset();
-            }
-        }
-        else
-        {
-            // keep tracking a still pose
-            _setState(State::inactive);
-            //tracking.resetTime();
-        }
-    }
-    else
-    {
-        for (const auto& anchor : anchors.anchors)
-        {
-            if (_isGestureDetected(anchor.get()))
-            {
-                _tracking = Tracking { anchor->chirality() };
-                _setState(State::active);
-                break;
-            }
-        }
+        case State::inactive: _tracking.reset(); break;
+        default: break;
     }
 }
 
-void
-XRUndoRedoInteraction::commit()
+XRInteraction::State
+XRUndoRedoInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
+    for (const auto& anchor : anchors.anchors)
+    {
+        if ((anchor != nullptr) && _isGestureDetected(*anchor))
+        {
+            _tracking = Tracking { anchor->chirality() };
+            return State::possible;
+        }
+    }
     
+    return State::inactive;
 }
+
+XRInteraction::State
+XRUndoRedoInteraction::_updateWhenPossible(const XRHandAnchors& anchors)
+{
+    ASSERT(_tracking.has_value());
+    
+    const auto& tracking = _tracking.value();
+    
+    const auto& anchor = anchors.anchor(tracking.chirality());
+    if (anchor == nullptr)
+    {
+        // lost tracking
+        return State::possible;
+    }
+    
+    if (!_isGestureDetected(*anchor))
+    {
+        return State::inactive;
+    }
+    
+    if (tracking.enoughTimeElapsed())
+    {
+        return State::active;
+    }
+    
+    return State::possible;
+}
+
+XRInteraction::State
+XRUndoRedoInteraction::_updateWhenActive(const XRHandAnchors& anchors)
+{
+    if (_type == Type::undo)
+    {
+        _world->commandHistory().undo();
+    }
+    else
+    {
+        _world->commandHistory().redo();
+    }
+    
+    return State::inactive;
+}
+
+
+XRInteraction::State
+XRUndoRedoInteraction::update(const XRHandAnchors& anchors)
+{
+    switch (state())
+    {
+        case State::inactive: return _updateWhenInactive(anchors);
+        case State::possible: return _updateWhenPossible(anchors);
+        case State::active: return _updateWhenActive(anchors);
+    }
+}
+

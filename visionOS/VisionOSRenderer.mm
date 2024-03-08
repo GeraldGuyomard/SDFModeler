@@ -28,14 +28,18 @@ public:
     void onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors);
 
 private:
-    
     void updateSelection(Renderer& renderer, const XRHandAnchors& anchors);
+    void onInteractionStateChanged(const XRInteraction::Ptr&);
+    
+    void setOutlineColor(float4 c);
     
     WorldPtr _world;
     std::vector<SelectionOutlineRenderPass*> _outlinePasses;
     float4 _defaultOutlineColor;
     
-    std::vector<XRInteraction::Ptr> _interactions;
+    XRInteractionManager _interactionManager;
+    XRDragInteraction::Ptr _dragInteraction;
+    XRDualPinchInteraction::Ptr _scaleInteraction;
 };
 
 App::App()
@@ -46,10 +50,25 @@ App::App()
     
     _world = makeDefaultWorld(transform);
     
-    _interactions.push_back(std::make_shared<XRUndoRedoInteraction>(_world, XRUndoRedoInteraction::Type::undo));
-    _interactions.push_back(std::make_shared<XRUndoRedoInteraction>(_world, XRUndoRedoInteraction::Type::redo));
-    _interactions.push_back(std::make_shared<XRDragInteraction>(_world));
-    _interactions.push_back(std::make_shared<XRDualPinchInteraction>(_world));
+    _scaleInteraction = std::make_shared<XRDualPinchInteraction>(_world);
+    _scaleInteraction->setName("scale");
+    _interactionManager.add(_scaleInteraction);
+    
+    _dragInteraction = std::make_shared<XRDragInteraction>(_world);
+    _dragInteraction->setName("drag");
+    _dragInteraction->setStateChangedCallback([this](const XRInteraction::Ptr& interaction, XRInteraction::State oldState, XRInteraction::State newState)
+    {
+        onInteractionStateChanged(interaction);
+    });
+    _interactionManager.add(_dragInteraction);
+    
+    auto undoInteraction = std::make_shared<XRDragInteraction>(_world);
+    undoInteraction->setName("undo");
+    _interactionManager.add(undoInteraction);
+    
+    auto redoInteraction = std::make_shared<XRUndoRedoInteraction>(_world, XRUndoRedoInteraction::Type::redo);
+    redoInteraction->setName("redo");
+    _interactionManager.add(redoInteraction);
 }
     
     
@@ -79,60 +98,81 @@ App::updateLogic(Renderer& renderer, const XRService& xrService)
 void
 App::onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors)
 {
-    for (const auto& interaction : _interactions)
-    {
-        const auto previousState = interaction->state();
-        interaction->update(anchors);
-        
-        const auto newState = interaction->state();
-        
-        if (previousState != newState)
-        {
-            if ((previousState == XRInteraction::State::active) && (newState == XRInteraction::State::inactive))
-            {
-                interaction->commit();
-            }
-            else if (newState == XRInteraction::State::active)
-            {
-                
-            }
-        }
-    }
-    
+    _interactionManager.process(anchors);
+
     updateSelection(renderer, anchors);
 }
-    
+
+void
+App::onInteractionStateChanged(const XRInteraction::Ptr& interaction)
+{
+    const auto state = interaction->state();
+    if (state == XRInteraction::State::inactive)
+    {
+        if ((interaction == _dragInteraction) || (interaction == _scaleInteraction))
+        {
+            _world->setSelection({});
+        }
+    }
+    else if ((state == XRInteraction::State::active) || (state == XRInteraction::State::possible))
+    {
+        if (interaction == _dragInteraction)
+        {
+            const auto* payload = _dragInteraction->statePayload();
+            ASSERT(payload != nullptr);
+            _world->setSelection(payload->entry.object);
+            
+            setOutlineColor({ 0.f, 1.f, 0.f, 1.f });
+        }
+        else if (interaction == _scaleInteraction)
+        {
+            const auto* payload = _scaleInteraction->activePayload();
+            ASSERT(payload != nullptr);
+            _world->setSelection(payload->entry.object);
+            
+            setOutlineColor({ 1.f, 0.f, 0.f, 1.f });
+        }
+    }
+}
+
+void
+App::setOutlineColor(float4 c)
+{
+    for (auto pass: _outlinePasses)
+    {
+        pass->setColor(c);
+    }
+}
+
 void
 App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
 {
-    // find if close to to an object
+    for (const auto& interaction: _interactionManager.interactions())
+    {
+        const auto state = interaction->state();
+        if (state != XRInteraction::State::inactive)
+        {
+            return;
+        }
+    }
+    
+    // Select the object that is close enough
     XRHandAnchorsWithDistance anchorsWithDist { anchors };
     findClosestObject(_world->rootObject(), anchorsWithDist);
     const auto closestChiralityOpt = anchorsWithDist.closestAnchorChirality();
     
-    if (closestChiralityOpt.has_value() && (anchorsWithDist.distance(closestChiralityOpt.value()).distance <= 0.05f))
+    if (!closestChiralityOpt.has_value())
+    {
+        return;
+    }
+    
+    if (anchorsWithDist.distance(closestChiralityOpt.value()).distance <= 0.05f)
     {
         const auto closestChirality = closestChiralityOpt.value();
-        const auto& closestAnchor = anchorsWithDist.anchor(closestChirality);
-        
         auto object = anchorsWithDist.distance(closestChiralityOpt.value()).object;
         
         _world->setSelection(object);
-        
-        float4 color;
-        if (closestAnchor->isPinching())
-        {
-            color = float4 { 0.f, 1.f, 0.f, 1.f };
-        }
-        else
-        {
-            color = _defaultOutlineColor;
-        }
-        
-        for (auto pass: _outlinePasses)
-        {
-            pass->setColor(color);
-        }
+        setOutlineColor(_defaultOutlineColor);
     }
     else
     {

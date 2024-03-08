@@ -19,25 +19,36 @@ public:
     
     XRDragInteraction(const WorldPtr& world);
     
-    void update(const XRHandAnchors&) override;
-    void commit() override;
+    State update(const XRHandAnchors&) override;
     
-private:
-    
-    WorldPtr _world;
-    
-    struct ActiveState final
+    struct StatePayload final
     {
         const Chirality chirality;
         float3 initialPosInWorld;
         
         TransformObjectCommand::Entry entry;
         
-        ActiveState(Chirality c, float3 pos, const Object3D::Ptr& object )
+        StatePayload(Chirality c, float3 pos, const Object3D::Ptr& object )
         : chirality(c), initialPosInWorld(pos), entry { object }
         {}
     };
     
-    std::unique_ptr<ActiveState> _activeState;
+    const StatePayload* statePayload() const
+    {
+        return _statePayload.get();
+    }
+    
+protected:
+    void _onStateChanged(State oldState, State newState) override;
+    
+private:
+    
+    State _updateWhenInactive(const XRHandAnchors&);
+    State _updateWhenPossible(const XRHandAnchors&);
+    State _updateWhenActive(const XRHandAnchors&);
+    
+    WorldPtr _world;
+    
+    std::unique_ptr<StatePayload> _statePayload;
 };
 
