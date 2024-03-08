@@ -10,6 +10,7 @@
 #import <Metal/Metal.h>
 #include <memory>
 #include <string>
+#include <optional>
 #include "RenderTargetConfiguration.h"
 
 class Renderer;
