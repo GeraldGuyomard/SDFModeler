@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include <variant>
+#include <functional>
 
 enum class PropertyType
 {
