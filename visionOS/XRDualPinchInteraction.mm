@@ -117,6 +117,7 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
     auto& payload = *_activePayload;
     
     const float scale = 1.f + (newDist - payload.initialDistance) / newDist;
+    NSLog(@"scale=%5.3f newDist=%5.3f initialDistance=%5.3f", scale, newDist, payload.initialDistance);
     
     const auto pos = translation(payload.entry.transform);
     const auto moveToPivot = matrix4x4_translation(-pos);

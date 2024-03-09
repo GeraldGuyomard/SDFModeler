@@ -92,7 +92,7 @@ XRDragInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
         return State::inactive;
     }
     
-    if (distances.distance > 0.02f)
+    if (distances.distance > kMinDistanceForActivation)
     {
         return State::inactive;
     }

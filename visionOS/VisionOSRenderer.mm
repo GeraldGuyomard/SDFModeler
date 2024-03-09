@@ -188,13 +188,25 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
         return;
     }
     
-    if (anchorsWithDist.distance(closestChiralityOpt.value()).distance <= 0.05f)
+    constexpr float kMinDistance = 0.05f;
+    const float dist = anchorsWithDist.distance(closestChiralityOpt.value()).distance;
+    
+    if (dist <= kMinDistance)
     {
-        const auto closestChirality = closestChiralityOpt.value();
         auto object = anchorsWithDist.distance(closestChiralityOpt.value()).object;
         
         _world->setSelection(object);
-        setOutlineColor(_defaultOutlineColor);
+        
+        ASSERT(kMinDistance > XRDragInteraction::kMinDistanceForActivation);
+        const float c = (dist -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
+        
+        NSLog(@"c=%5.3f", c);
+        
+        auto color = _defaultOutlineColor;
+        color.w *= c;
+        
+        setOutlineColor(color);
+        
         setOutlineThickness(_defaultOutlineThickness);
     }
     else
