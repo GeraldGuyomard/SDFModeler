@@ -150,8 +150,6 @@ MTKViewRendererDelegate::updateViewportSize()
             camera->setViewportSize(viewportSize);
             
 #if 1
-            camera->setInverseZ(true);
-            
             auto intrinsics = std::make_unique<TangentsCameraIntrinsics>();
             
             const float ratio = viewportSize.y / viewportSize.x;
@@ -162,23 +160,23 @@ MTKViewRendererDelegate::updateViewportSize()
             
             camera->setIntrinsics(std::move(intrinsics));
 #else
-            camera->setInverseZ(false);
+            camera->setInverseZ(_inverseZ);
             
             auto intrinsics = std::make_unique<FOVCameraIntrinsics>();
             
             camera->setIntrinsics(std::move(intrinsics));
 #endif
             
-            float nearZNDC = 0.f;
-            float farZNDC = 0.5f;
+            float rayOriginZInNDC = 0.f;
+            float rayForwardZInNDC = 0.5f;
             
-            if (camera->inverseZ())
+            if (_inverseZ)
             {
-                std::swap(nearZNDC, farZNDC);
+                std::swap(rayOriginZInNDC, rayForwardZInNDC);
             }
             
-            camera->setNearZInNDC(nearZNDC);
-            camera->setFarZInNDC(farZNDC);
+            camera->setRayOriginZInNDC(rayOriginZInNDC);
+            camera->setRayForwardPointZInNDC(rayForwardZInNDC);
             
             const auto projMatrix = camera->intrinsics()->computeProjectionMatrix(viewportSize, camera->inverseZ());
             
@@ -197,7 +195,7 @@ MTKViewRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
 MTLCompareFunction
 MTKViewRendererDelegate::depthCompareFunction() const
 {
-    return MTLCompareFunctionLessEqual;
+    return _inverseZ ? MTLCompareFunctionGreater : MTLCompareFunctionLessEqual;
 }
 
 void

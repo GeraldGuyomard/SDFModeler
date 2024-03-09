@@ -84,16 +84,14 @@ public:
     const float4x4& invProjectionMatrix() const { return _invProjectionMatrix; }
     void setProjectionMatrix(const float4x4&);
     
-    float nearZInNDC() const { return _nearZInNDC; }
-    void setNearZInNDC(float z) { _nearZInNDC = z; }
+    float rayOriginZInNDC() const { return _rayOriginZInC; }
+    void setRayOriginZInNDC(float z) { _rayOriginZInC = z; }
     
-    float farZInNDC() const { return _farZInNDC; }
-    void setFarZInNDC(float z) { _farZInNDC = z;  }
+    float rayForwardPointZInNDC() const { return _rayForwardPointZInNDC; }
+    void setRayForwardPointZInNDC(float z) { _rayForwardPointZInNDC = z;  }
+    bool inverseZ() const { return _rayForwardPointZInNDC < _rayOriginZInC; }
     
     float rayLength() const { return _rayLength; }
-    
-    bool inverseZ() const { return _inverseZ; }
-    void setInverseZ(bool i) { _inverseZ = i; }
     
 private:
     CameraIntrinsics::Ptr _intrinsics;
@@ -101,10 +99,7 @@ private:
     
     float4x4 _projectionMatrix = float4x4_identity();
     float4x4 _invProjectionMatrix = float4x4_identity();
-    float _nearZInNDC = 0.f;
-    float _farZInNDC = 0.5f;
+    float _rayOriginZInC = 0.f;
+    float _rayForwardPointZInNDC = 0.5f;
     float _rayLength = 25.f;
-    
-    bool _inverseZ = false;
-    
 };

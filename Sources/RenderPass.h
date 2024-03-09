@@ -51,7 +51,7 @@ public:
     
     static constexpr size_t kMaxBuffersInFlight = 3;
     
-    const PipelineConfiguration* pipelineConfiguration() const { return _pipelineConfiguration.get(); }
+    const PipelineConfiguration* _Nonnull pipelineConfiguration() const { return _pipelineConfiguration.get(); }
     
     bool enabled() const { return _enabled; }
     void enable(bool);

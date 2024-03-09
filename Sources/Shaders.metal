@@ -48,9 +48,8 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     
 #if 1
     out.color = res.color;
+    out.depth = res.adjustedDepth(uniforms.inverseZ());
     
-    // because reverse Z (the closest, the brightest)
-    out.depth = 1.f - res.depth;
 #else
     const float2 uv = (in.viewportNDC + float2 { 1.f, 1.f }) * 0.5f;
     out.color = float4 { uv.x, uv.y, 0, 1 };
@@ -62,6 +61,7 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
 struct FragmentShaderOut_ColorOnly
 {
     float4 color [[color(0)]];
+    float depth [[depth(any)]];
 };
 
 fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[stage_in]],
@@ -74,6 +74,7 @@ fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[
     
     FragmentShaderOut_ColorOnly out;
     out.color = res.color;
+    out.depth = res.adjustedDepth(uniforms.inverseZ());
     
     return out;
 }
@@ -101,7 +102,9 @@ struct FragmentShader_SelectionOutlineOut
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
-                                    texture2d<float> inTexture [[ texture(TextureIndexInput) ]])
+                                    texture2d<float> inTexture [[ texture(TextureIndexInput) ]],
+                                    texture2d<float> inDepthTexture [[ texture(DepthIndexInput) ]]
+                                    )
 {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,

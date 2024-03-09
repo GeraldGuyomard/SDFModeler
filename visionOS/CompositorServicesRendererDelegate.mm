@@ -39,18 +39,16 @@ CompositorServicesRendererDelegate::init(Renderer* renderer)
     _cameraRig = CameraRig::make(renderer->world(), nbCameras);
     for (const auto& camera : _cameraRig->cameras())
     {
-        camera->setInverseZ(inverseZ);
+        float rayOriginZNDC = 0.f;
+        float rayForwardZNDC = 0.5f;
         
-        float nearZNDC = 0.f;
-        float farZNDC = 0.5f;
-        
-        if (camera->inverseZ())
+        if (inverseZ)
         {
-            std::swap(nearZNDC, farZNDC);
+            std::swap(rayOriginZNDC, rayForwardZNDC);
         }
         
-        camera->setNearZInNDC(nearZNDC);
-        camera->setFarZInNDC(farZNDC);
+        camera->setRayOriginZInNDC(rayOriginZNDC);
+        camera->setRayForwardPointZInNDC(rayForwardZNDC);
         
         camera->setIntrinsics(std::make_unique<TangentsCameraIntrinsics>());
     }

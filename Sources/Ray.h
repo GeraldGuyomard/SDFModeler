@@ -34,10 +34,10 @@ struct Ray final
     
     static Ray make(float2 ndcPosition, CONSTANT Uniforms& uniforms)
     {
-        float3 origin = viewToWorld(ndcPosition, uniforms.nearZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
-        float3 end = viewToWorld(ndcPosition, uniforms.farZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
+        float3 origin = viewToWorld(ndcPosition, uniforms.rayOriginZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
+        float3 forwardPt = viewToWorld(ndcPosition, uniforms.rayForwardZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
         
-        float3 direction = (end - origin);
+        float3 direction = (forwardPt - origin);
         direction = normalize(direction);
         
         Ray ray { origin, direction, uniforms.rayLength };

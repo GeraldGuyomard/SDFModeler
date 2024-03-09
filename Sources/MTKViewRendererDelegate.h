@@ -43,6 +43,8 @@ private:
     
     RenderTargetConfiguration::Ptr _configuration = std::make_shared<RenderTargetConfiguration>();
     CameraRig::Ptr _cameraRig;
+    bool _inverseZ = true;
+    
     mutable std::optional<float2> _lastUpdatedViewportSize;
 };
 

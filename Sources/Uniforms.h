@@ -19,8 +19,14 @@ struct Uniforms final
     float4x4 invProjectionMatrix;
     float4x4 cameraMatrix;
     
-    float nearZInNDC = 0.f;
-    float farZInNDC = 0.5f;
+    float rayOriginZInNDC = 0.f;
+    float rayForwardZInNDC = 0.5f;
+    
+    bool inverseZ() CONSTANT
+    {
+        return rayForwardZInNDC < rayOriginZInNDC;
+    }
+    
     float rayLength = 100.f;
     
     float3 lightDirection;

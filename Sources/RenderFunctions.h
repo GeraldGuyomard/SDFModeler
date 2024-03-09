@@ -17,6 +17,8 @@
 #include "FragmentShader/CellShader.h"
 #include "FragmentShader/MattingShader.h"
 
+#include <TargetConditionals.h>
+
 template <typename TShader>
 class NullEnvironment final
 {
@@ -95,6 +97,11 @@ struct RenderResult final
 {
     const float4 color;
     const float depth;
+    
+    float adjustedDepth(bool inverseZ) const
+    {
+        return (inverseZ) ? (1.f - depth) : depth;
+    }
     
     RenderResult(float4 color, float depth)
     : color(color), depth(depth)

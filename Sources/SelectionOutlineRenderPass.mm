@@ -89,9 +89,9 @@ SelectionOutlineRenderPass::makePipelineConfiguration(Renderer& renderer) const
 }
 
 void
-SelectionOutlineRenderPass::setMattingTextureProvider(const MattingTextureProvider& provider)
+SelectionOutlineRenderPass::setMattingTexturesProvider(const MattingTexturesProvider& provider)
 {
-    _mattingTextureProvider = provider;
+    _mattingTexturesProvider = provider;
 }
 
 bool
@@ -142,14 +142,17 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
 void
 SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
-    if (_mattingTextureProvider == nullptr)
+    if (_mattingTexturesProvider == nullptr)
     {
         return;
     }
     
-    auto inputTexture = _mattingTextureProvider();
+    auto inputTextures = _mattingTexturesProvider();
     
-    if (inputTexture == nullptr)
+    auto inputColor = inputTextures.first;
+    auto inputDepth = inputTextures.second;
+    
+    if ((inputColor == nil) || (inputDepth == nil))
     {
         return;
     }
@@ -165,7 +168,8 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
                             offset:0
                            atIndex:BufferIndexUVs];
     
-    [encoder setFragmentTexture:inputTexture atIndex:TextureIndexInput];
+    [encoder setFragmentTexture:inputColor atIndex:TextureIndexInput];
+    [encoder setFragmentTexture:inputColor atIndex:DepthIndexInput];
     
     [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }

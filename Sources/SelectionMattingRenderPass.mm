@@ -32,11 +32,28 @@ public:
         
         for (const auto& object : sel.objects())
         {
-            _objectIDsToRender.insert(object->id());
+            _addObjectToRender(object, false);
         }
     }
     
 private:
+    
+    void _addObjectToRender(const Object3D::Ptr& object, bool ignoreIfSubstractive)
+    {
+        if (!ignoreIfSubstractive || (object->operation() == SDFOperation::addition))
+        {
+            if (object->geometry() != nullptr)
+            {
+                _objectIDsToRender.insert(object->id());
+            }
+        }
+        
+        for (const auto& child : object->children())
+        {
+            _addObjectToRender(child, true);
+        }
+    }
+    
     std::unordered_set<ObjectID> _objectIDsToRender;
 };
 
@@ -60,6 +77,10 @@ SelectionMattingRenderPass::init(Renderer& renderer)
     _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
     _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+    
+    _renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
+    _renderPassDescriptor.depthAttachment.clearDepth = 0;
     
     return true;
 }
@@ -95,16 +116,36 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     // to save time and get free blur
     //size = ceil(size * 0.75f);
     
-    if ((_targetTexture.width != size.x) || (_targetTexture.height != size.y))
+    if ((_targetColorTexture.width != size.x) || (_targetColorTexture.height != size.y))
     {
-        const auto colorPixelFormat = pipelineConfiguration()->colorPixelFormat;
-        auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:NSUInteger(size.x) height:NSUInteger(size.y) mipmapped:NO];
-        textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+        auto config = pipelineConfiguration();
         
-        _targetTexture = [renderer.mtlDevice() newTextureWithDescriptor:textureDescriptor];
+        const auto width = NSUInteger(size.x);
+        const auto height = NSUInteger(size.y);
+        
+        auto device = renderer.mtlDevice();
+        
+        // Color
+        {
+            const auto colorPixelFormat = config->colorPixelFormat;
+            auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:width height:height mipmapped:NO];
+            textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+            
+            _targetColorTexture = [device newTextureWithDescriptor:textureDescriptor];
+        }
+        
+        // Depth
+        {
+            const auto depthPixelFormat = renderer.delegate()->presentConfiguration()->depthPixelFormat;
+            auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:depthPixelFormat width:width height:height mipmapped:NO];
+            textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+            
+            _targetDepthTexture = [device newTextureWithDescriptor:textureDescriptor];
+        }
     }
     
-    _renderPassDescriptor.colorAttachments[0].texture = _targetTexture;
+    _renderPassDescriptor.colorAttachments[0].texture = _targetColorTexture;
+    _renderPassDescriptor.depthAttachment.texture = _targetDepthTexture;
     
     auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
     encoder.label = @"SelectionMattingRenderPass";
@@ -122,7 +163,6 @@ SelectionMattingRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
     config->colorPixelFormat = MTLPixelFormatR8Unorm;
-    config->depthPixelFormat = MTLPixelFormatInvalid;
     
     return config;
 }
