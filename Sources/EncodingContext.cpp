@@ -283,14 +283,13 @@ EncodingContext::encodedPrimitiveOffset(const Object3D* object) const
 }
 
 void
-EncodingContext::encodePrimitives(const Object3D& root, uint32_t depth)
+EncodingContext::encodePrimitives(const Object3D& root)
 {
     root.selfEncode(*this);
     
-    const uint32_t childrenDepth = depth  + 1;
     for (const auto& child : root.children())
     {
-        encodePrimitives(*child, childrenDepth);
+        encodePrimitives(*child);
     }
 }
 
@@ -323,14 +322,39 @@ EncodingContext::cancelLastDrawCommand()
     --_availableDrawCommandIndex;
 }
 
-void
-EncodingContext::setEncodingFilter(const EncodingFilter& filter)
+bool
+EncodingContextDelegate::shouldEncode(const Object3D&) const
 {
-    _encodingFilter = filter;
+    return true;
+}
+
+SDFOperation
+EncodingContextDelegate::operation(const Object3D& object) const
+{
+    return object.operation();
+}
+
+void
+EncodingContext::setDelegate(EncodingContextDelegate* delegate)
+{
+    _delegate = delegate;
 }
 
 bool
 EncodingContext::shouldEncode(const Object3D& object) const
 {
-    return (_encodingFilter == nullptr) || _encodingFilter(object);
+    return (_delegate == nullptr) || _delegate->shouldEncode(object);
+}
+
+SDFOperation
+EncodingContext::operation(const Object3D& object) const
+{
+    if (_delegate != nullptr)
+    {
+        return _delegate->operation(object);
+    }
+    else
+    {
+        return object.operation();
+    }
 }

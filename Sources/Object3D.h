@@ -230,7 +230,7 @@ public:
     
     void selfEncode(EncodingContext& context) const override final
     {
-        context.encodePrimitive(this, [this](EncodedPrimitive* encodedPrimitive)
+        context.encodePrimitive(this, [this, &context](EncodedPrimitive* encodedPrimitive)
         {
             RSTTransformer transformer { worldTransform() };
             
@@ -239,6 +239,8 @@ public:
             const auto matID = materialID();
             ASSERT(matID >= 0);
             
+            const SDFOperation op = context.operation(*this);
+            
             return encodePrimitive<SDFObject<TGeometry, RSTTransformer>>(
                                                 encodedPrimitive,
                                                object,
@@ -246,7 +248,7 @@ public:
                                                 matID,
                                                object.objectType(),
                                                transformer.transformerType(),
-                                                operation()
+                                                op
                                         );
         });
     }

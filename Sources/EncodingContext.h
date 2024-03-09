@@ -84,6 +84,14 @@ INLINE void ChildReorderingArrayChunk::push_back(uint8_t v)
     _array->_scratch[_startIndex + _size++] = v;
 }
 
+class EncodingContextDelegate
+{
+public:
+    virtual ~EncodingContextDelegate() = default;
+    virtual bool shouldEncode(const Object3D&) const;
+    virtual SDFOperation operation(const Object3D&) const;
+};
+
 class EncodingContext final
 {
 public:
@@ -107,7 +115,7 @@ public:
     
     bool isCulled(const Object3D& object, const RectF& tileRect) const;
     
-    void encodePrimitives(const Object3D& root, uint32_t depth);
+    void encodePrimitives(const Object3D& root);
     
     void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner);
     DrawCommand& writeGroupDrawCommand(const DrawCommand* owner);
@@ -117,10 +125,10 @@ public:
     
     ChildReorderingArray& childOrderingArray() { return _childOrderingArray; }
     
-    using EncodingFilter = std::function<bool(const Object3D&)>;
-    void setEncodingFilter(const EncodingFilter& filter);
+    void setDelegate(EncodingContextDelegate* delegate);
     
     bool shouldEncode(const Object3D&) const;
+    SDFOperation operation(const Object3D&) const;
     
 private:
     const float4x4 _viewProjectionMatrix;
@@ -139,5 +147,5 @@ private:
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
     
     ChildReorderingArray _childOrderingArray;
-    EncodingFilter _encodingFilter;
+    EncodingContextDelegate* _delegate = nullptr;
 };

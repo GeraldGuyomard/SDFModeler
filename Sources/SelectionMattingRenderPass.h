@@ -18,6 +18,7 @@ public:
     using _inherited = SDFRenderPass;
     
     SelectionMattingRenderPass(size_t cameraIndex);
+    ~SelectionMattingRenderPass() override;
     
     bool init(Renderer& renderer) override;
     
@@ -36,5 +37,6 @@ private:
     id<MTLTexture> _Nullable _targetTexture = nil;
     MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
     
-    std::unordered_set<ObjectID> _objectIDsToRender;
+    class MattingEncodingDelegate;
+    std::unique_ptr<MattingEncodingDelegate> _encodingDelegate;
 };

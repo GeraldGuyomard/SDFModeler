@@ -7,9 +7,45 @@
 
 #import "SelectionMattingRenderPass.h"
 
+
+class SelectionMattingRenderPass::MattingEncodingDelegate final : public EncodingContextDelegate
+{
+public:
+    bool shouldEncode(const Object3D& object) const override
+    {
+        return _objectIDsToRender.find(object.id()) != _objectIDsToRender.end();
+    }
+    
+    SDFOperation operation(const Object3D&) const override
+    {
+        return SDFOperation::addition;
+    }
+    
+    bool hasObjectsToRender() const
+    {
+        return !_objectIDsToRender.empty();
+    }
+    
+    void setObjectsToRender(const Object3DSelection& sel)
+    {
+        _objectIDsToRender.clear();
+        
+        for (const auto& object : sel.objects())
+        {
+            _objectIDsToRender.insert(object->id());
+        }
+    }
+    
+private:
+    std::unordered_set<ObjectID> _objectIDsToRender;
+};
+
+
 SelectionMattingRenderPass::SelectionMattingRenderPass(size_t cameraIndex)
-: _inherited(cameraIndex), _cameraIndex(cameraIndex)
+: _inherited(cameraIndex), _cameraIndex(cameraIndex), _encodingDelegate(std::make_unique<MattingEncodingDelegate>())
 {}
+
+SelectionMattingRenderPass::~SelectionMattingRenderPass() = default;
 
 bool
 SelectionMattingRenderPass::init(Renderer& renderer)
@@ -31,7 +67,7 @@ SelectionMattingRenderPass::init(Renderer& renderer)
 void
 SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
 {
-    enable(!_objectIDsToRender.empty());
+    enable(_encodingDelegate->hasObjectsToRender());
     
     if (enabled())
     {
@@ -42,10 +78,7 @@ SelectionMattingRenderPass::updateUniforms(Renderer& renderer)
 void
 SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 {
-    ctx.setEncodingFilter([this](const Object3D& object) -> bool
-    {
-        return object.selected();
-    });
+    ctx.setDelegate(_encodingDelegate.get());
 }
 
 id<MTLRenderCommandEncoder>_Nullable
@@ -97,10 +130,5 @@ SelectionMattingRenderPass::makePipelineConfiguration(Renderer& renderer) const
 void
 SelectionMattingRenderPass::setObjectsToRender(const Object3DSelection& sel)
 {
-    _objectIDsToRender.clear();
-    
-    for (const auto& object : sel.objects())
-    {
-        _objectIDsToRender.insert(object->id());
-    }
+    _encodingDelegate->setObjectsToRender(sel);
 }

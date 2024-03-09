@@ -544,7 +544,7 @@ Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& conte
         uint8_t index = 0;
         for (const auto& child : children)
         {
-            const auto operation = child->operation();
+            const auto operation = context.operation(*child);
             if (operation == SDFOperation::addition)
             {
                 positiveChildrenIndices.push_back(index);
@@ -718,7 +718,7 @@ World::encode(EncodingContext& context,
 {
     auto& serialized = context.serializedWorldObject();
     
-    context.encodePrimitives(*_rootObject, 0);
+    context.encodePrimitives(*_rootObject);
     
     const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
     
