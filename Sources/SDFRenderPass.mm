@@ -21,7 +21,8 @@ SDFRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->depthPixelFormat = presentationConfig->depthPixelFormat;
     
-    config->depthCompareFunction = renderer.delegate()->depthCompareFunction();
+    const auto depthInfo = renderer.delegate()->depthInfo();
+    config->depthCompareFunction = depthInfo.compareFunction;
     
     config->pipelineName = "RGB Contents";
     
@@ -106,7 +107,9 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
         renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
         
         auto depthAttachment = renderPassDescriptor.depthAttachment;
-        depthAttachment.clearDepth = 0;
+        
+        const auto info = renderer.delegate()->depthInfo();
+        depthAttachment.clearDepth = info.clearDepth;
         depthAttachment.loadAction = MTLLoadActionDontCare;
         depthAttachment.storeAction = MTLStoreActionStore;
         

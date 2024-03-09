@@ -228,10 +228,10 @@ CompositorServicesRendererDelegate::endSubmission()
     _xrDrawable.reset();
 }
 
-MTLCompareFunction
-CompositorServicesRendererDelegate::depthCompareFunction() const
+RendererDelegate::DepthInfo
+CompositorServicesRendererDelegate::depthInfo() const
 {
-    return MTLCompareFunctionGreater;
+    return { 0.f, MTLCompareFunctionGreater };
 }
 
 MTLRenderPassDescriptor* _Nullable

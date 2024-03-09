@@ -192,10 +192,24 @@ MTKViewRendererDelegate::renderPassDescriptor(size_t cameraIndex) const
     return _mtkView.currentRenderPassDescriptor;
 }
 
-MTLCompareFunction
-MTKViewRendererDelegate::depthCompareFunction() const
+RendererDelegate::DepthInfo
+MTKViewRendererDelegate::depthInfo() const
 {
-    return _inverseZ ? MTLCompareFunctionGreater : MTLCompareFunctionLessEqual;
+    float c;
+    MTLCompareFunction f;
+    
+    if (_inverseZ)
+    {
+        c = 0.f;
+        f = MTLCompareFunctionGreater;
+    }
+    else
+    {
+        c = 1.f;
+        f = MTLCompareFunctionLessEqual;
+    }
+    
+    return { c, f };
 }
 
 void

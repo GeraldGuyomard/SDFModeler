@@ -69,7 +69,7 @@ fragment FragmentShaderOut_Matting fragmentShaderMatting(VertexShaderOut in [[st
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>, false>(in.viewportNDC, uniforms, serializedWorld, materials);
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(in.viewportNDC, uniforms, serializedWorld, materials);
     
     FragmentShaderOut_Matting out;
     out.depth = res.adjustedDepth(uniforms.inverseZ());
@@ -96,6 +96,7 @@ vertex VertexShader_SelectionOutlineOut vertexShaderOutline(VertexShader_Selecti
 struct FragmentShader_SelectionOutlineOut
 {
     float4 color [[color(0)]];
+    float depth [[depth(any)]];
 };
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
@@ -107,7 +108,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
                                    mag_filter::linear,
                                    min_filter::linear);
     
-    const float depth = inDepthTexture.sample(depthSampler, in.textCoords).r;
+    float depth = inDepthTexture.sample(depthSampler, in.textCoords).r;
     float c = (depth != 0) ? 1.f : 0.f;
     
     float color = 0.f;
@@ -121,6 +122,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         for (float y = -delta.y; y <= delta.y; y += samplingRange.y)
         {
             const auto d = inDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
+            depth = max(depth, d);
             const auto value = (d != 0.f) ? 1.f : 0.f;
             color += value;
         }
@@ -132,6 +134,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     
     out.color = uniforms.color;
     out.color.a = outlineLevel;
+    out.depth = depth;
     
     return out;
 }

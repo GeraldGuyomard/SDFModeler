@@ -24,6 +24,10 @@
 
 #include "MainViewController.h"
 
+RendererDelegate::DepthInfo::DepthInfo(float clearDepth, MTLCompareFunction compareFunction)
+: clearDepth(clearDepth), compareFunction(compareFunction)
+{}
+
 float2
 RendererDelegate::tileSize() const
 {
@@ -211,6 +215,8 @@ Renderer::pick(float2 pixelPosition) const
 {
     const auto pixel = renderPixel(kLeftCameraIndex, pixelPosition);
     
+    const float mattingZ = renderMatting(kLeftCameraIndex, pixelPosition);
+    
     auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
     
     const auto& uniforms = sdfRenderPass->uniforms();
@@ -239,6 +245,25 @@ Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
     
     return renderDefault(p, uniforms, serializedWorld, materials).color;
 }
+
+float
+Renderer::renderMatting(size_t cameraIndex, float2 pixelPosition) const
+{
+    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
+    
+    const auto& uniforms = sdfRenderPass->uniforms();
+    const auto& serializedWorld = sdfRenderPass->serializedWorld();
+    const auto& materials = sdfRenderPass->materials();
+    
+    const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
+    
+    const auto p = pixelToNDC(size, pixelPosition);
+    
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(p, uniforms, serializedWorld, materials);
+    
+    return uniforms.inverseZ() ? (1.f - res.depth) : res.depth;
+}
+
 
 void
 Renderer::invalidate()

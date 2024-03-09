@@ -78,7 +78,7 @@ SelectionMattingRenderPass::init(Renderer& renderer)
     _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
     _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
     
-    _renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+    _renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionDontCare;
     _renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
     _renderPassDescriptor.depthAttachment.clearDepth = 0;
     

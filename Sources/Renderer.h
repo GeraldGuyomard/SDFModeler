@@ -44,7 +44,15 @@ public:
     virtual CameraRig::Ptr cameraRig() const = 0;
     virtual float2 tileSize() const;
     
-    virtual MTLCompareFunction depthCompareFunction() const = 0;
+    struct DepthInfo
+    {
+        float clearDepth;
+        MTLCompareFunction compareFunction;
+        
+        DepthInfo(float clearDepth, MTLCompareFunction compareFunction);
+    };
+    
+    virtual DepthInfo depthInfo() const = 0;
     
     virtual MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const = 0;
     virtual void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) = 0;
@@ -75,6 +83,7 @@ public:
     Ray ray(float2 pixelPosition) const;
     PickResult pick(float2 pixelPosition) const;
     float4 renderPixel(size_t cameraIndex, float2 pixelPosition) const;
+    float renderMatting(size_t cameraIndex, float2 pixelPosition) const;
     
     void invalidate();
     
