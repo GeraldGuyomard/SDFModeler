@@ -32,10 +32,9 @@ SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     colorAttachment.loadAction = MTLLoadActionLoad;
     colorAttachment.storeAction = MTLStoreActionStore;
-    //colorAttachment.clearColor = MTLClearColorMake(1, 0, 0, 1);
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
-    depthAttachment.loadAction = MTLLoadActionDontCare;
+    depthAttachment.loadAction = MTLLoadActionLoad;
     depthAttachment.storeAction = MTLStoreActionDontCare;
     
     if (renderPassDescriptor != nullptr)
@@ -83,7 +82,7 @@ SelectionOutlineRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->blendEnabled = true;
     
-    config->depthCompareFunction = MTLCompareFunctionAlways;
+    config->depthCompareFunction = renderer.delegate()->depthInfo().compareFunction;
     
     return config;
 }
