@@ -76,11 +76,9 @@ Renderer::init()
         rp.selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>(i);
         _renderPasses.push_back(rp.selectionOutlineRenderPass.get());
         
-        rp.selectionOutlineRenderPass->setMattingTexturesProvider([selectionMattingPass = rp.selectionMattingRenderPass.get()]()
+        rp.selectionOutlineRenderPass->setDepthTextureProvider([selectionMattingPass = rp.selectionMattingRenderPass.get()]()
         {
-            auto color = selectionMattingPass->targetColorTexture();
-            auto depth = selectionMattingPass->targetDepthTexture();
-            return std::pair(color, depth);
+            return selectionMattingPass->targetDepthTexture();
         });
     }
     

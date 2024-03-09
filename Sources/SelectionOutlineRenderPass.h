@@ -20,9 +20,8 @@ public:
     
     bool init(Renderer& renderer) override;
     
-    using ColorAndDepthTextures = std::pair<id<MTLTexture> /*color*/, id<MTLTexture> /*depth*/>;
-    using MattingTexturesProvider = std::function<ColorAndDepthTextures()>;
-    void setMattingTexturesProvider(const MattingTexturesProvider&);
+    using DepthTextureProvider = std::function<id<MTLTexture>()>;
+    void setDepthTextureProvider(const DepthTextureProvider&);
     
     void updateBuffersState() override;
     void updateUniforms(Renderer&) override;
@@ -47,7 +46,7 @@ private:
     using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexOutlineUniforms, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
-    MattingTexturesProvider _mattingTexturesProvider;
+    DepthTextureProvider _depthTextureProvider;
     
     float4 _color;
     float _thickness;

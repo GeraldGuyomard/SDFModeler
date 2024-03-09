@@ -58,13 +58,12 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     return out;
 }
 
-struct FragmentShaderOut_ColorOnly
+struct FragmentShaderOut_Matting
 {
-    float4 color [[color(0)]];
     float depth [[depth(any)]];
 };
 
-fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[stage_in]],
+fragment FragmentShaderOut_Matting fragmentShaderMatting(VertexShaderOut in [[stage_in]],
                                constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
                                constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
@@ -72,8 +71,7 @@ fragment FragmentShaderOut_ColorOnly fragmentShaderMatting(VertexShaderOut in [[
 {
     const auto res = render<MattingShader, NullEnvironment<MattingShader>, false>(in.viewportNDC, uniforms, serializedWorld, materials);
     
-    FragmentShaderOut_ColorOnly out;
-    out.color = res.color;
+    FragmentShaderOut_Matting out;
     out.depth = res.adjustedDepth(uniforms.inverseZ());
     
     return out;
@@ -102,28 +100,29 @@ struct FragmentShader_SelectionOutlineOut
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
-                                    texture2d<float> inTexture [[ texture(TextureIndexInput) ]],
                                     texture2d<float> inDepthTexture [[ texture(DepthIndexInput) ]]
                                     )
 {
-    constexpr sampler colorSampler(mip_filter::linear,
+    constexpr sampler depthSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear);
     
-   
-    const float c = inTexture.sample(colorSampler, in.textCoords).r;
+    const float depth = inDepthTexture.sample(depthSampler, in.textCoords).r;
+    float c = (depth != 0) ? 1.f : 0.f;
     
     float color = 0.f;
     
     const auto delta = uniforms.samplingDelta;
     
-    const float2 samplingRange = 2.f *delta;
+    const float2 samplingRange = 2.f * delta;
     
     for (float x = -delta.x; x <= delta.x; x += samplingRange.x)
     {
         for (float y = -delta.y; y <= delta.y; y += samplingRange.y)
         {
-            color += inTexture.sample(colorSampler, in.textCoords + float2 { x, y } ).r;
+            const auto d = inDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
+            const auto value = (d != 0.f) ? 1.f : 0.f;
+            color += value;
         }
     }
     

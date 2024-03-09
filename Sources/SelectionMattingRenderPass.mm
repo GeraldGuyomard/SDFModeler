@@ -116,7 +116,7 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     // to save time and get free blur
     //size = ceil(size * 0.75f);
     
-    if ((_targetColorTexture.width != size.x) || (_targetColorTexture.height != size.y))
+    if ((_targetDepthTexture.width != size.x) || (_targetDepthTexture.height != size.y))
     {
         auto config = pipelineConfiguration();
         
@@ -124,15 +124,6 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
         const auto height = NSUInteger(size.y);
         
         auto device = renderer.mtlDevice();
-        
-        // Color
-        {
-            const auto colorPixelFormat = config->colorPixelFormat;
-            auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:colorPixelFormat width:width height:height mipmapped:NO];
-            textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
-            
-            _targetColorTexture = [device newTextureWithDescriptor:textureDescriptor];
-        }
         
         // Depth
         {
@@ -144,7 +135,6 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
         }
     }
     
-    _renderPassDescriptor.colorAttachments[0].texture = _targetColorTexture;
     _renderPassDescriptor.depthAttachment.texture = _targetDepthTexture;
     
     auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
@@ -162,7 +152,7 @@ SelectionMattingRenderPass::makePipelineConfiguration(Renderer& renderer) const
     auto mtlLib = renderer.mtlLibrary();
     config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderMatting"];
     
-    config->colorPixelFormat = MTLPixelFormatR8Unorm;
+    config->colorPixelFormat = MTLPixelFormatInvalid;
     
     return config;
 }
