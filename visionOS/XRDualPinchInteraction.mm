@@ -45,6 +45,8 @@ XRDualPinchInteraction::_onStateChanged(State oldState, State newState)
     }
 }
 
+constexpr float kMinDistance = 0.05f;
+
 XRInteraction::State
 XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
@@ -76,10 +78,14 @@ XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
     
     const auto object = anchorsWithDist.distances[size_t(chiralityOpt.value())].object;
     
-    const auto pos0 = worldTipPosition(*anchors.anchors[0]);
-    const auto pos1 = worldTipPosition(*anchors.anchors[1]);
+    const auto posLeft = worldTipPosition(*anchors.anchor(Chirality::left));
+    const auto posRight = worldTipPosition(*anchors.anchor(Chirality::right));
     
-    const auto d = length(pos0 - pos1);
+    const auto d = length(posLeft - posRight);
+    if (d < kMinDistance)
+    {
+        return State::inactive;
+    }
     
     _activePayload = std::make_unique<ActivePayload>(d, object);
     
@@ -100,24 +106,25 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
         return State::active;
     }
     
-    if (!left->isPinching() || !right->isPinching())
+    if (!left->isPinching() && !right->isPinching())
     {
         return State::inactive;
     }
     
-    const auto newPos0 = translation(left->worldTransform());
-    const auto newPos1 = translation(right->worldTransform());
+    const auto posLeft = worldTipPosition(*anchors.anchor(Chirality::left));
+    const auto posRight = worldTipPosition(*anchors.anchor(Chirality::right));
     
-    const float newDist = length(newPos1 - newPos0);
-    if (newDist <= 1e-3f)
+    const auto d = length(posLeft - posRight);
+    
+    if (d < kMinDistance)
     {
         return State::active;
     }
     
     auto& payload = *_activePayload;
     
-    const float scale = 1.f + (newDist - payload.initialDistance) / newDist;
-    NSLog(@"scale=%5.3f newDist=%5.3f initialDistance=%5.3f", scale, newDist, payload.initialDistance);
+    const float scale = 1.f + (d - payload.initialDistance) / d;
+    NSLog(@"scale=%5.3f newDist=%5.3f initialDistance=%5.3f", scale, d, payload.initialDistance);
     
     const auto pos = translation(payload.entry.transform);
     const auto moveToPivot = matrix4x4_translation(-pos);

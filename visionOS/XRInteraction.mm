@@ -40,6 +40,16 @@ XRInteractionManager::process(const XRHandAnchors& anchors)
         if (requiredState == XRInteraction::State::active)
         {
             _activeInteraction = interaction;
+            
+            // deactivate the other interactions
+            for (const auto& otherInteraction : _interactions)
+            {
+                if (otherInteraction != _activeInteraction)
+                {
+                    otherInteraction->_setState(XRInteraction::State::inactive);
+                }
+            }
+            
             break;
         }
     }
