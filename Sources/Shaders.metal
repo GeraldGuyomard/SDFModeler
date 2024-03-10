@@ -112,40 +112,35 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     const float originalDepth = mainDepthTexture.sample(depthSampler, in.textCoords).r;
     const float mattingDepth = mattingDepthTexture.sample(depthSampler, in.textCoords).r;
     
-    const float centerDepth = (mattingDepth != 0) ? 1.f : 0.f;
-    
-    float color = 0.f;
-    float depth = mattingDepth;
-    
     const auto delta = uniforms.samplingDelta;
     
     const float2 samplingRange = 2.f * delta;
+    size_t n = 0;
     
     for (float x = -delta.x; x <= delta.x; x += samplingRange.x)
     {
         for (float y = -delta.y; y <= delta.y; y += samplingRange.y)
         {
             const auto d = mattingDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
-            depth = max(d, depth);
-            
-            const auto value = (d != 0.f) ? 1.f : 0.f;
-            color += value;
+            if (d != 0.f)
+            {
+                ++n;
+            }
         }
     }
     
     FragmentShader_SelectionOutlineOut out;
     
-    const float outlineLevel = (color / 8.f) - centerDepth;
-    
-    out.color = uniforms.color;
-    out.color.a = outlineLevel;
-    
-    if (outlineLevel != 0.f)
+    if ((n > 0) && (n < 4))
     {
-        out.depth = depth;
+        out.depth = mattingDepth;
+        
+        out.color = uniforms.color;
+        out.color.a = 1.f;
     }
     else
     {
+        out.color = float4 { 0.f, 0.f, 0.f, 0.f };
         out.depth = originalDepth;
     }
     
