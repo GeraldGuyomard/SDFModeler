@@ -138,14 +138,17 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         out.depth = mattingDepth;
         
         out.color = uniforms.color;
+        out.color.a = 1.f;
+        
         if (originalDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
         }
-        //out.color.a = 1.f;
     }
     else
     {
+        discard_fragment();
+        
         // keep blending
         out.color = float4 { 0.f, 0.f, 0.f, 0.f };
         out.depth = originalDepth;
