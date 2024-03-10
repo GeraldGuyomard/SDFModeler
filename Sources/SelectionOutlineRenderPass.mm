@@ -21,7 +21,7 @@ namespace
 SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
 : _cameraIndex(cameraIndex),
 _color { 252.0f / 255.0f, 202.0f / 255.0f, 0.0f, 1.f },
-_thickness(10.f)
+_thickness(4.f)
 {}
 
 id<MTLRenderCommandEncoder>_Nullable
