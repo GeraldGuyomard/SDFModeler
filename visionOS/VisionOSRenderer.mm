@@ -125,7 +125,7 @@ App::onInteractionStateChanged(const XRInteraction::Ptr& interaction)
     }
     else if ((state == XRInteraction::State::active) || (state == XRInteraction::State::possible))
     {
-        const float thickness = (state == XRInteraction::State::active) ? 2.f * _defaultOutlineThickness : _defaultOutlineThickness;
+        const float thickness = (state == XRInteraction::State::active) ? 1.5f * _defaultOutlineThickness : _defaultOutlineThickness;
         
         if (interaction == _dragInteraction)
         {
