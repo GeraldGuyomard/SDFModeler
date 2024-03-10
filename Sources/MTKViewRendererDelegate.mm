@@ -96,6 +96,8 @@ MTKViewRendererDelegate::init(Renderer* renderer)
     _mtkView.paused = YES;
     
     _mtkView.depthStencilPixelFormat = _configuration->depthPixelFormat;
+    _mtkView.depthStencilAttachmentTextureUsage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+    
     _mtkView.colorPixelFormat = _configuration->colorPixelFormat;
     _mtkView.sampleCount = _configuration->sampleCount;
     

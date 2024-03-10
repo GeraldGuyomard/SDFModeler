@@ -101,17 +101,21 @@ struct FragmentShader_SelectionOutlineOut
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
-                                    texture2d<float> inDepthTexture [[ texture(DepthIndexInput) ]]
+                                    texture2d<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
+                                    texture2d<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]]
                                     )
 {
     constexpr sampler depthSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear);
     
-    float depth = inDepthTexture.sample(depthSampler, in.textCoords).r;
-    float c = (depth != 0) ? 1.f : 0.f;
+    const float originalDepth = mainDepthTexture.sample(depthSampler, in.textCoords).r;
+    const float mattingDepth = mattingDepthTexture.sample(depthSampler, in.textCoords).r;
+    
+    const float centerDepth = (mattingDepth != 0) ? 1.f : 0.f;
     
     float color = 0.f;
+    float depth = mattingDepth;
     
     const auto delta = uniforms.samplingDelta;
     
@@ -121,20 +125,29 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     {
         for (float y = -delta.y; y <= delta.y; y += samplingRange.y)
         {
-            const auto d = inDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
-            depth = max(depth, d);
+            const auto d = mattingDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
+            depth = max(d, depth);
+            
             const auto value = (d != 0.f) ? 1.f : 0.f;
             color += value;
         }
     }
     
-    const float outlineLevel = (color / 8.f) - c;
-    
     FragmentShader_SelectionOutlineOut out;
+    
+    const float outlineLevel = (color / 8.f) - centerDepth;
     
     out.color = uniforms.color;
     out.color.a = outlineLevel;
-    out.depth = depth;
+    
+    if (outlineLevel != 0.f)
+    {
+        out.depth = depth;
+    }
+    else
+    {
+        out.depth = originalDepth;
+    }
     
     return out;
 }

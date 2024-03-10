@@ -42,8 +42,8 @@ struct Vertex final
 
 enum TextureIndex : EnumBackingType
 {
-    TextureIndexInput = 0,
-    DepthIndexInput = 1
+    MainDepthTextureIndex = 0,
+    MattingDepthIndexInput = 1
 };
 
 struct VertexShader_SelectionOutlineIn

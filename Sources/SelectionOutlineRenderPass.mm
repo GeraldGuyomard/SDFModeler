@@ -35,7 +35,7 @@ SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     depthAttachment.loadAction = MTLLoadActionLoad;
-    depthAttachment.storeAction = MTLStoreActionDontCare;
+    depthAttachment.storeAction = MTLStoreActionStore;
     
     if (renderPassDescriptor != nullptr)
     {
@@ -82,7 +82,7 @@ SelectionOutlineRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->blendEnabled = true;
     
-    config->depthCompareFunction = renderer.delegate()->depthInfo().compareFunction;
+    config->depthCompareFunction = MTLCompareFunctionAlways;
     
     return config;
 }
@@ -164,7 +164,12 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
                             offset:0
                            atIndex:BufferIndexUVs];
     
-    [encoder setFragmentTexture:inputDepth atIndex:DepthIndexInput];
+    
+    auto descriptor = renderer.delegate()->renderPassDescriptor(_cameraIndex);
+    auto mainDepth = descriptor.depthAttachment.texture;
+    
+    [encoder setFragmentTexture:mainDepth atIndex:MainDepthTextureIndex];
+    [encoder setFragmentTexture:inputDepth atIndex:MattingDepthIndexInput];
     
     [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }
