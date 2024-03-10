@@ -198,9 +198,10 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
         _world->setSelection(object);
         
         ASSERT(kMinDistance > XRDragInteraction::kMinDistanceForActivation);
-        const float c = (dist -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
+        float c = (dist -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
         
-        NSLog(@"c=%5.3f", c);
+        c = clamp(c, 0.1f, 1.f);
+        c = 1.f - c;
         
         auto color = _defaultOutlineColor;
         color.w *= c;
