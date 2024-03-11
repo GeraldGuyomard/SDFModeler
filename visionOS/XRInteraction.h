@@ -72,30 +72,4 @@ private:
     XRInteraction::Ptr _activeInteraction;
 };
 
-class XRHandAnchorsWithDistance : public XRHandAnchors
-{
-public:
-    using _inherited = XRHandAnchors;
-    XRHandAnchorsWithDistance(const XRHandAnchors&);
-    
-    struct Distance final
-    {
-        std::optional<float3> position;
-        
-        Object3D::Ptr object;
-        float distance = 1e10f;
-    };
-    
-    std::array<Distance, kMaxChirality> distances;
-    
-    const Distance& distance(Chirality) const;
-    
-    void updateDistance(const Object3D::Ptr& o);
-    
-    std::optional<Chirality> closestAnchorChirality() const;
-};
 
-void findClosestObject(const Object3D::Ptr& object, XRHandAnchorsWithDistance& anchors);
-
-std::optional<float3> worldTipPosition(const XRHandAnchor::Ptr& anchor);
-float3 worldTipPosition(const XRHandAnchor& anchor);

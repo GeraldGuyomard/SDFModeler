@@ -7,15 +7,6 @@
 
 #include "XRDragInteraction.h"
 
-void findClosestObject(const Object3D::Ptr& object, XRHandAnchorsWithDistance& anchors)
-{
-    anchors.updateDistance(object);
-    
-    for (const auto& child : object->children())
-    {
-        findClosestObject(child, anchors);
-    }
-}
 
 XRDragInteraction::XRDragInteraction(const WorldPtr& world)
 : _world(world)
@@ -60,8 +51,9 @@ XRDragInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
     ASSERT(_statePayload == nullptr);
     
     const XRHandAnchor* activeAnchor = nullptr;
-    for (const auto& anchor : anchors.anchors)
+    for (const auto& entry : anchors.entries())
     {
+        const auto& anchor = entry.handAnchor;
         if ((anchor != nullptr) && anchor->isPinching())
         {
             if (activeAnchor != nullptr)
@@ -82,25 +74,22 @@ XRDragInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
     {
         return State::inactive;
     }
-    
-    XRHandAnchorsWithDistance anchorsWithDist { anchors };
-    
-    findClosestObject(_world->rootObject(), anchorsWithDist);
 
-    const auto& distances = anchorsWithDist.distances[size_t(activeAnchor->chirality())];
-    if (!distances.position.has_value()) {
+    const auto& entry = anchors.entry(activeAnchor->chirality());
+    if (entry.object == nullptr)
+    {
         return State::inactive;
     }
     
-    if (distances.distance > kMinDistanceForActivation)
+    if (entry.distance > kMinDistanceForActivation)
     {
         return State::inactive;
     }
     
     _statePayload = std::make_unique<StatePayload>(
         activeAnchor->chirality(),
-        distances.position.value(),
-        distances.object
+        entry.distance,
+        entry.object
     );
     
     return State::possible;

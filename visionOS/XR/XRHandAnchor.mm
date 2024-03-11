@@ -11,6 +11,13 @@
 
 #import "SDFModeler_visionOS-Swift.h"
 
+float3 worldTipPosition(const XRHandAnchor& anchor)
+{
+    const auto tipTransform = anchor.jointTransformInWorldSpace(JointID::indexFingerTip);
+    return translation(tipTransform);
+}
+
+
 XRHandAnchor::XRHandAnchor(XRHandAnchorImpl* impl)
 : _impl(impl)
 {}
@@ -20,23 +27,37 @@ XRHandAnchor::~XRHandAnchor() = default;
 Chirality
 XRHandAnchor::chirality() const
 {
-    switch (_impl.chirality)
+    if (!_chirality.has_value())
     {
-        case ChiralityImplLeft: return Chirality::left;
-        case ChiralityImplRight: return Chirality::right;
+        switch (_impl.chirality)
+        {
+            case ChiralityImplLeft: _chirality = Chirality::left; break;
+            case ChiralityImplRight: _chirality = Chirality::right; break;
+        }
     }
+    
+    return _chirality.value();
 }
 
 bool
 XRHandAnchor::isTracked() const
 {
-    return _impl.isTracked;
+    if (!_isTracked.has_value())
+    {
+        _isTracked = _impl.isTracked;
+    }
+    
+    return _isTracked.value();
 }
 
 float4x4
 XRHandAnchor::worldTransform() const
 {
-    const float4x4 m = [_impl worldTransform];
+    if (!_worldTransform.has_value())
+    {
+        _worldTransform = [_impl worldTransform];
+    }
+    
     
     /*
     const auto r = right(m);
@@ -47,25 +68,37 @@ XRHandAnchor::worldTransform() const
     NSLog(@"                    up %5.2f, %5.2f, %5.2f", u.x, u.y, u.z );
     NSLog(@"                    fw %5.2f, %5.2f, %5.2f", f.x, f.y, f.z );*/
     
-    return m;
+    return _worldTransform.value();
 }
 
 float4x4
 XRHandAnchor::jointTransformInHandSpace(JointID id) const
 {
-    JointIDImpl idImpl;
-    
-    switch (id)
+    auto& transform = _jointTransformInHandSpace[size_t(id)];
+    if (!transform.has_value())
     {
-        case JointID::thumbTip : idImpl = JointIDImplThumbTip; break;
-        case JointID::indexFingerTip: idImpl = JointIDImplIndexFingerTip; break;
-        case JointID::middleFingerTip: idImpl = JointIDImplIndexFingerTip; break;
-        case JointID::ringFingerTip: idImpl = JointIDImplRingFingerTip; break;
-        case JointID::littleFingerTip: idImpl = JointIDImplLittleFingerTip; break;
-        case JointID::wrist: idImpl = JointIDImplWrist; break;
+        JointIDImpl idImpl;
+        
+        switch (id)
+        {
+            case JointID::thumbTip : idImpl = JointIDImplThumbTip; break;
+            case JointID::indexFingerTip: idImpl = JointIDImplIndexFingerTip; break;
+            case JointID::middleFingerTip: idImpl = JointIDImplIndexFingerTip; break;
+            case JointID::ringFingerTip: idImpl = JointIDImplRingFingerTip; break;
+            case JointID::littleFingerTip: idImpl = JointIDImplLittleFingerTip; break;
+            case JointID::wrist: idImpl = JointIDImplWrist; break;
+            default:
+            {
+                ASSERT(false);
+                transform = float4x4_identity();
+                break;
+            }
+        }
+        
+        transform = [_impl jointTransformInHandSpace:idImpl];
     }
     
-    return [_impl jointTransformInHandSpace:idImpl];
+    return transform.value();
 }
 
 float4x4
@@ -77,41 +110,102 @@ XRHandAnchor::jointTransformInWorldSpace(JointID id) const
 bool
 XRHandAnchor::isPinching(float minDistance) const
 {
-    const auto indexTipPos = translation(jointTransformInHandSpace(JointID::indexFingerTip));
-    const auto thumbTipPos = translation(jointTransformInHandSpace(JointID::thumbTip));
+    if (!_isPinching.has_value())
+    {
+        const auto indexTipPos = translation(jointTransformInHandSpace(JointID::indexFingerTip));
+        const auto thumbTipPos = translation(jointTransformInHandSpace(JointID::thumbTip));
+        
+        const float d = length(indexTipPos - thumbTipPos);
+        
+        _isPinching = d <= minDistance;
+    }
     
-    const float d = length(indexTipPos - thumbTipPos);
+    return _isPinching.value();
+}
+
+XRHandAnchors::XRHandAnchors() = default;
+
+XRHandAnchors::XRHandAnchors(const WorldPtr& world, const XRHandAnchor::Ptr& left, const XRHandAnchor::Ptr& right)
+{
+    _entries[0].handAnchor = left;
+    _entries[1].handAnchor = right;
     
-    return d <= minDistance;
+    for (auto& entry : _entries)
+    {
+        if (entry.handAnchor != nullptr)
+        {
+            entry.position = worldTipPosition(*entry.handAnchor);
+        }
+    }
+    
+    _updateDistances(world->rootObject());
+}
+
+void
+XRHandAnchors::_updateDistances(const Object3D::Ptr& object)
+{
+    for (auto& entry : _entries)
+    {
+        if (entry.handAnchor != nullptr)
+        {
+            const float d = object->computeDistance(entry.position);
+            if (d < entry.distance)
+            {
+                entry.distance = d;
+                entry.object = object;
+            }
+        }
+    }
+    
+    for (const auto& child : object->children())
+    {
+        _updateDistances(child);
+    }
+}
+
+const XRHandAnchors::Entry&
+XRHandAnchors::entry(Chirality c) const
+{
+    return _entries[size_t(c)];
 }
 
 const XRHandAnchor::Ptr&
 XRHandAnchors::anchor(Chirality c) const
 {
-    return anchors[size_t(c)];
+    return entry(c).handAnchor;
 }
-XRHandAnchor::Ptr&
-XRHandAnchors::anchor(Chirality c)
-{
-    return anchors[size_t(c)];
-}
+
 
 const XRHandAnchor::Ptr&
 XRHandAnchors::otherAnchor(Chirality c) const
 {
-    size_t i = 1 - size_t(c);
-    return anchors[i];
-}
-
-XRHandAnchor::Ptr&
-XRHandAnchors::otherAnchor(Chirality c)
-{
-    size_t i = 1 - size_t(c);
-    return anchors[i];
+    Chirality i = Chirality(1 - size_t(c));
+    return entry(i).handAnchor;
 }
 
 bool
 XRHandAnchors::none() const
 {
-    return (anchors[0] == nullptr) && (anchors[1] == nullptr);
+    return (_entries[0].handAnchor == nullptr) && (_entries[1].handAnchor == nullptr);
+}
+
+const XRHandAnchors::Entry*
+XRHandAnchors::closestEntryToAnyHand() const
+{
+    float m = std::numeric_limits<float>::max();
+    const Entry* e = nullptr;
+    for (const auto& entry : _entries)
+    {
+        auto anchor = entry.handAnchor;
+        if (anchor != nullptr)
+        {
+            if (entry.distance < m)
+            {
+                m = entry.distance;
+                e = &entry;
+            }
+        }
+    }
+    
+    return e;
 }

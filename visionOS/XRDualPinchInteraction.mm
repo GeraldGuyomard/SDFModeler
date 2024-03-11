@@ -6,6 +6,7 @@
 //
 
 #include "XRDualPinchInteraction.h"
+#include "XRDragInteraction.h"
 
 XRDualPinchInteraction::XRDualPinchInteraction(const WorldPtr& world)
 : _world(world)
@@ -52,10 +53,22 @@ XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
     ASSERT(_activePayload == nullptr);
     
-    size_t nbPinchingHands = 0;
-    
-    for (const auto& anchor : anchors.anchors)
+    const auto* closestEntry = anchors.closestEntryToAnyHand();
+    if (closestEntry == nullptr)
     {
+        return State::inactive;
+    }
+    
+    // closest position but be very close to object
+    if (closestEntry->distance > XRDragInteraction::kMinDistanceForActivation)
+    {
+        return State::inactive;
+    }
+    
+    size_t nbPinchingHands = 0;
+    for (const auto& entry : anchors.entries())
+    {
+        const auto& anchor = entry.handAnchor;
         if ((anchor != nullptr) && anchor->isPinching())
         {
             ++nbPinchingHands;
@@ -67,19 +80,10 @@ XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
         return State::inactive;
     }
     
-    XRHandAnchorsWithDistance anchorsWithDist { anchors };
+    const auto object = closestEntry->object;
     
-    findClosestObject(_world->rootObject(), anchorsWithDist);
-    const auto chiralityOpt = anchorsWithDist.closestAnchorChirality();
-    if (!chiralityOpt.has_value())
-    {
-        return State::inactive;
-    }
-    
-    const auto object = anchorsWithDist.distances[size_t(chiralityOpt.value())].object;
-    
-    const auto posLeft = worldTipPosition(*anchors.anchor(Chirality::left));
-    const auto posRight = worldTipPosition(*anchors.anchor(Chirality::right));
+    const auto posLeft = anchors.entry(Chirality::left).position;
+    const auto posRight = anchors.entry(Chirality::right).position;
     
     const auto d = length(posLeft - posRight);
     if (d < kMinDistance)
@@ -97,22 +101,22 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
 {
     ASSERT(_activePayload != nullptr);
     
-    const auto& left = anchors.anchor(Chirality::left);
-    const auto& right = anchors.anchor(Chirality::right);
+    const auto& leftEntry = anchors.entry(Chirality::left);
+    const auto& rightEntry = anchors.entry(Chirality::right);
     
-    if ((left == nullptr) || (right == nullptr))
+    if ((leftEntry.handAnchor == nullptr) || (rightEntry.handAnchor == nullptr))
     {
         // lost tracking
         return State::active;
     }
     
-    if (!left->isPinching() && !right->isPinching())
+    if (!leftEntry.handAnchor->isPinching() && !rightEntry.handAnchor->isPinching())
     {
         return State::inactive;
     }
     
-    const auto posLeft = worldTipPosition(*anchors.anchor(Chirality::left));
-    const auto posRight = worldTipPosition(*anchors.anchor(Chirality::right));
+    const auto posLeft = leftEntry.position;
+    const auto posRight = rightEntry.position;
     
     const auto d = length(posLeft - posRight);
     
@@ -124,7 +128,7 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
     auto& payload = *_activePayload;
     
     const float scale = 1.f + (d - payload.initialDistance) / d;
-    NSLog(@"scale=%5.3f newDist=%5.3f initialDistance=%5.3f", scale, d, payload.initialDistance);
+    //NSLog(@"scale=%5.3f newDist=%5.3f initialDistance=%5.3f", scale, d, payload.initialDistance);
     
     const auto pos = translation(payload.entry.transform);
     const auto moveToPivot = matrix4x4_translation(-pos);

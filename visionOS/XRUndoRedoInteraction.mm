@@ -95,8 +95,9 @@ XRUndoRedoInteraction::_onStateChanged(State oldState, State newState)
 XRInteraction::State
 XRUndoRedoInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
-    for (const auto& anchor : anchors.anchors)
+    for (const auto& entry : anchors.entries())
     {
+        const auto& anchor = entry.handAnchor;
         if ((anchor != nullptr) && _isGestureDetected(*anchor))
         {
             _tracking = Tracking { anchor->chirality() };

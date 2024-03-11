@@ -8,7 +8,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-
+#include "Object3D.h"
 #include <memory>
 
 @class XRHandTrackingImpl, XRHandAnchorImpl;
@@ -23,12 +23,14 @@ static constexpr size_t kMaxChirality = 2;
 
 enum class JointID
 {
-    thumbTip,
-    indexFingerTip,
-    middleFingerTip,
-    ringFingerTip,
-    littleFingerTip,
-    wrist
+    thumbTip = 0,
+    indexFingerTip = 1,
+    middleFingerTip = 2,
+    ringFingerTip = 3,
+    littleFingerTip = 4,
+    wrist = 5,
+    
+    jointCount
 };
 
 class XRHandAnchor final
@@ -51,18 +53,47 @@ public:
     
 private:
     XRHandAnchorImpl* const _Nonnull _impl;
+    
+    // cached
+    mutable std::optional<Chirality> _chirality;
+    mutable std::optional<bool> _isTracked;
+    mutable std::optional<float4x4> _worldTransform;
+    
+    mutable std::array<std::optional<float4x4>, size_t(JointID::jointCount)> _jointTransformInHandSpace;
+    mutable std::array<std::optional<float4x4>, size_t(JointID::jointCount)> _jointTransformInWorldSpace;
+    
+    mutable std::optional<bool> _isPinching;
+    
 };
 
-class XRHandAnchors
+class XRHandAnchors final
 {
 public:
-    std::array<XRHandAnchor::Ptr, kMaxChirality> anchors;
+    XRHandAnchors();
+    XRHandAnchors(const WorldPtr& world, const XRHandAnchor::Ptr& left, const XRHandAnchor::Ptr& right);
     
     const XRHandAnchor::Ptr& anchor(Chirality) const;
-    XRHandAnchor::Ptr& anchor(Chirality);
-    
     const XRHandAnchor::Ptr& otherAnchor(Chirality) const;
-    XRHandAnchor::Ptr& otherAnchor(Chirality);
     
     bool none() const;
+    
+    struct Entry final
+    {
+        XRHandAnchor::Ptr handAnchor;
+        float3 position = { 0.f, 0.f, 0.f };
+        Object3D::Ptr object;
+        float distance = 1e10f;
+    };
+    
+    const std::array<Entry, kMaxChirality>& entries() const { return _entries; }
+    const Entry& entry(Chirality) const;
+    
+    const Entry* _Nullable closestEntryToAnyHand() const;
+    
+private:
+    
+    void _updateDistances(const Object3D::Ptr& o);
+    
+    std::array<Entry, kMaxChirality> _entries;
 };
+

@@ -35,7 +35,7 @@ public:
     // tracking
     float4x4 worldHeadTransform(const XRDrawable&) const;
     
-    XRHandAnchors handAnchors() const;
+    XRHandAnchors handAnchors(const WorldPtr&) const;
     
 private:
     XRService();

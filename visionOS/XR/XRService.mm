@@ -75,7 +75,7 @@ XRService::worldHeadTransform(const XRDrawable& d) const
 }
 
 XRHandAnchors
-XRService::handAnchors() const
+XRService::handAnchors(const WorldPtr& world) const
 {
     const auto anchorsImpl = [_impl handAnchors];
     if (anchorsImpl == nil)
@@ -83,17 +83,17 @@ XRService::handAnchors() const
         return {};
     }
     
-    XRHandAnchors anchors;
+    XRHandAnchor::Ptr left, right;
     if (auto leftImpl = anchorsImpl.left)
     {
-        anchors.anchor(Chirality::left) = std::make_shared<XRHandAnchor>(leftImpl);
-    }
-
-    if (auto rightImpl = anchorsImpl.right)
-    {
-        anchors.anchor(Chirality::right) = std::make_shared<XRHandAnchor>(rightImpl);
+        left = std::make_shared<XRHandAnchor>(leftImpl);
     }
     
-    return anchors;
+    if (auto rightImpl = anchorsImpl.right)
+    {
+        right = std::make_shared<XRHandAnchor>(rightImpl);
+    }
+    
+    return { world, left, right };
 }
 

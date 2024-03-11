@@ -100,7 +100,7 @@ App::prepare(Renderer& renderer)
 void
 App::updateLogic(Renderer& renderer, const XRService& xrService)
 {
-    auto handAnchors = xrService.handAnchors();
+    auto handAnchors = xrService.handAnchors(_world);
     onHandUpdate(renderer, handAnchors);
 }
     
@@ -179,26 +179,22 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
     }
     
     // Select the object that is close enough
-    XRHandAnchorsWithDistance anchorsWithDist { anchors };
-    findClosestObject(_world->rootObject(), anchorsWithDist);
-    const auto closestChiralityOpt = anchorsWithDist.closestAnchorChirality();
-    
-    if (!closestChiralityOpt.has_value())
+    const auto* closestEntry = anchors.closestEntryToAnyHand();
+    if (closestEntry == nullptr)
     {
         return;
     }
     
     constexpr float kMinDistance = 0.05f;
-    const float dist = anchorsWithDist.distance(closestChiralityOpt.value()).distance;
     
-    if (dist <= kMinDistance)
+    if (closestEntry->distance <= kMinDistance)
     {
-        auto object = anchorsWithDist.distance(closestChiralityOpt.value()).object;
+        const auto& object = closestEntry->object;
         
         _world->setSelection(object);
         
         ASSERT(kMinDistance > XRDragInteraction::kMinDistanceForActivation);
-        float c = (dist -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
+        float c = (closestEntry->distance -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
         
         c = clamp(c, 0.1f, 1.f);
         c = 1.f - c;
