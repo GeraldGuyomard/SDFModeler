@@ -38,7 +38,7 @@ public:
         return _statePayload.get();
     }
     
-    static constexpr float kMinDistanceToAnyObjectForActivation = 0.02f;
+    static constexpr float kMinDistanceToAnyObjectForActivation = 0.01f;
     
 protected:
     void _onStateChanged(State oldState, State newState) override;

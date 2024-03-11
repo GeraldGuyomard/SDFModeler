@@ -48,6 +48,21 @@ XRDualPinchInteraction::_onStateChanged(State oldState, State newState)
 
 constexpr float kMinDistance = 0.05f;
 
+float rotationAngle(const float3& leftPos, const float3& rightPos)
+{
+    const float2 leftPos2D { leftPos.x, leftPos.z };
+    const float2 rightPos2D { rightPos.x, rightPos.z };
+    const float2 v = normalize(leftPos2D - rightPos2D);
+    
+    return atan2(v.y, v.x);
+}
+
+XRDualPinchInteraction::ActivePayload::ActivePayload(float dist, const float3& leftHandPos, const float3& rightHandPos, const Object3D::Ptr& object)
+: initialDistance(dist),
+initialRotationAngle(rotationAngle(leftHandPos, rightHandPos)),
+entry { object }
+{}
+
 XRInteraction::State
 XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
 {
@@ -91,7 +106,7 @@ XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
         return State::inactive;
     }
     
-    _activePayload = std::make_unique<ActivePayload>(d, object);
+    _activePayload = std::make_unique<ActivePayload>(d, posLeft, posRight, object);
     
     return State::active;
 }
@@ -135,7 +150,12 @@ XRDualPinchInteraction::_updateWhenActive(const XRHandAnchors& anchors)
     const auto moveBackToPos = matrix4x4_translation(pos);
     const auto scaleM = matrix4x4_scale(scale);
     
-    const auto transform = moveBackToPos * scaleM * moveToPivot * payload.entry.transform;
+    const float newRotAngle = rotationAngle(posLeft, posRight);
+    const float deltaRot = payload.initialRotationAngle - newRotAngle;
+    
+    const auto rot = matrix4x4_rotation(deltaRot, float3 {0.f, 1.f, 0.f });
+    
+    const auto transform = moveBackToPos * rot * scaleM * moveToPivot * payload.entry.transform;
     
     payload.entry.object->setWorldTransform(transform);
     

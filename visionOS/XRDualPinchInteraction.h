@@ -28,11 +28,10 @@ public:
     struct ActivePayload final
     {
         const float initialDistance;
+        const float initialRotationAngle;
         const TransformObjectCommand::Entry entry;
         
-        ActivePayload(float dist, const Object3D::Ptr& object)
-        : initialDistance(dist), entry { object }
-        {}
+        ActivePayload(float dist, const float3& leftHandPos, const float3& rightHandPos, const Object3D::Ptr& object);
     };
     
     const ActivePayload* activePayload() const { return _activePayload.get(); }
