@@ -193,8 +193,8 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
         
         _world->setSelection(object);
         
-        ASSERT(kMinDistance > XRDragInteraction::kMinDistanceForActivation);
-        float c = (closestEntry->distance -  XRDragInteraction::kMinDistanceForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceForActivation);
+        ASSERT(kMinDistance > XRDragInteraction::kMinDistanceToAnyObjectForActivation);
+        float c = (closestEntry->distance -  XRDragInteraction::kMinDistanceToAnyObjectForActivation) / (kMinDistance - XRDragInteraction::kMinDistanceToAnyObjectForActivation);
         
         c = clamp(c, 0.1f, 1.f);
         c = 1.f - c;

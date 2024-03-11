@@ -81,14 +81,14 @@ XRDragInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
         return State::inactive;
     }
     
-    if (entry.distance > kMinDistanceForActivation)
+    if (entry.distance > kMinDistanceToAnyObjectForActivation)
     {
         return State::inactive;
     }
     
     _statePayload = std::make_unique<StatePayload>(
         activeAnchor->chirality(),
-        entry.distance,
+        entry.position,
         entry.object
     );
     
@@ -100,14 +100,14 @@ XRDragInteraction::_updateWhenPossible(const XRHandAnchors& anchors)
 {
     ASSERT(_statePayload != nullptr);
     
-    const auto& activeAnchor = anchors.anchor(_statePayload->chirality);
-    if (activeAnchor == nullptr)
+    const auto& activeEntry = anchors.entry(_statePayload->chirality);
+    if (activeEntry.handAnchor == nullptr)
     {
         // tracking lost
         return State::possible;
     }
     
-    const auto newPos = translation(activeAnchor->jointTransformInWorldSpace(JointID::indexFingerTip));
+    const auto newPos = activeEntry.position;
     
     const auto delta = newPos - _statePayload->initialPosInWorld;
     const float d = length(delta);

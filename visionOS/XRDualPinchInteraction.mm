@@ -60,7 +60,7 @@ XRDualPinchInteraction::_updateWhenInactive(const XRHandAnchors& anchors)
     }
     
     // closest position but be very close to object
-    if (closestEntry->distance > XRDragInteraction::kMinDistanceForActivation)
+    if (closestEntry->distance > XRDragInteraction::kMinDistanceToAnyObjectForActivation)
     {
         return State::inactive;
     }
