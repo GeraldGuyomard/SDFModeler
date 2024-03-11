@@ -8,6 +8,7 @@
 // File for Metal kernel and shader functions
 
 
+#include <TargetConditionals.h>
 #include "RenderFunctions.h"
 
 struct VertexShaderOut
@@ -130,19 +131,19 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     
     FragmentShader_SelectionOutlineOut out;
     
-    const float originalDepth = mainDepthTexture.sample(depthSampler, in.textCoords).r;
-    
     if ((n > 0) && (n < 9))
     {
         out.depth = mattingDepth;
         
         out.color = uniforms.color;
-        //out.color.a = 1.f;
         
+#if !TARGET_OS_VISION
+        const float originalDepth = mainDepthTexture.sample(depthSampler, in.textCoords).r;
         if (originalDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
         }
+#endif
     }
     else
     {
