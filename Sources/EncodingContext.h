@@ -15,62 +15,82 @@
 class Object3D;
 class World;
 class RectF;
+class CullingNode;
 
-class ChildReorderingArray;
-class ChildReorderingArrayChunk final
+class CullingNodeArrayPool;
+class CullingNodeArray final
 {
 public:
-    ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t capacity);
-    ChildReorderingArrayChunk(ChildReorderingArrayChunk&&);
-    ~ChildReorderingArrayChunk();
+    CullingNodeArray() = default;
+    CullingNodeArray(size_t startIndex, size_t capacity);
+    CullingNodeArray(CullingNodeArray&&);
     
     size_t size() const { return _size; }
-    uint8_t operator[](size_t index) const;
-    uint8_t& operator[](size_t index);
+    bool empty() const { return _size == 0; }
     
-    void push_back(uint8_t v);
+    const CullingNode* at(CullingNodeArrayPool& pool, size_t index) const;
+    CullingNode* at(CullingNodeArrayPool& pool, size_t index);
+    
+    void push_back(CullingNodeArrayPool& pool, CullingNode*);
+    
+    CullingNodeArray& operator=(CullingNodeArray&&);
     
 private:
     
-    ChildReorderingArrayChunk(const ChildReorderingArrayChunk&) = delete;
+    CullingNodeArray(const CullingNodeArray&) = delete;
     
-    ChildReorderingArray* _array;
-    const size_t _capacity;
+    size_t _capacity = 0;
     size_t _size = 0;
-    const size_t _startIndex;
+    size_t _startIndex = 0;
 };
 
-class ChildReorderingArray final
+struct CullingNode final
 {
 public:
-    ChildReorderingArray(size_t reserve = 128);
+    const Object3D* const object;
+    const SDFOperation operation;
+    const bool hasGeometry;
+    const bool isCompound;
     
-    ChildReorderingArrayChunk allocate(size_t);
+    const RectF box;
+    RectF boxOfHierarchy; // including box
+    
+    CullingNodeArray positiveChildren;
+    CullingNodeArray negativeChildren;
+    
+    CullingNode(const Object3D& object, const RectF& box);
+};
+
+class CullingNodeArrayPool final
+{
+public:
+    void reserve(size_t size);
+    
+    CullingNodeArray allocate(size_t);
     
 private:
-    friend class ChildReorderingArrayChunk;
+    friend class CullingNodeArray;
     
-    std::vector<uint8_t> _scratch;
+    std::vector<CullingNode*> _scratch;
     size_t _availableIndex = 0;
 };
 
-INLINE uint8_t ChildReorderingArrayChunk::operator[](size_t index) const
+INLINE const CullingNode* CullingNodeArray::at(CullingNodeArrayPool& pool, size_t index) const
 {
     ASSERT(index < _size);
-    return _array->_scratch[_startIndex + index];
+    return pool._scratch[_startIndex + index];
 }
 
-INLINE uint8_t& ChildReorderingArrayChunk::operator[](size_t index)
+INLINE CullingNode* CullingNodeArray::at(CullingNodeArrayPool& pool, size_t index)
 {
     ASSERT(index < _size);
-    return _array->_scratch[_startIndex + index];
+    return pool._scratch[_startIndex + index];
 }
 
-INLINE void ChildReorderingArrayChunk::push_back(uint8_t v)
+INLINE void CullingNodeArray::push_back(CullingNodeArrayPool& pool, CullingNode* node)
 {
     ASSERT(_size < _capacity);
-
-    _array->_scratch[_startIndex + _size++] = v;
+    pool._scratch[_startIndex + _size++] = node;
 }
 
 class EncodingContextDelegate
@@ -128,29 +148,12 @@ private:
     size_t _nbPrimitivesSerialized = 0;
     size_t _availableDrawCommandIndex = 0;
     
-    struct CullingNode final
-    {
-    public:
-        const Object3D* const object;
-        const SDFOperation operation;
-        const bool hasGeometry;
-        const bool isCompound;
-        
-        const RectF box;
-        RectF boxOfHierarchy; // including box
-        
-        std::vector<CullingNode*> positiveChildren;
-        std::vector<CullingNode*> negativeChildren;
-        
-        CullingNode(const Object3D& object, const RectF& box);
-    };
-    
     CullingNode* _addCullingTree(const Object3D& root);
     
     bool _encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* node, const DrawCommand* owner);
     
     std::vector<CullingNode> _cullingTree;
-    std::vector<CullingNode*> _childrenArray;
+    CullingNodeArrayPool _cullingNodeArrayPool;
     
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
     

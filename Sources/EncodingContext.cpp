@@ -8,31 +8,39 @@
 #include "Object3D.h"
 #include "RectF.h"
 
-ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArray& array, size_t startIndex, size_t capacity)
-: _array(&array), _startIndex(startIndex), _capacity(capacity)
+CullingNodeArray::CullingNodeArray(size_t startIndex, size_t capacity)
+: _startIndex(startIndex), _capacity(capacity)
 {}
 
-ChildReorderingArrayChunk::ChildReorderingArrayChunk(ChildReorderingArrayChunk&& other)
-: _array(other._array), _startIndex(other._startIndex), _size(other._size), _capacity(other._capacity)
+CullingNodeArray::CullingNodeArray(CullingNodeArray&& other)
+: _startIndex(other._startIndex), _capacity(other._capacity)
 {
-    other._array = nullptr;
+    other._startIndex = 0;
+    other._capacity = 0;
 }
 
-ChildReorderingArrayChunk::~ChildReorderingArrayChunk()
+CullingNodeArray&
+CullingNodeArray::operator=(CullingNodeArray&& other)
 {
-    if (_array != nullptr)
-    {
-        _array->_availableIndex = _startIndex;
-    }
+    _startIndex = other._startIndex;
+    _capacity = other._capacity;
+    _size = other._size;
+    
+    other._startIndex = 0;
+    other._capacity = 0;
+    other._size = 0;
+    
+    return *this;
 }
 
-ChildReorderingArray::ChildReorderingArray(size_t reserve)
+void
+CullingNodeArrayPool::reserve(size_t size)
 {
-    _scratch.resize(reserve);
+    _scratch.resize(size);
 }
 
-ChildReorderingArrayChunk
-ChildReorderingArray::allocate(size_t size)
+CullingNodeArray
+CullingNodeArrayPool::allocate(size_t size)
 {
     const size_t requiredScratchSize = _availableIndex + size;
     if (_scratch.size() < requiredScratchSize)
@@ -40,13 +48,13 @@ ChildReorderingArray::allocate(size_t size)
         _scratch.resize(requiredScratchSize);
     }
     
-    ChildReorderingArrayChunk chunk { *this, _availableIndex, size };
+    CullingNodeArray array { _availableIndex, size };
     _availableIndex += size;
     
-    return chunk;
+    return array;
 }
 
-EncodingContext::CullingNode::CullingNode(const Object3D& object, const RectF& box)
+CullingNode::CullingNode(const Object3D& object, const RectF& box)
 : object(&object),
 operation(object.operation()),
 hasGeometry(object.geometryType() != nullptr),
@@ -55,7 +63,7 @@ box(box),
 boxOfHierarchy(box)
 {}
 
-EncodingContext::CullingNode* EncodingContext::_addCullingTree(const Object3D& root)
+CullingNode* EncodingContext::_addCullingTree(const Object3D& root)
 {
     if (!shouldEncode(root))
     {
@@ -94,29 +102,28 @@ EncodingContext::CullingNode* EncodingContext::_addCullingTree(const Object3D& r
     _cullingTree.emplace_back( root, box );
     auto& node = _cullingTree.back();
     
+    const auto& children = root.children();
+    const size_t childCount = children.size();
+    
     // Positive first
-    for (const auto& child: root.children())
+    node.positiveChildren = _cullingNodeArrayPool.allocate(childCount);
+    node.negativeChildren = _cullingNodeArrayPool.allocate(childCount);
+    
+    for (const auto& child: children)
     {
-        if (child->operation() == SDFOperation::addition)
+        auto* childNode = _addCullingTree(*child);
+        if (childNode != nullptr)
         {
-            auto* childNode = _addCullingTree(*child);
-            if (childNode != nullptr)
+            const auto op = child->operation();
+            if (op == SDFOperation::addition)
             {
                 node.boxOfHierarchy = node.boxOfHierarchy.makeUnion(childNode->boxOfHierarchy);
-                node.positiveChildren.push_back(childNode);
+                node.positiveChildren.push_back(_cullingNodeArrayPool, childNode);
             }
-        }
-    }
-    
-    // Negative last
-    for (const auto& child: root.children())
-    {
-        if (child->operation() == SDFOperation::substraction)
-        {
-            auto* childNode = _addCullingTree(*child);
-            if (childNode != nullptr)
+            else
             {
-                node.negativeChildren.push_back(childNode);
+                assert(op == SDFOperation::substraction);
+                node.negativeChildren.push_back(_cullingNodeArrayPool, childNode);
             }
         }
     }
@@ -306,10 +313,10 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
             }
             
             int16_t n = 0;
-            
-            for (const auto* positiveChild : node->positiveChildren)
+            const size_t nbPositiveChildren = node->positiveChildren.size();
+            for (size_t i=0; i < nbPositiveChildren; ++i)
             {
-                if (_encodeHierarchy(tileDescr, positiveChild, owner))
+                if (_encodeHierarchy(tileDescr, node->positiveChildren.at(_cullingNodeArrayPool, i), owner))
                 {
                     ++n;
                 }
@@ -317,9 +324,10 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
             
             if (n != 0)
             {
-                for (const auto* negativeChild : node->negativeChildren)
+                const size_t nbNegativeChildren = node->negativeChildren.size();
+                for (size_t i=0; i < nbNegativeChildren; ++i)
                 {
-                    if (_encodeHierarchy(tileDescr, negativeChild, owner))
+                    if (_encodeHierarchy(tileDescr, node->negativeChildren.at(_cullingNodeArrayPool, i), owner))
                     {
                         ++n;
                     }
