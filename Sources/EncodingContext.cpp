@@ -55,8 +55,8 @@ ProjectedBB::ProjectedBB(const RawPoints& pts, const RectF& viewportRect)
         
         // x => -1, 1 -> y => 1, -1
         float2 p { pt.x, pt.y };
-        p.x = (1.f + p.x) * 0.5f * viewportRect.bottom.x;
-        p.y = (1.f - p.y) * 0.5f * viewportRect.bottom.y;
+        p.x = (1.f + p.x) * 0.5f * viewportRect.bottomRight.x;
+        p.y = (1.f - p.y) * 0.5f * viewportRect.bottomRight.y;
         
         boundingBoxInViewportSpace.add(p);
     }

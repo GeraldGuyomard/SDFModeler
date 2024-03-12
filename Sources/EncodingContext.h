@@ -110,7 +110,7 @@ public:
     
     const ProjectedBB* projectedBB(const Object3D&) const;
     
-    const float2& viewportSize() const { return _viewportRect.bottom; }
+    const float2& viewportSize() const { return _viewportRect.bottomRight; }
     SerializedWorldObject& serializedWorldObject() { return _serializedWorldObject; }
     
     bool isCulled(const Object3D& object, const RectF& tileRect) const;

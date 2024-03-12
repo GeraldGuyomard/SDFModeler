@@ -11,17 +11,17 @@
 class RectF final
 {
 public:
-    float2 top = { 1e7f, 1e7f };
-    float2 bottom = { -1e7f, -1e7f };
+    float2 topLeft = { 1e7f, 1e7f };
+    float2 bottomRight = { -1e7f, -1e7f };
     
     RectF() = default;
-    RectF(float2 top, float2 bottom)
-    : top(top), bottom(bottom)
+    RectF(float2 topLeft, float2 bottomRight)
+    : topLeft(topLeft), bottomRight(bottomRight)
     {}
     
     bool empty() const
     {
-        return (top.x > bottom.x) || (top.y > bottom.y);
+        return (topLeft.x > bottomRight.x) || (topLeft.y > bottomRight.y);
     }
     
     
@@ -29,27 +29,27 @@ public:
     {
         if (empty())
         {
-            top = bottom = pt;
+            topLeft = bottomRight = pt;
         }
         else
         {
-            top = min(top, pt);
-            bottom = max(bottom, pt);
+            topLeft = min(topLeft, pt);
+            bottomRight = max(bottomRight, pt);
         }
     }
     
     bool contains(float2 pt) const
     {
-        return (pt.x >= top.x) && (pt.y >= top.y)
-        && (pt.x <= (bottom.x)) && (pt.y <= (bottom.y));
+        return (pt.x >= topLeft.x) && (pt.y >= topLeft.y)
+        && (pt.x <= (bottomRight.x)) && (pt.y <= (bottomRight.y));
     }
     
     RectF makeIntersection(RectF other) const
     {
-        const auto newTop = max(top, other.top);
-        const auto newBottom = min(bottom, other.bottom);
+        const auto newTopLeft = max(topLeft, other.topLeft);
+        const auto newBottomRight = min(bottomRight, other.bottomRight);
         
-        return RectF { newTop, newBottom };
+        return RectF { newTopLeft, newBottomRight };
     }
     
     bool intersects(RectF other) const
