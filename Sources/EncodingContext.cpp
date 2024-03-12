@@ -114,7 +114,7 @@ CullingNode* EncodingContext::_addCullingTree(const Object3D& root)
         auto* childNode = _addCullingTree(*child);
         if (childNode != nullptr)
         {
-            const auto op = child->operation();
+            const auto op = operation(*child);
             if (op == SDFOperation::addition)
             {
                 node.boxOfHierarchy = node.boxOfHierarchy.makeUnion(childNode->boxOfHierarchy);
