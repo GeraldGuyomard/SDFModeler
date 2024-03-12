@@ -46,6 +46,14 @@ private:
             {
                 _objectIDsToRender.insert(object->id());
             }
+            
+            // also add parents
+            auto parent = object->parent();
+            while (parent != nullptr)
+            {
+                _objectIDsToRender.insert(parent->id());
+                parent = parent->parent();
+            }
         }
         
         for (const auto& child : object->children())

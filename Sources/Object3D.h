@@ -91,8 +91,6 @@ public:
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
     
-    bool encodeHierarchy(TileDescriptor& tileDescr, EncodingContext& ctx, const DrawCommand* owner) const;
-    
     virtual void selfEncode(EncodingContext& context) const;
     
     ObjectID id() const;

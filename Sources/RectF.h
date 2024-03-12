@@ -57,5 +57,13 @@ public:
         const auto inter = makeIntersection(other);
         return !inter.empty();
     }
+    
+    RectF makeUnion(RectF other) const
+    {
+        const auto newTopLeft = min(topLeft, other.topLeft);
+        const auto newBottomRight = max(bottomRight, other.bottomRight);
+        
+        return RectF { newTopLeft, newBottomRight };
+    }
 };
 

@@ -46,127 +46,109 @@ ChildReorderingArray::allocate(size_t size)
     return chunk;
 }
 
-ProjectedBB::ProjectedBB(const RawPoints& pts, const RectF& viewportRect)
+EncodingContext::CullingNode::CullingNode(const Object3D& object, const RectF& box)
+: object(&object),
+operation(object.operation()),
+hasGeometry(object.geometryType() != nullptr),
+isCompound(object.isCompound()),
+box(box),
+boxOfHierarchy(box)
+{}
+
+EncodingContext::CullingNode* EncodingContext::_addCullingTree(const Object3D& root)
 {
-    for (size_t i=0; i < 8; ++i)
+    if (!shouldEncode(root))
     {
-        const auto& pt = pts[i];
-        projectedPoints[i] = pt;
-        
-        // x => -1, 1 -> y => 1, -1
-        float2 p { pt.x, pt.y };
-        p.x = (1.f + p.x) * 0.5f * viewportRect.bottomRight.x;
-        p.y = (1.f - p.y) * 0.5f * viewportRect.bottomRight.y;
-        
-        boundingBoxInViewportSpace.add(p);
+        return nullptr;
     }
     
-    boundingBoxInViewportSpace = boundingBoxInViewportSpace.makeIntersection(viewportRect);
-}
-
-bool
-EncodingContext::_addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect)
-{
-    const auto worldViewProjMatrix = _viewProjectionMatrix * root->worldTransform();
-    const auto box = root->localBoundingBox();
+    const auto localBBox = root.localBoundingBox();
+    RectF box;
     
-    const bool thisVisible = _addBBox(root.get(), worldViewProjMatrix, box);
-    
-    std::vector<Object3D::Ptr> positiveChildren;
-    std::vector<Object3D::Ptr> negativeChildren;
-
-    for (const auto& child : root->children())
+    if (!localBBox.empty())
     {
-        switch (child->operation())
+        const auto worldViewProjMatrix = _viewProjectionMatrix * root.worldTransform();
+        float3 pts[8];
+        localBBox.points(pts);
+        
+        for (size_t i=0; i < 8; ++i)
         {
-            case SDFOperation::addition:
+            float3& pt = pts[i];
+            
+            // NDC in metal is x, y between [0, 1]
+            // and z between [0, 1]
+            const float4 p = worldViewProjMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
+            pt = p.xyz / p.w;
+            
+            const float x = (1.f + pt.x) * 0.5f * _viewportRect.bottomRight.x;
+            const float y = (1.f - pt.y) * 0.5f * _viewportRect.bottomRight.y;
+            
+            const bool inFrustrum = (pt.z >= 0.f) && (pt.z <= 1.f);
+            if (inFrustrum)
             {
-                positiveChildren.push_back(child);
-                break;
+                box.add(float2 {x, y});
             }
-
-            case SDFOperation::substraction:
+        }
+    }
+    
+    _cullingTree.emplace_back( root, box );
+    auto& node = _cullingTree.back();
+    
+    // Positive first
+    for (const auto& child: root.children())
+    {
+        if (child->operation() == SDFOperation::addition)
+        {
+            auto* childNode = _addCullingTree(*child);
+            if (childNode != nullptr)
             {
-                negativeChildren.push_back(child);
-                break;
+                node.boxOfHierarchy = node.boxOfHierarchy.makeUnion(childNode->boxOfHierarchy);
+                node.positiveChildren.push_back(childNode);
             }
-                
-            default: break;
         }
     }
     
-    bool positiveChildVisible = false;
-    for (const auto& child : positiveChildren)
+    // Negative last
+    for (const auto& child: root.children())
     {
-        if (_addBBoxRecursive(child, viewportRect))
+        if (child->operation() == SDFOperation::substraction)
         {
-            positiveChildVisible = true;
+            auto* childNode = _addCullingTree(*child);
+            if (childNode != nullptr)
+            {
+                node.negativeChildren.push_back(childNode);
+            }
         }
     }
     
-    if (positiveChildVisible)
-    {
-        for (const auto& child : negativeChildren)
-        {
-            _addBBoxRecursive(child, viewportRect);
-        }
-    }
-    
-    return thisVisible;
+    return &node;
 }
 
-
-bool
-EncodingContext::_addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox)
+namespace
 {
-    if (localBBox.empty())
+    size_t nodeCount(const Object3D& object)
     {
-        return false;
-    }
-    
-    float3 pts[8];
-    localBBox.points(pts);
-    
-    bool inFrustrum = false;
-    
-    for (int i=0; i < 8; ++i)
-    {
-        float3& pt = pts[i];
+        size_t n = 1;
         
-        // NDC in metal is x, y between [0, 1]
-        // and z between [0, 1]
-        const float4 p = worldViewProjMatrix * float4 { pt.x, pt.y, pt.z, 1.f };
-        pt = p.xyz / p.w;
-        
-        if (!inFrustrum)
+        for(const auto& child : object.children())
         {
-            inFrustrum = (pt.z >= 0.f) && (pt.z <= 1.f);
+            n += nodeCount(*child);
         }
+        
+        return n;
     }
-    
-    if (!inFrustrum)
-    {
-        return false;
-    }
-    
-    const ProjectedBB bb {pts, _viewportRect};
-    if (bb.boundingBoxInViewportSpace.empty())
-    {
-        return false;
-    }
-    
-    _objectToProjectedBB.emplace(std::pair {object, bb});
-    
-    return true;
 }
 
-const ProjectedBB*
-EncodingContext::projectedBB(const Object3D& object) const
+void
+EncodingContext::buildCullingTree(const Object3D& root)
 {
-    const auto it = _objectToProjectedBB.find(&object);
-    return (it != _objectToProjectedBB.end()) ? &it->second : nullptr;
+    _cullingTree.clear();
+    
+    const size_t n = nodeCount(root);
+    _cullingTree.reserve(n);
+    
+    _addCullingTree(root);
 }
-
 
 EncodingContext::EncodingContext(const std::shared_ptr<const World>& world,
                                            const float4x4& viewProjectionMatrix,
@@ -233,21 +215,6 @@ _serializedWorldObject(serializedWorldObject)
         
         minPt.y += _serializedWorldObject.tileSize.y;
     }
-    
-    const RectF viewportRect { float2 { 0, 0 }, vpSize };
-    
-    _addBBoxRecursive(world->rootObject(), viewportRect);
-}
-
-bool EncodingContext::isCulled(const Object3D& object, const RectF& tileRect) const
-{
-    const auto* box = projectedBB(object);
-    if (box == nullptr)
-    {
-        return true;
-    }
-    
-    return !box->boundingBoxInViewportSpace.intersects(tileRect);
 }
 
 void
@@ -291,6 +258,84 @@ EncodingContext::encodePrimitives(const Object3D& root)
     {
         encodePrimitives(*child);
     }
+}
+
+void
+EncodingContext::encodeHierarchy(TileDescriptor& tileDescr, const DrawCommand* owner)
+{
+    if (!_cullingTree.empty())
+    {
+        _encodeHierarchy(tileDescr, &_cullingTree[0], owner);
+    }
+}
+
+bool
+EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* node, const DrawCommand* owner)
+{
+    if (node->hasGeometry)
+    {
+        assert(node->positiveChildren.empty());
+        assert(node->negativeChildren.empty());
+        
+        // culling
+        if (!tileDescr.tileRect.intersects(node->box))
+        {
+            return false;
+        }
+        
+        const auto myPrimitiveOffset = encodedPrimitiveOffset(node->object);
+        writePrimitiveDrawCommand(myPrimitiveOffset, owner);
+        return true;
+    }
+    else
+    {
+        // culling of hierarchy
+        if (!tileDescr.tileRect.intersects(node->boxOfHierarchy))
+        {
+            return false;
+        }
+        
+        // a compound or a group
+        if (!node->positiveChildren.empty())
+        {
+            auto& cmd = writeGroupDrawCommand(owner);
+            
+            if (node->isCompound)
+            {
+                owner = &cmd;
+            }
+            
+            int16_t n = 0;
+            
+            for (const auto* positiveChild : node->positiveChildren)
+            {
+                if (_encodeHierarchy(tileDescr, positiveChild, owner))
+                {
+                    ++n;
+                }
+            }
+            
+            if (n != 0)
+            {
+                for (const auto* negativeChild : node->negativeChildren)
+                {
+                    if (_encodeHierarchy(tileDescr, negativeChild, owner))
+                    {
+                        ++n;
+                    }
+                }
+                
+                cmd.primitiveOffsetOrNegativeChildrenCount = -n;
+                return true;
+            }
+            else
+            {
+                cancelLastDrawCommand();
+            }
+        }
+    }
+    
+    return false;
 }
 
 void

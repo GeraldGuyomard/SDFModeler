@@ -508,101 +508,6 @@ Object3D::setIsCompound(bool isCompound)
     _isCompound = isCompound;
 }
 
-bool
-Object3D::encodeHierarchy(TileDescriptor& tileDescriptor, EncodingContext& context, const DrawCommand* owner) const
-{
-    const auto* geomType = geometryType();
-    if (geomType != nullptr)
-    {
-        assert(children().empty());
-        
-        if (!context.shouldEncode(*this))
-        {
-            return false;
-        }
-        
-        const bool isCulled = context.isCulled(*this, tileDescriptor.tileRect);
-        if (isCulled)
-        {
-            return false;
-        }
-        
-        const auto myPrimitiveOffset = context.encodedPrimitiveOffset(this);
-        context.writePrimitiveDrawCommand(myPrimitiveOffset, owner);
-        return true;
-    }
-    else
-    {
-        // a compound or a group
-        const auto& children = this->children();
-        const size_t childrenCount = children.size();
-        
-        auto& scratch = context.childOrderingArray();
-        auto positiveChildrenIndices = scratch.allocate(childrenCount);
-        auto negativeChildrenIndices = scratch.allocate(childrenCount);
-
-        uint8_t index = 0;
-        for (const auto& child : children)
-        {
-            const auto operation = context.operation(*child);
-            if (operation == SDFOperation::addition)
-            {
-                positiveChildrenIndices.push_back(index);
-            }
-            else if (operation == SDFOperation::substraction)
-            {
-                negativeChildrenIndices.push_back(index);
-            }
-            
-            ++index;
-        }
-        
-        const size_t nbPositiveChildren = positiveChildrenIndices.size();
-        if (nbPositiveChildren != 0)
-        {
-            auto& cmd = context.writeGroupDrawCommand(owner);
-            
-            if (isCompound())
-            {
-                owner = &cmd;
-            }
-            
-            int16_t n = 0;
-            
-            for (index = 0; index < nbPositiveChildren; ++index)
-            {
-                const auto& child = children[positiveChildrenIndices[index]];
-                if (child->encodeHierarchy(tileDescriptor, context, owner))
-                {
-                    ++n;
-                }
-            }
-            
-            if (n != 0)
-            {
-                const size_t nbNegativeChildren = negativeChildrenIndices.size();
-                for (index = 0; index < nbNegativeChildren; ++index)
-                {
-                    const auto& child = children[negativeChildrenIndices[index]];
-                    if (child->encodeHierarchy(tileDescriptor, context, owner))
-                    {
-                        ++n;
-                    }
-                }
-                
-                cmd.primitiveOffsetOrNegativeChildrenCount = -n;
-                return true;
-            }
-            else
-            {
-                context.cancelLastDrawCommand();
-            }
-        }
-    }
-    
-    return false;
-}
-
 void
 Object3D::selfEncode(EncodingContext&) const
 {
@@ -719,6 +624,7 @@ World::encode(EncodingContext& context,
     auto& serialized = context.serializedWorldObject();
     
     context.encodePrimitives(*_rootObject);
+    context.buildCullingTree(*_rootObject);
     
     const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
     
@@ -728,7 +634,8 @@ World::encode(EncodingContext& context,
         tile.rootCommandIndex = context.availableCommandIndex();
         
         TileDescriptor descr { tile };
-        _rootObject->encodeHierarchy(descr, context, nullptr);
+        //_rootObject->encodeHierarchy(descr, context, nullptr);
+        context.encodeHierarchy(descr, nullptr);
         
         tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
         if (tile.nbCommands == 0)

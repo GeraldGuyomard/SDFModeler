@@ -12,17 +12,6 @@
 
 #include <functional>
 
-class ProjectedBB final
-{
-public:
-    using Points = std::array<float3, 8>;
-    Points projectedPoints;
-    RectF boundingBoxInViewportSpace;
-    
-    using RawPoints = float3[8];
-    ProjectedBB(const RawPoints& pts, const RectF& viewportRect);
-};
-
 class Object3D;
 class World;
 class RectF;
@@ -92,6 +81,8 @@ public:
     virtual SDFOperation operation(const Object3D&) const;
 };
 
+class TileDescriptor;
+
 class EncodingContext final
 {
 public:
@@ -108,14 +99,11 @@ public:
     void encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback&);
     TPrimitiveOffset encodedPrimitiveOffset(const Object3D* object) const;
     
-    const ProjectedBB* projectedBB(const Object3D&) const;
-    
     const float2& viewportSize() const { return _viewportRect.bottomRight; }
     SerializedWorldObject& serializedWorldObject() { return _serializedWorldObject; }
     
-    bool isCulled(const Object3D& object, const RectF& tileRect) const;
-    
     void encodePrimitives(const Object3D& root);
+    void encodeHierarchy(TileDescriptor& tileDescr, const DrawCommand* owner);
     
     void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner);
     DrawCommand& writeGroupDrawCommand(const DrawCommand* owner);
@@ -123,7 +111,7 @@ public:
     
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
     
-    ChildReorderingArray& childOrderingArray() { return _childOrderingArray; }
+    void buildCullingTree(const Object3D& root);
     
     void setDelegate(EncodingContextDelegate* delegate);
     
@@ -140,12 +128,29 @@ private:
     size_t _nbPrimitivesSerialized = 0;
     size_t _availableDrawCommandIndex = 0;
     
-    bool _addBBoxRecursive(const std::shared_ptr<Object3D>& root, const RectF& viewportRect);
-    bool _addBBox(const Object3D* object, const float4x4& worldViewProjMatrix, const BoundingBox& localBBox);
+    struct CullingNode final
+    {
+    public:
+        const Object3D* object;
+        RectF box;
+        RectF boxOfHierarchy; // including box
+        SDFOperation operation;
+        bool hasGeometry;
+        bool isCompound;
+        
+        std::vector<CullingNode*> positiveChildren;
+        std::vector<CullingNode*> negativeChildren;
+        
+        CullingNode(const Object3D& object, const RectF& box);
+    };
     
-    std::unordered_map<const Object3D*, ProjectedBB> _objectToProjectedBB;
+    CullingNode* _addCullingTree(const Object3D& root);
+    
+    bool _encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* node, const DrawCommand* owner);
+    
+    std::vector<CullingNode> _cullingTree;
+    
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
     
-    ChildReorderingArray _childOrderingArray;
     EncodingContextDelegate* _delegate = nullptr;
 };
