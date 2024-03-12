@@ -272,6 +272,12 @@ EncodingContext::encodeHierarchy(TileDescriptor& tileDescr, const DrawCommand* o
 bool
 EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* node, const DrawCommand* owner)
 {
+    // culling of hierarchy
+    if (!tileDescr.tileRect.intersects(node->boxOfHierarchy))
+    {
+        return false;
+    }
+    
     if (node->hasGeometry)
     {
         assert(node->positiveChildren.empty());
@@ -289,12 +295,6 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
     }
     else
     {
-        // culling of hierarchy
-        if (!tileDescr.tileRect.intersects(node->boxOfHierarchy))
-        {
-            return false;
-        }
-        
         // a compound or a group
         if (!node->positiveChildren.empty())
         {

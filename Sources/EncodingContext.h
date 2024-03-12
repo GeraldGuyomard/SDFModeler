@@ -131,12 +131,13 @@ private:
     struct CullingNode final
     {
     public:
-        const Object3D* object;
-        RectF box;
+        const Object3D* const object;
+        const SDFOperation operation;
+        const bool hasGeometry;
+        const bool isCompound;
+        
+        const RectF box;
         RectF boxOfHierarchy; // including box
-        SDFOperation operation;
-        bool hasGeometry;
-        bool isCompound;
         
         std::vector<CullingNode*> positiveChildren;
         std::vector<CullingNode*> negativeChildren;
@@ -149,6 +150,7 @@ private:
     bool _encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* node, const DrawCommand* owner);
     
     std::vector<CullingNode> _cullingTree;
+    std::vector<CullingNode*> _childrenArray;
     
     std::unordered_map<const Object3D*, TPrimitiveOffset> _objectToOffset;
     
