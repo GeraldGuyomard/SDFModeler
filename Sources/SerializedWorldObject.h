@@ -139,7 +139,7 @@ public:
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
-             locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
         }
         else
         {
@@ -180,6 +180,35 @@ public:
     {
         const TDrawCommandIndex index = _rootCommandIndex + _stack[_stackIndex].relativeDrawCommandIndex;
         return _serialized.drawCommand(index);
+    }
+    
+    TDrawCommandIndex closestPositiveRelativeDrawCommandIndex() const
+    {
+        int8_t depth = _stackIndex;
+        while (depth >= 0)
+        {
+            const THREAD Locals& locals = _stack[depth--];
+            
+            const auto cmdIndex = _rootCommandIndex + locals.relativeDrawCommandIndex;
+            CONSTANT auto* drawCommand = _serialized.drawCommand(cmdIndex);
+            if (drawCommand->primitiveOffsetOrNegativeChildrenCount < 0)
+            {
+                // a group
+                return locals.relativeDrawCommandIndex;
+            }
+            else
+            {
+                // a prim
+                CONSTANT auto* prim =  _serialized.primitive(drawCommand->primitiveOffsetOrNegativeChildrenCount);
+                if (prim->sdfOperation() == SDFOperation::addition)
+                {
+                    return locals.relativeDrawCommandIndex;
+                }
+            }
+            
+        }
+        
+        return kInvalidCommandIndex;
     }
     
     void back()
@@ -228,9 +257,21 @@ public:
         return _minCmdIndex;
     }
     
-    void setMinCmdIndex(TDrawCommandIndex index)
+    MaterialID minMaterialID() const
+    {
+        return _minMaterialID;
+    }
+    
+    ObjectID minObjectID() const
+    {
+        return _minObjectID;
+    }
+    
+    void setMinData(TDrawCommandIndex index, MaterialID materialID, ObjectID minObjectID)
     {
         _minCmdIndex = index;
+        _minMaterialID = materialID;
+        _minObjectID = minObjectID;
     }
     
     CullingInfo cullingInfo()
@@ -259,6 +300,8 @@ private:
     
     float _minDistance = 1e5f;
     TDrawCommandIndex _minCmdIndex = -1;
+    MaterialID _minMaterialID = kNoMaterialID;
+    ObjectID _minObjectID = kInvalidObjectID;
     
     bool _hit = false;
 };
@@ -320,19 +363,46 @@ INLINE void _computeDistIterative(
             const float2 distances = locals.distances;
             const float additiveObjectsDist = distances.x;
             const float negativeObjectsDist = -distances.y;
-            const int relativeMinCmdIndex = additiveObjectsDist < negativeObjectsDist;
+            float dist;
             
-            const float dist = max(additiveObjectsDist, negativeObjectsDist);
-            
-            if (visitor.submitMinDistance(serialized, dist))
+            if (additiveObjectsDist > negativeObjectsDist)
             {
-                // hit
-                const auto relativeCmdIndex = locals.relativeMinDrawCommandIndices[relativeMinCmdIndex];
-                ASSERT(relativeCmdIndex >= 0);
+                dist = additiveObjectsDist;
                 
-                visitor.setMinCmdIndex(rootCommandIndex + relativeCmdIndex);
+                if (visitor.submitMinDistance(serialized, additiveObjectsDist))
+                {
+                    // hit of positive part
+                    const auto relativeMinCmdIndex = locals.relativeMinDrawCommandIndices[0];
+                    const auto cmdIndex = rootCommandIndex + relativeMinCmdIndex;
+                    CONSTANT auto* cmd = serialized.drawCommand(cmdIndex);
+                    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+                    
+                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    
+                    visitor.setMinData(cmdIndex, prim->materialId, prim->objectId);
+                    break;
+                }
+            }
+            else
+            {
+                dist = negativeObjectsDist;
                 
-                break;
+                if (visitor.submitMinDistance(serialized, dist))
+                {
+                    // hit of negative part
+
+                    auto relativeMinCmdIndexForShadingPurpose = locals.relativeMinDrawCommandIndices[1];
+                    const auto cmdIndexForShadingPurpose = rootCommandIndex + relativeMinCmdIndexForShadingPurpose;
+                    CONSTANT auto* cmd = serialized.drawCommand(cmdIndexForShadingPurpose);
+                    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    
+                    const auto relativeMinCmdIndex = stack.closestPositiveRelativeDrawCommandIndex();
+                    const auto cmdIndex = rootCommandIndex + relativeMinCmdIndex;
+                    
+                    visitor.setMinData(cmdIndex, prim->materialId, prim->objectId);
+                    break;
+                }
             }
             
             if (stack.depth() > 0)
@@ -460,7 +530,7 @@ INLINE void visitFlatCommandList(float3 pt,
             const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
             if (visitor.submitMinDistance(serialized, d))
             {
-                visitor.setMinCmdIndex(serialized.drawCommandIndex(cmd));
+                visitor.setMinData(serialized.drawCommandIndex(cmd), prim->materialId, prim->objectId);
                 break;
             }
         }
@@ -516,19 +586,17 @@ computeHitResult(const THREAD Visitor& visitor,
     const auto minCmdIndex = visitor.minCmdIndex();
     ASSERT(minCmdIndex >= 0);
     
+    const auto materialID = visitor.minMaterialID();
+    const auto objectID = visitor.minObjectID();
+    
     // This should be a leaf primitive
     auto cmd = serialized.drawCommand(minCmdIndex);
-    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
     
     const TDrawCommandIndex startCmdIndex = minCmdIndex + cmd->ownerOffset;
     
-    auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-    const auto materialID = prim->materialId;
     const auto subCullingInfo = cullingInfo.subCulling(tile.rootCommandIndex, startCmdIndex);
     ShadedPrimitive primitive { serialized, startCmdIndex, materialID, subCullingInfo };
     const auto color = shader.computeShade(primitive, ray, visitor.minDistance(), pt);
-    
-    const auto objectID = prim->objectId;
     
     return RayMarchResult { ray, objectID, color, d };
 }
@@ -601,32 +669,51 @@ public:
         float3 pt = ray.origin;
         Visitor visitor;
         
-        for (size_t i=0; i < kNbSteps; ++i)
+        if (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0)
         {
-            pt = ray.pt(d);
-            
-            visitor.reset(cullingInfo);
-            
-            if (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0)
+            for (size_t i=0; i < kNbSteps; ++i)
             {
+                pt = ray.pt(d);
+                
+                visitor.reset(cullingInfo);
+                
                 visitDrawCommandTree(pt, _serialized, tile.rootCommandIndex, visitor);
+                
+                if (visitor.hit())
+                {
+                    break;
+                }
+                
+                d += visitor.minDistance();
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
             }
-            else
+        }
+        else
+        {
+            for (size_t i=0; i < kNbSteps; ++i)
             {
+                pt = ray.pt(d);
+                
+                visitor.reset(cullingInfo);
+                
                 // only positive objects, can ignore the tree structure and iterate flat
                 visitFlatCommandList(pt, _serialized, tile.rootCommandIndex, tile.nbCommands, visitor);
-            }
-            
-            if (visitor.hit())
-            {
-                break;
-            }
-            
-            d += visitor.minDistance();
-            
-            if (d > ray.maxLength)
-            {
-                break;
+
+                if (visitor.hit())
+                {
+                    break;
+                }
+                
+                d += visitor.minDistance();
+                
+                if (d > ray.maxLength)
+                {
+                    break;
+                }
             }
         }
         
