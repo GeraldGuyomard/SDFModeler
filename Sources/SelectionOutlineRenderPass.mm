@@ -21,7 +21,7 @@ namespace
 SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
 : _cameraIndex(cameraIndex),
 _color { 252.0f / 255.0f, 202.0f / 255.0f, 0.0f, 1.f },
-_thickness(4.f)
+_thickness(2.f)
 {}
 
 id<MTLRenderCommandEncoder>_Nullable
@@ -132,7 +132,9 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     
     const auto size = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
     
-    uniforms.samplingDelta = float2 { _thickness, _thickness } / size;
+    const float contentScaleFactor = renderer.delegate()->contentScaleFactor();
+    const float thickness = contentScaleFactor * _thickness;
+    uniforms.samplingDelta = float2 { thickness, thickness } / size;
     
     uniforms.color = _color;
 }

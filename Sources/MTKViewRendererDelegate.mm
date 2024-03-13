@@ -124,19 +124,28 @@ MTKViewRendererDelegate::cameraRig() const
     return _cameraRig;
 }
 
+float
+MTKViewRendererDelegate::contentScaleFactor() const
+{
+#if TARGET_OS_OSX
+    const auto sizeInPixels = [_mtkView convertSizeToBacking:CGSizeMake(1.f, 1.f)];
+    return sizeInPixels.width;
+#else
+    // iOS
+    const float s = _mtkView.layer.contentsScale;
+    return s;
+#endif
+}
+
 void
 MTKViewRendererDelegate::updateViewportSize()
 {
     CGSize drawableSize = _mtkView.bounds.size;
     
-#if TARGET_OS_OSX
-    drawableSize = [_mtkView convertSizeToBacking:drawableSize];
-#else
-    // iOS
-    const float s = _mtkView.layer.contentsScale;
-    drawableSize.width *= s;
-    drawableSize.height *= s;
-#endif
+    const float scale = contentScaleFactor();
+
+    drawableSize.width *= scale;
+    drawableSize.height *= scale;
     
     ASSERT(drawableSize.width > 0.f);
     ASSERT(drawableSize.height > 0.f);

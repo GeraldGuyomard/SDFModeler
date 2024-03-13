@@ -54,6 +54,8 @@ public:
     
     virtual DepthInfo depthInfo() const = 0;
     
+    virtual float contentScaleFactor() const { return 1.f; }
+    
     virtual MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const = 0;
     virtual void presentDrawable(id<MTLCommandBuffer> _Nonnull commandBuffer) = 0;
     

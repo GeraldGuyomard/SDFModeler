@@ -29,6 +29,7 @@ public:
     CameraRig::Ptr cameraRig() const override;
     void updateViewportSize() override;
     
+    float contentScaleFactor() const override;
     DepthInfo depthInfo() const override;
     
     MTLRenderPassDescriptor* _Nullable renderPassDescriptor(size_t cameraIndex) const override;
