@@ -90,6 +90,11 @@ SelectionMattingRenderPass::init(Renderer& renderer)
     _renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
     _renderPassDescriptor.depthAttachment.clearDepth = 0;
     
+    auto cameraRig = renderer.cameraRig();
+    const auto cameras = cameraRig->cameras();
+    
+    _renderPassDescriptor.renderTargetArrayLength = cameras.size();
+    
     return true;
 }
 
