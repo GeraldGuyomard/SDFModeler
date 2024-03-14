@@ -70,13 +70,12 @@ struct FragmentShaderOut_Matting
 };
 
 fragment FragmentShaderOut_Matting fragmentShaderMatting(VertexShaderOut in [[stage_in]],
-                                                         ushort amp_id [[amplification_id]],
-                                                        constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
+                                                         constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
-    CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[amp_id];
-    CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[amp_id];
+    CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[in.cameraIndex];
+    CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[in.cameraIndex];
     
     const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(in.viewportNDC, cameraUniforms, serializedWorld, materials);
     
@@ -90,14 +89,17 @@ struct VertexShader_SelectionOutlineOut
 {
     float4 position [[position]];
     float2 textCoords;
+    int cameraIndex;
 };
 
-vertex VertexShader_SelectionOutlineOut vertexShaderOutline(VertexShader_SelectionOutlineIn in [[stage_in]])
+vertex VertexShader_SelectionOutlineOut vertexShaderOutline(VertexShader_SelectionOutlineIn in [[stage_in]],
+                                                            ushort amp_id [[amplification_id]])
 {
     VertexShader_SelectionOutlineOut out;
 
     out.position = in.position;
     out.textCoords = in.textCoords;
+    out.cameraIndex = amp_id;
 
     return out;
 }
@@ -111,7 +113,7 @@ struct FragmentShader_SelectionOutlineOut
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
                                     texture2d<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
-                                    texture2d<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]]
+                                    texture2d_array<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]]
                                     )
 {
     constexpr sampler depthSampler(mip_filter::linear,
@@ -121,13 +123,13 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     const auto delta = uniforms.samplingDelta;
     
     size_t n = 0;
-    float mattingDepth = mattingDepthTexture.sample(depthSampler, in.textCoords).r;
+    float mattingDepth = mattingDepthTexture.sample(depthSampler, in.textCoords, in.cameraIndex).r;
     
     for (float x = -delta.x; x <= delta.x; x += delta.x)
     {
         for (float y = -delta.y; y <= delta.y; y += delta.y)
         {
-            const auto d = mattingDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }).r;
+            const auto d = mattingDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }, in.cameraIndex).r;
             mattingDepth = max(mattingDepth, d);
             
             if (d != 0.f)

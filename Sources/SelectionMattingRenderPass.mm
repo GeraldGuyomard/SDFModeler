@@ -114,7 +114,8 @@ id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
     auto cameraRig = renderer.cameraRig();
-    auto size = cameraRig->cameras()[kLeftCameraIndex]->viewportSize();
+    const auto cameras = cameraRig->cameras();
+    auto size = cameras[kLeftCameraIndex]->viewportSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
         return nullptr;
@@ -137,6 +138,11 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
             auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:depthPixelFormat width:width height:height mipmapped:NO];
             textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
             
+            textureDescriptor.textureType = MTLTextureType2DArray;
+            
+            const size_t nbViews = cameras.size();
+            textureDescriptor.arrayLength = nbViews;
+    
             _targetDepthTexture = [device newTextureWithDescriptor:textureDescriptor];
         }
     }
