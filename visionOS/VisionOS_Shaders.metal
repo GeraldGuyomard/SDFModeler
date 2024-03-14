@@ -30,7 +30,7 @@ vertex ColorInOut vertexShader_visionOS(Vertex in [[stage_in]],
 {
     ColorInOut out;
 
-    Uniforms uniforms = uniformsArray.uniforms[amp_id];
+    CameraUniforms uniforms = uniformsArray.uniforms[amp_id];
     
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;

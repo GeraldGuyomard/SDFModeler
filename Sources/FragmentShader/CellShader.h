@@ -13,7 +13,7 @@ class CellShader final
 {
 public:
     
-    CellShader(CONSTANT Uniforms& uniforms, CONSTANT Materials& materials)
+    CellShader(CONSTANT CameraUniforms& uniforms, CONSTANT Materials& materials)
     : _lightDirection(normalize(uniforms.lightDirection)), _materials(materials)
     {}
     

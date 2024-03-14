@@ -66,8 +66,8 @@ private:
 };
 
 
-SelectionMattingRenderPass::SelectionMattingRenderPass(size_t cameraIndex)
-: _inherited(cameraIndex), _cameraIndex(cameraIndex), _encodingDelegate(std::make_unique<MattingEncodingDelegate>())
+SelectionMattingRenderPass::SelectionMattingRenderPass()
+: _encodingDelegate(std::make_unique<MattingEncodingDelegate>())
 {}
 
 SelectionMattingRenderPass::~SelectionMattingRenderPass() = default;
@@ -114,7 +114,7 @@ id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
     auto cameraRig = renderer.cameraRig();
-    auto size = cameraRig->cameras()[_cameraIndex]->viewportSize();
+    auto size = cameraRig->cameras()[kLeftCameraIndex]->viewportSize();
     if ((size.x <= 0.f) || ((size.y <= 0.f)))
     {
         return nullptr;
@@ -126,8 +126,6 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     if ((_targetDepthTexture.width != size.x) || (_targetDepthTexture.height != size.y))
     {
-        auto config = pipelineConfiguration();
-        
         const auto width = NSUInteger(size.x);
         const auto height = NSUInteger(size.y);
         

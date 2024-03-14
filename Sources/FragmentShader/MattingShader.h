@@ -13,7 +13,7 @@ class MattingShader final
 {
 public:
     
-    MattingShader(CONSTANT Uniforms& uniforms, CONSTANT Materials& materials)
+    MattingShader(CONSTANT CameraUniforms& uniforms, CONSTANT Materials& materials)
     {}
     
     template <typename TPrimitive>

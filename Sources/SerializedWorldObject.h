@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "Uniforms.h"
+#include "CameraUniforms.h"
 #include "Results.h"
 #include "PrimitiveEvaluator.h"
 

@@ -11,16 +11,15 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "Uniforms.h"
+#include "CameraUniforms.h"
 
 enum BufferIndex : EnumBackingType
 {
     BufferIndexMeshPositions    = 0,
     BufferIndexMeshViewportNDCs = 1,
     
-    BufferIndexUniforms         = 2,
-    BufferIndexSerializedWorld  = 3,
-    BufferIndexMaterials        = 4,
+    BufferIndexViewDependentUniforms   = 2,
+    BufferIndexMaterials                = 3,
     
     BufferIndexUVs = 1,
     

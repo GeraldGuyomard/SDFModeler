@@ -8,9 +8,7 @@
 #include "SDFRenderPass.h"
 #include "Renderer.h"
 
-SDFRenderPass::SDFRenderPass(size_t cameraIndex)
-: _cameraIndex(cameraIndex)
-{}
+SDFRenderPass::SDFRenderPass() = default;
 
 PipelineConfiguration::Ptr
 SDFRenderPass::makePipelineConfiguration(Renderer& renderer) const
@@ -43,8 +41,7 @@ SDFRenderPass::init(Renderer& renderer)
     
     auto device = renderer.mtlDevice();
     
-    _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"UniformBuffer");
-    _serializedWorldBuffer = std::make_unique<SerializedWorldBuffer>(device, @"SerializedSceneBuffer");
+    _viewDependentUniformsBuffer = std::make_unique<ViewDependentUniformsBuffer>(device, @"ViewDependentUniforms");
     _materialsBuffer = std::make_unique<SerializedMaterials>(device, @"Materials");
 
     return true;
@@ -53,53 +50,58 @@ SDFRenderPass::init(Renderer& renderer)
 void
 SDFRenderPass::updateBuffersState()
 {
-    _uniformsBuffer->update();
-    _serializedWorldBuffer->update();
+    _viewDependentUniformsBuffer->update();
     _materialsBuffer->update();
 }
 
 void
 SDFRenderPass::updateUniforms(Renderer& renderer)
 {
-    auto& uniforms = _uniformsBuffer->uniform();
-
-    const auto camera = renderer.cameraRig()->cameras()[_cameraIndex];
+    const auto& cameras = renderer.cameraRig()->cameras();
+    const size_t cameraCount = cameras.size();
     
-    const float4x4 cameraMatrix = (camera != nullptr) ? camera->worldTransform() : float4x4_identity();
-    
-    uniforms.viewportSize = camera->viewportSize();
-    
-    uniforms.cameraMatrix = cameraMatrix;
-    uniforms.projectionMatrix = camera->projectionMatrix();
-    
-    uniforms.viewMatrix = inverse(cameraMatrix);
-    uniforms.invProjectionMatrix = camera->invProjectionMatrix();
-    
-    uniforms.rayOriginZInNDC = camera->rayOriginZInNDC();
-    uniforms.rayForwardZInNDC = camera->rayForwardPointZInNDC();
-    uniforms.rayLength = camera->rayLength();
-    
-    uniforms.lightDirection = float3 { -1, -1, -1 };
-    
-    if (auto world = renderer.world())
+    for (size_t cameraIndex=0; cameraIndex < cameraCount; ++cameraIndex)
     {
-        auto& serializedWorld = _serializedWorldBuffer->uniform();
-        auto& serializedMaterials = _materialsBuffer->uniform();
+        auto& cameraUniforms = _viewDependentUniformsBuffer->uniform().cameraUniforms[cameraIndex];
+
+        const auto camera = cameras[cameraIndex];
         
-        const auto viewMatrix = inverse(cameraMatrix);
-        const auto viewProjectionMatrix = camera->projectionMatrix() * viewMatrix;
+        const float4x4 cameraMatrix = (camera != nullptr) ? camera->worldTransform() : float4x4_identity();
         
-        EncodingContext context { world, viewProjectionMatrix, uniforms.viewportSize, renderer.delegate()->tileSize(), serializedWorld };
-        configure(context);
+        cameraUniforms.viewportSize = camera->viewportSize();
         
-        world->encode(context, serializedMaterials);
+        cameraUniforms.cameraMatrix = cameraMatrix;
+        cameraUniforms.projectionMatrix = camera->projectionMatrix();
+        
+        cameraUniforms.viewMatrix = inverse(cameraMatrix);
+        cameraUniforms.invProjectionMatrix = camera->invProjectionMatrix();
+        
+        cameraUniforms.rayOriginZInNDC = camera->rayOriginZInNDC();
+        cameraUniforms.rayForwardZInNDC = camera->rayForwardPointZInNDC();
+        cameraUniforms.rayLength = camera->rayLength();
+        
+        cameraUniforms.lightDirection = float3 { -1, -1, -1 };
+        
+        if (auto world = renderer.world())
+        {
+            auto& serializedWorld = _viewDependentUniformsBuffer->uniform().serializedWorldObject[cameraIndex];
+            auto& serializedMaterials = _materialsBuffer->uniform();
+            
+            const auto viewMatrix = inverse(cameraMatrix);
+            const auto viewProjectionMatrix = camera->projectionMatrix() * viewMatrix;
+            
+            EncodingContext context { world, viewProjectionMatrix, cameraUniforms.viewportSize, renderer.delegate()->tileSize(), serializedWorld };
+            configure(context);
+            
+            world->encode(context, serializedMaterials);
+        }
     }
 }
 
 id <MTLRenderCommandEncoder> _Nullable
 SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(_cameraIndex) copy];
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
     
     if (renderPassDescriptor != nullptr)
     {
@@ -126,9 +128,9 @@ SDFRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnu
 void
 SDFRenderPass::willStartRender(Renderer& renderer)
 {
-    const float2 viewportSize = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
+    const float2 viewportSize = renderer.cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
-    const auto& serialized = _serializedWorldBuffer->uniform();
+    const auto& serialized = _viewDependentUniformsBuffer->uniform().serializedWorldObject[kLeftCameraIndex];
     const float2 tileGridSize { serialized.numTileColumns, serialized.numTileRows };
     
     _renderStats.setViewportInfo(viewportSize, tileGridSize);
@@ -137,21 +139,42 @@ SDFRenderPass::willStartRender(Renderer& renderer)
 void
 SDFRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder)
 {
-    _uniformsBuffer->setFragmentBuffer(encoder);
-    _serializedWorldBuffer->setFragmentBuffer(encoder);
+    _viewDependentUniformsBuffer->setFragmentBuffer(encoder);
     _materialsBuffer->setFragmentBuffer(encoder);
     
-    MTLViewport vp;
-    vp.originX = vp.originY = 0;
-    auto camera = renderer.cameraRig()->cameras()[_cameraIndex];
+    const auto& cameras = renderer.cameraRig()->cameras();
+    const size_t cameraCount = cameras.size();
+    MTLViewport vps[cameraCount];
     
-    const auto& vpSize = camera->viewportSize();
-    vp.width = vpSize.x;
-    vp.height = vpSize.y;
-    vp.znear = 0;
-    vp.zfar = 1;
+    for (size_t cameraIndex = 0; cameraIndex < cameraCount; ++cameraIndex)
+    {
+        MTLViewport& vp = vps[cameraIndex];
+        
+        vp.originX = vp.originY = 0;
+        auto camera = cameras[cameraIndex];
+        
+        const auto& vpSize = camera->viewportSize();
+        vp.width = vpSize.x;
+        vp.height = vpSize.y;
+        vp.znear = 0;
+        vp.zfar = 1;
+    }
     
-    [encoder setViewport:vp];
+    [encoder setViewports:vps count:cameraCount];
+    
+    if (cameraCount > 1)
+    {
+        MTLVertexAmplificationViewMapping mapping[cameraCount];
+        
+        for (uint32_t cameraIndex = 0; cameraIndex < cameraCount; ++cameraIndex)
+        {
+            mapping[cameraIndex].renderTargetArrayIndexOffset = cameraIndex;
+            mapping[cameraIndex].viewportArrayIndexOffset = cameraIndex;
+        }
+        
+        [encoder setVertexAmplificationCount:cameraCount viewMappings:mapping];
+    }
+
     
     _inherited::_render(renderer, encoder);
 }

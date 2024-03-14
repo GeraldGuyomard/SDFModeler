@@ -17,7 +17,7 @@ class SelectionMattingRenderPass : public SDFRenderPass
 public:
     using _inherited = SDFRenderPass;
     
-    SelectionMattingRenderPass(size_t cameraIndex);
+    SelectionMattingRenderPass();
     ~SelectionMattingRenderPass() override;
     
     bool init(Renderer& renderer) override;
@@ -31,8 +31,6 @@ private:
     void configure(EncodingContext&) const override;
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;
-    
-    const size_t _cameraIndex;
     
     id<MTLTexture> _Nullable _targetDepthTexture = nil;
     MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;

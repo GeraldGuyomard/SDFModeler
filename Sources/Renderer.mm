@@ -63,28 +63,19 @@ Renderer::init()
     _commandQueue = [device newCommandQueue];
     _mtlLibrary = [device newDefaultLibrary];
     
-    const size_t n = _delegate->cameraRig()->cameras().size();
+    _sdfRenderPass = std::make_unique<SDFRenderPass>();
+    _renderPasses.push_back(_sdfRenderPass.get());
     
-    _renderPassesPerCamera.resize(n);
+    _selectionMattingRenderPass = std::make_unique<SelectionMattingRenderPass>();
+    _renderPasses.push_back(_selectionMattingRenderPass.get());
     
-    for (size_t i=0; i < n; ++i)
+    _selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>();
+    _renderPasses.push_back(_selectionOutlineRenderPass.get());
+    
+    _selectionOutlineRenderPass->setDepthTextureProvider([selectionMattingPass = _selectionMattingRenderPass.get()]()
     {
-        auto& rp = _renderPassesPerCamera[i];
-        
-        rp.sdfRenderPass = std::make_unique<SDFRenderPass>(i);
-        _renderPasses.push_back(rp.sdfRenderPass.get());
-        
-        rp.selectionMattingRenderPass = std::make_unique<SelectionMattingRenderPass>(i);
-        _renderPasses.push_back(rp.selectionMattingRenderPass.get());
-        
-        rp.selectionOutlineRenderPass = std::make_unique<SelectionOutlineRenderPass>(i);
-        _renderPasses.push_back(rp.selectionOutlineRenderPass.get());
-        
-        rp.selectionOutlineRenderPass->setDepthTextureProvider([selectionMattingPass = rp.selectionMattingRenderPass.get()]()
-        {
-            return selectionMattingPass->targetDepthTexture();
-        });
-    }
+        return selectionMattingPass->targetDepthTexture();
+    });
     
     for (auto renderPass : _renderPasses)
     {
@@ -146,10 +137,7 @@ Renderer::render()
         return;
     }
     
-    for (auto& rpPerCamera : _renderPassesPerCamera)
-    {
-        rpPerCamera.selectionMattingRenderPass->setObjectsToRender(_world->selection());
-    }
+    _selectionMattingRenderPass->setObjectsToRender(_world->selection());
     
     FrameSubmission submission { _delegate.get() };
     if (!submission.isValid()) {
@@ -206,7 +194,7 @@ Renderer::ray(float2 pixelPosition) const
     const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     const auto p = pixelToNDC(size, pixelPosition);
     
-    const auto ray = Ray::make(p, _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass->uniforms());
+    const auto ray = Ray::make(p, _sdfRenderPass->viewDependentUniforms().cameraUniforms[kLeftCameraIndex]);
     return ray;
 }
 
@@ -217,51 +205,48 @@ Renderer::pick(float2 pixelPosition) const
     
     const float mattingZ = renderMatting(kLeftCameraIndex, pixelPosition);
     
-    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
-    
-    const auto& uniforms = sdfRenderPass->uniforms();
-    const auto& serializedWorld = sdfRenderPass->serializedWorld();
-    const auto& materials = sdfRenderPass->materials();
+    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
+    const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
+    const auto& materials = _sdfRenderPass->materials();
     
     const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    return ::pickObject(p, uniforms, serializedWorld, materials);
+    return ::pickObject(p, cameraUniforms, serializedWorld, materials);
 }
 
 float4
 Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
 {
-    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
-    
-    const auto& uniforms = sdfRenderPass->uniforms();
-    const auto& serializedWorld = sdfRenderPass->serializedWorld();
-    const auto& materials = sdfRenderPass->materials();
+    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
+    const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
+    const auto& materials = _sdfRenderPass->materials();
     
     const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    return renderDefault(p, uniforms, serializedWorld, materials).color;
+    return renderDefault(p, cameraUniforms, serializedWorld, materials).color;
 }
 
 float
 Renderer::renderMatting(size_t cameraIndex, float2 pixelPosition) const
 {
-    auto sdfRenderPass = _renderPassesPerCamera[kLeftCameraIndex].sdfRenderPass.get();
-    
-    const auto& uniforms = sdfRenderPass->uniforms();
-    const auto& serializedWorld = sdfRenderPass->serializedWorld();
-    const auto& materials = sdfRenderPass->materials();
+    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
+    const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
+    const auto& materials = _sdfRenderPass->materials();
     
     const auto size = cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(p, uniforms, serializedWorld, materials);
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(p, cameraUniforms, serializedWorld, materials);
     
-    return uniforms.inverseZ() ? (1.f - res.depth) : res.depth;
+    return cameraUniforms.inverseZ() ? (1.f - res.depth) : res.depth;
 }
 
 

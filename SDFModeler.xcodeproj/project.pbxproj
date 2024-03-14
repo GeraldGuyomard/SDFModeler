@@ -178,6 +178,9 @@
 		7F74B6742B61974900262F2D /* VisionOS_Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 7F74B6732B61974900262F2D /* VisionOS_Shaders.metal */; };
 		7F74B6782B61974900262F2D /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6772B61974900262F2D /* Preview Assets.xcassets */; };
 		7F74B67A2B61974A00262F2D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7F74B6792B61974A00262F2D /* Assets.xcassets */; };
+		7F8180472BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8180452BA2833E00A39A39 /* ViewDependentUniforms.cpp */; };
+		7F8180482BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8180452BA2833E00A39A39 /* ViewDependentUniforms.cpp */; };
+		7F8180492BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8180452BA2833E00A39A39 /* ViewDependentUniforms.cpp */; };
 		7F8D0D9D2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
 		7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
 		7F8D0D9F2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */; };
@@ -314,7 +317,7 @@
 		74DAA6CE29AC2F3300171C03 /* Ray.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		74DAA6CF29AC2F8B00171C03 /* Ray.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Ray.cpp; sourceTree = "<group>"; };
 		74DAA6D129AC30A800171C03 /* CommonDefinitions.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommonDefinitions.cpp; sourceTree = "<group>"; };
-		74DAA6D329AC420C00171C03 /* Uniforms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Uniforms.h; sourceTree = "<group>"; };
+		74DAA6D329AC420C00171C03 /* CameraUniforms.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CameraUniforms.h; sourceTree = "<group>"; };
 		74DAA6D429AC432C00171C03 /* Results.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Results.h; sourceTree = "<group>"; };
 		74DAA6D529AC439E00171C03 /* Results.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Results.cpp; sourceTree = "<group>"; };
 		74DAA6E329AC7BD200171C03 /* SDFObject.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SDFObject.cpp; sourceTree = "<group>"; };
@@ -373,6 +376,8 @@
 		7F74B6772B61974900262F2D /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		7F74B6792B61974A00262F2D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7F74B67B2B61974A00262F2D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7F8180452BA2833E00A39A39 /* ViewDependentUniforms.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ViewDependentUniforms.cpp; sourceTree = "<group>"; };
+		7F8180462BA2833E00A39A39 /* ViewDependentUniforms.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewDependentUniforms.h; sourceTree = "<group>"; };
 		7F8D0D9B2B79A3E700AA2225 /* GroupSelectionCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupSelectionCommand.cpp; sourceTree = "<group>"; };
 		7F8D0D9C2B79A3E700AA2225 /* GroupSelectionCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupSelectionCommand.h; sourceTree = "<group>"; };
 		7F9234112B86E2D400E6A7A6 /* SelectionMattingRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectionMattingRenderPass.h; sourceTree = "<group>"; };
@@ -504,7 +509,7 @@
 				7444A4D829A1CB63009632C3 /* MainViewController.mm */,
 				74AF134329B4669C00F9BBA8 /* RenderCPUViewController.h */,
 				74AF134129B4665B00F9BBA8 /* RenderCPUViewController.mm */,
-				74DAA6D329AC420C00171C03 /* Uniforms.h */,
+				74DAA6D329AC420C00171C03 /* CameraUniforms.h */,
 				74F7646129CE87CF00CD5259 /* ObjectType.cpp */,
 				74F7646229CE87CF00CD5259 /* ObjectType.h */,
 				7444A4DC29A1CB63009632C3 /* ShaderTypes.h */,
@@ -524,6 +529,8 @@
 				74087D9329F0B85E00958CD7 /* EncodingContext.h */,
 				7451041529C1538100F69BC4 /* SerializedWorldObject.cpp */,
 				7451041629C1538100F69BC4 /* SerializedWorldObject.h */,
+				7F8180452BA2833E00A39A39 /* ViewDependentUniforms.cpp */,
+				7F8180462BA2833E00A39A39 /* ViewDependentUniforms.h */,
 				74F7646729CE8BFC00CD5259 /* EncodedPrimitive.cpp */,
 				74F7646829CE8BFC00CD5259 /* EncodedPrimitive.h */,
 				74897E9929EF56EC007A5CFE /* EncodedPrimitiveArray.cpp */,
@@ -941,6 +948,7 @@
 				7456FCA529E7B11800398E86 /* RemoveObjectCommand.cpp in Sources */,
 				74A18A8E29D8B4D00010F1B4 /* MainViewControllerMacOS.mm in Sources */,
 				74F7646F29CF93FD00CD5259 /* Serializer.cpp in Sources */,
+				7F8180472BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -979,6 +987,7 @@
 				748629CE2A004350002407AA /* Type.cpp in Sources */,
 				74AAF28129D7BCA900D322DB /* StandardTransformers.cpp in Sources */,
 				74AAF27C29D7BC9E00D322DB /* PhongShader.cpp in Sources */,
+				7F8180482BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */,
 				7492228F29E2685F00ACCFBC /* Command.cpp in Sources */,
 				7F8D0D9E2B79A3E700AA2225 /* GroupSelectionCommand.cpp in Sources */,
 				7F9234322B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */,
@@ -1089,6 +1098,7 @@
 				7F5DE06A2B7308B7003FC854 /* AddObjectCommand.cpp in Sources */,
 				7F5DE0862B730981003FC854 /* Type.cpp in Sources */,
 				7F74B66E2B61974900262F2D /* SDFModeler_visionOSApp.swift in Sources */,
+				7F8180492BA2833E00A39A39 /* ViewDependentUniforms.cpp in Sources */,
 				7F5DE0822B73092A003FC854 /* Interaction.cpp in Sources */,
 				7F5DE05B2B73088D003FC854 /* GridMaterial.cpp in Sources */,
 				7F92341A2B86E60D00E6A7A6 /* MattingShader.cpp in Sources */,

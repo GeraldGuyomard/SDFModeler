@@ -13,7 +13,7 @@ class PhongShader final
 {
 public:
     
-    PhongShader(CONSTANT Uniforms& uniforms, CONSTANT Materials& materials)
+    PhongShader(CONSTANT CameraUniforms& uniforms, CONSTANT Materials& materials)
     : _lightDirection(normalize(uniforms.lightDirection)), _materials(materials)
     {}
     

@@ -28,7 +28,7 @@ private:
 class NoShader final
 {
 public:
-    NoShader(CONSTANT Uniforms&, CONSTANT Materials&) {}
+    NoShader(CONSTANT CameraUniforms&, CONSTANT Materials&) {}
     
     template <typename TPrimitive>
     float4 computeShade(TPrimitive primitive, Ray ray, float dist, float3 p) const

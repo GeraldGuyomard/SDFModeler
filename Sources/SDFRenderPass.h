@@ -8,7 +8,7 @@
 #pragma once
 
 #include "QuadBasedRenderPass.h"
-#include "SerializedWorldObject.h"
+#include "ViewDependentUniforms.h"
 #include "ShaderTypes.h"
 #include "RenderStats.h"
 
@@ -19,7 +19,7 @@ class SDFRenderPass : public QuadBasedRenderPass
 public:
     using _inherited = QuadBasedRenderPass;
     
-    SDFRenderPass(size_t cameraIndex);
+    SDFRenderPass();
     
     bool init(Renderer& renderer) override;
     void updateBuffersState() override;
@@ -28,14 +28,9 @@ public:
     void willStartRender(Renderer& renderer) override;
     void onCompletedCommandBuffer(Renderer& renderer, float renderDuration) override;
     
-    const Uniforms& uniforms() const
+    const ViewDependentUniforms& viewDependentUniforms() const
     {
-        return _uniformsBuffer->uniform();
-    }
-
-    const SerializedWorldObject& serializedWorld() const
-    {
-        return _serializedWorldBuffer->uniform();
+        return _viewDependentUniformsBuffer->uniform();
     }
 
     const Materials& materials() const
@@ -44,8 +39,6 @@ public:
     }
     
 protected:
-    
-    const size_t _cameraIndex;
     
     PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;
     id <MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
@@ -56,12 +49,9 @@ protected:
     
 private:
     
-    using UniformsBuffer = TUniformBuffer<Uniforms, BufferIndex::BufferIndexUniforms, kMaxBuffersInFlight>;
-    std::unique_ptr<UniformsBuffer> _uniformsBuffer;
+    using ViewDependentUniformsBuffer = TUniformBuffer<ViewDependentUniforms, BufferIndex::BufferIndexViewDependentUniforms, kMaxBuffersInFlight>;
+    std::unique_ptr<ViewDependentUniformsBuffer> _viewDependentUniformsBuffer;
     
-    using SerializedWorldBuffer = TUniformBuffer<SerializedWorldObject, BufferIndex::BufferIndexSerializedWorld, kMaxBuffersInFlight>;
-    std::unique_ptr<SerializedWorldBuffer> _serializedWorldBuffer;
-
     using SerializedMaterials = TUniformBuffer<Materials, BufferIndex::BufferIndexMaterials, kMaxBuffersInFlight>;
     std::unique_ptr<SerializedMaterials> _materialsBuffer;
     

@@ -8,7 +8,7 @@
 #pragma once
 
 #include "CommonDefinitions.h"
-#include "Uniforms.h"
+#include "CameraUniforms.h"
 
 struct Ray final
 {
@@ -32,7 +32,7 @@ struct Ray final
         return (t >= 0) && (t <= maxLength);
     }
     
-    static Ray make(float2 ndcPosition, CONSTANT Uniforms& uniforms)
+    static Ray make(float2 ndcPosition, CONSTANT CameraUniforms& uniforms)
     {
         float3 origin = viewToWorld(ndcPosition, uniforms.rayOriginZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);
         float3 forwardPt = viewToWorld(ndcPosition, uniforms.rayForwardZInNDC, uniforms.cameraMatrix, uniforms.invProjectionMatrix);

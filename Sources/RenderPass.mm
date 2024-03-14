@@ -49,6 +49,10 @@ RenderPass::init(Renderer& renderer)
     pipelineStateDescriptor.depthAttachmentPixelFormat = _pipelineConfiguration->depthPixelFormat;
     pipelineStateDescriptor.stencilAttachmentPixelFormat = MTLPixelFormatInvalid;
     
+    const size_t viewCount = renderer.delegate()->cameraRig()->cameras().size();
+    
+    pipelineStateDescriptor.maxVertexAmplificationCount = viewCount;
+    
     auto device = renderer.mtlDevice();
     
     NSError *error = NULL;

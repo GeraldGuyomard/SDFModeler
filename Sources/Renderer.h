@@ -10,7 +10,7 @@
 #import <Metal/Metal.h>
 #import "CommonDefinitions.h"
 
-#import "Uniforms.h"
+#import "CameraUniforms.h"
 #import "ShaderTypes.h"
 
 #include "CameraRig.h"
@@ -123,14 +123,9 @@ private:
 
     std::vector<RenderPass*> _renderPasses;
     
-    struct RenderPassesPerCamera final
-    {
-        std::unique_ptr<class SDFRenderPass> sdfRenderPass;
-        std::unique_ptr<class SelectionMattingRenderPass> selectionMattingRenderPass;
-        std::unique_ptr<class SelectionOutlineRenderPass> selectionOutlineRenderPass;
-    };
-    
-    std::vector<RenderPassesPerCamera> _renderPassesPerCamera;
+    std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
+    std::unique_ptr<class SelectionMattingRenderPass> _selectionMattingRenderPass;
+    std::unique_ptr<class SelectionOutlineRenderPass> _selectionOutlineRenderPass;
     
     RenderCallback _renderCallback;
 };

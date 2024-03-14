@@ -16,8 +16,7 @@ struct ContentStageConfiguration: CompositorLayerConfiguration {
         let options: LayerRenderer.Capabilities.SupportedLayoutsOptions = foveationEnabled ? [.foveationEnabled] : []
         let supportedLayouts = capabilities.supportedLayouts(options: options)
         
-        //configuration.layout = supportedLayouts.contains(.layered) ? .layered : .dedicated
-        configuration.layout = .dedicated
+        configuration.layout = supportedLayouts.contains(.layered) ? .layered : .dedicated
     }
 }
 

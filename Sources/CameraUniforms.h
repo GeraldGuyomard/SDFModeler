@@ -1,5 +1,5 @@
 //
-//  Uniforms.h
+//  CameraUniforms.h
 //  SDFModeler
 //
 //  Created by Gérald Guyomard on 2/26/23.
@@ -11,7 +11,7 @@
 
 static CONSTANT constexpr size_t kLeftCameraIndex = 0;
 
-struct Uniforms final
+struct CameraUniforms final
 {
     float4x4 projectionMatrix;
     float4x4 viewMatrix;

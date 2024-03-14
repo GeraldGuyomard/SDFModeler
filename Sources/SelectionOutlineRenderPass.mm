@@ -18,8 +18,8 @@ namespace
     };
 }
 
-SelectionOutlineRenderPass::SelectionOutlineRenderPass(size_t cameraIndex)
-: _cameraIndex(cameraIndex),
+SelectionOutlineRenderPass::SelectionOutlineRenderPass()
+:
 _color { 252.0f / 255.0f, 202.0f / 255.0f, 0.0f, 1.f },
 _thickness(2.f)
 {}
@@ -27,7 +27,7 @@ _thickness(2.f)
 id<MTLRenderCommandEncoder>_Nullable
 SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(_cameraIndex) copy];
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     colorAttachment.loadAction = MTLLoadActionLoad;
@@ -130,7 +130,7 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     
     auto& uniforms = _uniformsBuffer->uniform();
     
-    const auto size = renderer.cameraRig()->cameras()[_cameraIndex]->viewportSize();
+    const auto size = renderer.cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
     const float contentScaleFactor = renderer.delegate()->contentScaleFactor();
     const float thickness = contentScaleFactor * _thickness;
@@ -167,7 +167,7 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
                            atIndex:BufferIndexUVs];
     
     
-    auto descriptor = renderer.delegate()->renderPassDescriptor(_cameraIndex);
+    auto descriptor = renderer.delegate()->renderPassDescriptor(kLeftCameraIndex);
     auto mainDepth = descriptor.depthAttachment.texture;
     
     [encoder setFragmentTexture:mainDepth atIndex:MainDepthTextureIndex];

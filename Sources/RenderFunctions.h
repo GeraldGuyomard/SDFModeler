@@ -59,7 +59,7 @@ public:
 
 template <typename TShader, typename TEnvironment = GridEnvironment<TShader>>
 INLINE RayMarchResult rayMarch(float2 ndcPosition,
-                            CONSTANT Uniforms& uniforms,
+                            CONSTANT CameraUniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
@@ -110,7 +110,7 @@ struct RenderResult final
 
 template <typename TShader, typename TEnvironment, bool writeToDepth = true>
 INLINE RenderResult render(float2 viewportNDC,
-                     CONSTANT Uniforms& uniforms,
+                     CONSTANT CameraUniforms& uniforms,
                      CONSTANT SerializedWorldObject& serializedWorld,
                      CONSTANT Materials& materials)
 {
@@ -140,7 +140,7 @@ INLINE RenderResult render(float2 viewportNDC,
 }
 
 INLINE RenderResult renderDefault(float2 viewportNDC,
-                            CONSTANT Uniforms& uniforms,
+                            CONSTANT CameraUniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
@@ -148,7 +148,7 @@ INLINE RenderResult renderDefault(float2 viewportNDC,
 }
 
 INLINE PickResult pickObject(float2 viewportNDC,
-                           CONSTANT Uniforms& uniforms,
+                           CONSTANT CameraUniforms& uniforms,
                            CONSTANT SerializedWorldObject& serializedWorld,
                            CONSTANT Materials& materials)
 {

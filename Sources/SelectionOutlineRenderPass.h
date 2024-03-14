@@ -16,7 +16,7 @@ class SelectionOutlineRenderPass : public RenderPass
 public:
     using _inherited = RenderPass;
     
-    SelectionOutlineRenderPass(size_t cameraIndex);
+    SelectionOutlineRenderPass();
     
     bool init(Renderer& renderer) override;
     
@@ -33,8 +33,6 @@ public:
     void setColor(float4);
     
 private:
-    
-    const size_t _cameraIndex;
     
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;

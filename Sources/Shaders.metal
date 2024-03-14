@@ -10,19 +10,23 @@
 
 #include <TargetConditionals.h>
 #include "RenderFunctions.h"
+#include "ViewDependentUniforms.h"
 
 struct VertexShaderOut
 {
     float4 position [[position]];
     float2 viewportNDC;
+    int cameraIndex;
 };
 
-vertex VertexShaderOut vertexShaderSDF(Vertex in [[stage_in]])
+vertex VertexShaderOut vertexShaderSDF(Vertex in [[stage_in]],
+                                       ushort amp_id [[amplification_id]])
 {
     VertexShaderOut out;
 
     out.position = in.position;
     out.viewportNDC = in.viewportNDC;
+    out.cameraIndex = amp_id;
 
     return out;
 }
@@ -34,13 +38,14 @@ struct FragmentShaderOut
 };
 
 fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
-                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-                               constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
+                               constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
+    CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[in.cameraIndex];
+    CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[in.cameraIndex];
     const auto res = renderDefault(in.viewportNDC,
-                         uniforms,
+                         cameraUniforms,
                          serializedWorld,
                          materials);
     
@@ -49,7 +54,7 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     
 #if 1
     out.color = res.color;
-    out.depth = res.adjustedDepth(uniforms.inverseZ());
+    out.depth = res.adjustedDepth(cameraUniforms.inverseZ());
     
 #else
     const float2 uv = (in.viewportNDC + float2 { 1.f, 1.f }) * 0.5f;
@@ -65,15 +70,18 @@ struct FragmentShaderOut_Matting
 };
 
 fragment FragmentShaderOut_Matting fragmentShaderMatting(VertexShaderOut in [[stage_in]],
-                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
-                               constant SerializedWorldObject& serializedWorld [[ buffer(BufferIndexSerializedWorld) ]],
+                                                         ushort amp_id [[amplification_id]],
+                                                        constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
                                constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
                                )
 {
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(in.viewportNDC, uniforms, serializedWorld, materials);
+    CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[amp_id];
+    CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[amp_id];
+    
+    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(in.viewportNDC, cameraUniforms, serializedWorld, materials);
     
     FragmentShaderOut_Matting out;
-    out.depth = res.adjustedDepth(uniforms.inverseZ());
+    out.depth = res.adjustedDepth(cameraUniforms.inverseZ());
     
     return out;
 }

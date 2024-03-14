@@ -263,12 +263,17 @@ CompositorServicesRendererDelegate::renderPassDescriptor(size_t cameraIndex) con
     auto map = _xrDrawable->rasterizationRateMaps(cameraIndex);
     if (map != nil)
     {
-        //const MTLSize mtlSize = [map physicalGranularity];
-        //NSLog(@"mtlSize %df, %d", mtlSize.width, mtlSize.height);
-        
         renderPassDescriptor.rasterizationRateMap = map;
     }
     
+    const auto layerConfig = cp_layer_renderer_get_configuration(_layerRenderer);
+    const auto layout = cp_layer_renderer_configuration_get_layout(layerConfig);
+    
+    if (layout == cp_layer_renderer_layout_layered)
+    {
+        renderPassDescriptor.renderTargetArrayLength = _xrDrawable->viewCount();
+    }
+        
     return renderPassDescriptor;
 }
 
