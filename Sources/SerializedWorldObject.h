@@ -101,6 +101,11 @@ public:
         return { _bits >> nbCmdsToSkip };
     }
     
+    bool nothingCulled() const
+    {
+        return _bits == 0;
+    }
+    
 private:
     CullingInfo(uint64_t bits)
     : _bits(bits)
@@ -601,6 +606,84 @@ computeHitResult(const THREAD Visitor& visitor,
     return RayMarchResult { ray, objectID, color, d };
 }
 
+static CONSTANT constexpr size_t kNbSteps = 100;
+
+struct RayMarchEvaluatorResult
+{
+    float d = 0.f;
+    float3 pt;
+    
+    RayMarchEvaluatorResult() = default;
+    RayMarchEvaluatorResult(Ray ray)
+    : pt(ray.origin)
+    {}
+};
+
+class RayMarchEvaluator
+{
+public:
+    
+    RayMarchEvaluator(CONSTANT SerializedWorldObject& serialized,
+                      Ray ray,
+                      TDrawCommandIndex cmdIndex,
+                      THREAD Visitor& visitor)
+    : _serialized(serialized), _ray(ray), _cmdIndex(cmdIndex), _visitor(visitor)
+    {}
+    
+    template <typename TPrimitive>
+    RayMarchEvaluatorResult evaluate(TPrimitive primitive) const
+    {
+        RayMarchEvaluatorResult res { _ray };
+
+        for (size_t i=0; i < kNbSteps; ++i)
+        {
+            res.pt = _ray.pt(res.d);
+
+            const float d = primitive.computeDistance(res.pt);
+            if (_visitor.submitMinDistance(_serialized, d))
+            {
+                auto cmd = _serialized.drawCommand(_cmdIndex);
+                ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+                auto p = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                
+                _visitor.setMinData(_cmdIndex, p->materialId, p->objectId);
+                break;
+            }
+            
+            res.d += _visitor.minDistance();
+            
+            if (res.d > _ray.maxLength)
+            {
+                break;
+            }
+        }
+        
+        return res;
+    }
+    
+private:
+    CONSTANT SerializedWorldObject& _serialized;
+    const Ray _ray;
+    const TDrawCommandIndex _cmdIndex;
+    THREAD Visitor& _visitor;
+};
+
+
+INLINE RayMarchEvaluatorResult rayMarchOnePrimitive(CONSTANT SerializedWorldObject& serialized,
+                          Ray ray,
+                          TDrawCommandIndex cmdIndex,
+                          THREAD Visitor& visitor)
+{
+    auto cmd = serialized.drawCommand(cmdIndex);
+    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+    auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+    
+    RayMarchEvaluator evaluator { serialized, ray, cmdIndex, visitor };
+    return evaluatePrimitive<RayMarchEvaluator, RayMarchEvaluatorResult>(evaluator, prim);
+}
+
+#define ACTIVATE_ONE_PRIMITIVE_RAYMARCHING 0
+
 template <typename TShader>
 class WorldObject final
 {
@@ -639,6 +722,10 @@ public:
         CullingInfo cullingInfo;
         auto cmd = _serialized.drawCommand(tile.rootCommandIndex);
         
+#if ACTIVATE_ONE_PRIMITIVE_RAYMARCHING
+        uint8_t lastRelativeCmdIndexNotCulled[2];
+#endif
+        
         for (uint8_t i=0; i < tile.nbCommands; ++i)
         {
             if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
@@ -652,6 +739,9 @@ public:
                 else
                 {
                     ++nbObjectsPerOperation[prim->operation];
+#if ACTIVATE_ONE_PRIMITIVE_RAYMARCHING
+                    lastRelativeCmdIndexNotCulled[prim->operation] = i;
+#endif
                 }
             }
             
@@ -663,11 +753,9 @@ public:
             return RayMarchResult { ray };
         }
         
-        constexpr size_t kNbSteps = 100;
-        
+        Visitor visitor;
         float d = 0.f;
         float3 pt = ray.origin;
-        Visitor visitor;
         
         if (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0)
         {
@@ -692,6 +780,21 @@ public:
                 }
             }
         }
+#if ACTIVATE_ONE_PRIMITIVE_RAYMARCHING
+        else if (nbObjectsPerOperation[size_t(SDFOperation::addition)] == 1)
+        {
+            // look for the only cmd not culled
+            const TDrawCommandIndex cmdIndex = tile.rootCommandIndex + lastRelativeCmdIndexNotCulled[0];
+            
+            // only one positive primitive to render
+            const auto res = rayMarchOnePrimitive(_serialized,
+                                                  ray,
+                                                  cmdIndex,
+                                                  visitor);
+            d = res.d;
+            pt = res.pt;
+        }
+#endif
         else
         {
             for (size_t i=0; i < kNbSteps; ++i)
