@@ -32,8 +32,9 @@ private:
     id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer) override;
     PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;
     
+    MTLRenderPassDescriptor* _Nullable makeRenderPassDescriptor(Renderer& renderer) const;
+    
     id<MTLTexture> _Nullable _targetDepthTexture = nil;
-    MTLRenderPassDescriptor* _Nullable _renderPassDescriptor = nil;
     
     class MattingEncodingDelegate;
     std::unique_ptr<MattingEncodingDelegate> _encodingDelegate;

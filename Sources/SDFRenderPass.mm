@@ -142,40 +142,8 @@ SDFRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull 
     _viewDependentUniformsBuffer->setFragmentBuffer(encoder);
     _materialsBuffer->setFragmentBuffer(encoder);
     
-    const auto& cameras = renderer.cameraRig()->cameras();
-    const size_t cameraCount = cameras.size();
-    MTLViewport vps[cameraCount];
-    
-    for (size_t cameraIndex = 0; cameraIndex < cameraCount; ++cameraIndex)
-    {
-        MTLViewport& vp = vps[cameraIndex];
-        
-        vp.originX = vp.originY = 0;
-        auto camera = cameras[cameraIndex];
-        
-        const auto& vpSize = camera->viewportSize();
-        vp.width = vpSize.x;
-        vp.height = vpSize.y;
-        vp.znear = 0;
-        vp.zfar = 1;
-    }
-    
-    [encoder setViewports:vps count:cameraCount];
-    
-    if (cameraCount > 1)
-    {
-        MTLVertexAmplificationViewMapping mapping[cameraCount];
-        
-        for (uint32_t cameraIndex = 0; cameraIndex < cameraCount; ++cameraIndex)
-        {
-            mapping[cameraIndex].renderTargetArrayIndexOffset = cameraIndex;
-            mapping[cameraIndex].viewportArrayIndexOffset = cameraIndex;
-        }
-        
-        [encoder setVertexAmplificationCount:cameraCount viewMappings:mapping];
-    }
+    _setupViewports(renderer, encoder);
 
-    
     _inherited::_render(renderer, encoder);
 }
 

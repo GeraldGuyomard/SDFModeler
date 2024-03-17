@@ -80,22 +80,26 @@ SelectionMattingRenderPass::init(Renderer& renderer)
         return false;
     }
     
-    _renderPassDescriptor = [MTLRenderPassDescriptor new];
+    return true;
+}
+
+MTLRenderPassDescriptor* _Nullable
+SelectionMattingRenderPass::makeRenderPassDescriptor(Renderer& renderer) const
+{
+    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
     
-    _renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
-    _renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
-    _renderPassDescriptor.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 0, 0);
+    renderPassDescriptor.colorAttachments[0].texture = nil;
     
-    _renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionDontCare;
-    _renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
-    _renderPassDescriptor.depthAttachment.clearDepth = 0;
+    renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionDontCare;
+    renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
+    renderPassDescriptor.depthAttachment.clearDepth = 0;
     
     auto cameraRig = renderer.cameraRig();
     const auto cameras = cameraRig->cameras();
     
-    _renderPassDescriptor.renderTargetArrayLength = cameras.size();
+    renderPassDescriptor.renderTargetArrayLength = cameras.size();
     
-    return true;
+    return renderPassDescriptor;
 }
 
 void
@@ -118,10 +122,12 @@ SelectionMattingRenderPass::configure(EncodingContext& ctx) const
 id<MTLRenderCommandEncoder>_Nullable
 SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    auto cameraRig = renderer.cameraRig();
-    const auto cameras = cameraRig->cameras();
-    auto size = cameras[kLeftCameraIndex]->viewportSize();
-    if ((size.x <= 0.f) || ((size.y <= 0.f)))
+    const auto refRenderPassDescriptor = renderer.delegate()->renderPassDescriptor(kLeftCameraIndex);
+    const auto depthTexture = refRenderPassDescriptor.depthAttachment.texture;
+    const NSUInteger width = depthTexture.width;
+    const NSUInteger height = depthTexture.height;
+    
+    if ((width == 0) || (height == 0))
     {
         return nullptr;
     }
@@ -130,11 +136,8 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     // to save time and get free blur
     //size = ceil(size * 0.75f);
     
-    if ((_targetDepthTexture.width != size.x) || (_targetDepthTexture.height != size.y))
+    if ((_targetDepthTexture.width != width) || (_targetDepthTexture.height != height))
     {
-        const auto width = NSUInteger(size.x);
-        const auto height = NSUInteger(size.y);
-        
         auto device = renderer.mtlDevice();
         
         // Depth
@@ -144,17 +147,16 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
             textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
             
             textureDescriptor.textureType = MTLTextureType2DArray;
-            
-            const size_t nbViews = cameras.size();
-            textureDescriptor.arrayLength = nbViews;
+            textureDescriptor.arrayLength = depthTexture.arrayLength;
     
             _targetDepthTexture = [device newTextureWithDescriptor:textureDescriptor];
         }
     }
     
-    _renderPassDescriptor.depthAttachment.texture = _targetDepthTexture;
+    auto renderPassDescriptor = makeRenderPassDescriptor(renderer);
+    renderPassDescriptor.depthAttachment.texture = _targetDepthTexture;
     
-    auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:_renderPassDescriptor];
+    auto encoder = [cmdBuffer renderCommandEncoderWithDescriptor:renderPassDescriptor];
     encoder.label = @"SelectionMattingRenderPass";
     return encoder;
 }

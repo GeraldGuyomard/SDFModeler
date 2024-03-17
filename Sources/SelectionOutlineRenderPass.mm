@@ -149,11 +149,12 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
     }
 
     auto inputDepth = _depthTextureProvider();
-    
     if (inputDepth == nil)
     {
         return;
     }
+    
+    _setupViewports(renderer, encoder);
     
     _uniformsBuffer->setFragmentBuffer(encoder);
     

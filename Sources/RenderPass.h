@@ -62,6 +62,8 @@ protected:
     virtual id<MTLRenderCommandEncoder>_Nullable makeRenderEncoder(Renderer& renderer,  id<MTLCommandBuffer> _Nonnull cmdBuffer) = 0;
     virtual void _render(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder) = 0;
     
+    void _setupViewports(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder);
+    
 private:
     PipelineConfiguration::Ptr _pipelineConfiguration;
     
