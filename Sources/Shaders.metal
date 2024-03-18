@@ -110,17 +110,36 @@ struct FragmentShader_SelectionOutlineOut
     float depth [[depth(any)]];
 };
 
+#if TARGET_OS_VISION && !TARGET_OS_SIMULATOR
+    #define USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP 1
+#else
+    #define USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP 0
+#endif
+
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
-                                    texture2d_array<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
                                     texture2d_array<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]],
+                                                                  
+#if USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP
+                                    texture2d_array<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
                                     constant rasterization_rate_map_data &rateMapData [[buffer(BufferIndexRasterizationRateMapUniforms)]]
+#else
+                                    texture2d<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]]
+#endif
                                     )
 {
-    rasterization_rate_map_decoder map(rateMapData);
+    
+    
     const float2 screenCoords = in.textCoords * uniforms.viewportSize;
     
-    float2 physCoords = map.map_screen_to_physical_coordinates(screenCoords, in.cameraIndex);
+    float2 physCoords;
+    
+#if USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP
+        rasterization_rate_map_decoder map(rateMapData);
+        physCoords = map.map_screen_to_physical_coordinates(screenCoords, in.cameraIndex);
+#else
+        physCoords = screenCoords;
+#endif
     
     constexpr sampler depthSampler(coord::pixel,
                                    address::clamp_to_edge,
@@ -168,8 +187,8 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         
         out.color = uniforms.color;
         
-#if !TARGET_OS_VISION
-        const float originalDepth = mainDepthTexture.sample(depthSampler, physCoords).r;
+#if !USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP
+        const float originalDepth = mainDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
         if (originalDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
