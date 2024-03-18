@@ -112,24 +112,47 @@ struct FragmentShader_SelectionOutlineOut
 
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
-                                    texture2d<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
-                                    texture2d_array<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]]
+                                    texture2d_array<float> mainDepthTexture [[ texture(MainDepthTextureIndex) ]],
+                                    texture2d_array<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]],
+                                    constant rasterization_rate_map_data &rateMapData [[buffer(BufferIndexRasterizationRateMapUniforms)]]
                                     )
 {
-    constexpr sampler depthSampler(mip_filter::linear,
-                                   mag_filter::linear,
-                                   min_filter::linear);
+    rasterization_rate_map_decoder map(rateMapData);
+    const float2 screenCoords = in.textCoords * uniforms.viewportSize;
+    
+    float2 physCoords = map.map_screen_to_physical_coordinates(screenCoords, in.cameraIndex);
+    
+    constexpr sampler depthSampler(coord::pixel,
+                                   address::clamp_to_edge,
+                                   filter::linear);
+    
+    float mattingDepth = mattingDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
+    
+    FragmentShader_SelectionOutlineOut out;
+    
+#if 0
+    if (mattingDepth != 0.f)
+    {
+        out.depth = mattingDepth;
+        out.color = float4 { 1.f, 0.f, 0.f, 1.f };
+    }
+    else
+    {
+        discard_fragment();
+    }
+    
+    return out;
+#else
     
     const auto delta = uniforms.samplingDelta;
     
     size_t n = 0;
-    float mattingDepth = mattingDepthTexture.sample(depthSampler, in.textCoords, in.cameraIndex).r;
     
     for (float x = -delta.x; x <= delta.x; x += delta.x)
     {
         for (float y = -delta.y; y <= delta.y; y += delta.y)
         {
-            const auto d = mattingDepthTexture.sample(depthSampler, in.textCoords + float2 { x, y }, in.cameraIndex).r;
+            const auto d = mattingDepthTexture.sample(depthSampler, physCoords + float2 { x, y }, in.cameraIndex).r;
             mattingDepth = max(mattingDepth, d);
             
             if (d != 0.f)
@@ -139,8 +162,6 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         }
     }
     
-    FragmentShader_SelectionOutlineOut out;
-    
     if ((n > 0) && (n < 9))
     {
         out.depth = mattingDepth;
@@ -148,7 +169,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         out.color = uniforms.color;
         
 #if !TARGET_OS_VISION
-        const float originalDepth = mainDepthTexture.sample(depthSampler, in.textCoords).r;
+        const float originalDepth = mainDepthTexture.sample(depthSampler, physCoords).r;
         if (originalDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
@@ -159,6 +180,7 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     {
         discard_fragment();
     }
+#endif
     
     return out;
 }

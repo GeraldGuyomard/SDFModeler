@@ -57,6 +57,7 @@ INLINE float3 viewToWorld(float2 ndc, float z, CONSTANT float4x4& cameraMatrix, 
 
 struct OutlineUniforms final
 {
+    float2 viewportSize;
     float2 samplingDelta;
     float4 color;
 };

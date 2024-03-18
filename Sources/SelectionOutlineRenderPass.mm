@@ -132,11 +132,14 @@ SelectionOutlineRenderPass::updateUniforms(Renderer& renderer)
     
     const auto size = renderer.cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
     
+    uniforms.viewportSize = size;
+    
     const float contentScaleFactor = renderer.delegate()->contentScaleFactor();
     const float thickness = contentScaleFactor * _thickness;
-    uniforms.samplingDelta = float2 { thickness, thickness } / size;
+    uniforms.samplingDelta = float2 { thickness, thickness };
     
     uniforms.color = _color;
+    
 }
 
 
@@ -170,6 +173,19 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
     
     auto descriptor = renderer.delegate()->renderPassDescriptor(kLeftCameraIndex);
     auto mainDepth = descriptor.depthAttachment.texture;
+    
+    if (auto rateMap = descriptor.rasterizationRateMap)
+    {
+        auto device = renderer.mtlDevice();
+        
+        MTLSizeAndAlign rateMapParamSize = rateMap.parameterBufferSizeAndAlign;
+        id<MTLBuffer> rateMapDataBuffer = [device newBufferWithLength: rateMapParamSize.size options:MTLResourceStorageModeShared];
+
+        // Copy the rate map's data into the buffer.
+        [rateMap copyParameterDataToBuffer:rateMapDataBuffer offset:0];
+        
+        [encoder setFragmentBuffer:rateMapDataBuffer offset:0 atIndex:BufferIndexRasterizationRateMapUniforms];
+    }
     
     [encoder setFragmentTexture:mainDepth atIndex:MainDepthTextureIndex];
     [encoder setFragmentTexture:inputDepth atIndex:MattingDepthIndexInput];
