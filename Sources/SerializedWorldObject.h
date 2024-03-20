@@ -74,8 +74,29 @@ struct Locals // 8
     int8_t nbChildrenLeft; // 1 if < 0 it's a leaf primitive
     
     // 1
-    uint8_t isCulled : 1;
-    uint8_t isRelativeMinDrawCommandSubstractive : 1;
+    
+    enum FFlags
+    {
+        fIsCulled = 1 << 0,
+        fIsMinDrawCommandSubstractive = 1 << 1
+    };
+    
+    uint8_t flags;
+    
+    bool isCulled() const
+    {
+        return (flags & fIsCulled) != 0;
+    }
+    
+    bool isMinDrawCommandSubstractive() const
+    {
+        return (flags & fIsMinDrawCommandSubstractive) != 0;
+    }
+    
+    Locals()
+    {
+        static_assert(sizeof(Locals) == 8, "should simply be one 64 bit word");
+    }
 };
 
 class CullingInfo final
@@ -157,7 +178,7 @@ public:
         locals.relativeMinDrawCommandIndex = -1;
         locals.relativeDrawCommandIndex = relativeCommandIndex;
         locals.distance = 1e7f;
-        locals.isCulled = _cullingInfo.nextCulling();
+        locals.flags = _cullingInfo.nextCulling() ? Locals::FFlags::fIsCulled : 0;
     }
 
     THREAD Locals* parentLocals()
@@ -257,7 +278,7 @@ public:
     
     bool hit() const
     {
-        return _hit;
+        return _minCmdIndex != kInvalidCommandIndex;
     }
     
     TDrawCommandIndex minCmdIndex() const
@@ -287,17 +308,12 @@ public:
         return _cullingInfo;
     }
     
-    bool submitMinDistance(CONSTANT SerializedWorldObject& serialized, float dist)
+    bool submitMinDistance(float dist)
     {
         if (dist < _minDistance)
         {
             _minDistance = dist;
-            
-            if (_minDistance <= kDistanceEpsilon)
-            {
-                _hit = true;
-                return true;
-            }
+            return _minDistance <= kDistanceEpsilon;
         }
         
         return false;
@@ -310,8 +326,6 @@ private:
     TDrawCommandIndex _minCmdIndex = -1;
     MaterialID _minMaterialID = kNoMaterialID;
     ObjectID _minObjectID = kInvalidObjectID;
-    
-    bool _hit = false;
 };
 
 INLINE void _computeDistIterative(
@@ -332,7 +346,7 @@ INLINE void _computeDistIterative(
         if (n < 0)
         {
             // Leaf Primitive
-            if (!locals.isCulled)
+            if (!locals.isCulled())
             {
                 CONSTANT auto* cmd = stack.currentDrawCommand();
                 auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
@@ -349,7 +363,7 @@ INLINE void _computeDistIterative(
                         {
                             parentLocals->distance = d;
                             parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
-                            parentLocals->isRelativeMinDrawCommandSubstractive = 1;
+                            parentLocals->flags |= Locals::FFlags::fIsMinDrawCommandSubstractive;
                         }
                     }
                     else
@@ -359,14 +373,14 @@ INLINE void _computeDistIterative(
                         {
                             parentLocals->distance = d;
                             parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
-                            parentLocals->isRelativeMinDrawCommandSubstractive = 0;
+                            parentLocals->flags &= ~Locals::FFlags::fIsMinDrawCommandSubstractive;
                         }
                     }
                 }
                 else if (prim->sdfOperation() == SDFOperation::addition)
                 {
                     locals.distance = d;
-                    visitor.submitMinDistance(serialized, d);
+                    visitor.submitMinDistance(d);
                 }
             }
 
@@ -375,7 +389,7 @@ INLINE void _computeDistIterative(
         else if (n > 0)
         {
             // groups could be culled too in future
-            ASSERT(!locals.isCulled);
+            ASSERT(!locals.isCulled());
             
             // A inner Draw Command
             stack.push();
@@ -386,10 +400,10 @@ INLINE void _computeDistIterative(
             // -> a group and we just finished to go through the children
             const float dist = locals.distance;
             
-            if (!locals.isRelativeMinDrawCommandSubstractive)
+            if (!locals.isMinDrawCommandSubstractive())
             {
                 // positive
-                if (visitor.submitMinDistance(serialized, dist))
+                if (visitor.submitMinDistance(dist))
                 {
                     // hit of positive part
                     const auto relativeMinCmdIndex = locals.relativeMinDrawCommandIndex;
@@ -405,7 +419,7 @@ INLINE void _computeDistIterative(
             }
             else
             {
-                if (visitor.submitMinDistance(serialized, dist))
+                if (visitor.submitMinDistance(dist))
                 {
                     // hit of negative part
 
@@ -489,7 +503,7 @@ INLINE void visitFlatCommandList(float3 pt,
         {
             auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
             const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-            if (visitor.submitMinDistance(serialized, d))
+            if (visitor.submitMinDistance(d))
             {
                 visitor.setMinData(serialized.drawCommandIndex(cmd), prim->materialId, prim->objectId);
                 break;
@@ -596,7 +610,7 @@ public:
             res.pt = _ray.pt(res.d);
 
             const float d = primitive.computeDistance(res.pt);
-            if (_visitor.submitMinDistance(_serialized, d))
+            if (_visitor.submitMinDistance(d))
             {
                 auto cmd = _serialized.drawCommand(_cmdIndex);
                 ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
