@@ -61,3 +61,9 @@ struct OutlineUniforms final
     float2 samplingDelta;
     float4 color;
 };
+
+struct WorkingPlaneUniforms final
+{
+    float4x4    projViewModelMatrix[2];
+    //float2      gridSize;
+};

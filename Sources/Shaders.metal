@@ -203,3 +203,36 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     
     return out;
 }
+
+struct VertexShader_WorkingPlaneOut
+{
+    float4 position [[position]];
+    float2 textCoords;
+};
+
+
+vertex VertexShader_WorkingPlaneOut vertexShader_WorkingPlane(VertexShader_WorkingPlaneIn in [[stage_in]],
+                                                              constant WorkingPlaneUniforms& uniforms [[ buffer(BufferIndexWorkingPlaneUniform) ]],
+                                                                  ushort cameraIndex [[amplification_id]])
+{
+    VertexShader_WorkingPlaneOut out;
+
+    out.position = uniforms.projViewModelMatrix[cameraIndex] * in.position;
+    out.textCoords = in.textCoords;
+
+    return out;
+}
+
+struct FragmentShader_WorkingPlaneOut
+{
+    float4 color [[color(0)]];
+};
+
+fragment FragmentShader_WorkingPlaneOut fragmentShader_WorkingPlane(VertexShader_WorkingPlaneOut in [[stage_in]],
+                                                                    constant WorkingPlaneUniforms& uniforms [[ buffer(BufferIndexWorkingPlaneUniform) ]])
+{
+    FragmentShader_WorkingPlaneOut out;
+    out.color = float4 { 1.f, 0.f, 0.f, 0.2f };
+    
+    return out;
+}

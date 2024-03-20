@@ -21,6 +21,7 @@
 #include "SDFRenderPass.h"
 #include "SelectionMattingRenderPass.h"
 #include "SelectionOutlineRenderPass.h"
+#include "WorkingPlaneRenderPass.h"
 
 #include "MainViewController.h"
 
@@ -76,6 +77,9 @@ Renderer::init()
     {
         return selectionMattingPass->targetDepthTexture();
     });
+    
+    _workingPlaneRenderPass = std::make_unique<WorkingPlaneRenderPass>();
+    _renderPasses.push_back(_workingPlaneRenderPass.get());
     
     for (auto renderPass : _renderPasses)
     {

@@ -39,6 +39,11 @@ public:
         [encoder setFragmentBuffer:_mtlBuffer offset:_offset atIndex:bufferIndex];
     }
     
+    id <MTLBuffer> mtlBuffer() const
+    {
+        return _mtlBuffer;
+    }
+    
 private:
     
     static constexpr size_t alignedSize()

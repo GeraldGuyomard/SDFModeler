@@ -126,6 +126,7 @@ private:
     std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
     std::unique_ptr<class SelectionMattingRenderPass> _selectionMattingRenderPass;
     std::unique_ptr<class SelectionOutlineRenderPass> _selectionOutlineRenderPass;
+    std::unique_ptr<RenderPass> _workingPlaneRenderPass;
     
     RenderCallback _renderCallback;
 };

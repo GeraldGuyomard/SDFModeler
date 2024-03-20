@@ -24,7 +24,9 @@ enum BufferIndex : EnumBackingType
     BufferIndexUVs = 1,
     
     BufferIndexOutlineUniforms = 0,
-    BufferIndexRasterizationRateMapUniforms = 4
+    BufferIndexRasterizationRateMapUniforms = 4,
+    
+    BufferIndexWorkingPlaneUniform = 0
 };
 
 enum VertexAttribute : EnumBackingType
@@ -55,5 +57,6 @@ struct VertexShader_SelectionOutlineIn
 struct VertexShader_WorkingPlaneIn
 {
     simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
+    float2 textCoords VB_ATTRIBUTE(VertexAttributeTexcoord);
 };
 

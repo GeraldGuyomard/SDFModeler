@@ -32,6 +32,8 @@ private:
     
     id <MTLBuffer> _Nonnull _quadVertexBuffer;
     
-    using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexOutlineUniforms, kMaxBuffersInFlight>;
+    using UniformsBuffer = TUniformBuffer<WorkingPlaneUniforms, BufferIndexWorkingPlaneUniform, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
+    
+    float4x4 _gridTransform;
 };

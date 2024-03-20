@@ -9,6 +9,17 @@
 #include "Renderer.h"
 
 
+namespace
+{
+    constexpr float kPlaneHalfSize = 1.f;
+
+    Vertex s_Vertices[4] = {
+        { {-kPlaneHalfSize, 0.f, +kPlaneHalfSize, 1.f}, {0.f, 1.f} },
+        { {-kPlaneHalfSize, 0.f, -kPlaneHalfSize, 1.f}, {0.f, 0.f} },
+        { {+kPlaneHalfSize, 0.f, +kPlaneHalfSize, 1.f}, {1.f, 1.f} },
+        { {+kPlaneHalfSize, 0.f, -kPlaneHalfSize, 1.f}, {1.f, 0.f} }
+    };
+}
 
 WorkingPlaneRenderPass::WorkingPlaneRenderPass()
 {}
@@ -48,24 +59,24 @@ WorkingPlaneRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->vertexDescriptor = [[MTLVertexDescriptor alloc] init];
 
     config->vertexDescriptor.attributes[VertexAttributePosition].format = MTLVertexFormatFloat4;
-    config->vertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(VertexShader_SelectionOutlineIn, position);
+    config->vertexDescriptor.attributes[VertexAttributePosition].offset = offsetof(VertexShader_WorkingPlaneIn, position);
     config->vertexDescriptor.attributes[VertexAttributePosition].bufferIndex = BufferIndexMeshPositions;
 
     config->vertexDescriptor.attributes[VertexAttributeTexcoord].format = MTLVertexFormatFloat2;
-    config->vertexDescriptor.attributes[VertexAttributeTexcoord].offset = offsetof(VertexShader_SelectionOutlineIn, textCoords);
+    config->vertexDescriptor.attributes[VertexAttributeTexcoord].offset = offsetof(VertexShader_WorkingPlaneIn, textCoords);
     config->vertexDescriptor.attributes[VertexAttributeTexcoord].bufferIndex = BufferIndexUVs;
 
-    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(VertexShader_SelectionOutlineIn);
+    config->vertexDescriptor.layouts[BufferIndexMeshPositions].stride = sizeof(VertexShader_WorkingPlaneIn);
     config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshPositions].stepFunction = MTLVertexStepFunctionPerVertex;
 
-    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(VertexShader_SelectionOutlineIn);
+    config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stride = sizeof(VertexShader_WorkingPlaneIn);
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepRate = 1;
     config->vertexDescriptor.layouts[BufferIndexMeshViewportNDCs].stepFunction = MTLVertexStepFunctionPerVertex;
     
     auto mtlLib = renderer.mtlLibrary();
-    config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShaderOutline"];
-    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderOutline"];
+    config->vertexFunction = [mtlLib newFunctionWithName:@"vertexShader_WorkingPlane"];
+    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShader_WorkingPlane"];
     
     auto presentationConfig = renderer.delegate()->presentConfiguration();
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
@@ -88,9 +99,14 @@ WorkingPlaneRenderPass::init(Renderer& renderer)
     _quadVertexBuffer = [device newBufferWithBytes:&s_Vertices length:sizeof(s_Vertices)
                                              options:MTLResourceStorageModeShared];
     
-    _quadVertexBuffer.label = @"QuadVertexBuffer";
+    _quadVertexBuffer.label = @"WorkingPlaneVertexBuffer";
     
-    _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"OutlineUniformsBuffer");
+    const size_t s = sizeof(WorkingPlaneUniforms);
+    _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"WorkingPlaneUniformsBuffer");
+    const size_t s2 = _uniformsBuffer->mtlBuffer().length;
+    
+    //_gridTransform = matrix4x4_translation(float3 { 0.f, -1.f ,0.f} );
+    _gridTransform = float4x4_identity();
     
     return true;
 }
@@ -106,16 +122,31 @@ WorkingPlaneRenderPass::updateUniforms(Renderer& renderer)
 {
     auto& uniforms = _uniformsBuffer->uniform();
     
-    const auto size = renderer.cameraRig()->cameras()[kLeftCameraIndex]->viewportSize();
+    const auto& cameras = renderer.cameraRig()->cameras();
+    const size_t cameraCount = cameras.size();
     
-    uniforms.viewportSize = size;
-    
-    const float contentScaleFactor = renderer.delegate()->contentScaleFactor();
-    const float thickness = contentScaleFactor * _thickness;
-    uniforms.samplingDelta = float2 { thickness, thickness };
-    
-    uniforms.color = _color;
-    
+    for (size_t i=0; i < cameraCount; ++i)
+    {
+        const auto& camera = cameras[i];
+        const auto viewMatrix = inverse(camera->worldTransform());
+        
+        uniforms.projViewModelMatrix[i] =  camera->projectionMatrix() * viewMatrix * _gridTransform;
+        
+        const float2 viewportSize = camera->viewportSize();
+        
+        RectF bounds;
+        
+        for (size_t j=0; j < 4; ++j)
+        {
+            const float4 pos = s_Vertices[j].position;
+            float4 pos2d = uniforms.projViewModelMatrix[i] * pos;
+            float3 p = pos2d.xyz / pos2d.w;
+            const float x = ((p.x + 1.f) * 0.5f) * viewportSize.x;
+            const float y = ((-p.y + 1.f) * 0.5f) * viewportSize.y;
+            
+            bounds.add({x, y});
+        }
+    }
 }
 
 void
@@ -134,22 +165,6 @@ WorkingPlaneRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> 
                             offset:0
                            atIndex:BufferIndexUVs];
     
-    
-    auto descriptor = renderer.delegate()->renderPassDescriptor(kLeftCameraIndex);
-    auto mainDepth = descriptor.depthAttachment.texture;
-    
-    if (auto rateMap = descriptor.rasterizationRateMap)
-    {
-        auto device = renderer.mtlDevice();
-        
-        MTLSizeAndAlign rateMapParamSize = rateMap.parameterBufferSizeAndAlign;
-        id<MTLBuffer> rateMapDataBuffer = [device newBufferWithLength: rateMapParamSize.size options:MTLResourceStorageModeShared];
-
-        // Copy the rate map's data into the buffer.
-        [rateMap copyParameterDataToBuffer:rateMapDataBuffer offset:0];
-        
-        [encoder setFragmentBuffer:rateMapDataBuffer offset:0 atIndex:BufferIndexRasterizationRateMapUniforms];
-    }
     
     [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }
