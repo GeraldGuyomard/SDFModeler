@@ -244,10 +244,7 @@ fragment FragmentShader_WorkingPlaneOut fragmentShader_WorkingPlane(VertexShader
     float4 c = uniforms.gridColor * pixelVisible;
     
     // Fade to black (Fog)
-    
-    const float4 fogColor = { 0, 0, 0, 0};
-    float fogRatio = in.position.z / in.position.w;
-    
+    const float fogRatio = in.position.z;
     c.a *= fogRatio;
     
     out.color = c;
