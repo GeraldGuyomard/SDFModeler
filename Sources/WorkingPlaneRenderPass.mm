@@ -129,6 +129,12 @@ WorkingPlaneRenderPass::updateUniforms(Renderer& renderer)
         
         uniforms.projViewModelMatrix[i] =  camera->projectionMatrix() * viewMatrix * _gridTransform;
     }
+    
+    constexpr float kGridSize = 2e-4f;
+    uniforms.gridSize = float2 { kGridSize, kGridSize };
+    
+    uniforms.gridThickness = 4e-6f;
+    uniforms.gridColor = float4 { 1.f, 1.f, 1.f, 0.25f };
 }
 
 void
