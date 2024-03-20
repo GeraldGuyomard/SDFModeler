@@ -15,6 +15,8 @@
 #include "XRUndoRedoInteraction.h"
 #include "XRDualPinchInteraction.h"
 
+#include "AddObjectCommand.h"
+
 class App final
 {
 public:
@@ -27,6 +29,8 @@ public:
     void updateLogic(Renderer& renderer, const XRService& xrService);
     void onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors);
 
+    void addPrimitive(const std::string& name);
+    
 private:
     void updateSelection(Renderer& renderer, const XRHandAnchors& anchors);
     void onInteractionStateChanged(const XRInteraction::Ptr&);
@@ -46,7 +50,7 @@ private:
 
 App::App()
 {
-    constexpr float s = 0.25f;
+    constexpr float s = 0.15f;
     float4x4 transform = matrix4x4_scale(s);
     setTranslation(transform, float3 {0, 1.f, -1.f});
     
@@ -211,7 +215,26 @@ App::updateSelection(Renderer& renderer, const XRHandAnchors& anchors)
         _world->setSelection({});
     }
 }
+
+void
+App::addPrimitive(const std::string& name)
+{
+    auto factory = Object3DFactory::factoryByName(name);
+    if (factory == nullptr)
+    {
+        return;
+    }
+    
+    auto cmd = std::make_shared<AddObjectCommand>(_world->rootObject(), factory);
+    _world->commandHistory().run(cmd);
+}
         
+@interface VisionOSRenderer()
+
+-(void)addPrimitiveWithName:(NSString*)name;
+
+@end
+
 @implementation VisionOSRenderer
 {
     std::unique_ptr<App> _app;
@@ -291,10 +314,17 @@ static __weak VisionOSRenderer* s_Instance = nil;
 
 +(void) renderOnCPU
 {
-    if (s_Instance != nil)
-    {
-        [s_Instance renderImage];
-    }
+    [s_Instance renderImage];
+}
+
+-(void)addPrimitiveWithName:(NSString*)name
+{
+    _app->addPrimitive([name UTF8String]);
+}
+
++(void) addPrimitiveWithName:(NSString*)name
+{
+    [s_Instance addPrimitiveWithName:name];
 }
 
 @end

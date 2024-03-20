@@ -19,6 +19,8 @@
 
 +(void) renderOnCPU;
 
++(void) addPrimitiveWithName:(NSString*)name;
+
 
 @end
 

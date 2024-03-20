@@ -7,6 +7,7 @@
 #include "Object3D.h"
 #include "EncodingContext.h"
 #include "RectF.h"
+#include <map>
 
 Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
@@ -108,6 +109,7 @@ public:
     void addFactory(const Object3DFactory::Ptr& factory)
     {
         _factories.push_back(factory);
+        _nameToFactory[factory->name()] = factory;
     }
     
     const std::vector<Object3DFactory::Ptr>& factories() const
@@ -115,11 +117,24 @@ public:
         return _factories;
     }
     
+    Object3DFactory::Ptr factoryByName(const std::string& name) const
+    {
+        const auto it = _nameToFactory.find(name);
+        if (it != _nameToFactory.end())
+        {
+            return it->second;
+        }
+        else
+        {
+            return nullptr;
+        }
+    }
 private:
     Object3DFactoryRegistry() = default;
     Object3DFactoryRegistry(const Object3DFactoryRegistry&) = delete;
     
     std::vector<Object3DFactory::Ptr> _factories;
+    std::map<std::string, Object3DFactory::Ptr> _nameToFactory;
 };
 
 void
@@ -134,6 +149,11 @@ Object3DFactory::factories()
     return Object3DFactoryRegistry::instance().factories();
 }
 
+Object3DFactory::Ptr
+Object3DFactory::factoryByName(const std::string& name)
+{
+    return Object3DFactoryRegistry::instance().factoryByName(name);
+}
 
 void
 Object3D::setMaterial(const Material3D::Ptr& mat)

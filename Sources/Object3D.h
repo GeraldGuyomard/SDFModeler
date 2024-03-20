@@ -59,6 +59,7 @@ public:
     // Factory
     static void addFactory(const Ptr&);
     static const std::vector<Ptr>& factories();
+    static Ptr factoryByName(const std::string& name);
     
 private:
     const std::string _name;

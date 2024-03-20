@@ -19,17 +19,28 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Model3D(named: "Scene", bundle: realityKitContentBundle)
-                .padding(.bottom, 50)
-
-            Text("Hello, world!")
-
             Toggle("Show Immersive Space", isOn: $showImmersiveSpace)
                 .toggleStyle(.button)
                 .padding(.top, 50)
             
-            Button("Render on CPU") {
-                VisionOSRenderer.renderOnCPU()
+            Button("Add Sphere") {
+                VisionOSRenderer.addPrimitive(withName: "Sphere")
+            }
+            
+            Button("Add Box") {
+                VisionOSRenderer.addPrimitive(withName: "Box")
+            }
+            
+            Button("Add Rounded Box") {
+                VisionOSRenderer.addPrimitive(withName: "Rounded Box")
+            }
+            
+            Button("Add Cylinder") {
+                VisionOSRenderer.addPrimitive(withName: "Cylinder")
+            }
+            
+            Button("Add Torus") {
+                VisionOSRenderer.addPrimitive(withName: "Torus")
             }
         
         }
