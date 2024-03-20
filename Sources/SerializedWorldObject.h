@@ -65,14 +65,17 @@ struct SerializedWorldObject final
     }
 };
 
-struct Locals // 16
+struct Locals // 8
 {
-    float2 distances; // 8
-    char2 relativeMinDrawCommandIndices; // 2
+    float distance; // 4
     
+    char relativeMinDrawCommandIndex; // 1
     uint8_t relativeDrawCommandIndex; // 1
     int8_t nbChildrenLeft; // 1 if < 0 it's a leaf primitive
-    uint8_t isCulled; // 1
+    
+    // 1
+    uint8_t isCulled : 1;
+    uint8_t isRelativeMinDrawCommandSubstractive : 1;
 };
 
 class CullingInfo final
@@ -151,9 +154,9 @@ public:
             locals.nbChildrenLeft = -100;
         }
         
-        locals.relativeMinDrawCommandIndices = { -1, -1 };
+        locals.relativeMinDrawCommandIndex = -1;
         locals.relativeDrawCommandIndex = relativeCommandIndex;
-        locals.distances = { 1e7f, 1e7f };
+        locals.distance = 1e7f;
         locals.isCulled = _cullingInfo.nextCulling();
     }
 
@@ -333,20 +336,36 @@ INLINE void _computeDistIterative(
             {
                 CONSTANT auto* cmd = stack.currentDrawCommand();
                 auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-                const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-                const size_t opIndex = size_t(prim->sdfOperation());
+                float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
                 
                 if (auto parentLocals = stack.parentLocals())
                 {
-                    if (d < parentLocals->distances[opIndex])
+                    const bool isSubstractive = (prim->sdfOperation() == SDFOperation::substraction);
+                    if (isSubstractive)
                     {
-                        parentLocals->distances[opIndex] = d;
-                        parentLocals->relativeMinDrawCommandIndices[opIndex] = locals.relativeDrawCommandIndex;
+                        // dAcculumated = max(-d, dAcculumated)
+                        d = -d;
+                        if (d > parentLocals->distance)
+                        {
+                            parentLocals->distance = d;
+                            parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
+                            parentLocals->isRelativeMinDrawCommandSubstractive = 1;
+                        }
+                    }
+                    else
+                    {
+                        // dAcculumated = min (d, dAcculumated)
+                        if (d < parentLocals->distance)
+                        {
+                            parentLocals->distance = d;
+                            parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
+                            parentLocals->isRelativeMinDrawCommandSubstractive = 0;
+                        }
                     }
                 }
                 else if (prim->sdfOperation() == SDFOperation::addition)
                 {
-                    locals.distances[opIndex] = d;
+                    locals.distance = d;
                     visitor.submitMinDistance(serialized, d);
                 }
             }
@@ -365,19 +384,15 @@ INLINE void _computeDistIterative(
         {
             // == 0
             // -> a group and we just finished to go through the children
-            const float2 distances = locals.distances;
-            const float additiveObjectsDist = distances.x;
-            const float negativeObjectsDist = -distances.y;
-            float dist;
+            const float dist = locals.distance;
             
-            if (additiveObjectsDist > negativeObjectsDist)
+            if (!locals.isRelativeMinDrawCommandSubstractive)
             {
-                dist = additiveObjectsDist;
-                
-                if (visitor.submitMinDistance(serialized, additiveObjectsDist))
+                // positive
+                if (visitor.submitMinDistance(serialized, dist))
                 {
                     // hit of positive part
-                    const auto relativeMinCmdIndex = locals.relativeMinDrawCommandIndices[0];
+                    const auto relativeMinCmdIndex = locals.relativeMinDrawCommandIndex;
                     const auto cmdIndex = rootCommandIndex + relativeMinCmdIndex;
                     CONSTANT auto* cmd = serialized.drawCommand(cmdIndex);
                     ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
@@ -390,13 +405,11 @@ INLINE void _computeDistIterative(
             }
             else
             {
-                dist = negativeObjectsDist;
-                
                 if (visitor.submitMinDistance(serialized, dist))
                 {
                     // hit of negative part
 
-                    auto relativeMinCmdIndexForShadingPurpose = locals.relativeMinDrawCommandIndices[1];
+                    auto relativeMinCmdIndexForShadingPurpose = locals.relativeMinDrawCommandIndex;
                     const auto cmdIndexForShadingPurpose = rootCommandIndex + relativeMinCmdIndexForShadingPurpose;
                     CONSTANT auto* cmd = serialized.drawCommand(cmdIndexForShadingPurpose);
                     ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
@@ -413,7 +426,7 @@ INLINE void _computeDistIterative(
             if (stack.depth() > 0)
             {
                 THREAD auto& parentLocals = stack.parentLocalsNoCheck();
-                parentLocals.distances[0] = min(parentLocals.distances[0], dist);
+                parentLocals.distance = min(parentLocals.distance, dist);
             }
 
             stack.back();
