@@ -145,26 +145,11 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
                                    address::clamp_to_edge,
                                    filter::linear);
     
-    float mattingDepth = mattingDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
-    
     FragmentShader_SelectionOutlineOut out;
-    
-#if 0
-    if (mattingDepth != 0.f)
-    {
-        out.depth = mattingDepth;
-        out.color = float4 { 1.f, 0.f, 0.f, 1.f };
-    }
-    else
-    {
-        discard_fragment();
-    }
-    
-    return out;
-#else
     
     const auto delta = uniforms.samplingDelta;
     
+    float mattingDepth = 0.f;
     size_t n = 0;
     
     for (float x = -delta.x; x <= delta.x; x += delta.x)
@@ -199,7 +184,6 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     {
         discard_fragment();
     }
-#endif
     
     return out;
 }
