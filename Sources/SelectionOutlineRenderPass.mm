@@ -27,7 +27,8 @@ _thickness(2.f)
 id<MTLRenderCommandEncoder>_Nullable
 SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
+    auto delegate = renderer.delegate();
+    MTLRenderPassDescriptor* renderPassDescriptor = [delegate->renderPassDescriptor(kLeftCameraIndex) copy];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     colorAttachment.loadAction = MTLLoadActionLoad;
@@ -35,7 +36,9 @@ SelectionOutlineRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     depthAttachment.loadAction = MTLLoadActionLoad;
-    depthAttachment.storeAction = MTLStoreActionStore;
+    
+    const auto depthStored = renderer.delegate()->depthInfo().depthReadbackDownstream;
+    depthAttachment.storeAction = depthStored ? MTLStoreActionStore : MTLStoreActionDontCare;
     
     if (renderPassDescriptor != nullptr)
     {

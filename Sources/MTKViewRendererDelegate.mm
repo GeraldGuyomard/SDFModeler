@@ -220,7 +220,7 @@ MTKViewRendererDelegate::depthInfo() const
         f = MTLCompareFunctionLessEqual;
     }
     
-    return { c, f };
+    return { c, f, false /*depth read back down stream */ };
 }
 
 void

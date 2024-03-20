@@ -27,7 +27,8 @@ WorkingPlaneRenderPass::WorkingPlaneRenderPass()
 id<MTLRenderCommandEncoder>_Nullable
 WorkingPlaneRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
 {
-    MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
+    auto delegate = renderer.delegate();
+    MTLRenderPassDescriptor* renderPassDescriptor = [delegate->renderPassDescriptor(kLeftCameraIndex) copy];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
     colorAttachment.loadAction = MTLLoadActionLoad;
@@ -35,8 +36,10 @@ WorkingPlaneRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffe
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
     depthAttachment.loadAction = MTLLoadActionLoad;
-    //depthAttachment.storeAction = MTLStoreActionStore;
-    depthAttachment.storeAction = MTLStoreActionDontCare;
+    
+    const auto depthStored = delegate->depthInfo().depthReadbackDownstream;
+    
+    depthAttachment.storeAction = depthStored ? MTLStoreActionStore : MTLStoreActionDontCare;
     
     if (renderPassDescriptor != nullptr)
     {
@@ -133,8 +136,8 @@ WorkingPlaneRenderPass::updateUniforms(Renderer& renderer)
     constexpr float kGridSize = 2e-4f;
     uniforms.gridSize = float2 { kGridSize, kGridSize };
     
-    uniforms.gridThickness = 4e-6f;
-    uniforms.gridColor = float4 { 1.f, 1.f, 1.f, 0.25f };
+    uniforms.gridThickness = 0.95f;
+    uniforms.gridColor = float4 { 1.f, 1.f, 1.f, 1.f };
 }
 
 void

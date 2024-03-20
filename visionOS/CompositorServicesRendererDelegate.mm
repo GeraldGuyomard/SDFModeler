@@ -231,7 +231,7 @@ CompositorServicesRendererDelegate::endSubmission()
 RendererDelegate::DepthInfo
 CompositorServicesRendererDelegate::depthInfo() const
 {
-    return { 0.f, MTLCompareFunctionGreater };
+    return { 0.f, MTLCompareFunctionGreater, true /* depth needed by vision os compositor */ };
 }
 
 MTLRenderPassDescriptor* _Nullable

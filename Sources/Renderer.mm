@@ -25,8 +25,8 @@
 
 #include "MainViewController.h"
 
-RendererDelegate::DepthInfo::DepthInfo(float clearDepth, MTLCompareFunction compareFunction)
-: clearDepth(clearDepth), compareFunction(compareFunction)
+RendererDelegate::DepthInfo::DepthInfo(float clearDepth, MTLCompareFunction compareFunction, bool depthReadbackDownstream)
+: clearDepth(clearDepth), compareFunction(compareFunction), depthReadbackDownstream(depthReadbackDownstream)
 {}
 
 float2

@@ -48,8 +48,9 @@ public:
     {
         float clearDepth;
         MTLCompareFunction compareFunction;
+        bool depthReadbackDownstream;
         
-        DepthInfo(float clearDepth, MTLCompareFunction compareFunction);
+        DepthInfo(float clearDepth, MTLCompareFunction compareFunction, bool depthReadbackDownstream);
     };
     
     virtual DepthInfo depthInfo() const = 0;

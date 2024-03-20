@@ -237,24 +237,18 @@ fragment FragmentShader_WorkingPlaneOut fragmentShader_WorkingPlane(VertexShader
     
     float2 xy = in.textCoords;
     
-    //float2 s = sign(xy);
-    //xy *= s;
-    
     xy = fract(xy / uniforms.gridSize);
-    
-    //xy = max(-s, 0.f) + (s * xy);
-
-    xy = step(0.98, xy);
+    xy = step(uniforms.gridThickness, xy);
     
     float pixelVisible = min(1.f, xy.x + xy.y);
     float4 c = uniforms.gridColor * pixelVisible;
     
     // Fade to black (Fog)
-    /*const float4 fogColor = { 0, 0, 0, 0};
-    float fogRatio = dist / 10.f;
-    fogRatio = pow(fogRatio, 1.5f);
     
-    c = mix(c, fogColor, fogRatio);*/
+    const float4 fogColor = { 0, 0, 0, 0};
+    float fogRatio = in.position.z / in.position.w;
+    
+    c.a *= fogRatio;
     
     out.color = c;
     
