@@ -52,3 +52,8 @@ struct VertexShader_SelectionOutlineIn
     float2 textCoords VB_ATTRIBUTE(VertexAttributeTexcoord);
 };
 
+struct VertexShader_WorkingPlaneIn
+{
+    simd_float4 position VB_ATTRIBUTE(VertexAttributePosition);
+};
+

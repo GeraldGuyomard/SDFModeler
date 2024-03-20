@@ -244,7 +244,7 @@ Renderer::renderMatting(size_t cameraIndex, float2 pixelPosition) const
     
     const auto p = pixelToNDC(size, pixelPosition);
     
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(p, cameraUniforms, serializedWorld, materials);
+    const auto res = render<MattingShader, true /*write to depth*/>(p, cameraUniforms, serializedWorld, materials);
     
     return cameraUniforms.inverseZ() ? (1.f - res.depth) : res.depth;
 }

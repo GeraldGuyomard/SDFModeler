@@ -211,6 +211,9 @@
 		7FA764AF2B93A5190011BEA8 /* XRImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7FA764AE2B93A5190011BEA8 /* XRImpl.swift */; };
 		7FC279382B97F3C50031FE0A /* XRDragInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FC279362B97F3C50031FE0A /* XRDragInteraction.mm */; };
 		7FC2793B2B97FF820031FE0A /* XRUndoRedoInteraction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FC2793A2B97FF820031FE0A /* XRUndoRedoInteraction.mm */; };
+		7FE74EBE2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
+		7FE74EBF2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
+		7FE74EC02BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
 		7FF5B9E52B97A4E3008DE57C /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9DF2B97A4E3008DE57C /* XRService.mm */; };
 		7FF5B9E62B97A4E3008DE57C /* XRDrawable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */; };
 		7FF5B9E72B97A4E3008DE57C /* XRFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */; };
@@ -401,6 +404,8 @@
 		7FC279372B97F3C50031FE0A /* XRDragInteraction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XRDragInteraction.h; sourceTree = "<group>"; };
 		7FC279392B97FF820031FE0A /* XRUndoRedoInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRUndoRedoInteraction.h; sourceTree = "<group>"; };
 		7FC2793A2B97FF820031FE0A /* XRUndoRedoInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRUndoRedoInteraction.mm; sourceTree = "<group>"; };
+		7FE74EBC2BA8B01E00285364 /* WorkingPlaneRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkingPlaneRenderPass.h; sourceTree = "<group>"; };
+		7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WorkingPlaneRenderPass.mm; sourceTree = "<group>"; };
 		7FF5B9DD2B97A4E3008DE57C /* XRFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRFrame.h; sourceTree = "<group>"; };
 		7FF5B9DE2B97A4E3008DE57C /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
 		7FF5B9DF2B97A4E3008DE57C /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
@@ -503,6 +508,8 @@
 				7F9234122B86E2D400E6A7A6 /* SelectionMattingRenderPass.mm */,
 				7F9234392B8837BA00E6A7A6 /* SelectionOutlineRenderPass.h */,
 				7F92343A2B8837BA00E6A7A6 /* SelectionOutlineRenderPass.mm */,
+				7FE74EBC2BA8B01E00285364 /* WorkingPlaneRenderPass.h */,
+				7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */,
 				7F5DE0882B730B00003FC854 /* MTKViewRendererDelegate.h */,
 				7F5DE0872B730B00003FC854 /* MTKViewRendererDelegate.mm */,
 				7444A4D729A1CB63009632C3 /* MainViewController.h */,
@@ -939,6 +946,7 @@
 				7444A4D929A1CB63009632C3 /* MainViewController.mm in Sources */,
 				7F9234312B881BC400E6A7A6 /* QuadBasedRenderPass.mm in Sources */,
 				7492229229E2689F00ACCFBC /* TransformObjectCommand.cpp in Sources */,
+				7FE74EBE2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */,
 				74897EA329EF93A6007A5CFE /* SDFCylinder.cpp in Sources */,
 				74DAA6E529AC7BD200171C03 /* SDFObject.cpp in Sources */,
 				748629CD2A004350002407AA /* Type.cpp in Sources */,
@@ -968,6 +976,7 @@
 				74AAF28329D7BCB100D322DB /* SDFSphere.cpp in Sources */,
 				74AAF28229D7BCA900D322DB /* Transformer.cpp in Sources */,
 				7F5DE0762B730914003FC854 /* Ray.cpp in Sources */,
+				7FE74EBF2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */,
 				7F5CCD422B685A2C00BC6A69 /* RenderStats.mm in Sources */,
 				74AAF28B29D7BCC700D322DB /* ObjectType.cpp in Sources */,
 				74A18A9129D8B67C0010F1B4 /* MainViewControllerIOS.mm in Sources */,
@@ -1068,6 +1077,7 @@
 				7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */,
 				7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */,
 				7F5DE0842B73092A003FC854 /* Object3DInteraction.mm in Sources */,
+				7FE74EC02BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */,
 				7F5DE05C2B73088D003FC854 /* Material.cpp in Sources */,
 				7F5DE0602B73089F003FC854 /* SDFCylinder.cpp in Sources */,
 				7F92342E2B8819BF00E6A7A6 /* TUniformBuffer.mm in Sources */,

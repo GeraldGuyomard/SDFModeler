@@ -77,7 +77,7 @@ fragment FragmentShaderOut_Matting fragmentShaderMatting(VertexShaderOut in [[st
     CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[in.cameraIndex];
     CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[in.cameraIndex];
     
-    const auto res = render<MattingShader, NullEnvironment<MattingShader>, true /*write to depth*/>(in.viewportNDC, cameraUniforms, serializedWorld, materials);
+    const auto res = render<MattingShader, true /*write to depth*/>(in.viewportNDC, cameraUniforms, serializedWorld, materials);
     
     FragmentShaderOut_Matting out;
     out.depth = res.adjustedDepth(cameraUniforms.inverseZ());

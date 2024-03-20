@@ -57,7 +57,7 @@ public:
     }
 };
 
-template <typename TShader, typename TEnvironment = GridEnvironment<TShader>>
+template <typename TShader>
 INLINE RayMarchResult rayMarch(float2 ndcPosition,
                             CONSTANT CameraUniforms& uniforms,
                             CONSTANT SerializedWorldObject& serializedWorld,
@@ -68,29 +68,7 @@ INLINE RayMarchResult rayMarch(float2 ndcPosition,
     const TShader shader { uniforms, materials };
     
     WorldObject<TShader> worldObject { shader, serializedWorld };
-    const auto worldRes = worldObject.rayMarch(ndcPosition, uniforms.viewportSize, ray);
-    
-    TEnvironment environment;
-    const auto envRes = environment.rayMarch(shader, ray, serializedWorld);
-    //const RayMarchResult envRes { ray };
-    
-    if (worldRes.isValid())
-    {
-        if (envRes.isValid())
-        {
-            return (worldRes.distance <= envRes.distance) ? worldRes : envRes;
-        }
-        else
-        {
-            return worldRes;
-        }
-    }
-    else if (envRes.isValid())
-    {
-        return envRes;
-    }
-    
-    return { ray };
+    return worldObject.rayMarch(ndcPosition, uniforms.viewportSize, ray);
 }
 
 struct RenderResult final
@@ -108,13 +86,13 @@ struct RenderResult final
     {}
 };
 
-template <typename TShader, typename TEnvironment, bool writeToDepth = true>
+template <typename TShader, bool writeToDepth = true>
 INLINE RenderResult render(float2 viewportNDC,
                      CONSTANT CameraUniforms& uniforms,
                      CONSTANT SerializedWorldObject& serializedWorld,
                      CONSTANT Materials& materials)
 {
-    const auto res = rayMarch<TShader, TEnvironment>(viewportNDC, uniforms, serializedWorld, materials);
+    const auto res = rayMarch<TShader>(viewportNDC, uniforms, serializedWorld, materials);
     if (res.isValid())
     {
         if constexpr (writeToDepth)
@@ -144,7 +122,7 @@ INLINE RenderResult renderDefault(float2 viewportNDC,
                             CONSTANT SerializedWorldObject& serializedWorld,
                             CONSTANT Materials& materials)
 {
-    return render<PhongShader, GridEnvironment<PhongShader>>(viewportNDC, uniforms, serializedWorld, materials);
+    return render<PhongShader>(viewportNDC, uniforms, serializedWorld, materials);
 }
 
 INLINE PickResult pickObject(float2 viewportNDC,
