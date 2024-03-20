@@ -44,6 +44,9 @@ private:
     using UniformsBuffer = TUniformBuffer<OutlineUniforms, BufferIndexOutlineUniforms, kMaxBuffersInFlight>;
     std::unique_ptr<UniformsBuffer> _uniformsBuffer;
     
+    using RateMapDataBuffer = TVariableSizeUniformBuffer<BufferIndex::BufferIndexRasterizationRateMapUniforms, kMaxBuffersInFlight>;
+    std::unique_ptr<RateMapDataBuffer> _rateMapDataBuffer;
+    
     DepthTextureProvider _depthTextureProvider;
     
     float4 _color;
