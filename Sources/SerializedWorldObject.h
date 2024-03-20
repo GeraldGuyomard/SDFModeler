@@ -442,70 +442,13 @@ void _visitDrawCommandTree(float3 pt, CONSTANT SerializedWorldObject& serialized
 }
 
 #if SHADER_ON_CPU
-    
-    template <typename TVisitor>
-    float computeDistRecursive(DistanceEvaluator distanceEvaluator,
-                               THREAD TVisitor& visitor,
-                               CONSTANT SerializedWorldObject& serialized,
-                               CONSTANT DrawCommand*& inCmd)
-    {
-        auto cmd = inCmd++;
-        
-        if (visitor.nextCulling())
-        {
-            return 1e7f;
-        }
-        
-        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
-        {
-            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-            const float dist = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
-            return dist;
-        }
-        else
-        {
-            int32_t nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
-            float2 distances { 1e7f, 1e7f };
-            
-            while (nbChildrenLeft > 0)
-            {
-                auto childCmd = inCmd;
-                const float childDist = computeDistRecursive(distanceEvaluator, visitor, serialized, inCmd);
-                if (childCmd->primitiveOffsetOrNegativeChildrenCount < 0)
-                {
-                    distances.x = min(distances.x, childDist);
-                }
-                else
-                {
-                    auto childPrim = serialized.primitive(childCmd->primitiveOffsetOrNegativeChildrenCount);
-                    const size_t op = size_t(childPrim->sdfOperation());
-                    distances[op] = min(distances[op], childDist);
-                }
-                
-                --nbChildrenLeft;
-            }
-            
-            const float dist = max(distances.x, -distances.y);
-            visitor.submitMinDistance(serialized, dist);
-            
-            return dist;
-        }
-    }
-
-#define CPU_ITERATIVE 1
 
 INLINE void visitDrawCommandTree(float3 pt,
                     CONSTANT SerializedWorldObject& serialized,
                     TDrawCommandIndex rootCmdIndex,
                     THREAD Visitor& visitor)
 {
-#if CPU_ITERATIVE
     return _visitDrawCommandTree(pt, serialized, rootCmdIndex, visitor);
-#else
-    CONSTANT DrawCommand* cmd = serialized.drawCommand(rootCmdIndex);
-    DistanceEvaluator distanceEvaluator { pt };
-    computeDistRecursive<TVisitor>(distanceEvaluator, visitor, serialized, cmd);
-#endif
 }
 
 #else
