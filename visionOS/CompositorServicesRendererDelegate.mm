@@ -70,8 +70,8 @@ float2
 CompositorServicesRendererDelegate::tileSize() const
 {
     //return float2 { 4096, 4096 };
-    //return float2 { 64, 64 };
-    return float2 { 128, 128 };
+    return float2 { 64, 64 };
+    //return float2 { 128, 128 };
 }
 
 void
