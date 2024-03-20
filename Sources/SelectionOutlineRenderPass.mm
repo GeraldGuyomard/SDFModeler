@@ -116,6 +116,10 @@ void
 SelectionOutlineRenderPass::updateBuffersState()
 {
     _uniformsBuffer->update();
+    if (_rateMapDataBuffer != nullptr)
+    {
+        _rateMapDataBuffer->update();
+    }
 }
 
 void
@@ -177,14 +181,21 @@ SelectionOutlineRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncod
     if (auto rateMap = descriptor.rasterizationRateMap)
     {
         auto device = renderer.mtlDevice();
+        const MTLSizeAndAlign rateMapParamSize = rateMap.parameterBufferSizeAndAlign;
         
-        MTLSizeAndAlign rateMapParamSize = rateMap.parameterBufferSizeAndAlign;
-        id<MTLBuffer> rateMapDataBuffer = [device newBufferWithLength: rateMapParamSize.size options:MTLResourceStorageModeShared];
+        if (_rateMapDataBuffer == nullptr)
+        {
+            _rateMapDataBuffer = std::make_unique<RateMapDataBuffer>(device, rateMapParamSize.size, @"RateMapData");
+        }
+        else
+        {
+            _rateMapDataBuffer->reallocIfNeeded(rateMapParamSize.size);
+        }
 
         // Copy the rate map's data into the buffer.
-        [rateMap copyParameterDataToBuffer:rateMapDataBuffer offset:0];
+        [rateMap copyParameterDataToBuffer:_rateMapDataBuffer->mtlBuffer() offset:_rateMapDataBuffer->offset()];
         
-        [encoder setFragmentBuffer:rateMapDataBuffer offset:0 atIndex:BufferIndexRasterizationRateMapUniforms];
+        _rateMapDataBuffer->setFragmentBuffer(encoder);
     }
     
     [encoder setFragmentTexture:mainDepth atIndex:MainDepthTextureIndex];
