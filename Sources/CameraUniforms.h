@@ -65,5 +65,6 @@ struct OutlineUniforms final
 struct WorkingPlaneUniforms final
 {
     float4x4    projViewModelMatrix[2];
-    //float2      gridSize;
+    char toto[256];
+    float4      dummy;
 };

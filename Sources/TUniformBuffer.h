@@ -33,13 +33,18 @@ public:
         _offset = alignedSize() * _index;
         _uniform = reinterpret_cast<TUniform*>(((uint8_t*)_mtlBuffer.contents) + _offset);
     }
+
+    void setVertexBuffer(id <MTLRenderCommandEncoder> _Nonnull encoder)
+    {
+        [encoder setVertexBuffer:_mtlBuffer offset:_offset atIndex:bufferIndex];
+    }
     
     void setFragmentBuffer(id <MTLRenderCommandEncoder> _Nonnull encoder)
     {
         [encoder setFragmentBuffer:_mtlBuffer offset:_offset atIndex:bufferIndex];
     }
     
-    id <MTLBuffer> mtlBuffer() const
+    id <MTLBuffer> _Nonnull mtlBuffer() const
     {
         return _mtlBuffer;
     }

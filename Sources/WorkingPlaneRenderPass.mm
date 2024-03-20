@@ -11,7 +11,7 @@
 
 namespace
 {
-    constexpr float kPlaneHalfSize = 1.f;
+    constexpr float kPlaneHalfSize = 1000.f;
 
     Vertex s_Vertices[4] = {
         { {-kPlaneHalfSize, 0.f, +kPlaneHalfSize, 1.f}, {0.f, 1.f} },
@@ -30,12 +30,13 @@ WorkingPlaneRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandBuffe
     MTLRenderPassDescriptor* renderPassDescriptor = [renderer.delegate()->renderPassDescriptor(kLeftCameraIndex) copy];
     
     auto colorAttachment = renderPassDescriptor.colorAttachments[0];
-    colorAttachment.loadAction = MTLLoadActionDontCare;
+    colorAttachment.loadAction = MTLLoadActionLoad;
     colorAttachment.storeAction = MTLStoreActionStore;
     
     auto depthAttachment = renderPassDescriptor.depthAttachment;
-    depthAttachment.loadAction = MTLLoadActionDontCare;
-    depthAttachment.storeAction = MTLStoreActionStore;
+    depthAttachment.loadAction = MTLLoadActionLoad;
+    //depthAttachment.storeAction = MTLStoreActionStore;
+    depthAttachment.storeAction = MTLStoreActionDontCare;
     
     if (renderPassDescriptor != nullptr)
     {
@@ -82,7 +83,7 @@ WorkingPlaneRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->colorPixelFormat = presentationConfig->colorPixelFormat;
     config->blendEnabled = true;
     
-    config->depthCompareFunction = MTLCompareFunctionAlways;
+    config->depthCompareFunction = MTLCompareFunctionGreaterEqual;
     
     return config;
 }
@@ -101,12 +102,8 @@ WorkingPlaneRenderPass::init(Renderer& renderer)
     
     _quadVertexBuffer.label = @"WorkingPlaneVertexBuffer";
     
-    const size_t s = sizeof(WorkingPlaneUniforms);
     _uniformsBuffer = std::make_unique<UniformsBuffer>(device, @"WorkingPlaneUniformsBuffer");
-    const size_t s2 = _uniformsBuffer->mtlBuffer().length;
-    
-    //_gridTransform = matrix4x4_translation(float3 { 0.f, -1.f ,0.f} );
-    _gridTransform = float4x4_identity();
+    _gridTransform = matrix4x4_translation(float3 { 0.f, -1.f ,0.f} );
     
     return true;
 }
@@ -131,21 +128,6 @@ WorkingPlaneRenderPass::updateUniforms(Renderer& renderer)
         const auto viewMatrix = inverse(camera->worldTransform());
         
         uniforms.projViewModelMatrix[i] =  camera->projectionMatrix() * viewMatrix * _gridTransform;
-        
-        const float2 viewportSize = camera->viewportSize();
-        
-        RectF bounds;
-        
-        for (size_t j=0; j < 4; ++j)
-        {
-            const float4 pos = s_Vertices[j].position;
-            float4 pos2d = uniforms.projViewModelMatrix[i] * pos;
-            float3 p = pos2d.xyz / pos2d.w;
-            const float x = ((p.x + 1.f) * 0.5f) * viewportSize.x;
-            const float y = ((-p.y + 1.f) * 0.5f) * viewportSize.y;
-            
-            bounds.add({x, y});
-        }
     }
 }
 
@@ -154,6 +136,7 @@ WorkingPlaneRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> 
 {
     _setupViewports(renderer, encoder);
     
+    _uniformsBuffer->setVertexBuffer(encoder);
     _uniformsBuffer->setFragmentBuffer(encoder);
     
     // Draw a quad on screen
@@ -164,7 +147,6 @@ WorkingPlaneRenderPass::_render(Renderer& renderer, id<MTLRenderCommandEncoder> 
     [encoder setVertexBuffer:_quadVertexBuffer
                             offset:0
                            atIndex:BufferIndexUVs];
-    
     
     [encoder drawPrimitives:MTLPrimitiveTypeTriangleStrip vertexStart:0 vertexCount:4];
 }

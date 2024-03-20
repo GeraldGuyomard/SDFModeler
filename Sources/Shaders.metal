@@ -211,9 +211,10 @@ struct VertexShader_WorkingPlaneOut
 };
 
 
-vertex VertexShader_WorkingPlaneOut vertexShader_WorkingPlane(VertexShader_WorkingPlaneIn in [[stage_in]],
-                                                              constant WorkingPlaneUniforms& uniforms [[ buffer(BufferIndexWorkingPlaneUniform) ]],
-                                                                  ushort cameraIndex [[amplification_id]])
+vertex VertexShader_WorkingPlaneOut vertexShader_WorkingPlane(
+            VertexShader_WorkingPlaneIn in [[stage_in]],
+            constant WorkingPlaneUniforms& uniforms [[ buffer(BufferIndexWorkingPlaneUniform) ]],
+            ushort cameraIndex [[amplification_id]])
 {
     VertexShader_WorkingPlaneOut out;
 

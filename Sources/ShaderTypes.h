@@ -26,7 +26,7 @@ enum BufferIndex : EnumBackingType
     BufferIndexOutlineUniforms = 0,
     BufferIndexRasterizationRateMapUniforms = 4,
     
-    BufferIndexWorkingPlaneUniform = 0
+    BufferIndexWorkingPlaneUniform = 10
 };
 
 enum VertexAttribute : EnumBackingType
