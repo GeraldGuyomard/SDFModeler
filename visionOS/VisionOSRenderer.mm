@@ -16,6 +16,7 @@
 #include "XRDualPinchInteraction.h"
 
 #include "AddObjectCommand.h"
+#include "ToggleObjectOperationCommand.h"
 
 class App final
 {
@@ -30,6 +31,7 @@ public:
     void onHandUpdate(Renderer& renderer, const XRHandAnchors& anchors);
 
     void addPrimitive(const std::string& name);
+    void toggleOperation();
     
 private:
     void updateSelection(Renderer& renderer, const XRHandAnchors& anchors);
@@ -228,10 +230,23 @@ App::addPrimitive(const std::string& name)
     auto cmd = std::make_shared<AddObjectCommand>(_world->rootObject(), factory);
     _world->commandHistory().run(cmd);
 }
+
+void
+App::toggleOperation()
+{
+    const auto selection = _world->selection();
+    
+    if (!selection.empty())
+    {
+        auto cmd = std::make_shared<ToggleObjectOperationCommand>(selection);
+        _world->commandHistory().run(cmd);
+    }
+}
         
 @interface VisionOSRenderer()
 
 -(void)addPrimitiveWithName:(NSString*)name;
+-(void)toggleOperation;
 
 @end
 
@@ -325,6 +340,16 @@ static __weak VisionOSRenderer* s_Instance = nil;
 +(void) addPrimitiveWithName:(NSString*)name
 {
     [s_Instance addPrimitiveWithName:name];
+}
+
++(void) toggleOperation
+{
+    [s_Instance toggleOperation];
+}
+
+-(void)toggleOperation
+{
+    _app->toggleOperation();
 }
 
 @end

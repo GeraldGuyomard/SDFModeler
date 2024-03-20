@@ -42,6 +42,12 @@ struct ContentView: View {
             Button("Add Torus") {
                 VisionOSRenderer.addPrimitive(withName: "Torus")
             }
+            
+            Text("--------")
+            
+            Button("Toggle Operation") {
+                VisionOSRenderer.toggleOperation()
+            }
         
         }
         .padding()

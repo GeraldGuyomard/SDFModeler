@@ -20,6 +20,7 @@
 +(void) renderOnCPU;
 
 +(void) addPrimitiveWithName:(NSString*)name;
++(void) toggleOperation;
 
 
 @end

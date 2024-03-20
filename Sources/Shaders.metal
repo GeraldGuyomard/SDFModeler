@@ -116,6 +116,14 @@ struct FragmentShader_SelectionOutlineOut
     #define USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP 0
 #endif
 
+CONSTANT const float2 kOutlineKernel [8] =
+{
+    { -1.f, -1.f }, { +0.f, -1.f }, { +1.f, -1.f },
+    { -1.f, +0.f },                 { +1.f, +0.f },
+    { -1.f, +1.f }, { +0.f, +1.f }, { +1.f, +1.f },
+    
+};
+
 fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_SelectionOutlineOut in [[stage_in]],
                                     constant OutlineUniforms& uniforms [[ buffer(BufferIndexOutlineUniforms) ]],
                                     texture2d_array<float> mattingDepthTexture [[ texture(MattingDepthIndexInput) ]],
@@ -149,32 +157,28 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
     
     const auto delta = uniforms.samplingDelta;
     
-    float mattingDepth = 0.f;
-    size_t n = 0;
+    const float centerMattingDepth = mattingDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
+    float mattingDepth = centerMattingDepth;
+    float n = ceil(mattingDepth);
     
-    for (float x = -delta.x; x <= delta.x; x += delta.x)
+    constexpr size_t kKernelSize = sizeof(kOutlineKernel) / sizeof(kOutlineKernel[0]);
+    
+    for(size_t i=0; i < kKernelSize; ++i)
     {
-        for (float y = -delta.y; y <= delta.y; y += delta.y)
-        {
-            const auto d = mattingDepthTexture.sample(depthSampler, physCoords + float2 { x, y }, in.cameraIndex).r;
-            mattingDepth = max(mattingDepth, d);
-            
-            if (d != 0.f)
-            {
-                ++n;
-            }
-        }
+        const float2 c = physCoords + (kOutlineKernel[i] * delta);
+        const float d = mattingDepthTexture.sample(depthSampler, c, in.cameraIndex).r;
+        mattingDepth = max(mattingDepth, d);
+        n += ceil(d);
     }
     
-    if ((n > 0) && (n < 9))
+    if ((n > 0) && (n < (kKernelSize + 1)))
     {
         out.depth = mattingDepth;
         
         out.color = uniforms.color;
         
 #if !USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP
-        const float originalDepth = mainDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
-        if (originalDepth >= mattingDepth)
+        if (centerMattingDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
         }
