@@ -350,12 +350,22 @@ INLINE void _computeDistIterative(
             {
                 CONSTANT auto* cmd = stack.currentDrawCommand();
                 auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                const bool isAdditive = (prim->sdfOperation() == SDFOperation::addition);
                 float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
                 
                 if (auto parentLocals = stack.parentLocals())
                 {
-                    const bool isSubstractive = (prim->sdfOperation() == SDFOperation::substraction);
-                    if (isSubstractive)
+                    if (isAdditive)
+                    {
+                        // dAcculumated = min (d, dAcculumated)
+                        if (d < parentLocals->distance)
+                        {
+                            parentLocals->distance = d;
+                            parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
+                            parentLocals->flags = 0;
+                        }
+                    }
+                    else
                     {
                         // dAcculumated = max(-d, dAcculumated)
                         d = -d;
@@ -363,21 +373,11 @@ INLINE void _computeDistIterative(
                         {
                             parentLocals->distance = d;
                             parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
-                            parentLocals->flags |= Locals::FFlags::fIsMinDrawCommandSubstractive;
-                        }
-                    }
-                    else
-                    {
-                        // dAcculumated = min (d, dAcculumated)
-                        if (d < parentLocals->distance)
-                        {
-                            parentLocals->distance = d;
-                            parentLocals->relativeMinDrawCommandIndex = locals.relativeDrawCommandIndex;
-                            parentLocals->flags &= ~Locals::FFlags::fIsMinDrawCommandSubstractive;
+                            parentLocals->flags = Locals::FFlags::fIsMinDrawCommandSubstractive;
                         }
                     }
                 }
-                else if (prim->sdfOperation() == SDFOperation::addition)
+                else if (isAdditive)
                 {
                     locals.distance = d;
                     visitor.submitMinDistance(d);
@@ -437,12 +437,11 @@ INLINE void _computeDistIterative(
                 }
             }
             
-            if (stack.depth() > 0)
+            if (auto parentLocals = stack.parentLocals())
             {
-                THREAD auto& parentLocals = stack.parentLocalsNoCheck();
-                parentLocals.distance = min(parentLocals.distance, dist);
+                parentLocals->distance = min(parentLocals->distance, dist);
             }
-
+            
             stack.back();
         }
     }
