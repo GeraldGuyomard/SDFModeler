@@ -6,7 +6,7 @@
 //
 
 #import "SelectionMattingRenderPass.h"
-
+#import <TargetConditionals.h>
 
 class SelectionMattingRenderPass::MattingEncodingDelegate final : public EncodingContextDelegate
 {
@@ -94,10 +94,12 @@ SelectionMattingRenderPass::makeRenderPassDescriptor(Renderer& renderer) const
     renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
     renderPassDescriptor.depthAttachment.clearDepth = 0;
     
+#if !TARGET_OS_SIMULATOR
     auto cameraRig = renderer.cameraRig();
     const auto cameras = cameraRig->cameras();
     
     renderPassDescriptor.renderTargetArrayLength = cameras.size();
+#endif
     
     return renderPassDescriptor;
 }
@@ -144,7 +146,15 @@ SelectionMattingRenderPass::makeRenderEncoder(Renderer& renderer, id<MTLCommandB
         {
             const auto depthPixelFormat = renderer.delegate()->presentConfiguration()->depthPixelFormat;
             auto textureDescriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:depthPixelFormat width:width height:height mipmapped:NO];
+            
             textureDescriptor.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
+            
+        #if TARGET_OS_SIMULATOR
+            textureDescriptor.storageMode = MTLStorageModePrivate;
+        #else
+            textureDescriptor.storageMode = MTLStorageModeShared;
+        #endif
+            
             
             textureDescriptor.textureType = MTLTextureType2DArray;
             textureDescriptor.arrayLength = depthTexture.arrayLength;
