@@ -9,6 +9,7 @@
 #include "RenderFunctions.h"
 #include "CameraInteraction.h"
 #include "Object3DInteraction.h"
+#include "SDFRenderPass.h"
 
 @interface MainViewControllerMacOS()<NSMenuItemValidation>
 @end
@@ -24,6 +25,7 @@
     self.renderer->delegate()->updateViewportSize();
     
     [self reframeAllImmediately];
+    [self updateRenderStyleMenuItems];
 }
 
 - (void)rightMouseDown:(NSEvent *)event
@@ -132,6 +134,76 @@
     interaction->pinch(d);
     
     [self setInteraction:std::move(interaction)];
+}
+
+NSMenuItem* findMenuItem(NSMenu* menu, SEL selector)
+{
+    for (NSMenuItem* item in menu.itemArray)
+    {
+        if (item.action == selector)
+        {
+            return item;
+        }
+        
+        if (auto subMenu = item.submenu)
+        {
+            const auto subItem = findMenuItem(subMenu, selector);
+            if (subItem != nullptr)
+            {
+                return subItem;
+            }
+        }
+    }
+    
+    return nil;
+}
+
+- (void)updateRenderStyleMenuItems
+{
+    NSMenu* menu = [NSApplication sharedApplication].mainMenu;
+    
+    std::array<NSMenuItem*, 3> items;
+    items[size_t(RenderStyle::phong)] = findMenuItem(menu, @selector(selectPhongRendering:));
+    items[size_t(RenderStyle::cellShaded)] = findMenuItem(menu, @selector(selectCellShadedRendering:));
+    items[size_t(RenderStyle::flat)] = findMenuItem(menu, @selector(selectFlatRendering:));
+    
+    auto renderer = self.renderer;
+    auto pass = renderer->sdfRenderPass();
+    const size_t renderStyle = size_t(pass->renderStyle());
+    
+    for (size_t i=0; i < 3; ++i)
+    {
+        items[i].state = (i == renderStyle) ? NSControlStateValueOn : NSControlStateValueOff;
+    }
+    
+}
+
+- (void)setRenderStyle:(RenderStyle)style
+{
+    auto renderer = self.renderer;
+    auto pass = renderer->sdfRenderPass();
+    pass->setRenderStyle(style);
+    
+    renderer->invalidate();
+    
+    // update menu item
+    [self updateRenderStyleMenuItems];
+}
+
+
+- (IBAction)selectPhongRendering:(NSMenuItem*)source
+{
+    [self setRenderStyle:RenderStyle::phong];
+}
+
+- (IBAction)selectCellShadedRendering:(NSMenuItem*)source
+{
+    [self setRenderStyle:RenderStyle::cellShaded];
+}
+
+- (IBAction)selectFlatRendering:(NSMenuItem*)source
+{
+    [self setRenderStyle:RenderStyle::flat];
 }
 
 - (BOOL)acceptsFirstResponder

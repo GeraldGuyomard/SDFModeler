@@ -14,11 +14,11 @@
 
 class EncodingContext;
 
-enum class RenderStyle
+enum class RenderStyle : size_t
 {
-    phong,
-    cellShaded,
-    flat
+    phong = 0,
+    cellShaded = 1,
+    flat = 2
 };
 
 class SDFRenderPass : public QuadBasedRenderPass

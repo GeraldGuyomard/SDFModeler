@@ -24,8 +24,6 @@
 #include "CameraRig.h"
 #include "WorldHelpers.h"
 
-#include "SDFRenderPass.h"
-
 @interface MainViewController()
 @end
 
@@ -224,30 +222,6 @@ void visitTypes(const Object3D::Ptr& object)
 {
     auto cmd = std::make_shared<ToggleObjectOperationCommand>(self.world->selection());
     self.world->commandHistory().run(cmd);
-}
-
-- (void)setRenderStyle:(RenderStyle)style
-{
-    auto renderer = self.renderer;
-    auto pass = renderer->sdfRenderPass();
-    pass->setRenderStyle(style);
-    
-    renderer->invalidate();
-}
-
-- (IBAction)selectPhongRendering:(id)source
-{
-    [self setRenderStyle:RenderStyle::phong];
-}
-
-- (IBAction)selectCellShadedRendering:(id)source
-{
-    [self setRenderStyle:RenderStyle::cellShaded];
-}
-
-- (IBAction)selectFlatRendering:(id)source
-{
-    [self setRenderStyle:RenderStyle::flat];
 }
 
 - (void)frameAtPosition:(float2)pos owner:(BOOL)frameOwner
