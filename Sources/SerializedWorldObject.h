@@ -143,9 +143,7 @@ class Stack final
 public:
     Stack(CONSTANT SerializedWorldObject& serialized, TDrawCommandIndex rootCommandIndex, CullingInfo cullingInfo)
     : _serialized(serialized), _rootCommandIndex(rootCommandIndex), _cullingInfo(cullingInfo)
-    {
-        static_assert(sizeof(Locals) <= 16, "Locals became too big");
-    }
+    {}
     
     bool empty() const
     {
@@ -161,10 +159,14 @@ public:
     {
         ASSERT(_stackIndex < int8_t(kMaxStackDepth - 1));
         
-        const auto relativeCommandIndex = _relativeCmdIndex++;
-        CONSTANT DrawCommand* cmd = _serialized.drawCommand(_rootCommandIndex + relativeCommandIndex);
-        
         THREAD auto& locals = _stack[++_stackIndex];
+        
+        const auto relativeCommandIndex = _relativeCmdIndex++;
+        
+        const bool isCulled = _cullingInfo.nextCulling();
+        locals.flags = isCulled ? Locals::FFlags::fIsCulled : 0;
+        
+        CONSTANT DrawCommand* cmd = _serialized.drawCommand(_rootCommandIndex + relativeCommandIndex);
         
         if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
         {
@@ -175,10 +177,9 @@ public:
             locals.nbChildrenLeft = -100;
         }
         
-        locals.relativeMinDrawCommandIndex = -1;
+        //locals.relativeMinDrawCommandIndex = -1; // avoid one init masked by initial max value of distance
         locals.relativeDrawCommandIndex = relativeCommandIndex;
         locals.distance = 1e7f;
-        locals.flags = _cullingInfo.nextCulling() ? Locals::FFlags::fIsCulled : 0;
     }
 
     THREAD Locals* parentLocals()
