@@ -197,7 +197,8 @@ fragment FragmentShader_SelectionOutlineOut fragmentShaderOutline(VertexShader_S
         out.color = uniforms.color;
         
 #if !USE_LAYERED_TEXTURES_AND_RASTERIZATION_RATE_MAP
-        if (centerMattingDepth >= mattingDepth)
+        const float originalDepth = mainDepthTexture.sample(depthSampler, physCoords, in.cameraIndex).r;
+        if (originalDepth >= mattingDepth)
         {
             out.color.a *= 0.25f;
         }
