@@ -243,14 +243,19 @@ public:
             
             const SDFOperation op = context.operation(*this);
             
+            const EncodingPrimitiveParams params {
+                .id = id(),
+                .materialId = matID,
+                .objectType = object.objectType(),
+                .transformerType = transformer.transformerType(),
+                .operation = op,
+                .blendingFactor = blendingFactor()
+            };
+            
             return encodePrimitive<SDFObject<TGeometry, RSTTransformer>>(
+                                                params,
                                                 encodedPrimitive,
-                                               object,
-                                               id(),
-                                                matID,
-                                               object.objectType(),
-                                               transformer.transformerType(),
-                                                op
+                                                object
                                         );
         });
     }

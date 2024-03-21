@@ -13,23 +13,28 @@
 #include <cstring>
 #include <assert.h>
 
-template <typename TObject>
-static size_t copy(ObjectID id,
-                MaterialID materialId,
-                 ObjectType objectType,
-                 TransformerType transformerType,
-                 EncodedPrimitive* encodedPrimitive,
-                 const TObject& object,
-                 SDFOperation operation)
+struct EncodingPrimitiveParams final
 {
-    assert(objectType != ObjectType::invalid);
+    const ObjectID id;
+    const MaterialID materialId;
+    const ObjectType objectType;
+    const TransformerType transformerType;
+    const SDFOperation operation;
+    const float blendingFactor;
+};
+
+template <typename TObject>
+size_t encodePrimitive(const EncodingPrimitiveParams& params, EncodedPrimitive* encodedPrimitive, const TObject& object)
+{
+    assert(params.objectType != ObjectType::invalid);
     
     const size_t size = sizeof(TObject);
     
-    encodedPrimitive->objectId = id;
-    encodedPrimitive->materialId = materialId;
-    encodedPrimitive->objectCode = computeObjectCode(objectType, transformerType);
-    encodedPrimitive->operation = uint16_t(operation);
+    encodedPrimitive->objectId = params.id;
+    encodedPrimitive->materialId = params.materialId;
+    encodedPrimitive->objectCode = computeObjectCode(params.objectType, params.transformerType);
+    encodedPrimitive->operation = uint16_t(params.operation);
+    encodedPrimitive->blendingFactor = params.blendingFactor;
     
     uint8_t* dst = &(encodedPrimitive->firstByte);
     const uint8_t* src = reinterpret_cast<const uint8_t*>(&object);
@@ -39,27 +44,3 @@ static size_t copy(ObjectID id,
     return alignedSize(size);
 }
 
-template <typename TObject>
-static size_t copy(EncodedPrimitive* primitive,
-                 const TObject& object,
-                 ObjectID id,
-                MaterialID materialId,
-                 ObjectType objectType,
-                 TransformerType transformerType,
-                 SDFOperation operation)
-{
-    return copy<TObject>(id, materialId, objectType, transformerType, primitive, object, operation);
-}
-
-
-template <typename TPrimitive>
-INLINE size_t encodePrimitive(EncodedPrimitive* encodedPrimitive,
-                              const TPrimitive& primitive,
-                              ObjectID id,
-                              MaterialID materialId,
-                              ObjectType objectType,
-                              TransformerType transformerType,
-                              SDFOperation operation)
-{
-    return copy(encodedPrimitive, primitive, id, materialId, objectType, transformerType, operation);
-}
