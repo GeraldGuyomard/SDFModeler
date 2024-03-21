@@ -209,7 +209,7 @@ Renderer::pick(float2 pixelPosition) const
     
     const float mattingZ = renderMatting(kLeftCameraIndex, pixelPosition);
     
-    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& uniforms = _sdfRenderPass->viewDependentUniforms();
     const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
     const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
     const auto& materials = _sdfRenderPass->materials();
@@ -224,7 +224,7 @@ Renderer::pick(float2 pixelPosition) const
 float4
 Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
 {
-    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& uniforms = _sdfRenderPass->viewDependentUniforms();
     const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
     const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
     const auto& materials = _sdfRenderPass->materials();
@@ -239,7 +239,7 @@ Renderer::renderPixel(size_t cameraIndex, float2 pixelPosition) const
 float
 Renderer::renderMatting(size_t cameraIndex, float2 pixelPosition) const
 {
-    const auto uniforms = _sdfRenderPass->viewDependentUniforms();
+    const auto& uniforms = _sdfRenderPass->viewDependentUniforms();
     const auto& cameraUniforms = uniforms.cameraUniforms[kLeftCameraIndex];
     const auto& serializedWorld = uniforms.serializedWorldObject[kLeftCameraIndex];
     const auto& materials = _sdfRenderPass->materials();
