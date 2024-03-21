@@ -11,6 +11,12 @@
 bool
 RenderPass::init(Renderer& renderer)
 {
+    return _updateStates(renderer);
+}
+
+bool
+RenderPass::_updateStates(Renderer& renderer)
+{
     _pipelineConfiguration = makePipelineConfiguration(renderer);
     if (_pipelineConfiguration == nullptr)
     {
@@ -55,13 +61,18 @@ RenderPass::init(Renderer& renderer)
     
     auto device = renderer.mtlDevice();
     
+    id <MTLRenderPipelineState> pipelineState = nil;
+    
     NSError *error = NULL;
-    _pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
-    if (!_pipelineState)
+    pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor error:&error];
+    if (pipelineState == nil)
     {
         NSLog(@"Failed to created pipeline state, error %@", error);
+        return false;
     }
 
+    id <MTLDepthStencilState> depthState = nil;
+    
     if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
     {
         ASSERT(_pipelineConfiguration->depthCompareFunction.has_value());
@@ -72,9 +83,14 @@ RenderPass::init(Renderer& renderer)
             depthStateDesc.depthCompareFunction = _pipelineConfiguration->depthCompareFunction.value();
             depthStateDesc.depthWriteEnabled = true;
             
-            _depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
+            depthState = [device newDepthStencilStateWithDescriptor:depthStateDesc];
         }
     }
+    
+    _states = std::make_unique<States>( States {
+        .pipelineState = pipelineState,
+        .depthState = depthState
+    });
     
     return true;
 }
@@ -87,17 +103,22 @@ RenderPass::render(Renderer& renderer, id<MTLCommandBuffer> _Nonnull cmdBuffer)
         return;
     }
     
+    if (_states == nullptr)
+    {
+        _updateStates(renderer);
+    }
+    
     auto renderEncoder = makeRenderEncoder(renderer, cmdBuffer);
     
     if (renderEncoder != nil)
     {
         [renderEncoder setCullMode:MTLCullModeNone];
         
-        [renderEncoder setRenderPipelineState:_pipelineState];
+        [renderEncoder setRenderPipelineState:_states->pipelineState];
         
         if (_pipelineConfiguration->depthPixelFormat != MTLPixelFormatInvalid)
         {
-            [renderEncoder setDepthStencilState:_depthState];
+            [renderEncoder setDepthStencilState:_states->depthState];
         }
         
         _render(renderer, renderEncoder);
@@ -147,4 +168,10 @@ RenderPass::_setupViewports(Renderer& renderer, id<MTLRenderCommandEncoder> _Non
         
         [encoder setVertexAmplificationCount:cameraCount viewMappings:mapping];
     }
+}
+
+void
+RenderPass::_invalidateStates()
+{
+    _states.reset();
 }

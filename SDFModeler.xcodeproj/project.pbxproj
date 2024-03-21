@@ -214,6 +214,9 @@
 		7FE74EBE2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
 		7FE74EBF2BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
 		7FE74EC02BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */; };
+		7FF5AB612BAC8272003823BC /* FlatShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5AB602BAC8272003823BC /* FlatShader.cpp */; };
+		7FF5AB622BAC8272003823BC /* FlatShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5AB602BAC8272003823BC /* FlatShader.cpp */; };
+		7FF5AB632BAC8272003823BC /* FlatShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5AB602BAC8272003823BC /* FlatShader.cpp */; };
 		7FF5B9E52B97A4E3008DE57C /* XRService.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9DF2B97A4E3008DE57C /* XRService.mm */; };
 		7FF5B9E62B97A4E3008DE57C /* XRDrawable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E02B97A4E3008DE57C /* XRDrawable.mm */; };
 		7FF5B9E72B97A4E3008DE57C /* XRFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7FF5B9E12B97A4E3008DE57C /* XRFrame.mm */; };
@@ -406,6 +409,8 @@
 		7FC2793A2B97FF820031FE0A /* XRUndoRedoInteraction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRUndoRedoInteraction.mm; sourceTree = "<group>"; };
 		7FE74EBC2BA8B01E00285364 /* WorkingPlaneRenderPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkingPlaneRenderPass.h; sourceTree = "<group>"; };
 		7FE74EBD2BA8B01E00285364 /* WorkingPlaneRenderPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WorkingPlaneRenderPass.mm; sourceTree = "<group>"; };
+		7FF5AB5F2BAC8272003823BC /* FlatShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlatShader.h; sourceTree = "<group>"; };
+		7FF5AB602BAC8272003823BC /* FlatShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FlatShader.cpp; sourceTree = "<group>"; };
 		7FF5B9DD2B97A4E3008DE57C /* XRFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRFrame.h; sourceTree = "<group>"; };
 		7FF5B9DE2B97A4E3008DE57C /* XRService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XRService.h; sourceTree = "<group>"; };
 		7FF5B9DF2B97A4E3008DE57C /* XRService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XRService.mm; sourceTree = "<group>"; };
@@ -644,6 +649,8 @@
 				74AF133B29B442AE00F9BBA8 /* PhongShader.h */,
 				74AF133F29B4466B00F9BBA8 /* CellShader.cpp */,
 				74AF133E29B4466B00F9BBA8 /* CellShader.h */,
+				7FF5AB602BAC8272003823BC /* FlatShader.cpp */,
+				7FF5AB5F2BAC8272003823BC /* FlatShader.h */,
 				7F9234172B86E60D00E6A7A6 /* MattingShader.cpp */,
 				7F9234162B86E60D00E6A7A6 /* MattingShader.h */,
 			);
@@ -901,6 +908,7 @@
 				7F9234132B86E2D400E6A7A6 /* SelectionMattingRenderPass.mm in Sources */,
 				74AF134029B4466B00F9BBA8 /* CellShader.cpp in Sources */,
 				7444A4E329A1CB64009632C3 /* main.m in Sources */,
+				7FF5AB612BAC8272003823BC /* FlatShader.cpp in Sources */,
 				74AF134629B53D5300F9BBA8 /* Culling.cpp in Sources */,
 				7444A4DB29A1CB63009632C3 /* Shaders.metal in Sources */,
 				74F7646329CE87CF00CD5259 /* ObjectType.cpp in Sources */,
@@ -1007,6 +1015,7 @@
 				74AAF28529D7BCB100D322DB /* SDFPlane.cpp in Sources */,
 				74AAF29529D7BCD300D322DB /* PrimitiveEvaluator.cpp in Sources */,
 				74AAF29229D7BCD300D322DB /* EncodedPrimitive.cpp in Sources */,
+				7FF5AB622BAC8272003823BC /* FlatShader.cpp in Sources */,
 				7F92343C2B8837BB00E6A7A6 /* SelectionOutlineRenderPass.mm in Sources */,
 				7456FCAA29EA284C00398E86 /* AddObjectCommand.cpp in Sources */,
 				74AAF27D29D7BC9E00D322DB /* CellShader.cpp in Sources */,
@@ -1076,6 +1085,7 @@
 				7F5DE0772B73091F003FC854 /* PrimitiveEvaluator.cpp in Sources */,
 				7F5DE05D2B730895003FC854 /* StandardTransformers.cpp in Sources */,
 				7F5DE06E2B7308FA003FC854 /* Serializer.cpp in Sources */,
+				7FF5AB632BAC8272003823BC /* FlatShader.cpp in Sources */,
 				7F5DE0842B73092A003FC854 /* Object3DInteraction.mm in Sources */,
 				7FE74EC02BA8B01E00285364 /* WorkingPlaneRenderPass.mm in Sources */,
 				7F5DE05C2B73088D003FC854 /* Material.cpp in Sources */,

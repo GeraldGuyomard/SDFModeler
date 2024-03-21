@@ -25,7 +25,23 @@ SDFRenderPass::makePipelineConfiguration(Renderer& renderer) const
     config->pipelineName = "RGB Contents";
     
     auto mtlLib = renderer.mtlLibrary();
-    config->fragmentFunction = [mtlLib newFunctionWithName:@"fragmentShaderSDF"];
+    
+    NSString* fragmentShaderName = nil;
+    switch (_renderStyle)
+    {
+        case RenderStyle::cellShaded: fragmentShaderName = @"fragmentShaderSDF_CellShaded"; break;
+        case RenderStyle::flat: fragmentShaderName = @"fragmentShaderSDF_Flat"; break;
+            
+        case RenderStyle::phong:
+        default:
+        {
+            fragmentShaderName = @"fragmentShaderSDF_Phong";
+            break;
+        }
+    }
+    
+    config->fragmentFunction = [mtlLib newFunctionWithName:fragmentShaderName];
+    ASSERT(config->fragmentFunction != nil);
     
     return config;
 }
@@ -151,4 +167,13 @@ void
 SDFRenderPass::onCompletedCommandBuffer(Renderer& renderer, float renderDuration)
 {
     _renderStats.submitFrameRenderTime(renderDuration);
+}
+
+void SDFRenderPass::setRenderStyle(RenderStyle style)
+{
+    if (style != _renderStyle)
+    {
+        _renderStyle = style;
+        _invalidateStates();
+    }
 }

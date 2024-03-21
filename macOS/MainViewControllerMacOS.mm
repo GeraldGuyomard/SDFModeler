@@ -166,6 +166,19 @@
     {
         return !self.world->selection().empty();
     }
+    // Render styles
+    else if (menuItem.action == @selector(selectPhongRendering:))
+    {
+        return true;
+    }
+    else if (menuItem.action == @selector(selectCellShadedRendering:))
+    {
+        return true;
+    }
+    else if (menuItem.action == @selector(selectFlatRendering:))
+    {
+        return true;
+    }
     
     return NO;
 }

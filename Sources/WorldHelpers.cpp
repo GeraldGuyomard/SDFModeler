@@ -70,6 +70,7 @@ WorldPtr makeDefaultWorld(const float4x4& worldTransform)
         { float3 { 0.2, 0.4, 0.2 }, 0.1 }
     );
     boxPart->setLocalTransform(RSTTransformer { float3 { 0, 0, 0 } });
+    //boxPart->setBlendingFactor(1e-3f);
     
     auto negativeSpherePart = std::make_shared<TObject3D<SDFSphere>>(world, SDFSphere { 0.4f });
     negativeSpherePart->setLocalTransform(RSTTransformer { float3 { 0, 0.25, 0.5f } });

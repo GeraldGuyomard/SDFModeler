@@ -28,6 +28,11 @@
 - (IBAction)group:(id)source;
 - (IBAction)toggleOperation:(id)source;
 
+// rendering
+- (IBAction)selectPhongRendering:(id)source;
+- (IBAction)selectCellShadedRendering:(id)source;
+- (IBAction)selectFlatRendering:(id)source;
+
 - (void)frameAtPosition:(float2)pos owner:(BOOL)frameOwner;
 
 - (void)addAnimation:(Animation::Ptr)animation;

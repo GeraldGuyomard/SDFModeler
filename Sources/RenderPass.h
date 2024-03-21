@@ -64,11 +64,21 @@ protected:
     
     void _setupViewports(Renderer& renderer, id<MTLRenderCommandEncoder> _Nonnull encoder);
     
+    void _invalidateStates();
+    
 private:
+    
+    bool _updateStates(Renderer&);
+    
     PipelineConfiguration::Ptr _pipelineConfiguration;
     
-    id <MTLRenderPipelineState> _Nonnull _pipelineState;
-    id <MTLDepthStencilState> _Nullable _depthState;
+    struct States final
+    {
+        const id <MTLRenderPipelineState> _Nonnull pipelineState;
+        const id <MTLDepthStencilState> _Nullable depthState;
+    };
+    
+    std::unique_ptr<States> _states;
     
     bool _enabled = true;
 };

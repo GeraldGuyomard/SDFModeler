@@ -14,6 +14,13 @@
 
 class EncodingContext;
 
+enum class RenderStyle
+{
+    phong,
+    cellShaded,
+    flat
+};
+
 class SDFRenderPass : public QuadBasedRenderPass
 {
 public:
@@ -38,6 +45,13 @@ public:
         return _materialsBuffer->uniform();
     }
     
+    RenderStyle renderStyle() const
+    {
+        return _renderStyle;
+    }
+    
+    void setRenderStyle(RenderStyle);
+    
 protected:
     
     PipelineConfiguration::Ptr makePipelineConfiguration(Renderer&) const override;
@@ -56,5 +70,7 @@ private:
     std::unique_ptr<SerializedMaterials> _materialsBuffer;
     
     RenderStats _renderStats;
+    
+    RenderStyle _renderStyle = RenderStyle::phong;
 };
 

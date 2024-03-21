@@ -37,14 +37,15 @@ struct FragmentShaderOut
     float depth [[depth(any)]];
 };
 
-fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
-                               constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
-                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
-                               )
+template <typename TShader> inline FragmentShaderOut fragmentShaderSDF(
+                                                VertexShaderOut in,
+                                                constant ViewDependentUniforms& viewDependentUniforms,
+                                                constant Materials& materials)
 {
     CONSTANT auto& cameraUniforms = viewDependentUniforms.cameraUniforms[in.cameraIndex];
     CONSTANT auto& serializedWorld = viewDependentUniforms.serializedWorldObject[in.cameraIndex];
-    const auto res = renderDefault(in.viewportNDC,
+    
+    const auto res = render<TShader>(in.viewportNDC,
                          cameraUniforms,
                          serializedWorld,
                          materials);
@@ -52,16 +53,34 @@ fragment FragmentShaderOut fragmentShaderSDF(VertexShaderOut in [[stage_in]],
     
     FragmentShaderOut out;
     
-#if 1
     out.color = res.color;
     out.depth = res.adjustedDepth(cameraUniforms.inverseZ());
     
-#else
-    const float2 uv = (in.viewportNDC + float2 { 1.f, 1.f }) * 0.5f;
-    out.color = float4 { uv.x, uv.y, 0, 1 };
-#endif
-    
     return out;
+}
+
+fragment FragmentShaderOut fragmentShaderSDF_Phong(VertexShaderOut in [[stage_in]],
+                               constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
+                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
+                               )
+{
+    return fragmentShaderSDF<PhongShader>(in, viewDependentUniforms, materials);
+}
+
+fragment FragmentShaderOut fragmentShaderSDF_CellShaded(VertexShaderOut in [[stage_in]],
+                               constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
+                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
+                               )
+{
+    return fragmentShaderSDF<CellShader>(in, viewDependentUniforms, materials);
+}
+
+fragment FragmentShaderOut fragmentShaderSDF_Flat(VertexShaderOut in [[stage_in]],
+                               constant ViewDependentUniforms& viewDependentUniforms [[ buffer(BufferIndexViewDependentUniforms) ]],
+                               constant Materials& materials [[ buffer(BufferIndexMaterials) ]]
+                               )
+{
+    return fragmentShaderSDF<FlatShader>(in, viewDependentUniforms, materials);
 }
 
 struct FragmentShaderOut_Matting

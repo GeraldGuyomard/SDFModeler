@@ -15,6 +15,7 @@
 
 #include "FragmentShader/PhongShader.h"
 #include "FragmentShader/CellShader.h"
+#include "FragmentShader/FlatShader.h"
 #include "FragmentShader/MattingShader.h"
 
 #include <TargetConditionals.h>

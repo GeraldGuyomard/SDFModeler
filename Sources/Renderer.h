@@ -70,6 +70,8 @@ public:
     typedef UIImage AppleImage;
 #endif
 
+class SDFRenderPass;
+
 class Renderer final
 {
 public:
@@ -99,6 +101,7 @@ public:
     }
     
     const std::vector<RenderPass*>& renderPasses() const { return _renderPasses; }
+    SDFRenderPass* _Nullable sdfRenderPass() const { return _sdfRenderPass.get(); }
     
     AppleImage* _Nonnull renderImage() const;
     
@@ -124,7 +127,7 @@ private:
 
     std::vector<RenderPass*> _renderPasses;
     
-    std::unique_ptr<class SDFRenderPass> _sdfRenderPass;
+    std::unique_ptr<SDFRenderPass> _sdfRenderPass;
     std::unique_ptr<class SelectionMattingRenderPass> _selectionMattingRenderPass;
     std::unique_ptr<class SelectionOutlineRenderPass> _selectionOutlineRenderPass;
     std::unique_ptr<RenderPass> _workingPlaneRenderPass;

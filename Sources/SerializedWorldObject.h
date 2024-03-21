@@ -329,6 +329,12 @@ private:
     ObjectID _minObjectID = kInvalidObjectID;
 };
 
+INLINE float opSmoothUnion(float d1, float d2, float k)
+{
+    float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
+    return mix( d2, d1, h ) - k*h*(1.0-h);
+}
+
 INLINE void _computeDistIterative(
                            DistanceEvaluator distanceEvaluator,
                            THREAD Visitor& visitor,
@@ -359,6 +365,11 @@ INLINE void _computeDistIterative(
                     if (isAdditive)
                     {
                         // dAcculumated = min (d, dAcculumated)
+                        if (prim->blendingFactor != 0.f)
+                        {
+                            d = opSmoothUnion(d, parentLocals->distance, prim->blendingFactor);
+                        }
+                        
                         if (d < parentLocals->distance)
                         {
                             parentLocals->distance = d;
