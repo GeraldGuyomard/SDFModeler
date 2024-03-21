@@ -93,7 +93,7 @@ SDFRenderPass::updateUniforms(Renderer& renderer)
             EncodingContext context { world, viewProjectionMatrix, cameraUniforms.viewportSize, renderer.delegate()->tileSize(), serializedWorld };
             configure(context);
             
-            world->encode(context, serializedMaterials);
+            context.encode(*world, serializedMaterials);
         }
     }
 }

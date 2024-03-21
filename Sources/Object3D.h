@@ -136,6 +136,9 @@ public:
     SDFOperation operation() const { return _operation; }
     void setOperation(SDFOperation);
     
+    float blendingFactor() const { return _blendingFactor; }
+    void setBlendingFactor(float);
+    
     void invalidate();
     
     // Editor bindings
@@ -179,18 +182,18 @@ private:
     ObjectID _id = kInvalidObjectID;
     Material3D::Ptr _material;
     SDFOperation _operation = SDFOperation::addition;
-    
-    bool _isCompound = false;
+    float _blendingFactor = 0.f;
     
     Object3D::WPtr _parent;
     std::vector<Ptr> _children;
     
     float4x4 _localTransform = float4x4_identity();
-    bool _selected = false;
     
     mutable float4x4 _cachedWorldTransform;
     mutable bool _cachedWorldTransformValid = false;
     
+    bool _selected = false;
+    bool _isCompound = false;
 };
 
 template <typename TGeometry>
@@ -328,11 +331,10 @@ class World final : public std::enable_shared_from_this<World>
 public:
     static WorldPtr make();
     
-    void encode(EncodingContext& context,
-                   Materials& materials) const;
-    
     WorldDelegate::Ptr delegate() const;
     void setDelegate(const WorldDelegate::Ptr&);
+    
+    const std::vector<Material3D::Ptr>& materials() const { return _materials; }
     
     void addMaterial(const Material3D::Ptr&);
     Material3D::Ptr addMaterial(const float4& color);

@@ -13,26 +13,27 @@
 
 CONSTANT static constexpr uint64_t kObjectTypeShift = 2;
 
-INLINE constexpr uint32_t computeObjectCode(ObjectType objectType, TransformerType transformerType)
+using TObjectCode = uint32_t;
+INLINE constexpr TObjectCode computeObjectCode(ObjectType objectType, TransformerType transformerType)
 {
-    return (uint32_t(objectType) << kObjectTypeShift) | uint32_t(transformerType);
+    return (TObjectCode(objectType) << kObjectTypeShift) | TObjectCode(transformerType);
 }
 
 template <typename TObject, typename TTransformer>
-INLINE constexpr uint64_t computeObjectCode()
+INLINE constexpr TObjectCode computeObjectCode()
 {
     return computeObjectCode(TObject::objectType(), TTransformer::transformerType());
 }
 
 struct EncodedPrimitive final
 {
-    uint16_t    _unused;
-    uint8_t     _unused2;
-    uint8_t     operation;
+    uint16_t    operation;
+    uint16_t    _unused; // for flags?
+    float       blendingFactor;
     
-    ObjectID    objectId;
-    MaterialID  materialId;
-    uint32_t    objectCode;
+    ObjectID    objectId; // 2
+    MaterialID  materialId; // 2
+    TObjectCode objectCode; // 2
     
     uint8_t     firstByte;
     

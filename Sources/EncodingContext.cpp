@@ -411,3 +411,40 @@ EncodingContext::operation(const Object3D& object) const
         return object.operation();
     }
 }
+
+void
+EncodingContext::encode(const World& world, Materials& materials)
+{
+    auto& serialized = serializedWorldObject();
+    
+    auto root = world.rootObject();
+    encodePrimitives(*root);
+    buildCullingTree(*root);
+    
+    const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
+    
+    for (size_t index=0; index < nbTiles; ++index)
+    {
+        auto& tile = serialized.tiles[index];
+        tile.rootCommandIndex = availableCommandIndex();
+        
+        TileDescriptor descr { tile };
+        
+        encodeHierarchy(descr, nullptr);
+        
+        tile.nbCommands = availableCommandIndex() - tile.rootCommandIndex;
+        if (tile.nbCommands == 0)
+        {
+            tile.rootCommandIndex = -1;
+        }
+    }
+    
+    const auto& allMaterials = world.materials();
+    
+    materials.nbMaterials = allMaterials.size();
+    
+    for (const auto& mat : allMaterials)
+    {
+        materials.material[mat->id()] = mat->material();
+    }
+}

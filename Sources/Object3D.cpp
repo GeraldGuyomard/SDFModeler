@@ -518,6 +518,16 @@ Object3D::setOperation(SDFOperation op)
     }
 }
 
+void
+Object3D::setBlendingFactor(float f)
+{
+    if (_blendingFactor != f)
+    {
+        _blendingFactor = f;
+        invalidate();
+    }
+}
+
 TileDescriptor::TileDescriptor(Tile& tile)
 : tile(tile), tileRect(tile.minPt, tile.maxPt)
 {}
@@ -635,41 +645,6 @@ World::init()
     setTranslation(t, float3 { 0.f, -0.5f, 0.f });
     
     _environment->setWorldTransform(t);
-}
-
-void
-World::encode(EncodingContext& context,
-                 Materials& materials) const
-{
-    auto& serialized = context.serializedWorldObject();
-    
-    context.encodePrimitives(*_rootObject);
-    context.buildCullingTree(*_rootObject);
-    
-    const size_t nbTiles = serialized.numTileRows * serialized.numTileColumns;
-    
-    for (size_t index=0; index < nbTiles; ++index)
-    {
-        auto& tile = serialized.tiles[index];
-        tile.rootCommandIndex = context.availableCommandIndex();
-        
-        TileDescriptor descr { tile };
-        //_rootObject->encodeHierarchy(descr, context, nullptr);
-        context.encodeHierarchy(descr, nullptr);
-        
-        tile.nbCommands = context.availableCommandIndex() - tile.rootCommandIndex;
-        if (tile.nbCommands == 0)
-        {
-            tile.rootCommandIndex = -1;
-        }
-    }
-    
-    materials.nbMaterials = _materials.size();
-    
-    for (const auto& mat : _materials)
-    {
-        materials.material[mat->id()] = mat->material();
-    }
 }
 
 ObjectID

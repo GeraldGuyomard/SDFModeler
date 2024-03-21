@@ -113,14 +113,26 @@ public:
                          const float2& tileSize,
                          SerializedWorldObject& serializedWorldObject);
     
-    const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
     
     using EncodingPrimitiveCallback = std::function<size_t (EncodedPrimitive*)>;
     void encodePrimitive(const Object3D* object, const EncodingPrimitiveCallback&);
-    TPrimitiveOffset encodedPrimitiveOffset(const Object3D* object) const;
+    
+    void encode(const World& world, Materials& materials);
+    
+    void setDelegate(EncodingContextDelegate* delegate);
+    
+    SDFOperation operation(const Object3D&) const;
+    
+private:
+    
+    bool shouldEncode(const Object3D&) const;
     
     const float2& viewportSize() const { return _viewportRect.bottomRight; }
     SerializedWorldObject& serializedWorldObject() { return _serializedWorldObject; }
+    
+    const float4x4& viewProjectionMatrix() const { return _viewProjectionMatrix; }
+    
+    void buildCullingTree(const Object3D& root);
     
     void encodePrimitives(const Object3D& root);
     void encodeHierarchy(TileDescriptor& tileDescr, const DrawCommand* owner);
@@ -131,14 +143,8 @@ public:
     
     size_t availableCommandIndex() const { return _availableDrawCommandIndex; }
     
-    void buildCullingTree(const Object3D& root);
+    TPrimitiveOffset encodedPrimitiveOffset(const Object3D* object) const;
     
-    void setDelegate(EncodingContextDelegate* delegate);
-    
-    bool shouldEncode(const Object3D&) const;
-    SDFOperation operation(const Object3D&) const;
-    
-private:
     const float4x4 _viewProjectionMatrix;
     const RectF _viewportRect;
     
