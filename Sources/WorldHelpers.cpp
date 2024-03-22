@@ -6,7 +6,7 @@
 
 #include "WorldHelpers.h"
 
-WorldPtr makeDefaultWorld(const float4x4& worldTransform)
+WorldPtr makeDefaultWorld_1(const float4x4& worldTransform)
 {
     auto world = World::make();
     auto rootObject = world->rootObject();
@@ -95,4 +95,43 @@ WorldPtr makeDefaultWorld(const float4x4& worldTransform)
     rootObject->addChild(sdfUnion);
     
     return world;
+}
+
+WorldPtr makeDefaultWorld_2(const float4x4& worldTransform)
+{
+    auto world = World::make();
+    auto rootObject = world->rootObject();
+    
+    rootObject->setWorldTransform(worldTransform);
+    
+    auto white = world->addMaterial(float4 { 1, 1, 1, 1 });
+    
+    constexpr float kZ = 0;
+    constexpr float s = 0.5f;
+    float3 pos = float3 {0.5, 0, kZ};
+    
+    auto red = world->addMaterial(float4 { 1, 0, 0, 1 });
+    auto redSphere = std::make_shared<TObject3D<SDFSphere>>(world, SDFSphere { 0.5f });
+    redSphere->setLocalTransform(RSTTransformer { float3 { -1, 0, kZ } } );
+    redSphere->setMaterial(red);
+    
+    rootObject->addChild(redSphere);
+    
+
+    auto blue = world->addMaterial(float4 { 0, 0, 1, 1 });
+    
+    auto blueSphere = std::make_shared<TObject3D<SDFSphere>>(world, SDFSphere { 0.4f });
+    blueSphere->setBlendingFactor(0.1f);
+    
+    blueSphere->setLocalTransform(RSTTransformer { pos });
+    blueSphere->setMaterial(blue);
+    rootObject->addChild(blueSphere);
+ 
+    return world;
+}
+
+
+WorldPtr makeDefaultWorld(const float4x4& worldTransform)
+{
+    return makeDefaultWorld_1(worldTransform);
 }

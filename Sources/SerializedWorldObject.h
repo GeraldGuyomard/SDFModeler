@@ -19,6 +19,13 @@ struct Tile final
     float2 maxPt = { 0, 0 }; // 8
     uint16_t nbCommands = 0; // 2
     TDrawCommandIndex rootCommandIndex = -1; // 2
+    
+    enum Flags
+    {
+        fHasBlendedPrimitives = 1 << 0
+    };
+    
+    uint16_t flags = 0; // 4
 };
 
 
@@ -367,7 +374,7 @@ INLINE void _computeDistIterative(
                         // dAcculumated = min (d, dAcculumated)
                         if (prim->blendingFactor != 0.f)
                         {
-                            d = opSmoothUnion(d, parentLocals->distance, prim->blendingFactor);
+                            d = opSmoothUnion(parentLocals->distance, d, prim->blendingFactor);
                         }
                         
                         if (d < parentLocals->distance)
@@ -738,7 +745,7 @@ public:
         float d = 0.f;
         float3 pt = ray.origin;
         
-        if (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0)
+        if ((tile.flags & Tile::Flags::fHasBlendedPrimitives) || (nbObjectsPerOperation[size_t(SDFOperation::substraction)] != 0))
         {
             for (size_t i=0; i < kNbSteps; ++i)
             {

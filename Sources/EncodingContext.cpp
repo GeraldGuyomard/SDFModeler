@@ -296,6 +296,11 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
             return false;
         }
         
+        if (node->object->blendingFactor() != 0.f)
+        {
+            tileDescr.tile.flags |= Tile::Flags::fHasBlendedPrimitives;
+        }
+        
         const auto myPrimitiveOffset = encodedPrimitiveOffset(node->object);
         writePrimitiveDrawCommand(myPrimitiveOffset, owner);
         return true;
