@@ -78,7 +78,7 @@ struct Locals // 8
     
     char relativeMinDrawCommandIndex; // 1
     uint8_t relativeDrawCommandIndex; // 1
-    int8_t nbChildrenLeft; // 1 if < 0 it's a leaf primitive
+    int8_t nbChildrenLeft; // 1
     
     // 1
     
@@ -175,9 +175,9 @@ public:
         
         CONSTANT DrawCommand* cmd = _serialized.drawCommand(_rootCommandIndex + relativeCommandIndex);
         
-        if (cmd->primitiveOffsetOrNegativeChildrenCount < 0)
+        if (cmd->isGroup())
         {
-            locals.nbChildrenLeft = -cmd->primitiveOffsetOrNegativeChildrenCount;
+            locals.nbChildrenLeft = cmd->childrenCount;
         }
         else
         {
@@ -228,7 +228,7 @@ public:
             
             const auto cmdIndex = _rootCommandIndex + locals.relativeDrawCommandIndex;
             CONSTANT auto* drawCommand = _serialized.drawCommand(cmdIndex);
-            if (drawCommand->primitiveOffsetOrNegativeChildrenCount < 0)
+            if (drawCommand->isGroup())
             {
                 // a group
                 return locals.relativeDrawCommandIndex;
@@ -236,8 +236,8 @@ public:
             else
             {
                 // a prim
-                CONSTANT auto* prim =  _serialized.primitive(drawCommand->primitiveOffsetOrNegativeChildrenCount);
-                if (prim->sdfOperation() == SDFOperation::addition)
+                ASSERT(drawCommand->isPrimitive());
+                if (drawCommand->isAdditivePrimitive())
                 {
                     return locals.relativeDrawCommandIndex;
                 }
@@ -363,13 +363,12 @@ INLINE void _computeDistIterative(
             if (!locals.isCulled())
             {
                 CONSTANT auto* cmd = stack.currentDrawCommand();
-                auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
-                const bool isAdditive = (prim->sdfOperation() == SDFOperation::addition);
+                auto prim = serialized.primitive(cmd->primitiveOffset);
                 float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
                 
                 if (auto parentLocals = stack.parentLocals())
                 {
-                    if (isAdditive)
+                    if (cmd->isAdditivePrimitive())
                     {
                         // dAcculumated = min (d, dAcculumated)
                         if (prim->blendingFactor != 0.f)
@@ -396,7 +395,7 @@ INLINE void _computeDistIterative(
                         }
                     }
                 }
-                else if (isAdditive)
+                else if (cmd->isAdditivePrimitive())
                 {
                     locals.distance = d;
                     visitor.submitMinDistance(d);
@@ -428,9 +427,9 @@ INLINE void _computeDistIterative(
                     const auto relativeMinCmdIndex = locals.relativeMinDrawCommandIndex;
                     const auto cmdIndex = rootCommandIndex + relativeMinCmdIndex;
                     CONSTANT auto* cmd = serialized.drawCommand(cmdIndex);
-                    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
+                    ASSERT(cmd->isPrimitive());
                     
-                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffset);
                     
                     visitor.setMinData(cmdIndex, prim->materialId, prim->objectId);
                     break;
@@ -445,8 +444,8 @@ INLINE void _computeDistIterative(
                     auto relativeMinCmdIndexForShadingPurpose = locals.relativeMinDrawCommandIndex;
                     const auto cmdIndexForShadingPurpose = rootCommandIndex + relativeMinCmdIndexForShadingPurpose;
                     CONSTANT auto* cmd = serialized.drawCommand(cmdIndexForShadingPurpose);
-                    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
-                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                    ASSERT(cmd->isPrimitive());
+                    CONSTANT auto* prim = serialized.primitive(cmd->primitiveOffset);
                     
                     const auto relativeMinCmdIndex = stack.closestPositiveRelativeDrawCommandIndex();
                     const auto cmdIndex = rootCommandIndex + relativeMinCmdIndex;
@@ -517,9 +516,9 @@ INLINE void visitFlatCommandList(float3 pt,
             continue;
         }
         
-        if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+        if (cmd->isPrimitive())
         {
-            auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+            auto prim = serialized.primitive(cmd->primitiveOffset);
             const float d = evaluatePrimitive<DistanceEvaluator, float>(distanceEvaluator, prim);
             if (visitor.submitMinDistance(d))
             {
@@ -631,8 +630,8 @@ public:
             if (_visitor.submitMinDistance(d))
             {
                 auto cmd = _serialized.drawCommand(_cmdIndex);
-                ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
-                auto p = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                ASSERT(cmd->isPrimitive());
+                auto p = _serialized.primitive(cmd->primitiveOffset);
                 
                 _visitor.setMinData(_cmdIndex, p->materialId, p->objectId);
                 break;
@@ -663,8 +662,8 @@ INLINE RayMarchEvaluatorResult rayMarchOnePrimitive(CONSTANT SerializedWorldObje
                           THREAD Visitor& visitor)
 {
     auto cmd = serialized.drawCommand(cmdIndex);
-    ASSERT(cmd->primitiveOffsetOrNegativeChildrenCount >= 0);
-    auto prim = serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+    ASSERT(cmd->isPrimitive());
+    auto prim = serialized.primitive(cmd->primitiveOffset);
     
     RayMarchEvaluator evaluator { serialized, ray, cmdIndex, visitor };
     return evaluatePrimitive<RayMarchEvaluator, RayMarchEvaluatorResult>(evaluator, prim);
@@ -716,9 +715,9 @@ public:
         
         for (uint8_t i=0; i < tile.nbCommands; ++i)
         {
-            if (cmd->primitiveOffsetOrNegativeChildrenCount >= 0)
+            if (cmd->isPrimitive())
             {
-                auto prim = _serialized.primitive(cmd->primitiveOffsetOrNegativeChildrenCount);
+                auto prim = _serialized.primitive(cmd->primitiveOffset);
                 const bool culled = evaluatePrimitive<CullEvaluator, bool>(cullEvaluator, prim);
                 if (culled)
                 {

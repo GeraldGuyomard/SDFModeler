@@ -301,8 +301,9 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
             tileDescr.tile.flags |= Tile::Flags::fHasBlendedPrimitives;
         }
         
+        const bool isSubtractive = (node->object->operation() == SDFOperation::substraction);
         const auto myPrimitiveOffset = encodedPrimitiveOffset(node->object);
-        writePrimitiveDrawCommand(myPrimitiveOffset, owner);
+        writePrimitiveDrawCommand(myPrimitiveOffset, owner, isSubtractive);
         return true;
     }
     else
@@ -338,7 +339,7 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
                     }
                 }
                 
-                cmd.primitiveOffsetOrNegativeChildrenCount = -n;
+                cmd.childrenCount = n;
                 return true;
             }
             else
@@ -352,14 +353,15 @@ EncodingContext::_encodeHierarchy(TileDescriptor& tileDescr, const CullingNode* 
 }
 
 void
-EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner)
+EncodingContext::writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner, bool subtractive)
 {
     assert(primitiveOffset >= 0);
     
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     auto& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
-    cmd.primitiveOffsetOrNegativeChildrenCount = primitiveOffset;
+    cmd.flags = subtractive ?  DrawCommandFlags::fIsSubtractivePrimitive : DrawCommandFlags::fIsAdditivePrimitive;
+    cmd.primitiveOffset = primitiveOffset;
     cmd.ownerOffset = (owner != nullptr) ? (owner - &cmd) : 0;
 }
 
@@ -369,6 +371,7 @@ EncodingContext::writeGroupDrawCommand(const DrawCommand* owner)
     assert(_availableDrawCommandIndex < kDrawCommandArraySize);
     
     auto& cmd = _serializedWorldObject.drawCommands[_availableDrawCommandIndex++];
+    cmd.flags = 0;
     cmd.ownerOffset = (owner != nullptr) ? (owner - &cmd) : 0;
     return cmd;
 }

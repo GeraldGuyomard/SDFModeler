@@ -137,7 +137,7 @@ private:
     void encodePrimitives(const Object3D& root);
     void encodeHierarchy(TileDescriptor& tileDescr, const DrawCommand* owner);
     
-    void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner);
+    void writePrimitiveDrawCommand(TPrimitiveOffset primitiveOffset, const DrawCommand* owner, bool subtractive);
     DrawCommand& writeGroupDrawCommand(const DrawCommand* owner);
     void cancelLastDrawCommand();
     
