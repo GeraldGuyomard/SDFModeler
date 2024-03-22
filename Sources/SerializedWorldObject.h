@@ -29,7 +29,7 @@ struct Tile final
 };
 
 
-static CONSTANT constexpr size_t kMaxTiles = 64 * 64;
+static CONSTANT constexpr size_t kMaxTiles = 14000; // 64 * 64;
 static CONSTANT constexpr size_t kPrimitivesBufferSize = 128 * kNbObjectsMax;
 static CONSTANT constexpr size_t kDrawCommandArraySize = kMaxTiles * kNbObjectsMax;
 
