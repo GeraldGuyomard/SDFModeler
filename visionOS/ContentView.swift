@@ -21,29 +21,29 @@ struct ContentView: View {
         VStack {
             Toggle("Show Immersive Space", isOn: $showImmersiveSpace)
                 .toggleStyle(.button)
-                .padding(.top, 50)
+                .background() {
+                    //Color(uiColor: UIColor.red)
+                }
             
-            Button("Add Sphere") {
-                VisionOSRenderer.addPrimitive(withName: "Sphere")
-            }
+            Divider()
             
-            Button("Add Box") {
-                VisionOSRenderer.addPrimitive(withName: "Box")
-            }
+            VStack {
+                let primitives = ["Sphere", "Box", "Rounded Box", "Cylinder", "Torus"]
+                let n = primitives.count
+                
+                ForEach(0..<n) { i in
+                    
+                    let primitive = primitives[i]
+                    let name = "Add \(primitive)"
+                    
+                    Button(name) {
+                        VisionOSRenderer.addPrimitive(withName: primitive)
+                    }
+                }
+                
+            }.padding(EdgeInsets(top: 16.0, leading: 0.0, bottom: 16.0, trailing: 0.0))
             
-            Button("Add Rounded Box") {
-                VisionOSRenderer.addPrimitive(withName: "Rounded Box")
-            }
-            
-            Button("Add Cylinder") {
-                VisionOSRenderer.addPrimitive(withName: "Cylinder")
-            }
-            
-            Button("Add Torus") {
-                VisionOSRenderer.addPrimitive(withName: "Torus")
-            }
-            
-            Text("--------")
+            Divider()
             
             Button("Toggle Operation") {
                 VisionOSRenderer.toggleOperation()
