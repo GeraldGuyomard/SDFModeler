@@ -25,32 +25,33 @@ struct ContentView: View {
                     //Color(uiColor: UIColor.red)
                 }
             
-            Divider()
-            
-            VStack {
-                let primitives = ["Sphere", "Box", "Rounded Box", "Cylinder", "Torus"]
-                let n = primitives.count
+            if (immersiveSpaceIsShown) {
+                Divider()
                 
-                ForEach(0..<n) { i in
+                Section {
+                    VStack {
+                        let primitives = ["Sphere", "Box", "Rounded Box", "Cylinder", "Torus"]
+                        
+                        ForEach(primitives, id: \.self) { primitive in
+                            
+                            let name = "Add \(primitive)"
+                            
+                            Button(name) {
+                                VisionOSRenderer.addPrimitive(withName: primitive)
+                            }
+                        }
+                        
+                    }.padding(EdgeInsets(top: 16.0, leading: 0.0, bottom: 16.0, trailing: 0.0))
                     
-                    let primitive = primitives[i]
-                    let name = "Add \(primitive)"
+                    Divider()
                     
-                    Button(name) {
-                        VisionOSRenderer.addPrimitive(withName: primitive)
+                    Button("Toggle Operation") {
+                        VisionOSRenderer.toggleOperation()
                     }
                 }
-                
-            }.padding(EdgeInsets(top: 16.0, leading: 0.0, bottom: 16.0, trailing: 0.0))
-            
-            Divider()
-            
-            Button("Toggle Operation") {
-                VisionOSRenderer.toggleOperation()
             }
-        
         }
-        .padding()
+        .frame(width: 300, height: 600, alignment: Alignment.center)
         .onChange(of: showImmersiveSpace) { _, newValue in
             Task {
                 if newValue {

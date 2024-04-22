@@ -25,7 +25,7 @@ struct TestingApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-        }
+        }.windowResizability(.contentSize)
 
         ImmersiveSpace(id: "ImmersiveSpace") {
             
