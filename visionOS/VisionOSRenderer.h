@@ -15,12 +15,12 @@
 - (instancetype) initWithLayerRenderer:(cp_layer_renderer_t)renderer;
 
 - (void)startRenderLoop;
+- (void)shutdown;
+
 - (void)renderImage;
 
-+(void) renderOnCPU;
-
-+(void) addPrimitiveWithName:(NSString*)name;
-+(void) toggleOperation;
+- (void)addPrimitiveWithName:(NSString*)name;
+- (void)toggleOperation;
 
 
 @end

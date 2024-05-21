@@ -6,26 +6,28 @@
 //
 
 import SwiftUI
-import RealityKit
-import RealityKitContent
 
-struct ContentView: View {
-
+struct ContentView: View
+{
+    @Binding var appState: AppState
     @State private var showImmersiveSpace = false
-    @State private var immersiveSpaceIsShown = false
-
-    @Environment(\.openImmersiveSpace) var openImmersiveSpace
-    @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
-
-    var body: some View {
+    @State private var immersiveSpaceShown = false
+    
+    // these are functions given by the environment
+    @Environment(\.openImmersiveSpace) var _openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) var _dismissImmersiveSpace
+    
+    var body: some View
+    {
         VStack {
             Toggle("Show Immersive Space", isOn: $showImmersiveSpace)
-                .toggleStyle(.button)
-                .background() {
-                    //Color(uiColor: UIColor.red)
-                }
+            .toggleStyle(.button)
+            .background() {
+                //Color(uiColor: UIColor.red)
+            }
             
-            if (immersiveSpaceIsShown) {
+            if showImmersiveSpace
+            {
                 Divider()
                 
                 Section {
@@ -37,7 +39,7 @@ struct ContentView: View {
                             let name = "Add \(primitive)"
                             
                             Button(name) {
-                                VisionOSRenderer.addPrimitive(withName: primitive)
+                                appState.renderer?.addPrimitive(withName: primitive)
                             }
                         }
                         
@@ -46,7 +48,7 @@ struct ContentView: View {
                     Divider()
                     
                     Button("Toggle Operation") {
-                        VisionOSRenderer.toggleOperation()
+                        appState.renderer?.toggleOperation()
                     }
                 }
             }
@@ -54,25 +56,27 @@ struct ContentView: View {
         .frame(width: 300, height: 600, alignment: Alignment.center)
         .onChange(of: showImmersiveSpace) { _, newValue in
             Task {
-                if newValue {
-                    switch await openImmersiveSpace(id: "ImmersiveSpace") {
-                    case .opened:
-                        immersiveSpaceIsShown = true
-                    case .error, .userCancelled:
-                        fallthrough
-                    @unknown default:
-                        immersiveSpaceIsShown = false
-                        showImmersiveSpace = false
+                if newValue
+                {
+                    self.immersiveSpaceShown = true
+                    switch await _openImmersiveSpace(id: "ImmersiveSpace")
+                    {
+                        case .opened:
+                            self.immersiveSpaceShown = true
+                        case .error, .userCancelled:
+                            fallthrough
+                        @unknown default:
+                            self.immersiveSpaceShown = false
                     }
-                } else if immersiveSpaceIsShown {
-                    await dismissImmersiveSpace()
-                    immersiveSpaceIsShown = false
+                }
+                else
+                {
+                    appState.tearDownImmersiveSpace()
+                    await _dismissImmersiveSpace()
+
+                    self.immersiveSpaceShown = false
                 }
             }
         }
     }
-}
-
-#Preview(windowStyle: .automatic) {
-    ContentView()
 }

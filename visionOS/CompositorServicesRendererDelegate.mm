@@ -21,6 +21,9 @@ CompositorServicesRendererDelegate::shutdown()
 {
     _shouldStopRendering = true;
     _renderThread.detach();
+    
+    while (!_renderLoopEnded)
+    {}
 }
 
 bool
@@ -104,6 +107,7 @@ CompositorServicesRendererDelegate::startRenderLoop(const RenderLoopTermination&
             }
             
             termination();
+            _renderLoopEnded = true;
         }
     }};
 }

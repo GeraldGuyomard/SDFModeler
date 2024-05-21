@@ -20,19 +20,47 @@ struct ContentStageConfiguration: CompositorLayerConfiguration {
     }
 }
 
+class AppState
+{
+    private var _renderer: VisionOSRenderer? = nil
+    
+    public var renderer: VisionOSRenderer?
+    {
+        return self._renderer
+    }
+    
+    public func setupImmersiveSpace(layerRenderer: LayerRenderer)
+    {
+        self._renderer = VisionOSRenderer(layerRenderer: layerRenderer)
+        self._renderer?.startRenderLoop()
+    }
+    
+    public func tearDownImmersiveSpace()
+    {
+        if let renderer = self._renderer
+        {
+            renderer.shutdown();
+        }
+    }
+}
+
 @main
-struct TestingApp: App {
-    var body: some Scene {
-        WindowGroup {
-            ContentView()
+struct SpatialStudioApp: App
+{
+    @State private var appState = AppState()
+    
+    var body: some Scene
+    {
+        WindowGroup
+        {
+            ContentView(appState: $appState)
         }.windowResizability(.contentSize)
 
-        ImmersiveSpace(id: "ImmersiveSpace") {
-            
-            CompositorLayer(configuration: ContentStageConfiguration()) { layerRenderer in
-                
-                let renderer = VisionOSRenderer(layerRenderer: layerRenderer)
-                renderer?.startRenderLoop()
+        ImmersiveSpace(id: "ImmersiveSpace")
+        {
+            CompositorLayer(configuration: ContentStageConfiguration())
+            { layerRenderer in
+                appState.setupImmersiveSpace(layerRenderer: layerRenderer)
             }
         }.immersionStyle(selection: .constant(.full), in: .full)
         

@@ -258,15 +258,10 @@ App::toggleOperation()
     std::unique_ptr<Renderer> _renderer;
 }
 
-static __weak VisionOSRenderer* s_Instance = nil;
-
 - (instancetype) initWithLayerRenderer:(cp_layer_renderer_t)layerRenderer
 {
     if (self = [self init])
     {
-        ASSERT(s_Instance == nil);
-        s_Instance = self;
-        
         _app = std::make_unique<App>();
         
         _xrService = XRService::make();
@@ -287,9 +282,12 @@ static __weak VisionOSRenderer* s_Instance = nil;
 
 - (void)shutdown
 {
-    auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
-    delegate->shutdown();
-    _renderer.reset();
+    if (_renderer != nullptr)
+    {
+        auto delegate = static_cast<CompositorServicesRendererDelegate*>(_renderer->delegate());
+        delegate->shutdown();
+        _renderer.reset();
+    }
 }
 
 - (void)startRenderLoop
@@ -317,7 +315,6 @@ static __weak VisionOSRenderer* s_Instance = nil;
             
         });
     });
-    
 }
 
 - (void)renderImage
@@ -327,24 +324,10 @@ static __weak VisionOSRenderer* s_Instance = nil;
     a = 1;
 }
 
-+(void) renderOnCPU
-{
-    [s_Instance renderImage];
-}
 
 -(void)addPrimitiveWithName:(NSString*)name
 {
     _app->addPrimitive([name UTF8String]);
-}
-
-+(void) addPrimitiveWithName:(NSString*)name
-{
-    [s_Instance addPrimitiveWithName:name];
-}
-
-+(void) toggleOperation
-{
-    [s_Instance toggleOperation];
 }
 
 -(void)toggleOperation
