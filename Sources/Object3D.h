@@ -358,6 +358,9 @@ public:
     // environment
     Environment3DPtr environment() const { return _environment; }
     
+    // serialization
+    std::string serialize() const;
+    
 private:
     World() = default;
     

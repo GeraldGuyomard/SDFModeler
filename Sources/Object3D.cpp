@@ -9,6 +9,8 @@
 #include "RectF.h"
 #include <map>
 
+#include <rapidjson/rapidjson.h>
+
 Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
 {}
@@ -710,4 +712,10 @@ World::invalidate()
     {
         delegate->onChange(shared_from_this());
     }
+}
+
+std::string
+World::serialize() const
+{
+    return {};
 }
