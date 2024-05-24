@@ -171,10 +171,10 @@ Object3D::setMaterial(const Material3D::Ptr& mat)
     }
 }
 
-const Type*
+const Type&
 Object3D::type() const
 {
-    return &TType<Object3D>::instance();
+    return TType<Object3D>::instance();
 }
 
 template <>
@@ -740,11 +740,11 @@ World::serialize() const
 bool
 Object3D::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer)
 {
-    const auto* t = type();
+    const auto& t = type();
     
     writer.StartObject();
     
-    if (!t->serialize(writer, this))
+    if (!t.serialize(writer, this))
     {
         return false;
     }
@@ -771,3 +771,11 @@ Object3D::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer)
     
     return true;
 }
+
+// some stubs
+template <> void initializeType<TObject3D<SDFSphere>>(Type&) {}
+template <> void initializeType<TObject3D<SDFCylinder>>(Type&) {}
+template <> void initializeType<TObject3D<SDFRoundedBox>>(Type&) {}
+template <> void initializeType<TObject3D<SDFBox>>(Type&) {}
+template <> void initializeType<TObject3D<SDFPlane>>(Type&) {}
+template <> void initializeType<TObject3D<SDFTorus>>(Type&) {}

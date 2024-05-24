@@ -6,6 +6,23 @@
 //
 
 #include "Type.h"
+#include <cxxabi.h>
+
+std::string demangle(const std::type_info& info)
+{
+    const char* abiName = info.name();
+    
+    char name[256];
+    size_t size = sizeof(name);
+    int status;
+    abi::__cxa_demangle(abiName, name, &size, &status);
+    
+    return { name };
+}
+
+Type::Type(const std::string& name, const Type* superType)
+: _name(name), _superType(superType)
+{}
 
 Property::Property(const std::string& name, PropertyType propType,
                    const Getter& getter,
@@ -64,9 +81,9 @@ bool write(rapidjsonStringWriter& writer, const TPropertyValue& value)
     }
 }
 
-bool Type::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const
+bool Type::_serializeSelfProperties(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const
 {
-    for (const auto& prop : properties())
+    for (const auto& prop : _properties)
     {
         writer.Key(prop->name().c_str());
        
@@ -76,6 +93,37 @@ bool Type::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer, const v
             return false;
         }
     }
+    
+    return true;
+}
+
+bool Type::_serializeProperties(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const
+{
+    if (auto sType = superType())
+    {
+        if (!sType->_serializeProperties(writer, instance))
+        {
+            return false;
+        }
+    }
+    
+    return _serializeSelfProperties(writer, instance);;
+}
+
+bool Type::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const
+{
+    writer.Key("type");
+    writer.String(_name.c_str());
+    
+    writer.Key("properties");
+    writer.StartObject();
+    
+    if (!_serializeProperties(writer, instance))
+    {
+        return false;
+    }
+    
+    writer.EndObject();
     
     return true;
 }

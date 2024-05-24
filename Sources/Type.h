@@ -17,6 +17,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
+
 using rapidjsonStringWriter = rapidjson::Writer<rapidjson::StringBuffer>;
 
 enum class PropertyType
@@ -69,7 +70,7 @@ using TPropertyValue = std::variant<float, int, std::string>;
 
 bool write(rapidjsonStringWriter& writer, const TPropertyValue& value);
 
-class Property
+class Property final
 {
 public:
     using Ptr = std::unique_ptr<Property>;
@@ -103,6 +104,10 @@ private:
 class Type
 {
 public:
+    Type(const std::string& name, const Type* superType = nullptr);
+    
+    const std::string& name() const { return _name; }
+    const Type* superType() const { return _superType; }
     
     template <typename TObject, typename TPropertyType>
     void addProperty(const std::string& name,
@@ -188,11 +193,25 @@ public:
     bool serialize(rapidjsonStringWriter& writer, const void* instance) const;
     
 private:
+    bool _serializeSelfProperties(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const;
+    bool _serializeProperties(rapidjson::Writer<rapidjson::StringBuffer>& writer, const void* instance) const;
+    
+    const std::string _name;
     std::vector<Property::Ptr> _properties;
+    
+    const Type* const _superType;
 };
 
 template <typename T>
 void initializeType(Type&);
+
+template <typename T>
+concept HasSuperType = requires
+{
+    typename T::_inherited;
+};
+
+std::string demangle(const std::type_info&);
 
 template <typename T>
 class TType : public Type
@@ -205,11 +224,31 @@ public:
     }
     
 private:
+    
+    TType(const std::string& name, const Type* superType)
+    : Type(name, superType)
+    {}
+    
+    template <HasSuperType U>
+    static inline const Type* superType()
+    {
+        using SuperType = U::_inherited;
+        return &TType<SuperType>::instance();
+    }
+
+    template <typename U>
+    static inline const Type* superType()
+    {
+        return nullptr;
+    }
+    
     static TType* createInstance()
     {
-        TType* t = new TType;
+        const auto* sType  = superType<T>();
+        TType* t = new TType { demangle(typeid(T)), sType };
         initializeType<T>(*t);
         return t;
     }
 };
+
 

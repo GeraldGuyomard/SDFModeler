@@ -90,7 +90,7 @@ public:
     
     WorldPtr world() const { return _world.lock(); }
     
-    virtual const Type* type() const;
+    virtual const Type& type() const;
     
     virtual const Type* geometryType() const { return nullptr; }
     virtual void* geometry() { return nullptr; }
@@ -215,6 +215,11 @@ public:
     TObject3D(const WorldPtr& world, const TGeometry& geometry)
     : _inherited(world), _geometry(geometry)
     {}
+    
+    const Type& type() const override
+    {
+        return TType<TObject3D<TGeometry>>::instance();
+    }
     
     const Type* geometryType() const override
     {
