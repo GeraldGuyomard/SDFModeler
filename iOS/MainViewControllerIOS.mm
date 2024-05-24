@@ -516,7 +516,7 @@ namespace
     
     if (section == 0)
     {
-        type = object->type();
+        type = &object->type();
     }
     else if (section == 1)
     {
@@ -524,7 +524,13 @@ namespace
         type = object->geometryType();
     }
 
-    return (type != nullptr) ? type->properties().size() : 0;
+    if (type == nullptr)
+    {
+        return 0;
+    }
+    
+    const auto& allProps = type->allProperties();
+    return allProps.size();
 }
 
 
@@ -535,16 +541,14 @@ namespace
     auto object = self.world->selection().single();
     
     void* editedObject = nullptr;
-    const Property* property = nullptr;
+    Property::Ptr property;
     
     const auto section = indexPath.section;
     if (section == 0)
     {
-        const auto* type = object->type();
         editedObject = object.get();
-        
-        const auto& props = type->properties();
-        property = props[indexPath.row].get();
+        const auto& allProps = object->type().allProperties();
+        property = allProps[indexPath.row];
     }
     else if (section == 1)
     {
@@ -553,14 +557,14 @@ namespace
         editedObject = object->geometry();
 
         const auto& props = type->properties();
-        property = props[indexPath.row].get();
+        property = props[indexPath.row];
     }
     
     [cell setupWithObject:editedObject prop:property];
     
     __weak MainViewControllerIOS* wself = self;
     
-    [cell setChangeCallback:[wself](bool finished, void* object, const auto* prop, float newValue)
+    [cell setChangeCallback:[wself](bool finished, void* object, const auto& prop, float newValue)
     {
         MainViewControllerIOS* self = wself;
         

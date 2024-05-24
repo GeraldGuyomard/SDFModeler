@@ -17,18 +17,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 
-
 using rapidjsonStringWriter = rapidjson::Writer<rapidjson::StringBuffer>;
-
-enum class PropertyType
-{
-    Float,
-    Int,
-    String
-};
-
-template <typename T>
-PropertyType getPropertyType();
 
 template <typename T>
 class RangedValue
@@ -47,44 +36,38 @@ public:
 using FloatRangedValue = RangedValue<float>;
 using IntRangedValue = RangedValue<int32_t>;
 
-template <>
-inline PropertyType getPropertyType<int>()
-{
-    return PropertyType::Int;
-}
-
-template <>
-inline PropertyType getPropertyType<float>()
-{
-    return PropertyType::Float;
-}
-
-template <>
-inline PropertyType getPropertyType<std::string>()
-{
-    return PropertyType::String;
-}
-
 using TDefaultPropertyValue = std::variant<FloatRangedValue, IntRangedValue, std::string>;
 using TPropertyValue = std::variant<float, int, std::string>;
 
 bool write(rapidjsonStringWriter& writer, const TPropertyValue& value);
 
+class Type;
+
+template <typename T>
+const Type& getType();
+
+class Value
+{
+public:
+    virtual ~Value() = default;
+    
+    virtual const Type& type() const = 0;
+    virtual void* value() const = 0;
+};
+
 class Property final
 {
 public:
-    using Ptr = std::unique_ptr<Property>;
+    using Ptr = std::shared_ptr<Property>;
     
     using Getter = std::function<TPropertyValue (const void* object)>;
     using Setter = std::function<void (void* object, const TPropertyValue&)>;
     
     Property(const std::string& name,
-             PropertyType propType,
+             const Type& propType,
              const Getter& getter,
              const Setter& setter,
              const TDefaultPropertyValue& defaultValue = {});
-    
-    virtual ~Property() = default;
     
     TPropertyValue get(const void* object) const;
     const TDefaultPropertyValue& defaultValue() const { return _defaultValue; }
@@ -95,7 +78,7 @@ public:
     
 private:
     const std::string _name;
-    const PropertyType _propertyType;
+    const Type& _type;
     const Getter _getter;
     const Setter _setter;
     const TDefaultPropertyValue _defaultValue;
@@ -104,6 +87,9 @@ private:
 class Type
 {
 public:
+    
+    static const Type* typeByName(const std::string&);
+    
     Type(const std::string& name, const Type* superType = nullptr);
     
     const std::string& name() const { return _name; }
@@ -114,7 +100,7 @@ public:
                      const std::function<TPropertyType (const TObject* object)>& getter,
                      const std::function<void (TObject* object, const TPropertyType& value)>& setter)
     {
-        auto prop = std::make_unique<Property>(name, getPropertyType<TPropertyType>(),
+        auto prop = std::make_shared<Property>(name, getPropertyType<TPropertyType>(),
         [getter](const void* object) -> TPropertyValue
         {
             TObject* o = (TObject*) object;
@@ -140,7 +126,7 @@ public:
     {
         const TDefaultPropertyValue defaultValue { defaultV };
         
-        auto prop = std::make_unique<Property>(name, getPropertyType<std::string>(),
+        auto prop = std::make_shared<Property>(name, getType<std::string>(),
         [](const void* object) -> TPropertyValue
         {
             TObject* o = (TObject*) object;
@@ -165,7 +151,7 @@ public:
     {
         const RangedValue<T> defaultValue { T{}, minValue, maxValue };
         
-        auto prop = std::make_unique<Property>(name, getPropertyType<T>(),
+        auto prop = std::make_shared<Property>(name, getType<T>(),
         [](const void* object) -> TPropertyValue
         {
             TObject* o = (TObject*) object;
@@ -186,6 +172,7 @@ public:
     }
     
     const std::vector<Property::Ptr>& properties() const { return _properties; }
+    const std::vector<Property::Ptr>& allProperties() const;
     
     TPropertyValue getPropertyValue(const void* object, const std::string& propName) const;
     
@@ -198,6 +185,7 @@ private:
     
     const std::string _name;
     std::vector<Property::Ptr> _properties;
+    mutable std::optional<std::vector<Property::Ptr>> _allProperties;
     
     const Type* const _superType;
 };
@@ -214,7 +202,7 @@ concept HasSuperType = requires
 std::string demangle(const std::type_info&);
 
 template <typename T>
-class TType : public Type
+class TType final : public Type
 {
 public:
     static const TType& instance()
@@ -251,4 +239,8 @@ private:
     }
 };
 
-
+template <typename T>
+inline const Type& getType()
+{
+    return TType<T>::instance();
+}

@@ -6,7 +6,7 @@
 
 #include "SetPropertyCommand.h"
 
-SetPropertyCommand::SetPropertyCommand(void* object, const Property* property, Renderer* renderer)
+SetPropertyCommand::SetPropertyCommand(void* object, const Property::Ptr& property, Renderer* renderer)
 : _object(object), _property(property), _savedValue(property->get(object)), _renderer(renderer)
 {}
 

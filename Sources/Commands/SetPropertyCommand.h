@@ -15,7 +15,7 @@ class SetPropertyCommand : public Command
 public:
     using Ptr = std::shared_ptr<SetPropertyCommand>;
     
-    SetPropertyCommand(void* object, const Property* property, Renderer*);
+    SetPropertyCommand(void* object, const Property::Ptr& property, Renderer*);
     
     void setValue(const TPropertyValue&);
     
@@ -28,7 +28,7 @@ private:
     void _swapAndSet();
     
     void* _object;
-    const Property* _property;
+    const Property::Ptr _property;
     Renderer* _renderer;
     
     TPropertyValue _savedValue;

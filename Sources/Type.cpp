@@ -24,12 +24,38 @@ Type::Type(const std::string& name, const Type* superType)
 : _name(name), _superType(superType)
 {}
 
-Property::Property(const std::string& name, PropertyType propType,
+Property::Property(const std::string& name, const Type& type,
                    const Getter& getter,
                    const Setter& setter,
                    const TDefaultPropertyValue& defaultValue)
-: _name(name), _propertyType(propType), _getter(getter), _setter(setter), _defaultValue(defaultValue)
+: _name(name), _type(type), _getter(getter), _setter(setter), _defaultValue(defaultValue)
 {}
+
+namespace
+{
+    void recurseProps(const Type* t, std::vector<Property::Ptr>& oProps)
+    {
+        if (t != nullptr)
+        {
+            recurseProps(t->superType(), oProps);
+            
+            const auto& p = t->properties();
+            oProps.insert(oProps.end(), p.begin(), p.end());
+        }
+    }
+}
+
+const std::vector<Property::Ptr>& Type::allProperties() const
+{
+    if (!_allProperties.has_value())
+    {
+        std::vector<Property::Ptr> p;
+        recurseProps(this, p);
+        _allProperties = p;
+    }
+    
+    return _allProperties.value();
+}
 
 TPropertyValue
 Property::get(const void* object) const
@@ -126,4 +152,16 @@ bool Type::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer, const v
     writer.EndObject();
     
     return true;
+}
+
+template <>
+void initializeType<std::string>(Type&)
+{
+    
+}
+
+template <>
+void initializeType<float>(Type&)
+{
+    
 }

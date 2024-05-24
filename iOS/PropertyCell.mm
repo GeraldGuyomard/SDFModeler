@@ -10,7 +10,7 @@
 @implementation PropertyCell
 {
     void* _object;
-    const Property* _property;
+    Property::Ptr _property;
     ChangeCallback _changeCallback;
     
     BOOL _sliderHooked;
@@ -21,7 +21,7 @@
     return _object;
 }
 
--(const Property*) property
+-(Property::Ptr) property
 {
     return _property;
 }
@@ -42,7 +42,7 @@
     }
 }
 
-- (void)setupWithObject:(void*)object prop:(const Property*)prop
+- (void)setupWithObject:(void*)object prop:(const Property::Ptr&)prop
 {
     _object = object;
     _property = prop;
