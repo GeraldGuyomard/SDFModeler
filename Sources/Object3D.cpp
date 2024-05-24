@@ -9,7 +9,6 @@
 #include "RectF.h"
 #include <map>
 
-#include <rapidjson/rapidjson.h>
 
 Material3D::Material3D(const SimpleMaterial& m)
 : _material(m)
@@ -158,6 +157,12 @@ Object3DFactory::factoryByName(const std::string& name)
 }
 
 void
+Object3D::setName(const std::string& name)
+{
+    _name = name;
+}
+
+void
 Object3D::setMaterial(const Material3D::Ptr& mat)
 {
     if (_material != mat)
@@ -175,6 +180,8 @@ Object3D::type() const
 template <>
 void initializeType<Object3D>(Type& type)
 {
+    type.addStringProperty<Object3D, &Object3D::name, &Object3D::setName>("name");
+    
     {
         constexpr float minValue = -5.f;
         constexpr float maxValue = +5.f;
@@ -717,5 +724,50 @@ World::invalidate()
 std::string
 World::serialize() const
 {
-    return {};
+    rapidjson::StringBuffer buffer;
+    rapidjson::Writer<rapidjson::StringBuffer> writer { buffer };
+    
+    writer.StartObject();
+    {
+        writer.Key("rootObject");
+        _rootObject->serialize(writer);
+    }
+    writer.EndObject();
+    
+    return buffer.GetString();
+}
+
+bool
+Object3D::serialize(rapidjson::Writer<rapidjson::StringBuffer>& writer)
+{
+    const auto* t = type();
+    
+    writer.StartObject();
+    
+    if (!t->serialize(writer, this))
+    {
+        return false;
+    }
+    
+    // children
+    const auto& children = this->children();
+    if (!children.empty())
+    {
+        writer.Key("children");
+        writer.StartArray();
+        {
+            for (const auto& child : children)
+            {
+                if (!child->serialize(writer))
+                {
+                    return false;
+                }
+            }
+        }
+        writer.EndArray();
+    }
+    
+    writer.EndObject();
+    
+    return true;
 }

@@ -252,7 +252,15 @@ NSMenuItem* findMenuItem(NSMenu* menu, SEL selector)
         return true;
     }
     
-    return NO;
+    return [super validateMenuItem:menuItem];
+}
+
+- (IBAction)saveDocument:(id)sender
+{
+    auto world = self.world;
+    const auto str = world->serialize();
+    
+    NSLog(@"Saved:\n%s\n", str.c_str());
 }
 
 @end

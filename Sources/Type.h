@@ -14,17 +14,23 @@
 #include <variant>
 #include <functional>
 
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
+using rapidjsonStringWriter = rapidjson::Writer<rapidjson::StringBuffer>;
+
 enum class PropertyType
 {
     Float,
-    Int
+    Int,
+    String
 };
 
 template <typename T>
 PropertyType getPropertyType();
 
 template <typename T>
-class RangedValue final
+class RangedValue
 {
 public:
     T value = {};
@@ -52,8 +58,16 @@ inline PropertyType getPropertyType<float>()
     return PropertyType::Float;
 }
 
-using TPropertyRangedValue = std::variant<FloatRangedValue, IntRangedValue>;
-using TPropertyValue = std::variant<float, int>;
+template <>
+inline PropertyType getPropertyType<std::string>()
+{
+    return PropertyType::String;
+}
+
+using TDefaultPropertyValue = std::variant<FloatRangedValue, IntRangedValue, std::string>;
+using TPropertyValue = std::variant<float, int, std::string>;
+
+bool write(rapidjsonStringWriter& writer, const TPropertyValue& value);
 
 class Property
 {
@@ -67,12 +81,12 @@ public:
              PropertyType propType,
              const Getter& getter,
              const Setter& setter,
-             const TPropertyRangedValue& defaultValue = {});
+             const TDefaultPropertyValue& defaultValue = {});
     
     virtual ~Property() = default;
     
     TPropertyValue get(const void* object) const;
-    const TPropertyRangedValue& defaultValue() const { return _defaultValue; }
+    const TDefaultPropertyValue& defaultValue() const { return _defaultValue; }
     
     const std::string& name() const { return _name; }
     
@@ -83,7 +97,7 @@ private:
     const PropertyType _propertyType;
     const Getter _getter;
     const Setter _setter;
-    const TPropertyRangedValue _defaultValue;
+    const TDefaultPropertyValue _defaultValue;
 };
 
 class Type
@@ -116,8 +130,33 @@ public:
         _properties.push_back(std::move(prop));
     }
     
+    template <class TObject, std::string (TObject::*TGet)() const, void (TObject::*TSet)(const std::string&)>
+    void addStringProperty(const std::string& name, const std::string& defaultV = {})
+    {
+        const TDefaultPropertyValue defaultValue { defaultV };
+        
+        auto prop = std::make_unique<Property>(name, getPropertyType<std::string>(),
+        [](const void* object) -> TPropertyValue
+        {
+            TObject* o = (TObject*) object;
+            return { (o->*TGet)() };
+        },
+                                               
+        [](void* object, const TPropertyValue& value)
+        {
+            TObject* o = (TObject*) object;
+            
+            if (auto v = std::get_if<std::string>(&value))
+            {
+                (o->*TSet)(*v);
+            }
+        }, defaultValue);
+        
+        _properties.push_back(std::move(prop));
+    }
+    
     template <class TObject, typename T, T (TObject::*TGet)() const, void (TObject::*TSet)(T)>
-    void addProperty(const std::string& name, T minValue = 0, T maxValue = 3)
+    void addProperty(const std::string& name, T minValue = 0 , T maxValue = 5)
     {
         const RangedValue<T> defaultValue { T{}, minValue, maxValue };
         
@@ -144,6 +183,9 @@ public:
     const std::vector<Property::Ptr>& properties() const { return _properties; }
     
     TPropertyValue getPropertyValue(const void* object, const std::string& propName) const;
+    
+    // serialization
+    bool serialize(rapidjsonStringWriter& writer, const void* instance) const;
     
 private:
     std::vector<Property::Ptr> _properties;

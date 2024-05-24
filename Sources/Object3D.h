@@ -21,6 +21,9 @@
 #include "EncodingContext.h"
 #include "Type.h"
 
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/writer.h>
+
 class RectF;
 
 class Material3D final
@@ -98,6 +101,9 @@ public:
     
     Object3D::Ptr objectByID(ObjectID id) const;
     
+    std::string name() const { return _name; }
+    void setName(const std::string&);
+    
     Material3D::Ptr material() const { return _material; }
     void setMaterial(const Material3D::Ptr&);
     
@@ -166,6 +172,8 @@ public:
 public:
     void setId(ObjectID);
     
+    bool serialize(rapidjson::Writer<rapidjson::StringBuffer>&);
+    
 private:
     
     void invalidateCachedWorldTransform();
@@ -180,6 +188,8 @@ private:
     const WorldWPtr _world;
     
     ObjectID _id = kInvalidObjectID;
+    std::string _name;
+    
     Material3D::Ptr _material;
     SDFOperation _operation = SDFOperation::addition;
     float _blendingFactor = 0.f;
