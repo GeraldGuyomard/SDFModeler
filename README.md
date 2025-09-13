@@ -2,7 +2,14 @@
 
 - works on macOS, iOS, iPadOS and visionOS
 
-![Screenshot](screenshot.jpg)
+MacOS:
+![Screenshot](screenshot-macos.jpg)
+
+iPadOS:
+![Screenshot](screenshot-ios.jpg)
+
+visionOS:
+![Screenshot](screenshot-visionos.jpg)
 
 # Instructions
 
