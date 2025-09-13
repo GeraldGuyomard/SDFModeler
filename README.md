@@ -11,6 +11,10 @@ iPadOS:
 visionOS:
 ![Screenshot](screenshot-visionos.jpg)
 
+# Implementation details
+- SDF evaluation written in C++. Runs both on CPU (for picking) and GPU with Metal Shading Language (rendering)
+- Optimized for realtime rendering (partitioning, culling, C++ template meta programming)
+
 # Instructions
 
 - drag objects to move them
