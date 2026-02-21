@@ -241,21 +241,30 @@ fragment FragmentShader_WorkingPlaneOut fragmentShader_WorkingPlane(VertexShader
                                                                     constant WorkingPlaneUniforms& uniforms [[ buffer(BufferIndexWorkingPlaneUniform) ]])
 {
     FragmentShader_WorkingPlaneOut out;
-    out.color = uniforms.gridColor;
-    
-    float2 xy = in.textCoords;
-    
-    xy = fract(xy / uniforms.gridSize);
-    xy = step(uniforms.gridThickness, xy);
-    
-    float pixelVisible = min(1.f, xy.x + xy.y);
+
+    // Scale texture coords to grid cell space
+    float2 coord = in.textCoords / uniforms.gridSize;
+
+    // Screen-space derivative gives pixel footprint in grid-cell units — used for AA width
+    // Capped to lineHalfWidth so perspective doesn't fatten lines at grazing angles
+    float lineHalfWidth = 1.0 - uniforms.gridThickness;
+    float2 fw = clamp(fwidth(coord), float2(1e-6), float2(lineHalfWidth));
+
+    // Distance from nearest cell boundary (0 = on a line, 0.5 = cell center)
+    float2 cellPos = fract(coord);
+    float2 distToEdge = min(cellPos, 1.0 - cellPos);
+
+    // Smooth anti-aliased coverage per axis: 1 on the line, 0 away from it
+    float2 lineAlpha = 1.0 - smoothstep(lineHalfWidth, lineHalfWidth + fw, distToEdge);
+
+    float pixelVisible = max(lineAlpha.x, lineAlpha.y);
     float4 c = uniforms.gridColor * pixelVisible;
-    
-    // Fade to black (Fog)
+
+    // Fade to transparent with distance (Fog)
     const float fogRatio = in.position.z;
     c.a *= fogRatio;
-    
+
     out.color = c;
-    
+
     return out;
 }

@@ -779,3 +779,4 @@ template <> void initializeType<TObject3D<SDFRoundedBox>>(Type&) {}
 template <> void initializeType<TObject3D<SDFBox>>(Type&) {}
 template <> void initializeType<TObject3D<SDFPlane>>(Type&) {}
 template <> void initializeType<TObject3D<SDFTorus>>(Type&) {}
+template <> void initializeType<TObject3D<SDFCone>>(Type&) {}

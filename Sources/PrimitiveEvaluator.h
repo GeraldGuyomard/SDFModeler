@@ -15,6 +15,7 @@
 #include "SDFGeometry/SDFRoundedBox.h"
 #include "SDFGeometry/SDFTorus.h"
 #include "SDFGeometry/SDFCylinder.h"
+#include "SDFGeometry/SDFCone.h"
 
 #include "SDFObject.h"
 
@@ -170,6 +171,10 @@ INLINE TReturnValue evaluatePrimitive(TEvaluator evaluator, CONSTANT EncodedPrim
     {
         return ret.returnValue;
     }
-    
+    else if (auto ret = computeEvaluationReturn<TEvaluator, SDFCone, TReturnValue>(evaluator, header))
+    {
+        return ret.returnValue;
+    }
+
     return {};
 }

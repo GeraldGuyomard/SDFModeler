@@ -18,7 +18,8 @@ enum class ObjectType : int64_t
     roundedBox,
     plane,
     torus,
-    cylinder
+    cylinder,
+    cone
 };
 
 using ObjectID = uint16_t;
