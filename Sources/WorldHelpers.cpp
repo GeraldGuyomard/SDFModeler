@@ -68,11 +68,11 @@ WorldPtr makeDefaultWorld_1(const float4x4& worldTransform)
     greenSphere->setMaterial(green);
     rootObject->addChild(greenSphere);
 
-    auto orange = world->addMaterial(float4 { 1, 0.5f, 0, 1 });
+    auto cyan = world->addMaterial(float4 { 0, 1, 1, 1 });
     auto orangeCone = std::make_shared<TObject3D<SDFCone>>(world, SDFCone { 0.35f, 0.8f });
-    orangeCone->setName("orange cone");
+    orangeCone->setName("cyan cone");
     orangeCone->setLocalTransform(RSTTransformer { float3 { 1, 1, kZ } });
-    orangeCone->setMaterial(orange);
+    orangeCone->setMaterial(cyan);
     rootObject->addChild(orangeCone);
     
     const float3 compositionOrigin { -2., 0.f, kZ + 0.5f };
