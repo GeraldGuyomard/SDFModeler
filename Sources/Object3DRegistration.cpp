@@ -12,3 +12,4 @@ TObject3DFactoryRegistration s_BoxRegistration {"Box", SDFBox { float3 {0.5f, 0.
 TObject3DFactoryRegistration s_RoundedBoxRegistration {"Rounded Box", SDFRoundedBox { float3 {0.5f, 0.5f, 0.5}, 0.1f } };
 TObject3DFactoryRegistration s_TorusRegistration {"Torus", SDFTorus { 0.5f, 0.25f } };
 TObject3DFactoryRegistration s_CylinderRegistration {"Cylinder", SDFCylinder { 0.3f, 0.7f } };
+TObject3DFactoryRegistration s_ConeRegistration {"Cone", SDFCone { 0.3f, 0.7f } };

@@ -136,7 +136,7 @@ WorkingPlaneRenderPass::updateUniforms(Renderer& renderer)
     constexpr float kGridSize = 2e-4f;
     uniforms.gridSize = float2 { kGridSize, kGridSize };
     
-    uniforms.gridThickness = 0.95f;
+    uniforms.gridThickness = 0.995f;
     uniforms.gridColor = float4 { 1.f, 1.f, 1.f, 1.f };
 }
 

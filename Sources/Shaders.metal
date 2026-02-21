@@ -246,14 +246,13 @@ fragment FragmentShader_WorkingPlaneOut fragmentShader_WorkingPlane(VertexShader
     float2 coord = in.textCoords / uniforms.gridSize;
 
     // Screen-space derivative gives pixel footprint in grid-cell units — used for AA width
-    float2 fw = max(fwidth(coord), float2(1e-6));
+    // Capped to lineHalfWidth so perspective doesn't fatten lines at grazing angles
+    float lineHalfWidth = 1.0 - uniforms.gridThickness;
+    float2 fw = clamp(fwidth(coord), float2(1e-6), float2(lineHalfWidth));
 
     // Distance from nearest cell boundary (0 = on a line, 0.5 = cell center)
     float2 cellPos = fract(coord);
     float2 distToEdge = min(cellPos, 1.0 - cellPos);
-
-    // Line half-width in cell units derived from gridThickness (e.g. 0.95 → 0.05 cells wide)
-    float lineHalfWidth = 1.0 - uniforms.gridThickness;
 
     // Smooth anti-aliased coverage per axis: 1 on the line, 0 away from it
     float2 lineAlpha = 1.0 - smoothstep(lineHalfWidth, lineHalfWidth + fw, distToEdge);
